@@ -1,0 +1,31 @@
+.content {
+	padding: 2rem 1rem 4rem;
+
+	.idea {
+		padding: 1px 0;
+	}
+
+	.idea:hover {
+		background: rgba(200, 200, 200, 0.3);
+	}
+}
+
+:target {
+	background: #ffc;
+	border-radius: 2px;
+	padding: 4px 0;
+
+	&:before {
+		display: block;
+		position: absolute;
+		content: ' ';
+		margin-top: -150px;
+		height: 150px;
+		visibility: hidden;
+	}
+
+	& + dd {
+		background: #ffc;
+		border-radius: 2px;
+	}
+}

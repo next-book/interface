@@ -1,0 +1,67 @@
+{
+  "name": "nb-base",
+  "version": "0.1.0",
+  "description": "Next-book’s base browser library",
+  "repository": "https://github.com/next-book/nb-base",
+  "main": "src/js/index.js",
+  "scripts": {
+    "build:css": "node-sass src/scss/style.scss dist/nb-base.css",
+    "build:js": "browserify src/js/index.js -o dist/nb-base.js",
+    "build": "rm -r dist && mkdir dist && npm run build:js && npm run build:css",
+    "build:watch-css": "npm run build:css && onchange 'src/scss/**.scss' -v -- npm run build:css",
+    "build:watch-js": "npm run build:js && onchange 'src/js/**.js' -v -- npm run build:js",
+    "test": "jest"
+  },
+  "author": "Jan Martinek",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/preset-env": "^7.2.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-cli": "^6.26.0",
+    "browserify": "^16.1.1",
+    "eslint": "^5.9.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-react": "^7.11.1",
+    "husky": "^1.2.0",
+    "jest": "^22.4.2",
+    "onchange": "^3.3.0",
+    "prettier": "^1.15.3",
+    "pretty-quick": "^1.8.0"
+  },
+  "dependencies": {
+    "@babel/core": "^7.1.5",
+    "babelify": "^10.0.0",
+    "cuid": "^2.1.4",
+    "keycode": "^2.2.0",
+    "lodash": "^4.17.11",
+    "node-sass": "^4.10.0",
+    "prop-types": "^15.6.2",
+    "react": "^16.6.1",
+    "react-dom": "^16.6.1",
+    "react-redux": "^5.1.1",
+    "redux": "^4.0.1",
+    "to-milliseconds": "^1.1.0"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "@babel/preset-env",
+            "@babel/preset-react"
+          ],
+          "sourceType": "module"
+        }
+      ]
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
+}
