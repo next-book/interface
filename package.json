@@ -12,6 +12,9 @@
     "build:watch-js": "npm run build:js && onchange 'src/js/**.js' -v -- npm run build:js",
     "test": "jest"
   },
+  "bin": {
+    "copy-nb-base-assets": "./bin/copy-assets.js"
+  },
   "author": "Jan Martinek",
   "license": "MIT",
   "devDependencies": {
