@@ -22,9 +22,15 @@ loadSpine().then(spine => {
   );
 
   Object.keys(views).forEach(key => {
+    const wrapper = views[key].wrapperId
+      ? document.getElementById(views[key].wrapperId)
+      : plantRoot(key);
+
+    if (!wrapper) return;
+
     ReactDOM.render(
       <Provider store={store}>{React.createElement(views[key], null)}</Provider>,
-      plantRoot(key)
+      wrapper
     );
   });
 

@@ -44785,6 +44785,95 @@ module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(S
 },{"./spine-reducer":59,"react":46,"react-redux":37,"redux":47}],61:[function(require,module,exports){
 "use strict";
 
+var _react = _interopRequireDefault(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _reactRedux = require("react-redux");
+
+var _redux = require("redux");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Toc =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(Toc, _React$Component);
+
+  function Toc(props) {
+    _classCallCheck(this, Toc);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(Toc).call(this, props));
+  }
+
+  _createClass(Toc, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {}
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {}
+  }, {
+    key: "render",
+    value: function render() {
+      return _react.default.createElement("ol", null, this.props.spine.documents.map(function (doc) {
+        return doc.order ? _react.default.createElement("li", {
+          key: doc.order
+        }, _react.default.createElement("a", {
+          href: doc.file
+        }, doc.title), _react.default.createElement("ul", null, doc.toc && doc.toc[0].children.length ? doc.toc[0].children.map(function (section, index) {
+          return _react.default.createElement("li", {
+            key: index
+          }, _react.default.createElement("a", {
+            href: "".concat(doc.file, "#").concat(section.id)
+          }, section.name));
+        }) : null)) : null;
+      }));
+    }
+  }]);
+
+  return Toc;
+}(_react.default.Component);
+
+Toc.wrapperId = 'nb-table-of-contents';
+Toc.propTypes = {
+  spine: _propTypes.default.shape({
+    documents: _propTypes.default.arrayOf(_propTypes.default.object)
+  })
+};
+
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    spine: state.spine
+  };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return (0, _redux.bindActionCreators)({}, dispatch);
+};
+
+module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Toc);
+
+},{"prop-types":20,"react":46,"react-redux":37,"redux":47}],62:[function(require,module,exports){
+"use strict";
+
 var _toMilliseconds = _interopRequireDefault(require("to-milliseconds"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -44885,7 +44974,7 @@ reducer.addMoment = function (time, chapter, idea) {
 
 module.exports = reducer;
 
-},{"to-milliseconds":56}],62:[function(require,module,exports){
+},{"to-milliseconds":56}],63:[function(require,module,exports){
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -44986,7 +45075,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Trace);
 
-},{"./trace-reducer":61,"lodash":14,"prop-types":20,"react":46,"react-redux":37,"redux":47}],63:[function(require,module,exports){
+},{"./trace-reducer":62,"lodash":14,"prop-types":20,"react":46,"react-redux":37,"redux":47}],64:[function(require,module,exports){
 "use strict";
 
 var _reactRedux = require("react-redux");
@@ -45018,9 +45107,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     return f;
   }));
   Object.keys(_views.default).forEach(function (key) {
+    var wrapper = _views.default[key].wrapperId ? document.getElementById(_views.default[key].wrapperId) : (0, _shared.plantRoot)(key);
+    if (!wrapper) return;
+
     _reactDom.default.render(_react.default.createElement(_reactRedux.Provider, {
       store: store
-    }, _react.default.createElement(_views.default[key], null)), (0, _shared.plantRoot)(key));
+    }, _react.default.createElement(_views.default[key], null)), wrapper);
   });
   store.subscribe((0, _lodash.debounce)(function () {
     localStorage.setItem(spine.slug, JSON.stringify(store.getState()));
@@ -45032,7 +45124,7 @@ document.addEventListener('DOMContentLoaded', function () {
   headroom.init();
 });
 
-},{"./reducer":64,"./shared":65,"./views":66,"headroom.js":10,"lodash":14,"react":46,"react-dom":24,"react-redux":37,"redux":47}],64:[function(require,module,exports){
+},{"./reducer":65,"./shared":66,"./views":67,"headroom.js":10,"lodash":14,"react":46,"react-dom":24,"react-redux":37,"redux":47}],65:[function(require,module,exports){
 "use strict";
 
 var _redux = require("redux");
@@ -45051,7 +45143,7 @@ module.exports = (0, _redux.combineReducers)({
   trace: _traceReducer.default
 });
 
-},{"./components/navigation-reducer":57,"./components/spine-reducer":59,"./components/trace-reducer":61,"redux":47}],65:[function(require,module,exports){
+},{"./components/navigation-reducer":57,"./components/spine-reducer":59,"./components/trace-reducer":62,"redux":47}],66:[function(require,module,exports){
 "use strict";
 
 var _cuid = _interopRequireDefault(require("cuid"));
@@ -45090,12 +45182,14 @@ module.exports = {
   loadSpine: loadSpine
 };
 
-},{"cuid":7}],66:[function(require,module,exports){
+},{"cuid":7}],67:[function(require,module,exports){
 "use strict";
 
 var _navigation = _interopRequireDefault(require("./components/navigation"));
 
 var _spine = _interopRequireDefault(require("./components/spine"));
+
+var _toc = _interopRequireDefault(require("./components/toc"));
 
 var _trace = _interopRequireDefault(require("./components/trace"));
 
@@ -45104,7 +45198,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 module.exports = {
   navigation: _navigation.default,
   // spine,
+  toc: _toc.default,
   trace: _trace.default
 };
 
-},{"./components/navigation":58,"./components/spine":60,"./components/trace":62}]},{},[63]);
+},{"./components/navigation":58,"./components/spine":60,"./components/toc":61,"./components/trace":63}]},{},[64]);
