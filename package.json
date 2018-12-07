@@ -1,6 +1,6 @@
 {
   "name": "nb-base",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Next-book’s base browser library",
   "repository": "https://github.com/next-book/nb-base",
   "main": "src/js/index.js",
@@ -38,6 +38,7 @@
     "@babel/core": "^7.1.5",
     "babelify": "^10.0.0",
     "cuid": "^2.1.4",
+    "headroom.js": "^0.9.4",
     "keycode": "^2.2.0",
     "lodash": "^4.17.11",
     "node-sass": "^4.10.0",

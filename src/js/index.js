@@ -6,6 +6,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { debounce } from 'lodash';
 
+import Headroom from 'headroom.js';
+
 import { loadSpine, plantRoot } from './shared';
 import reducer from './reducer';
 import views from './views';
@@ -33,4 +35,9 @@ loadSpine().then(spine => {
   );
 
   window.book = store;
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const headroom = new Headroom(window.document.body);
+  headroom.init();
 });
