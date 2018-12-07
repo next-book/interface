@@ -44619,8 +44619,8 @@ function getPosition() {
 }
 
 function getChapter() {
-  var pos = document.querySelector('meta[name="order"]').getAttribute('content');
-  return parseInt(pos, 10);
+  var el = document.querySelector('meta[name="order"]');
+  return el ? parseInt(el.getAttribute('content'), 10) : 0;
 }
 
 function getFirstIdeaShown() {

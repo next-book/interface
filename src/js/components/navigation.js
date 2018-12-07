@@ -265,8 +265,8 @@ function getPosition() {
 }
 
 function getChapter() {
-  const pos = document.querySelector('meta[name="order"]').getAttribute('content');
-  return parseInt(pos, 10);
+  const el = document.querySelector('meta[name="order"]');
+  return el ? parseInt(el.getAttribute('content'), 10) : 0;
 }
 
 function getFirstIdeaShown() {
