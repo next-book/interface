@@ -10,7 +10,6 @@ class Navigation extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { chapters: { list: [] } };
     this.handleScroll = this.handleScroll.bind(this);
     this.handleKeyboardNav = this.handleKeyboardNav.bind(this);
     this.handleInvisibleNav = this.handleInvisibleNav.bind(this);
@@ -25,9 +24,15 @@ class Navigation extends React.Component {
   handleKeyboardNav(event) {
     switch (keycode(event)) {
       case 'left':
-        return moveBackward(event, this.state.chapters.list[this.props.navigation.chapter].prev);
+        return moveBackward(
+          event,
+          this.props.navigation.readingOrder[this.props.navigation.chapter].prev
+        );
       case 'right':
-        return moveForward(event, this.state.chapters.list[this.props.navigation.chapter].next);
+        return moveForward(
+          event,
+          this.props.navigation.readingOrder[this.props.navigation.chapter].next
+        );
       default:
         return;
     }
@@ -36,17 +41,20 @@ class Navigation extends React.Component {
   handleInvisibleNav(event) {
     if (event.target === document.querySelector('html')) {
       if (window.innerWidth / 2 > event.clientX) {
-        return moveBackward(event, this.state.chapters.list[this.props.navigation.chapter].prev);
+        return moveBackward(
+          event,
+          this.props.navigation.readingOrder[this.props.navigation.chapter].prev
+        );
       } else {
-        return moveForward(event, this.state.chapters.list[this.props.navigation.chapter].next);
+        return moveForward(
+          event,
+          this.props.navigation.readingOrder[this.props.navigation.chapter].next
+        );
       }
     }
   }
 
   componentDidMount() {
-    var chapters = prepareChapters(this.props.spine.documents);
-    this.setState({ ...this.state, chapters });
-
     window.addEventListener('scroll', debounce(this.handleScroll, 500));
     if (this.props.navigation.config.keyboardNav) {
       window.document.body.addEventListener('keydown', this.handleKeyboardNav);
@@ -55,6 +63,7 @@ class Navigation extends React.Component {
       window.document.addEventListener('click', this.handleInvisibleNav);
     }
 
+    this.props.setReadingOrder(this.props.spine.documents);
     this.props.setChapter(getChapter());
     this.props.setPosition(getPosition());
     setUriIdea(this.props.navigation.firstIdeaInView);
@@ -73,16 +82,21 @@ class Navigation extends React.Component {
   }
 
   render() {
-    const chapters = this.state.chapters;
     const nav = this.props.navigation;
-    const chapter = chapters.list[nav.chapter];
+    if (nav.readingOrder == undefined) return null;
 
-    if (chapter == undefined) return null;
+    const chapter = nav.readingOrder[nav.chapter];
+    const { totalWords } = nav.readingOrder[nav.readingOrder.length - 1];
 
     return (
       <nav>
         <CatchWord />
-        <NavBar chapters={chapters} chapter={chapter} position={nav.position} />
+        <NavBar
+          readingOrder={nav.readingOrder}
+          chapter={chapter}
+          position={nav.position}
+          totalWords={totalWords}
+        />
         <TopBar spine={this.props.spine} chapter={chapter} />
         <ChapterLink rel="prev" chapter={chapter} />
         <ChapterLink rel="next" chapter={chapter} />
@@ -97,6 +111,7 @@ Navigation.propTypes = {
   }),
   setPosition: PropTypes.func.isRequired,
   setFirstIdeaInView: PropTypes.func.isRequired,
+  setReadingOrder: PropTypes.func.isRequired,
   setChapter: PropTypes.func.isRequired,
   navigation: PropTypes.object.isRequired,
 };
@@ -108,13 +123,9 @@ function CatchWord(props) {
 function NavBar(props) {
   return (
     <ul className="nav-bar">
-      <Pointer
-        position={props.position}
-        chapter={props.chapter}
-        totalWords={props.chapters.totalWords}
-      />
-      {props.chapters.list.map((chapter, index) => (
-        <Chapter key={chapter.order} chapter={chapter} totalWords={props.chapters.totalWords} />
+      <Pointer position={props.position} chapter={props.chapter} totalWords={props.totalWords} />
+      {props.readingOrder.map((chapter, index) => (
+        <Chapter key={chapter.order} chapter={chapter} totalWords={props.totalWords} />
       ))}
     </ul>
   );
@@ -123,7 +134,8 @@ function NavBar(props) {
 NavBar.propTypes = {
   position: PropTypes.number.isRequired,
   chapter: PropTypes.object.isRequired,
-  chapters: PropTypes.object.isRequired,
+  totalWords: PropTypes.number.isRequired,
+  readingOrder: PropTypes.array.isRequired,
 };
 
 function Pointer(props) {
@@ -287,32 +299,6 @@ function setUriIdea(id) {
   window.history.replaceState(undefined, undefined, `#idea${id}`);
 }
 
-function prepareChapters(documents) {
-  let totalChars = 0;
-  let totalWords = 0;
-
-  const list = documents
-    .reduce((arr, doc) => {
-      if (doc.isChapter) arr[doc.order] = doc;
-      return arr;
-    }, [])
-    .map(doc => {
-      doc.offsetChars = totalChars;
-      doc.offsetWords = totalWords;
-
-      totalChars += doc.chars;
-      totalWords += doc.words;
-
-      return doc;
-    });
-
-  return {
-    list,
-    totalChars,
-    totalWords,
-  };
-}
-
 const mapStateToProps = state => {
   return {
     navigation: state.navigation,
@@ -326,6 +312,7 @@ const mapDispatchToProps = dispatch => {
       setChapter: reducer.setChapter,
       setPosition: reducer.setPosition,
       setFirstIdeaInView: reducer.setFirstIdeaInView,
+      setReadingOrder: reducer.setReadingOrder,
     },
     dispatch
   );

@@ -44200,10 +44200,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var SET_CHAPTER = 'nb-base/navigation/SET_CHAPTER';
 var SET_POSITION = 'nb-base/navigation/SET_POSITION';
 var SET_FIRST_IDEA = 'nb-base/navigation/SET_FIRST_IDEA';
+var SET_READING_ORDER = 'nb-base/navigation/SET_READING_ORDER';
 var defaultState = {
   chapter: 1,
   position: 0,
   firstIdeaInView: 1,
+  readingOrder: [],
   config: {
     keyboardNav: true,
     invisibleNav: true
@@ -44230,10 +44232,43 @@ function reducer() {
         firstIdeaInView: parseInt(action.payload, 10)
       });
 
+    case SET_READING_ORDER:
+      return _objectSpread({}, state, {
+        readingOrder: prepReadingOrder(action.payload)
+      });
+
     default:
       return state;
   }
 }
+
+function prepReadingOrder(documents) {
+  var totalChars = 0;
+  var totalWords = 0;
+  return documents.filter(function (doc) {
+    return doc.isChapter;
+  }).sort(function (a, b) {
+    return a.order - b.order;
+  }).map(function (doc) {
+    var offsetChars = totalChars;
+    var offsetWords = totalWords;
+    totalChars += doc.chars;
+    totalWords += doc.words;
+    return _objectSpread({}, doc, {
+      offsetChars: offsetChars,
+      offsetWords: offsetWords,
+      totalChars: totalChars,
+      totalWords: totalWords
+    });
+  });
+}
+
+reducer.setReadingOrder = function (documents) {
+  return {
+    type: SET_READING_ORDER,
+    payload: documents
+  };
+};
 
 reducer.setPosition = function (position) {
   return {
@@ -44287,10 +44322,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -44318,11 +44349,6 @@ function (_React$Component) {
     _classCallCheck(this, Navigation);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Navigation).call(this, props));
-    _this.state = {
-      chapters: {
-        list: []
-      }
-    };
     _this.handleScroll = _this.handleScroll.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.handleKeyboardNav = _this.handleKeyboardNav.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.handleInvisibleNav = _this.handleInvisibleNav.bind(_assertThisInitialized(_assertThisInitialized(_this)));
@@ -44341,10 +44367,10 @@ function (_React$Component) {
     value: function handleKeyboardNav(event) {
       switch ((0, _keycode.default)(event)) {
         case 'left':
-          return moveBackward(event, this.state.chapters.list[this.props.navigation.chapter].prev);
+          return moveBackward(event, this.props.navigation.readingOrder[this.props.navigation.chapter].prev);
 
         case 'right':
-          return moveForward(event, this.state.chapters.list[this.props.navigation.chapter].next);
+          return moveForward(event, this.props.navigation.readingOrder[this.props.navigation.chapter].next);
 
         default:
           return;
@@ -44355,19 +44381,15 @@ function (_React$Component) {
     value: function handleInvisibleNav(event) {
       if (event.target === document.querySelector('html')) {
         if (window.innerWidth / 2 > event.clientX) {
-          return moveBackward(event, this.state.chapters.list[this.props.navigation.chapter].prev);
+          return moveBackward(event, this.props.navigation.readingOrder[this.props.navigation.chapter].prev);
         } else {
-          return moveForward(event, this.state.chapters.list[this.props.navigation.chapter].next);
+          return moveForward(event, this.props.navigation.readingOrder[this.props.navigation.chapter].next);
         }
       }
     }
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      var chapters = prepareChapters(this.props.spine.documents);
-      this.setState(_objectSpread({}, this.state, {
-        chapters: chapters
-      }));
       window.addEventListener('scroll', (0, _lodash.debounce)(this.handleScroll, 500));
 
       if (this.props.navigation.config.keyboardNav) {
@@ -44378,6 +44400,7 @@ function (_React$Component) {
         window.document.addEventListener('click', this.handleInvisibleNav);
       }
 
+      this.props.setReadingOrder(this.props.spine.documents);
       this.props.setChapter(getChapter());
       this.props.setPosition(getPosition());
       setUriIdea(this.props.navigation.firstIdeaInView);
@@ -44399,14 +44422,15 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var chapters = this.state.chapters;
       var nav = this.props.navigation;
-      var chapter = chapters.list[nav.chapter];
-      if (chapter == undefined) return null;
+      if (nav.readingOrder == undefined) return null;
+      var chapter = nav.readingOrder[nav.chapter];
+      var totalWords = nav.readingOrder[nav.readingOrder.length - 1].totalWords;
       return _react.default.createElement("nav", null, _react.default.createElement(CatchWord, null), _react.default.createElement(NavBar, {
-        chapters: chapters,
+        readingOrder: nav.readingOrder,
         chapter: chapter,
-        position: nav.position
+        position: nav.position,
+        totalWords: totalWords
       }), _react.default.createElement(TopBar, {
         spine: this.props.spine,
         chapter: chapter
@@ -44429,6 +44453,7 @@ Navigation.propTypes = {
   }),
   setPosition: _propTypes.default.func.isRequired,
   setFirstIdeaInView: _propTypes.default.func.isRequired,
+  setReadingOrder: _propTypes.default.func.isRequired,
   setChapter: _propTypes.default.func.isRequired,
   navigation: _propTypes.default.object.isRequired
 };
@@ -44445,12 +44470,12 @@ function NavBar(props) {
   }, _react.default.createElement(Pointer, {
     position: props.position,
     chapter: props.chapter,
-    totalWords: props.chapters.totalWords
-  }), props.chapters.list.map(function (chapter, index) {
+    totalWords: props.totalWords
+  }), props.readingOrder.map(function (chapter, index) {
     return _react.default.createElement(Chapter, {
       key: chapter.order,
       chapter: chapter,
-      totalWords: props.chapters.totalWords
+      totalWords: props.totalWords
     });
   }));
 }
@@ -44458,7 +44483,8 @@ function NavBar(props) {
 NavBar.propTypes = {
   position: _propTypes.default.number.isRequired,
   chapter: _propTypes.default.object.isRequired,
-  chapters: _propTypes.default.object.isRequired
+  totalWords: _propTypes.default.number.isRequired,
+  readingOrder: _propTypes.default.array.isRequired
 };
 
 function Pointer(props) {
@@ -44643,26 +44669,6 @@ function setUriIdea(id) {
   window.history.replaceState(undefined, undefined, "#idea".concat(id));
 }
 
-function prepareChapters(documents) {
-  var totalChars = 0;
-  var totalWords = 0;
-  var list = documents.reduce(function (arr, doc) {
-    if (doc.isChapter) arr[doc.order] = doc;
-    return arr;
-  }, []).map(function (doc) {
-    doc.offsetChars = totalChars;
-    doc.offsetWords = totalWords;
-    totalChars += doc.chars;
-    totalWords += doc.words;
-    return doc;
-  });
-  return {
-    list: list,
-    totalChars: totalChars,
-    totalWords: totalWords
-  };
-}
-
 var mapStateToProps = function mapStateToProps(state) {
   return {
     navigation: state.navigation,
@@ -44674,7 +44680,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return (0, _redux.bindActionCreators)({
     setChapter: _navigationReducer.default.setChapter,
     setPosition: _navigationReducer.default.setPosition,
-    setFirstIdeaInView: _navigationReducer.default.setFirstIdeaInView
+    setFirstIdeaInView: _navigationReducer.default.setFirstIdeaInView,
+    setReadingOrder: _navigationReducer.default.setReadingOrder
   }, dispatch);
 };
 
@@ -44833,18 +44840,18 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      return _react.default.createElement("ol", null, this.props.spine.documents.map(function (doc) {
-        return doc.order ? _react.default.createElement("li", {
+      return _react.default.createElement("ol", null, this.props.readingOrder.map(function (doc) {
+        return _react.default.createElement("li", {
           key: doc.order
         }, _react.default.createElement("a", {
           href: doc.file
         }, doc.title), _react.default.createElement("ul", null, doc.toc && doc.toc[0].children.length ? doc.toc[0].children.map(function (section, index) {
-          return _react.default.createElement("li", {
-            key: index
-          }, _react.default.createElement("a", {
-            href: "".concat(doc.file, "#").concat(section.id)
-          }, section.name));
-        }) : null)) : null;
+          return _react.default.createElement(Section, {
+            key: index,
+            file: doc.file,
+            section: section
+          });
+        }) : null));
       }));
     }
   }]);
@@ -44854,14 +44861,23 @@ function (_React$Component) {
 
 Toc.wrapperId = 'nb-table-of-contents';
 Toc.propTypes = {
-  spine: _propTypes.default.shape({
-    documents: _propTypes.default.arrayOf(_propTypes.default.object)
-  })
+  readingOrder: _propTypes.default.array.isRequired
+};
+
+function Section(props) {
+  return _react.default.createElement("li", null, _react.default.createElement("a", {
+    href: "".concat(props.file, "#").concat(props.section.id)
+  }, props.section.name));
+}
+
+Section.propTypes = {
+  section: _propTypes.default.object.isRequired,
+  file: _propTypes.default.string.isRequired
 };
 
 var mapStateToProps = function mapStateToProps(state) {
   return {
-    spine: state.spine
+    readingOrder: state.navigation.readingOrder
   };
 };
 

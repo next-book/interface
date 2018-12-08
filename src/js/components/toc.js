@@ -15,23 +15,19 @@ class Toc extends React.Component {
   render() {
     return (
       <ol>
-        {this.props.spine.documents.map(doc => {
-          return doc.order ? (
+        {this.props.readingOrder.map(doc => {
+          return (
             <li key={doc.order}>
               <a href={doc.file}>{doc.title}</a>
               <ul>
                 {doc.toc && doc.toc[0].children.length
                   ? doc.toc[0].children.map((section, index) => {
-                      return (
-                        <li key={index}>
-                          <a href={`${doc.file}#${section.id}`}>{section.name}</a>
-                        </li>
-                      );
+                      return <Section key={index} file={doc.file} section={section} />;
                     })
                   : null}
               </ul>
             </li>
-          ) : null;
+          );
         })}
       </ol>
     );
@@ -41,14 +37,25 @@ class Toc extends React.Component {
 Toc.wrapperId = 'nb-table-of-contents';
 
 Toc.propTypes = {
-  spine: PropTypes.shape({
-    documents: PropTypes.arrayOf(PropTypes.object),
-  }),
+  readingOrder: PropTypes.array.isRequired,
+};
+
+function Section(props) {
+  return (
+    <li>
+      <a href={`${props.file}#${props.section.id}`}>{props.section.name}</a>
+    </li>
+  );
+}
+
+Section.propTypes = {
+  section: PropTypes.object.isRequired,
+  file: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
-    spine: state.spine,
+    readingOrder: state.navigation.readingOrder,
   };
 };
 
