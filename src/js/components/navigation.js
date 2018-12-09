@@ -69,8 +69,6 @@ class Navigation extends React.Component {
     this.props.setChapter(getChapter());
     this.props.setPosition(getPosition());
     setUriIdea(this.props.navigation.firstIdeaInView);
-
-    this.render();
   }
 
   componentWillUnmount() {
