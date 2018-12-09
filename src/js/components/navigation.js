@@ -1,10 +1,12 @@
 import React from 'react';
-import reducer from './navigation-reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { debounce } from 'lodash';
 import keycode from 'keycode';
 import PropTypes from 'prop-types';
+
+import reducer from './navigation-reducer';
+import FullScreen from './full-screen';
 
 class Navigation extends React.Component {
   constructor(props) {
@@ -159,6 +161,7 @@ function TopBar(props) {
       </p>
       <p className="book">
         <a href="./index.html">{props.spine.title}</a>
+        <FullScreen />
       </p>
     </div>
   );
