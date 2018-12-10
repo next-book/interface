@@ -44573,7 +44573,7 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       var nav = this.props.navigation;
-      if (nav.readingOrder == undefined || nav.chapter === 0) return null;
+      if (nav.readingOrder.length === 0 || nav.chapter === 0) return null;
       var chapter = nav.readingOrder[nav.chapter - 1];
       var totalWords = nav.readingOrder[nav.readingOrder.length - 1].totalWords;
       return _react.default.createElement("nav", null, _react.default.createElement(CatchWord, null), _react.default.createElement(NavBar, {

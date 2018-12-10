@@ -83,7 +83,7 @@ class Navigation extends React.Component {
 
   render() {
     const nav = this.props.navigation;
-    if (nav.readingOrder == undefined || nav.chapter === 0) return null;
+    if (nav.readingOrder.length === 0 || nav.chapter === 0) return null;
 
     const chapter = nav.readingOrder[nav.chapter - 1];
     const { totalWords } = nav.readingOrder[nav.readingOrder.length - 1];
