@@ -1045,7 +1045,7 @@ for (var alias in aliases) {
 /**
  * @license
  * Lodash <https://lodash.com/>
- * Copyright JS Foundation and other contributors <https://js.foundation/>
+ * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -1056,7 +1056,7 @@ for (var alias in aliases) {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.11';
+  var VERSION = '4.17.15';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -3715,16 +3715,10 @@ for (var alias in aliases) {
         value.forEach(function(subValue) {
           result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack));
         });
-
-        return result;
-      }
-
-      if (isMap(value)) {
+      } else if (isMap(value)) {
         value.forEach(function(subValue, key) {
           result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack));
         });
-
-        return result;
       }
 
       var keysFunc = isFull
@@ -4648,8 +4642,8 @@ for (var alias in aliases) {
         return;
       }
       baseFor(source, function(srcValue, key) {
+        stack || (stack = new Stack);
         if (isObject(srcValue)) {
-          stack || (stack = new Stack);
           baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
         }
         else {
@@ -6466,7 +6460,7 @@ for (var alias in aliases) {
       return function(number, precision) {
         number = toNumber(number);
         precision = precision == null ? 0 : nativeMin(toInteger(precision), 292);
-        if (precision) {
+        if (precision && nativeIsFinite(number)) {
           // Shift with exponential notation to avoid floating-point issues.
           // See [MDN](https://mdn.io/round#Examples) for more details.
           var pair = (toString(number) + 'e').split('e'),
@@ -7649,7 +7643,7 @@ for (var alias in aliases) {
     }
 
     /**
-     * Gets the value at `key`, unless `key` is "__proto__".
+     * Gets the value at `key`, unless `key` is "__proto__" or "constructor".
      *
      * @private
      * @param {Object} object The object to query.
@@ -7657,6 +7651,10 @@ for (var alias in aliases) {
      * @returns {*} Returns the property value.
      */
     function safeGet(object, key) {
+      if (key === 'constructor' && typeof object[key] === 'function') {
+        return;
+      }
+
       if (key == '__proto__') {
         return;
       }
@@ -11457,6 +11455,7 @@ for (var alias in aliases) {
           }
           if (maxing) {
             // Handle invocations in a tight loop.
+            clearTimeout(timerId);
             timerId = setTimeout(timerExpired, wait);
             return invokeFunc(lastCallTime);
           }
@@ -15843,9 +15842,12 @@ for (var alias in aliases) {
       , 'g');
 
       // Use a sourceURL for easier debugging.
+      // The sourceURL gets injected into the source that's eval-ed, so be careful
+      // with lookup (in case of e.g. prototype pollution), and strip newlines if any.
+      // A newline wouldn't be a valid sourceURL anyway, and it'd enable code injection.
       var sourceURL = '//# sourceURL=' +
-        ('sourceURL' in options
-          ? options.sourceURL
+        (hasOwnProperty.call(options, 'sourceURL')
+          ? (options.sourceURL + '').replace(/[\r\n]/g, ' ')
           : ('lodash.templateSources[' + (++templateCounter) + ']')
         ) + '\n';
 
@@ -15878,7 +15880,9 @@ for (var alias in aliases) {
 
       // If `variable` is not specified wrap a with-statement around the generated
       // code to add the data object to the top of the scope chain.
-      var variable = options.variable;
+      // Like with sourceURL, we take care to not check the option's prototype,
+      // as this configuration is a code injection vector.
+      var variable = hasOwnProperty.call(options, 'variable') && options.variable;
       if (!variable) {
         source = 'with (obj) {\n' + source + '\n}\n';
       }
@@ -18083,10 +18087,11 @@ for (var alias in aliases) {
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var lodashFunc = lodash[methodName];
       if (lodashFunc) {
-        var key = (lodashFunc.name + ''),
-            names = realNames[key] || (realNames[key] = []);
-
-        names.push({ 'name': methodName, 'func': lodashFunc });
+        var key = lodashFunc.name + '';
+        if (!hasOwnProperty.call(realNames, key)) {
+          realNames[key] = [];
+        }
+        realNames[key].push({ 'name': methodName, 'func': lodashFunc });
       }
     });
 
@@ -44342,6 +44347,108 @@ module.exports = FullScreen;
 },{"fscreen":10,"react":47}],59:[function(require,module,exports){
 "use strict";
 
+var SET_SPINE_DATA = 'nb-base/manifest/SET_SPINE_DATA';
+
+function reducer() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var action = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  switch (action.type) {
+    case SET_SPINE_DATA:
+      return action.payload;
+
+    default:
+      return state;
+  }
+}
+
+reducer.setManifestData = function (data) {
+  return {
+    type: SET_SPINE_DATA,
+    payload: data
+  };
+};
+
+module.exports = reducer;
+
+},{}],60:[function(require,module,exports){
+"use strict";
+
+var _react = _interopRequireDefault(require("react"));
+
+var _manifestReducer = _interopRequireDefault(require("./manifest-reducer"));
+
+var _reactRedux = require("react-redux");
+
+var _redux = require("redux");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Manifest =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(Manifest, _React$Component);
+
+  function Manifest(props) {
+    _classCallCheck(this, Manifest);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(Manifest).call(this, props));
+  }
+
+  _createClass(Manifest, [{
+    key: "handleScroll",
+    value: function handleScroll() {}
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {}
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {}
+  }, {
+    key: "render",
+    value: function render() {
+      return null;
+    }
+  }]);
+
+  return Manifest;
+}(_react.default.Component);
+
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    manifest: state.manifest
+  };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return (0, _redux.bindActionCreators)({
+    setManifestData: _manifestReducer.default.setManifestData
+  }, dispatch);
+};
+
+module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Manifest);
+
+},{"./manifest-reducer":59,"react":47,"react-redux":38,"redux":48}],61:[function(require,module,exports){
+"use strict";
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -44442,7 +44549,7 @@ reducer.setChapter = function (pos) {
 
 module.exports = reducer;
 
-},{}],60:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -44500,18 +44607,47 @@ function (_React$Component) {
     _classCallCheck(this, Navigation);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Navigation).call(this, props));
-    _this.handleScroll = _this.handleScroll.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.getScrollHandler = _this.getScrollHandler.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.setCurrentPosition = _this.setCurrentPosition.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.setCurrentIdea = _this.setCurrentIdea.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.setCurrentUriIdea = _this.setCurrentUriIdea.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.handleKeyboardNav = _this.handleKeyboardNav.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.handleInvisibleNav = _this.handleInvisibleNav.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     return _this;
   }
 
   _createClass(Navigation, [{
-    key: "handleScroll",
-    value: function handleScroll() {
+    key: "setCurrentPosition",
+    value: function setCurrentPosition() {
       this.props.setPosition(getPosition());
+    }
+  }, {
+    key: "setCurrentIdea",
+    value: function setCurrentIdea() {
       this.props.setFirstIdeaInView(getFirstIdeaShown());
+    }
+  }, {
+    key: "setCurrentUriIdea",
+    value: function setCurrentUriIdea() {
       setUriIdea(this.props.navigation.firstIdeaInView);
+    }
+  }, {
+    key: "getScrollHandler",
+    value: function getScrollHandler() {
+      var t1 = (0, _lodash.throttle)(this.setCurrentPosition, 50, {
+        leading: true
+      });
+      var t2 = (0, _lodash.throttle)(this.setCurrentIdea, 500, {
+        leading: true
+      });
+      var t3 = (0, _lodash.throttle)(this.setCurrentUriIdea, 500, {
+        leading: true
+      });
+      return function throttled() {
+        t1();
+        t2();
+        t3();
+      };
     }
   }, {
     key: "handleKeyboardNav",
@@ -44530,7 +44666,7 @@ function (_React$Component) {
   }, {
     key: "handleInvisibleNav",
     value: function handleInvisibleNav(event) {
-      if (event.target === document.querySelector('html')) {
+      if (event.target.tagName != 'A' && event.target.closest('A') === null) {
         if (window.innerWidth / 2 > event.clientX) {
           return moveBackward(event, this.props.navigation.readingOrder[this.props.navigation.chapter].prev);
         } else {
@@ -44541,7 +44677,7 @@ function (_React$Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      window.addEventListener('scroll', (0, _lodash.debounce)(this.handleScroll, 500));
+      window.addEventListener('scroll', this.getScrollHandler());
 
       if (this.props.navigation.config.keyboardNav) {
         window.document.body.addEventListener('keydown', this.handleKeyboardNav);
@@ -44551,7 +44687,7 @@ function (_React$Component) {
         window.document.addEventListener('click', this.handleInvisibleNav);
       }
 
-      this.props.setReadingOrder(this.props.spine.documents);
+      this.props.setReadingOrder(this.props.manifest.documents);
       this.props.setChapter(getChapter());
       this.props.setPosition(getPosition());
       setUriIdea(this.props.navigation.firstIdeaInView);
@@ -44559,7 +44695,7 @@ function (_React$Component) {
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
-      window.removeEventListener('scroll', _lodash.debounce);
+      window.removeEventListener('scroll', this.getScrollHandler());
 
       if (this.props.navigation.config.keyboardNav) {
         window.document.body.removeEventListener('keydown', this.handleKeyboardNav);
@@ -44573,8 +44709,8 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       var nav = this.props.navigation;
-      if (nav.readingOrder.length === 0 || nav.chapter === 0) return null;
-      var chapter = nav.readingOrder[nav.chapter - 1];
+      if (nav.readingOrder.length === 0 || nav.chapter === undefined) return null;
+      var chapter = nav.readingOrder[nav.chapter];
       var totalWords = nav.readingOrder[nav.readingOrder.length - 1].totalWords;
       return _react.default.createElement("nav", null, _react.default.createElement(CatchWord, null), _react.default.createElement(NavBar, {
         readingOrder: nav.readingOrder,
@@ -44582,7 +44718,7 @@ function (_React$Component) {
         position: nav.position,
         totalWords: totalWords
       }), _react.default.createElement(TopBar, {
-        spine: this.props.spine,
+        manifest: this.props.manifest,
         chapter: chapter
       }), _react.default.createElement(ChapterLink, {
         rel: "prev",
@@ -44598,7 +44734,7 @@ function (_React$Component) {
 }(_react.default.Component);
 
 Navigation.propTypes = {
-  spine: _propTypes.default.shape({
+  manifest: _propTypes.default.shape({
     documents: _propTypes.default.arrayOf(_propTypes.default.object)
   }),
   setPosition: _propTypes.default.func.isRequired,
@@ -44661,16 +44797,19 @@ function TopBar(props) {
   return _react.default.createElement("div", {
     className: "top-bar"
   }, _react.default.createElement("p", {
-    className: "chapter"
-  }, props.chapter.order, " / ", props.chapter.title), _react.default.createElement("p", {
-    className: "book"
+    className: "info"
   }, _react.default.createElement("a", {
+    className: "book",
     href: "./index.html"
-  }, props.spine.title), _react.default.createElement(_fullScreen.default, null)));
+  }, props.manifest.title), _react.default.createElement("span", {
+    className: "chapter"
+  }, props.chapter.order, " / ", props.chapter.title)), _react.default.createElement("p", {
+    className: "tools"
+  }, _react.default.createElement(_fullScreen.default, null)));
 }
 
 TopBar.propTypes = {
-  spine: _propTypes.default.shape({
+  manifest: _propTypes.default.shape({
     title: _propTypes.default.string.isRequired
   }),
   chapter: _propTypes.default.shape({
@@ -44762,7 +44901,7 @@ function moveForward(event, nextChapter) {
 
 function moveBackward(event, prevChapter) {
   event.preventDefault();
-  if (!isPageScrolledToTop()) window.scrollTo(window.scrollX, window.scrollY - getScrollStep());else if (prevChapter) window.location.href = prevChapter;
+  if (!isPageScrolledToTop()) window.scrollTo(window.scrollX, window.scrollY - getScrollStep());else if (prevChapter) window.location.href = "".concat(prevChapter, "#page-end");
 }
 
 function isPageScrolledToBottom() {
@@ -44822,7 +44961,7 @@ function setUriIdea(id) {
 var mapStateToProps = function mapStateToProps(state) {
   return {
     navigation: state.navigation,
-    spine: state.spine
+    manifest: state.manifest
   };
 };
 
@@ -44837,39 +44976,64 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Navigation);
 
-},{"./full-screen":58,"./navigation-reducer":59,"keycode":14,"lodash":15,"prop-types":21,"react":47,"react-redux":38,"redux":48}],61:[function(require,module,exports){
+},{"./full-screen":58,"./navigation-reducer":61,"keycode":14,"lodash":15,"prop-types":21,"react":47,"react-redux":38,"redux":48}],63:[function(require,module,exports){
 "use strict";
 
-var SET_SPINE_DATA = 'nb-base/spine/SET_SPINE_DATA';
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var SET_OFFLINE_AVAILABILITY = 'nb-base/offline/SET_OFFLINE_AVAILABILITY';
+var SET_CACHE_AVAILABILITY = 'nb-base/offline/SET_CACHE_AVAILABILITY';
+var defaultState = {
+  offlineIsAvailable: false,
+  cacheIsAvailable: false
+};
 
 function reducer() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultState;
   var action = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   switch (action.type) {
-    case SET_SPINE_DATA:
-      return action.payload;
+    case SET_OFFLINE_AVAILABILITY:
+      return _objectSpread({}, state, {
+        offlineIsAvailable: action.payload
+      });
+
+    case SET_CACHE_AVAILABILITY:
+      return _objectSpread({}, state, {
+        cacheIsAvailable: action.payload
+      });
 
     default:
       return state;
   }
 }
 
-reducer.setSpineData = function (data) {
+reducer.setOfflineAvailability = function (status) {
   return {
-    type: SET_SPINE_DATA,
-    payload: data
+    type: SET_OFFLINE_AVAILABILITY,
+    payload: status
+  };
+};
+
+reducer.setCacheAvailability = function (status) {
+  return {
+    type: SET_CACHE_AVAILABILITY,
+    payload: status
   };
 };
 
 module.exports = reducer;
 
-},{}],62:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
 
-var _spineReducer = _interopRequireDefault(require("./spine-reducer"));
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _offlineReducer = _interopRequireDefault(require("./offline-reducer"));
 
 var _reactRedux = require("react-redux");
 
@@ -44895,23 +45059,29 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var Spine =
+var Offline =
 /*#__PURE__*/
 function (_React$Component) {
-  _inherits(Spine, _React$Component);
+  _inherits(Offline, _React$Component);
 
-  function Spine(props) {
-    _classCallCheck(this, Spine);
+  function Offline(props) {
+    _classCallCheck(this, Offline);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Spine).call(this, props));
+    return _possibleConstructorReturn(this, _getPrototypeOf(Offline).call(this, props));
   }
 
-  _createClass(Spine, [{
-    key: "handleScroll",
-    value: function handleScroll() {}
-  }, {
+  _createClass(Offline, [{
     key: "componentDidMount",
-    value: function componentDidMount() {}
+    value: function componentDidMount() {
+      if ('serviceWorker' in navigator) {
+        var props = this.props;
+        props.setOfflineAvailability(true);
+        navigator.serviceWorker.ready.then(function (registration) {
+          props.setCacheAvailability(true);
+        });
+        registerServiceWorker();
+      }
+    }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {}
@@ -44922,24 +45092,37 @@ function (_React$Component) {
     }
   }]);
 
-  return Spine;
+  return Offline;
 }(_react.default.Component);
+
+Offline.propTypes = {
+  offlineIsAvailable: _propTypes.default.bool.isRequired,
+  cacheIsAvailable: _propTypes.default.bool.isRequired,
+  setCacheAvailability: _propTypes.default.func.isRequired,
+  setOfflineAvailability: _propTypes.default.func.isRequired
+};
+
+function registerServiceWorker() {
+  navigator.serviceWorker.register('./service-worker.js');
+}
 
 var mapStateToProps = function mapStateToProps(state) {
   return {
-    spine: state.spine
+    offlineIsAvailable: state.offline.offlineIsAvailable,
+    cacheIsAvailable: state.offline.cacheIsAvailable
   };
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return (0, _redux.bindActionCreators)({
-    setSpineData: _spineReducer.default.setSpineData
+    setCacheAvailability: _offlineReducer.default.setCacheAvailability,
+    setOfflineAvailability: _offlineReducer.default.setOfflineAvailability
   }, dispatch);
 };
 
-module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Spine);
+module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Offline);
 
-},{"./spine-reducer":61,"react":47,"react-redux":38,"redux":48}],63:[function(require,module,exports){
+},{"./offline-reducer":63,"prop-types":21,"react":47,"react-redux":38,"redux":48}],65:[function(require,module,exports){
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -45037,7 +45220,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Toc);
 
-},{"prop-types":21,"react":47,"react-redux":38,"redux":48}],64:[function(require,module,exports){
+},{"prop-types":21,"react":47,"react-redux":38,"redux":48}],66:[function(require,module,exports){
 "use strict";
 
 var _toMilliseconds = _interopRequireDefault(require("to-milliseconds"));
@@ -45140,7 +45323,7 @@ reducer.addMoment = function (time, chapter, idea) {
 
 module.exports = reducer;
 
-},{"to-milliseconds":57}],65:[function(require,module,exports){
+},{"to-milliseconds":57}],67:[function(require,module,exports){
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -45241,7 +45424,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Trace);
 
-},{"./trace-reducer":64,"lodash":15,"prop-types":21,"react":47,"react-redux":38,"redux":48}],66:[function(require,module,exports){
+},{"./trace-reducer":66,"lodash":15,"prop-types":21,"react":47,"react-redux":38,"redux":48}],68:[function(require,module,exports){
 "use strict";
 
 var _reactRedux = require("react-redux");
@@ -45265,51 +45448,62 @@ var _views = _interopRequireDefault(require("./views"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* global window */
-(0, _shared.loadSpine)().then(function (spine) {
-  var persistedState = localStorage.getItem(spine.slug);
-  var store = (0, _redux.createStore)(_reducer.default, persistedState ? JSON.parse(persistedState) : {
-    spine: spine
-  }, (0, _redux.compose)(window.devToolsExtension ? window.devToolsExtension() : function (f) {
-    return f;
-  }));
-  Object.keys(_views.default).forEach(function (key) {
-    var wrapper = _views.default[key].wrapperId ? document.getElementById(_views.default[key].wrapperId) : (0, _shared.plantRoot)(key);
-    if (!wrapper) return;
-
-    _reactDom.default.render(_react.default.createElement(_reactRedux.Provider, {
-      store: store
-    }, _react.default.createElement(_views.default[key], null)), wrapper);
-  });
-  store.subscribe((0, _lodash.debounce)(function () {
-    localStorage.setItem(spine.slug, JSON.stringify(store.getState()));
-  }, 500));
-  window.book = store;
-});
 document.addEventListener('DOMContentLoaded', function () {
+  initBook();
+  initHeadroom();
+});
+
+function initBook() {
+  (0, _shared.loadManifest)().then(function (manifest) {
+    var persistedState = localStorage.getItem(manifest.slug);
+    var store = (0, _redux.createStore)(_reducer.default, persistedState ? JSON.parse(persistedState) : {
+      manifest: manifest
+    }, (0, _redux.compose)(window.devToolsExtension ? window.devToolsExtension() : function (f) {
+      return f;
+    }));
+    Object.keys(_views.default).forEach(function (key) {
+      var wrapper = _views.default[key].wrapperId ? document.getElementById(_views.default[key].wrapperId) : (0, _shared.plantRoot)(key);
+      if (!wrapper) return;
+
+      _reactDom.default.render(_react.default.createElement(_reactRedux.Provider, {
+        store: store
+      }, _react.default.createElement(_views.default[key], null)), wrapper);
+    });
+    store.subscribe((0, _lodash.debounce)(function () {
+      localStorage.setItem(manifest.slug, JSON.stringify(store.getState()));
+    }, 500));
+    window.book = store;
+  });
+}
+
+function initHeadroom() {
   var headroom = new _headroom.default(window.document.body);
   headroom.init();
-});
+}
 
-},{"./reducer":67,"./shared":68,"./views":69,"headroom.js":11,"lodash":15,"react":47,"react-dom":25,"react-redux":38,"redux":48}],67:[function(require,module,exports){
+},{"./reducer":69,"./shared":70,"./views":71,"headroom.js":11,"lodash":15,"react":47,"react-dom":25,"react-redux":38,"redux":48}],69:[function(require,module,exports){
 "use strict";
 
 var _redux = require("redux");
 
 var _navigationReducer = _interopRequireDefault(require("./components/navigation-reducer"));
 
-var _spineReducer = _interopRequireDefault(require("./components/spine-reducer"));
+var _manifestReducer = _interopRequireDefault(require("./components/manifest-reducer"));
 
 var _traceReducer = _interopRequireDefault(require("./components/trace-reducer"));
+
+var _offlineReducer = _interopRequireDefault(require("./components/offline-reducer"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 module.exports = (0, _redux.combineReducers)({
   navigation: _navigationReducer.default,
-  spine: _spineReducer.default,
-  trace: _traceReducer.default
+  manifest: _manifestReducer.default,
+  trace: _traceReducer.default,
+  offline: _offlineReducer.default
 });
 
-},{"./components/navigation-reducer":59,"./components/spine-reducer":61,"./components/trace-reducer":64,"redux":48}],68:[function(require,module,exports){
+},{"./components/manifest-reducer":59,"./components/navigation-reducer":61,"./components/offline-reducer":63,"./components/trace-reducer":66,"redux":48}],70:[function(require,module,exports){
 "use strict";
 
 var _cuid = _interopRequireDefault(require("cuid"));
@@ -45338,34 +45532,37 @@ function json(response) {
   return response.json();
 }
 
-function loadSpine() {
-  var uri = document.querySelector('link#spine').getAttribute('href');
+function loadManifest() {
+  var uri = document.querySelector('link[rel="publication"]').getAttribute('href');
   return fetch(uri).then(status).then(json);
 }
 
 module.exports = {
   plantRoot: plantRoot,
-  loadSpine: loadSpine
+  loadManifest: loadManifest
 };
 
-},{"cuid":7}],69:[function(require,module,exports){
+},{"cuid":7}],71:[function(require,module,exports){
 "use strict";
 
 var _navigation = _interopRequireDefault(require("./components/navigation"));
 
-var _spine = _interopRequireDefault(require("./components/spine"));
+var _manifest = _interopRequireDefault(require("./components/manifest"));
 
 var _toc = _interopRequireDefault(require("./components/toc"));
 
 var _trace = _interopRequireDefault(require("./components/trace"));
 
+var _offline = _interopRequireDefault(require("./components/offline"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 module.exports = {
   navigation: _navigation.default,
-  // spine,
+  manifest: _manifest.default,
   toc: _toc.default,
-  trace: _trace.default
+  trace: _trace.default,
+  offline: _offline.default
 };
 
-},{"./components/navigation":60,"./components/spine":62,"./components/toc":63,"./components/trace":65}]},{},[66]);
+},{"./components/manifest":60,"./components/navigation":62,"./components/offline":64,"./components/toc":65,"./components/trace":67}]},{},[68]);
