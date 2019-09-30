@@ -86,7 +86,7 @@ class Navigation extends React.Component {
       window.document.addEventListener('click', this.handleInvisibleNav);
     }
 
-    this.props.setReadingOrder(this.props.spine.documents);
+    this.props.setReadingOrder(this.props.manifest.documents);
     this.props.setChapter(getChapter());
     this.props.setPosition(getPosition());
     setUriIdea(this.props.navigation.firstIdeaInView);
@@ -118,7 +118,7 @@ class Navigation extends React.Component {
           position={nav.position}
           totalWords={totalWords}
         />
-        <TopBar spine={this.props.spine} chapter={chapter} />
+        <TopBar manifest={this.props.manifest} chapter={chapter} />
         <ChapterLink rel="prev" chapter={chapter} />
         <ChapterLink rel="next" chapter={chapter} />
       </nav>
@@ -127,7 +127,7 @@ class Navigation extends React.Component {
 }
 
 Navigation.propTypes = {
-  spine: PropTypes.shape({
+  manifest: PropTypes.shape({
     documents: PropTypes.arrayOf(PropTypes.object),
   }),
   setPosition: PropTypes.func.isRequired,
@@ -328,7 +328,7 @@ function setUriIdea(id) {
 const mapStateToProps = state => {
   return {
     navigation: state.navigation,
-    spine: state.spine,
+    manifest: state.manifest,
   };
 };
 

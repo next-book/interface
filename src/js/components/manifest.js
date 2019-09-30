@@ -1,9 +1,9 @@
 import React from 'react';
-import reducer from './spine-reducer';
+import reducer from './manifest-reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-class Spine extends React.Component {
+class Manifest extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -20,13 +20,13 @@ class Spine extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return { spine: state.spine };
+  return { manifest: state.manifest };
 };
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
-      setSpineData: reducer.setSpineData,
+      setManifestData: reducer.setManifestData,
     },
     dispatch
   );
@@ -35,4 +35,4 @@ const mapDispatchToProps = dispatch => {
 module.exports = connect(
   mapStateToProps,
   mapDispatchToProps
-)(Spine);
+)(Manifest);

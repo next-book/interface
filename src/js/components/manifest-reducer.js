@@ -1,4 +1,4 @@
-const SET_SPINE_DATA = 'nb-base/spine/SET_SPINE_DATA';
+const SET_SPINE_DATA = 'nb-base/manifest/SET_SPINE_DATA';
 
 function reducer(state = {}, action = {}) {
   switch (action.type) {
@@ -9,7 +9,7 @@ function reducer(state = {}, action = {}) {
   }
 }
 
-reducer.setSpineData = function(data) {
+reducer.setManifestData = function(data) {
   return {
     type: SET_SPINE_DATA,
     payload: data,

@@ -21,11 +21,11 @@ function json(response) {
   return response.json();
 }
 
-function loadSpine() {
-  const uri = document.querySelector('link#spine').getAttribute('href');
+function loadManifest() {
+  const uri = document.querySelector('link[rel="publication"]').getAttribute('href');
   return fetch(uri)
     .then(status)
     .then(json);
 }
 
-module.exports = { plantRoot, loadSpine };
+module.exports = { plantRoot, loadManifest };
