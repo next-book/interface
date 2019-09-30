@@ -274,7 +274,7 @@ function moveBackward(event, prevChapter) {
   event.preventDefault();
 
   if (!isPageScrolledToTop()) window.scrollTo(window.scrollX, window.scrollY - getScrollStep());
-  else if (prevChapter) window.location.href = `${prevChapter}#page-end`;
+  else if (prevChapter) window.location.href = `${prevChapter}#chapter-end`;
 }
 
 function isPageScrolledToBottom() {
@@ -304,7 +304,8 @@ function getPosition() {
 
 function getChapter() {
   const el = document.querySelector('meta[name="order"]');
-  return el ? parseInt(el.getAttribute('content'), 10) : 0;
+  const number = parseInt(el.getAttribute('content'), 10);
+  return el && number >= 0 ? number : null;
 }
 
 function getFirstIdeaShown() {
