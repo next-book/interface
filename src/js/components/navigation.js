@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { debounce } from 'lodash';
+import { throttle } from 'lodash';
 import keycode from 'keycode';
 import PropTypes from 'prop-types';
 
@@ -12,15 +12,36 @@ class Navigation extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleScroll = this.handleScroll.bind(this);
+    this.getScrollHandler = this.getScrollHandler.bind(this);
+    this.setCurrentPosition = this.setCurrentPosition.bind(this);
+    this.setCurrentIdea = this.setCurrentIdea.bind(this);
+    this.setCurrentUriIdea = this.setCurrentUriIdea.bind(this);
     this.handleKeyboardNav = this.handleKeyboardNav.bind(this);
     this.handleInvisibleNav = this.handleInvisibleNav.bind(this);
   }
 
-  handleScroll() {
+  setCurrentPosition() {
     this.props.setPosition(getPosition());
+  }
+
+  setCurrentIdea() {
     this.props.setFirstIdeaInView(getFirstIdeaShown());
+  }
+
+  setCurrentUriIdea() {
     setUriIdea(this.props.navigation.firstIdeaInView);
+  }
+
+  getScrollHandler() {
+    const t1 = throttle(this.setCurrentPosition, 50, { leading: true });
+    const t2 = throttle(this.setCurrentIdea, 500, { leading: true });
+    const t3 = throttle(this.setCurrentUriIdea, 500, { leading: true });
+
+    return function throttled() {
+      t1();
+      t2();
+      t3();
+    };
   }
 
   handleKeyboardNav(event) {
@@ -41,7 +62,7 @@ class Navigation extends React.Component {
   }
 
   handleInvisibleNav(event) {
-    if (event.target === document.querySelector('html')) {
+    if (event.target.tagName != 'A' && event.target.closest('A') === null) {
       if (window.innerWidth / 2 > event.clientX) {
         return moveBackward(
           event,
@@ -57,7 +78,7 @@ class Navigation extends React.Component {
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', debounce(this.handleScroll, 500));
+    window.addEventListener('scroll', this.getScrollHandler());
     if (this.props.navigation.config.keyboardNav) {
       window.document.body.addEventListener('keydown', this.handleKeyboardNav);
     }
@@ -72,7 +93,7 @@ class Navigation extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', debounce);
+    window.removeEventListener('scroll', this.getScrollHandler());
     if (this.props.navigation.config.keyboardNav) {
       window.document.body.removeEventListener('keydown', this.handleKeyboardNav);
     }
@@ -83,9 +104,9 @@ class Navigation extends React.Component {
 
   render() {
     const nav = this.props.navigation;
-    if (nav.readingOrder.length === 0 || nav.chapter === 0) return null;
+    if (nav.readingOrder.length === 0 || nav.chapter === undefined) return null;
 
-    const chapter = nav.readingOrder[nav.chapter - 1];
+    const chapter = nav.readingOrder[nav.chapter];
     const { totalWords } = nav.readingOrder[nav.readingOrder.length - 1];
 
     return (
@@ -154,11 +175,15 @@ Pointer.propTypes = {
 function TopBar(props) {
   return (
     <div className="top-bar">
-      <p className="chapter">
-        {props.chapter.order} / {props.chapter.title}
+      <p className="info">
+        <a className="book" href="./index.html">
+          {props.manifest.title}
+        </a>
+        <span className="chapter">
+          {props.chapter.order} / {props.chapter.title}
+        </span>
       </p>
-      <p className="book">
-        <a href="./index.html">{props.spine.title}</a>
+      <p className="tools">
         <FullScreen />
       </p>
     </div>
@@ -166,7 +191,7 @@ function TopBar(props) {
 }
 
 TopBar.propTypes = {
-  spine: PropTypes.shape({
+  manifest: PropTypes.shape({
     title: PropTypes.string.isRequired,
   }),
   chapter: PropTypes.shape({
@@ -249,7 +274,7 @@ function moveBackward(event, prevChapter) {
   event.preventDefault();
 
   if (!isPageScrolledToTop()) window.scrollTo(window.scrollX, window.scrollY - getScrollStep());
-  else if (prevChapter) window.location.href = prevChapter;
+  else if (prevChapter) window.location.href = `${prevChapter}#page-end`;
 }
 
 function isPageScrolledToBottom() {
