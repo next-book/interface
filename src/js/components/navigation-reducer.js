@@ -1,10 +1,10 @@
-const SET_CHAPTER = 'nb-base/navigation/SET_CHAPTER';
+const SET_CHAPTER_NUM = 'nb-base/navigation/SET_CHAPTER_NUM';
 const SET_POSITION = 'nb-base/navigation/SET_POSITION';
 const SET_FIRST_IDEA = 'nb-base/navigation/SET_FIRST_IDEA';
 const SET_READING_ORDER = 'nb-base/navigation/SET_READING_ORDER';
 
 const defaultState = {
-  chapter: 1,
+  chapterNum: 0,
   position: 0,
   firstIdeaInView: 1,
   readingOrder: [],
@@ -16,8 +16,8 @@ const defaultState = {
 
 function reducer(state = defaultState, action = {}) {
   switch (action.type) {
-    case SET_CHAPTER:
-      return { ...state, ...{ chapter: parseInt(action.payload, 10) } };
+    case SET_CHAPTER_NUM:
+      return { ...state, ...{ chapterNum: parseInt(action.payload, 10) } };
     case SET_POSITION:
       return { ...state, ...{ position: parseFloat(action.payload) } };
     case SET_FIRST_IDEA:
@@ -68,9 +68,9 @@ reducer.setFirstIdeaInView = function(firstIdea) {
   };
 };
 
-reducer.setChapter = function(pos) {
+reducer.setChapterNum = function(pos) {
   return {
-    type: SET_CHAPTER,
+    type: SET_CHAPTER_NUM,
     payload: pos,
   };
 };

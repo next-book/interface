@@ -44453,12 +44453,12 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var SET_CHAPTER = 'nb-base/navigation/SET_CHAPTER';
+var SET_CHAPTER_NUM = 'nb-base/navigation/SET_CHAPTER_NUM';
 var SET_POSITION = 'nb-base/navigation/SET_POSITION';
 var SET_FIRST_IDEA = 'nb-base/navigation/SET_FIRST_IDEA';
 var SET_READING_ORDER = 'nb-base/navigation/SET_READING_ORDER';
 var defaultState = {
-  chapter: 1,
+  chapterNum: 0,
   position: 0,
   firstIdeaInView: 1,
   readingOrder: [],
@@ -44473,9 +44473,9 @@ function reducer() {
   var action = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   switch (action.type) {
-    case SET_CHAPTER:
+    case SET_CHAPTER_NUM:
       return _objectSpread({}, state, {
-        chapter: parseInt(action.payload, 10)
+        chapterNum: parseInt(action.payload, 10)
       });
 
     case SET_POSITION:
@@ -44540,9 +44540,9 @@ reducer.setFirstIdeaInView = function (firstIdea) {
   };
 };
 
-reducer.setChapter = function (pos) {
+reducer.setChapterNum = function (pos) {
   return {
-    type: SET_CHAPTER,
+    type: SET_CHAPTER_NUM,
     payload: pos
   };
 };
@@ -44654,10 +44654,10 @@ function (_React$Component) {
     value: function handleKeyboardNav(event) {
       switch ((0, _keycode.default)(event)) {
         case 'left':
-          return moveBackward(event, this.props.navigation.readingOrder[this.props.navigation.chapter].prev);
+          return moveBackward(event, this.props.navigation.readingOrder[this.props.navigation.chapterNum].prev);
 
         case 'right':
-          return moveForward(event, this.props.navigation.readingOrder[this.props.navigation.chapter].next);
+          return moveForward(event, this.props.navigation.readingOrder[this.props.navigation.chapterNum].next);
 
         default:
           return;
@@ -44668,9 +44668,9 @@ function (_React$Component) {
     value: function handleInvisibleNav(event) {
       if (event.target.tagName != 'A' && event.target.closest('A') === null) {
         if (window.innerWidth / 2 > event.clientX) {
-          return moveBackward(event, this.props.navigation.readingOrder[this.props.navigation.chapter].prev);
+          return moveBackward(event, this.props.navigation.readingOrder[this.props.navigation.chapterNum].prev);
         } else {
-          return moveForward(event, this.props.navigation.readingOrder[this.props.navigation.chapter].next);
+          return moveForward(event, this.props.navigation.readingOrder[this.props.navigation.chapterNum].next);
         }
       }
     }
@@ -44688,7 +44688,7 @@ function (_React$Component) {
       }
 
       this.props.setReadingOrder(this.props.manifest.documents);
-      this.props.setChapter(getChapter());
+      this.props.setChapterNum(getChapterNum());
       this.props.setPosition(getPosition());
       setUriIdea(this.props.navigation.firstIdeaInView);
     }
@@ -44709,8 +44709,8 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       var nav = this.props.navigation;
-      if (nav.readingOrder.length === 0 || nav.chapter === undefined) return null;
-      var chapter = nav.readingOrder[nav.chapter];
+      if (nav.readingOrder.length === 0 || nav.chapterNum === -1) return null;
+      var chapter = nav.readingOrder[nav.chapterNum];
       var totalWords = nav.readingOrder[nav.readingOrder.length - 1].totalWords;
       return _react.default.createElement("nav", null, _react.default.createElement(CatchWord, null), _react.default.createElement(NavBar, {
         readingOrder: nav.readingOrder,
@@ -44740,7 +44740,7 @@ Navigation.propTypes = {
   setPosition: _propTypes.default.func.isRequired,
   setFirstIdeaInView: _propTypes.default.func.isRequired,
   setReadingOrder: _propTypes.default.func.isRequired,
-  setChapter: _propTypes.default.func.isRequired,
+  setChapterNum: _propTypes.default.func.isRequired,
   navigation: _propTypes.default.object.isRequired
 };
 
@@ -44803,7 +44803,7 @@ function TopBar(props) {
     href: "./index.html"
   }, props.manifest.title), _react.default.createElement("span", {
     className: "chapter"
-  }, props.chapter.order, " / ", props.chapter.title)), _react.default.createElement("p", {
+  }, props.chapter.order + 1, " / ", props.chapter.title)), _react.default.createElement("p", {
     className: "tools"
   }, _react.default.createElement(_fullScreen.default, null)));
 }
@@ -44833,7 +44833,7 @@ function Chapter(props) {
     title: props.chapter.title
   }, _react.default.createElement("span", {
     className: "info"
-  }, props.chapter.order, ": ", props.chapter.title));
+  }, props.chapter.order + 1, ": ", props.chapter.title));
 }
 
 Chapter.propTypes = {
@@ -44933,10 +44933,11 @@ function getPosition() {
   return window.scrollY / (document.body.scrollHeight - window.innerHeight);
 }
 
-function getChapter() {
+function getChapterNum() {
   var el = document.querySelector('meta[name="order"]');
+  if (!el) return -1;
   var number = parseInt(el.getAttribute('content'), 10);
-  return el && number >= 0 ? number : null;
+  return number >= 0 ? number : -1;
 }
 
 function getFirstIdeaShown() {
@@ -44968,7 +44969,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return (0, _redux.bindActionCreators)({
-    setChapter: _navigationReducer.default.setChapter,
+    setChapterNum: _navigationReducer.default.setChapterNum,
     setPosition: _navigationReducer.default.setPosition,
     setFirstIdeaInView: _navigationReducer.default.setFirstIdeaInView,
     setReadingOrder: _navigationReducer.default.setReadingOrder

@@ -49,12 +49,12 @@ class Navigation extends React.Component {
       case 'left':
         return moveBackward(
           event,
-          this.props.navigation.readingOrder[this.props.navigation.chapter].prev
+          this.props.navigation.readingOrder[this.props.navigation.chapterNum].prev
         );
       case 'right':
         return moveForward(
           event,
-          this.props.navigation.readingOrder[this.props.navigation.chapter].next
+          this.props.navigation.readingOrder[this.props.navigation.chapterNum].next
         );
       default:
         return;
@@ -66,12 +66,12 @@ class Navigation extends React.Component {
       if (window.innerWidth / 2 > event.clientX) {
         return moveBackward(
           event,
-          this.props.navigation.readingOrder[this.props.navigation.chapter].prev
+          this.props.navigation.readingOrder[this.props.navigation.chapterNum].prev
         );
       } else {
         return moveForward(
           event,
-          this.props.navigation.readingOrder[this.props.navigation.chapter].next
+          this.props.navigation.readingOrder[this.props.navigation.chapterNum].next
         );
       }
     }
@@ -87,7 +87,7 @@ class Navigation extends React.Component {
     }
 
     this.props.setReadingOrder(this.props.manifest.documents);
-    this.props.setChapter(getChapter());
+    this.props.setChapterNum(getChapterNum());
     this.props.setPosition(getPosition());
     setUriIdea(this.props.navigation.firstIdeaInView);
   }
@@ -104,9 +104,9 @@ class Navigation extends React.Component {
 
   render() {
     const nav = this.props.navigation;
-    if (nav.readingOrder.length === 0 || nav.chapter === undefined) return null;
+    if (nav.readingOrder.length === 0 || nav.chapterNum === -1) return null;
 
-    const chapter = nav.readingOrder[nav.chapter];
+    const chapter = nav.readingOrder[nav.chapterNum];
     const { totalWords } = nav.readingOrder[nav.readingOrder.length - 1];
 
     return (
@@ -133,7 +133,7 @@ Navigation.propTypes = {
   setPosition: PropTypes.func.isRequired,
   setFirstIdeaInView: PropTypes.func.isRequired,
   setReadingOrder: PropTypes.func.isRequired,
-  setChapter: PropTypes.func.isRequired,
+  setChapterNum: PropTypes.func.isRequired,
   navigation: PropTypes.object.isRequired,
 };
 
@@ -180,7 +180,7 @@ function TopBar(props) {
           {props.manifest.title}
         </a>
         <span className="chapter">
-          {props.chapter.order} / {props.chapter.title}
+          {props.chapter.order + 1} / {props.chapter.title}
         </span>
       </p>
       <p className="tools">
@@ -211,7 +211,7 @@ function Chapter(props) {
       title={props.chapter.title}
     >
       <span className="info">
-        {props.chapter.order}: {props.chapter.title}
+        {props.chapter.order + 1}: {props.chapter.title}
       </span>
     </li>
   );
@@ -302,10 +302,12 @@ function getPosition() {
   return window.scrollY / (document.body.scrollHeight - window.innerHeight);
 }
 
-function getChapter() {
+function getChapterNum() {
   const el = document.querySelector('meta[name="order"]');
+  if (!el) return -1;
+
   const number = parseInt(el.getAttribute('content'), 10);
-  return el && number >= 0 ? number : null;
+  return number >= 0 ? number : -1;
 }
 
 function getFirstIdeaShown() {
@@ -336,7 +338,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
-      setChapter: reducer.setChapter,
+      setChapterNum: reducer.setChapterNum,
       setPosition: reducer.setPosition,
       setFirstIdeaInView: reducer.setFirstIdeaInView,
       setReadingOrder: reducer.setReadingOrder,
