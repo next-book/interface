@@ -34,20 +34,6 @@
   {
     1: [
       function(require, module, exports) {
-        function _assertThisInitialized(self) {
-          if (self === void 0) {
-            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-          }
-
-          return self;
-        }
-
-        module.exports = _assertThisInitialized;
-      },
-      {},
-    ],
-    2: [
-      function(require, module, exports) {
         function _extends() {
           module.exports = _extends =
             Object.assign ||
@@ -72,19 +58,7 @@
       },
       {},
     ],
-    3: [
-      function(require, module, exports) {
-        function _inheritsLoose(subClass, superClass) {
-          subClass.prototype = Object.create(superClass.prototype);
-          subClass.prototype.constructor = subClass;
-          subClass.__proto__ = superClass;
-        }
-
-        module.exports = _inheritsLoose;
-      },
-      {},
-    ],
-    4: [
+    2: [
       function(require, module, exports) {
         function _interopRequireDefault(obj) {
           return obj && obj.__esModule
@@ -98,41 +72,62 @@
       },
       {},
     ],
-    5: [
+    3: [
       function(require, module, exports) {
+        function _getRequireWildcardCache() {
+          if (typeof WeakMap !== 'function') return null;
+          var cache = new WeakMap();
+
+          _getRequireWildcardCache = function _getRequireWildcardCache() {
+            return cache;
+          };
+
+          return cache;
+        }
+
         function _interopRequireWildcard(obj) {
           if (obj && obj.__esModule) {
             return obj;
-          } else {
-            var newObj = {};
+          }
 
-            if (obj != null) {
-              for (var key in obj) {
-                if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                  var desc =
-                    Object.defineProperty && Object.getOwnPropertyDescriptor
-                      ? Object.getOwnPropertyDescriptor(obj, key)
-                      : {};
+          var cache = _getRequireWildcardCache();
 
-                  if (desc.get || desc.set) {
-                    Object.defineProperty(newObj, key, desc);
-                  } else {
-                    newObj[key] = obj[key];
-                  }
+          if (cache && cache.has(obj)) {
+            return cache.get(obj);
+          }
+
+          var newObj = {};
+
+          if (obj != null) {
+            var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
                 }
               }
             }
-
-            newObj.default = obj;
-            return newObj;
           }
+
+          newObj['default'] = obj;
+
+          if (cache) {
+            cache.set(obj, newObj);
+          }
+
+          return newObj;
         }
 
         module.exports = _interopRequireWildcard;
       },
       {},
     ],
-    6: [
+    4: [
       function(require, module, exports) {
         function _objectWithoutPropertiesLoose(source, excluded) {
           if (source == null) return {};
@@ -153,7 +148,7 @@
       },
       {},
     ],
-    7: [
+    5: [
       function(require, module, exports) {
         /**
          * cuid.js
@@ -234,9 +229,9 @@
 
         module.exports = cuid;
       },
-      { './lib/fingerprint.js': 8, './lib/getRandomValue.js': 9, './lib/pad.js': 10 },
+      { './lib/fingerprint.js': 6, './lib/getRandomValue.js': 7, './lib/pad.js': 8 },
     ],
-    8: [
+    6: [
       function(require, module, exports) {
         var pad = require('./pad.js');
 
@@ -252,9 +247,9 @@
           return clientId;
         };
       },
-      { './pad.js': 10 },
+      { './pad.js': 8 },
     ],
-    9: [
+    7: [
       function(require, module, exports) {
         var getRandomValue;
 
@@ -273,7 +268,7 @@
       },
       {},
     ],
-    10: [
+    8: [
       function(require, module, exports) {
         module.exports = function pad(num, size) {
           var s = '000000000' + num;
@@ -282,7 +277,7 @@
       },
       {},
     ],
-    11: [
+    9: [
       function(require, module, exports) {
         'use strict';
 
@@ -378,7 +373,7 @@
       },
       {},
     ],
-    12: [
+    10: [
       function(require, module, exports) {
         /*!
          * headroom.js v0.9.4 - Give your page some headroom. Hide your header until you need it
@@ -855,7 +850,7 @@
       },
       {},
     ],
-    13: [
+    11: [
       function(require, module, exports) {
         'use strict';
 
@@ -864,7 +859,6 @@
          * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
          */
         var ReactIs = require('react-is');
-        var React = require('react');
         var REACT_STATICS = {
           childContextTypes: true,
           contextType: true,
@@ -872,6 +866,7 @@
           defaultProps: true,
           displayName: true,
           getDefaultProps: true,
+          getDerivedStateFromError: true,
           getDerivedStateFromProps: true,
           mixins: true,
           propTypes: true,
@@ -891,10 +886,29 @@
         var FORWARD_REF_STATICS = {
           $$typeof: true,
           render: true,
+          defaultProps: true,
+          displayName: true,
+          propTypes: true,
+        };
+
+        var MEMO_STATICS = {
+          $$typeof: true,
+          compare: true,
+          defaultProps: true,
+          displayName: true,
+          propTypes: true,
+          type: true,
         };
 
         var TYPE_STATICS = {};
         TYPE_STATICS[ReactIs.ForwardRef] = FORWARD_REF_STATICS;
+
+        function getStatics(component) {
+          if (ReactIs.isMemo(component)) {
+            return MEMO_STATICS;
+          }
+          return TYPE_STATICS[component['$$typeof']] || REACT_STATICS;
+        }
 
         var defineProperty = Object.defineProperty;
         var getOwnPropertyNames = Object.getOwnPropertyNames;
@@ -920,8 +934,8 @@
               keys = keys.concat(getOwnPropertySymbols(sourceComponent));
             }
 
-            var targetStatics = TYPE_STATICS[targetComponent['$$typeof']] || REACT_STATICS;
-            var sourceStatics = TYPE_STATICS[sourceComponent['$$typeof']] || REACT_STATICS;
+            var targetStatics = getStatics(targetComponent);
+            var sourceStatics = getStatics(sourceComponent);
 
             for (var i = 0; i < keys.length; ++i) {
               var key = keys[i];
@@ -947,9 +961,9 @@
 
         module.exports = hoistNonReactStatics;
       },
-      { react: 51, 'react-is': 32 },
+      { 'react-is': 30 },
     ],
-    14: [
+    12: [
       function(require, module, exports) {
         (function(process) {
           /**
@@ -1005,9 +1019,9 @@
           module.exports = invariant;
         }.call(this, require('_process')));
       },
-      { _process: 18 },
+      { _process: 16 },
     ],
-    15: [
+    13: [
       function(require, module, exports) {
         // Source: http://jsfiddle.net/vWx8V/
         // http://stackoverflow.com/questions/5603195/full-list-of-javascript-keycodes
@@ -1193,7 +1207,7 @@
       },
       {},
     ],
-    16: [
+    14: [
       function(require, module, exports) {
         (function(global) {
           /**
@@ -18910,7 +18924,7 @@
       },
       {},
     ],
-    17: [
+    15: [
       function(require, module, exports) {
         /*
 object-assign
@@ -19006,7 +19020,7 @@ object-assign
       },
       {},
     ],
-    18: [
+    16: [
       function(require, module, exports) {
         // shim for using process in browser
         var process = (module.exports = {});
@@ -19196,7 +19210,7 @@ object-assign
       },
       {},
     ],
-    19: [
+    17: [
       function(require, module, exports) {
         (function(process) {
           /**
@@ -19327,9 +19341,9 @@ object-assign
           module.exports = checkPropTypes;
         }.call(this, require('_process')));
       },
-      { './lib/ReactPropTypesSecret': 23, _process: 18 },
+      { './lib/ReactPropTypesSecret': 21, _process: 16 },
     ],
-    20: [
+    18: [
       function(require, module, exports) {
         /**
          * Copyright (c) 2013-present, Facebook, Inc.
@@ -19396,9 +19410,9 @@ object-assign
           return ReactPropTypes;
         };
       },
-      { './lib/ReactPropTypesSecret': 23 },
+      { './lib/ReactPropTypesSecret': 21 },
     ],
-    21: [
+    19: [
       function(require, module, exports) {
         (function(process) {
           /**
@@ -20194,14 +20208,14 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        './checkPropTypes': 19,
-        './lib/ReactPropTypesSecret': 23,
-        _process: 18,
-        'object-assign': 17,
-        'react-is': 26,
+        './checkPropTypes': 17,
+        './lib/ReactPropTypesSecret': 21,
+        _process: 16,
+        'object-assign': 15,
+        'react-is': 24,
       },
     ],
-    22: [
+    20: [
       function(require, module, exports) {
         (function(process) {
           /**
@@ -20229,13 +20243,13 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        './factoryWithThrowingShims': 20,
-        './factoryWithTypeCheckers': 21,
-        _process: 18,
-        'react-is': 26,
+        './factoryWithThrowingShims': 18,
+        './factoryWithTypeCheckers': 19,
+        _process: 16,
+        'react-is': 24,
       },
     ],
-    23: [
+    21: [
       function(require, module, exports) {
         /**
          * Copyright (c) 2013-present, Facebook, Inc.
@@ -20252,7 +20266,7 @@ object-assign
       },
       {},
     ],
-    24: [
+    22: [
       function(require, module, exports) {
         (function(process) {
           /** @license React v16.10.1
@@ -20536,9 +20550,9 @@ object-assign
           }
         }.call(this, require('_process')));
       },
-      { _process: 18 },
+      { _process: 16 },
     ],
-    25: [
+    23: [
       function(require, module, exports) {
         /** @license React v16.10.1
          * react-is.production.min.js
@@ -20678,7 +20692,7 @@ object-assign
       },
       {},
     ],
-    26: [
+    24: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -20690,9 +20704,9 @@ object-assign
           }
         }.call(this, require('_process')));
       },
-      { './cjs/react-is.development.js': 24, './cjs/react-is.production.min.js': 25, _process: 18 },
+      { './cjs/react-is.development.js': 22, './cjs/react-is.production.min.js': 23, _process: 16 },
     ],
-    27: [
+    25: [
       function(require, module, exports) {
         (function(process) {
           /** @license React v16.10.1
@@ -53698,15 +53712,15 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        _process: 18,
-        'object-assign': 17,
-        'prop-types/checkPropTypes': 19,
-        react: 51,
-        scheduler: 57,
-        'scheduler/tracing': 58,
+        _process: 16,
+        'object-assign': 15,
+        'prop-types/checkPropTypes': 17,
+        react: 55,
+        scheduler: 61,
+        'scheduler/tracing': 62,
       },
     ],
-    28: [
+    26: [
       function(require, module, exports) {
         /** @license React v16.10.1
          * react-dom.production.min.js
@@ -60852,9 +60866,9 @@ object-assign
           yk = (xk && wk) || xk;
         module.exports = yk.default || yk;
       },
-      { 'object-assign': 17, react: 51, scheduler: 57 },
+      { 'object-assign': 15, react: 55, scheduler: 61 },
     ],
-    29: [
+    27: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -60898,389 +60912,138 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        './cjs/react-dom.development.js': 27,
-        './cjs/react-dom.production.min.js': 28,
-        _process: 18,
+        './cjs/react-dom.development.js': 25,
+        './cjs/react-dom.production.min.js': 26,
+        _process: 16,
       },
+    ],
+    28: [
+      function(require, module, exports) {
+        arguments[4][22][0].apply(exports, arguments);
+      },
+      { _process: 16, dup: 22 },
+    ],
+    29: [
+      function(require, module, exports) {
+        arguments[4][23][0].apply(exports, arguments);
+      },
+      { dup: 23 },
     ],
     30: [
       function(require, module, exports) {
-        (function(process) {
-          /** @license React v16.6.1
-           * react-is.development.js
-           *
-           * Copyright (c) Facebook, Inc. and its affiliates.
-           *
-           * This source code is licensed under the MIT license found in the
-           * LICENSE file in the root directory of this source tree.
-           */
-
-          'use strict';
-
-          if (process.env.NODE_ENV !== 'production') {
-            (function() {
-              'use strict';
-
-              Object.defineProperty(exports, '__esModule', { value: true });
-
-              // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
-              // nor polyfill, then a plain number is used for performance.
-              var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-
-              var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
-              var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
-              var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
-              var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
-              var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
-              var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
-              var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace;
-              var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
-              var REACT_CONCURRENT_MODE_TYPE = hasSymbol
-                ? Symbol.for('react.concurrent_mode')
-                : 0xeacf;
-              var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
-              var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
-              var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
-              var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
-
-              function isValidElementType(type) {
-                return (
-                  typeof type === 'string' ||
-                  typeof type === 'function' ||
-                  // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
-                  type === REACT_FRAGMENT_TYPE ||
-                  type === REACT_CONCURRENT_MODE_TYPE ||
-                  type === REACT_PROFILER_TYPE ||
-                  type === REACT_STRICT_MODE_TYPE ||
-                  type === REACT_SUSPENSE_TYPE ||
-                  (typeof type === 'object' &&
-                    type !== null &&
-                    (type.$$typeof === REACT_LAZY_TYPE ||
-                      type.$$typeof === REACT_MEMO_TYPE ||
-                      type.$$typeof === REACT_PROVIDER_TYPE ||
-                      type.$$typeof === REACT_CONTEXT_TYPE ||
-                      type.$$typeof === REACT_FORWARD_REF_TYPE))
-                );
-              }
-
-              /**
-               * Forked from fbjs/warning:
-               * https://github.com/facebook/fbjs/blob/e66ba20ad5be433eb54423f2b097d829324d9de6/packages/fbjs/src/__forks__/warning.js
-               *
-               * Only change is we use console.warn instead of console.error,
-               * and do nothing when 'console' is not supported.
-               * This really simplifies the code.
-               * ---
-               * Similar to invariant but only logs a warning if the condition is not met.
-               * This can be used to log issues in development environments in critical
-               * paths. Removing the logging code for production environments will keep the
-               * same logic and follow the same code paths.
-               */
-
-              var lowPriorityWarning = function() {};
-
-              {
-                var printWarning = function(format) {
-                  for (
-                    var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1;
-                    _key < _len;
-                    _key++
-                  ) {
-                    args[_key - 1] = arguments[_key];
-                  }
-
-                  var argIndex = 0;
-                  var message =
-                    'Warning: ' +
-                    format.replace(/%s/g, function() {
-                      return args[argIndex++];
-                    });
-                  if (typeof console !== 'undefined') {
-                    console.warn(message);
-                  }
-                  try {
-                    // --- Welcome to debugging React ---
-                    // This error was thrown as a convenience so that you can use this stack
-                    // to find the callsite that caused this warning to fire.
-                    throw new Error(message);
-                  } catch (x) {}
-                };
-
-                lowPriorityWarning = function(condition, format) {
-                  if (format === undefined) {
-                    throw new Error(
-                      '`lowPriorityWarning(condition, format, ...args)` requires a warning ' +
-                        'message argument'
-                    );
-                  }
-                  if (!condition) {
-                    for (
-                      var _len2 = arguments.length,
-                        args = Array(_len2 > 2 ? _len2 - 2 : 0),
-                        _key2 = 2;
-                      _key2 < _len2;
-                      _key2++
-                    ) {
-                      args[_key2 - 2] = arguments[_key2];
-                    }
-
-                    printWarning.apply(undefined, [format].concat(args));
-                  }
-                };
-              }
-
-              var lowPriorityWarning$1 = lowPriorityWarning;
-
-              function typeOf(object) {
-                if (typeof object === 'object' && object !== null) {
-                  var $$typeof = object.$$typeof;
-
-                  switch ($$typeof) {
-                    case REACT_ELEMENT_TYPE:
-                      var type = object.type;
-
-                      switch (type) {
-                        case REACT_ASYNC_MODE_TYPE:
-                        case REACT_CONCURRENT_MODE_TYPE:
-                        case REACT_FRAGMENT_TYPE:
-                        case REACT_PROFILER_TYPE:
-                        case REACT_STRICT_MODE_TYPE:
-                          return type;
-                        default:
-                          var $$typeofType = type && type.$$typeof;
-
-                          switch ($$typeofType) {
-                            case REACT_CONTEXT_TYPE:
-                            case REACT_FORWARD_REF_TYPE:
-                            case REACT_PROVIDER_TYPE:
-                              return $$typeofType;
-                            default:
-                              return $$typeof;
-                          }
-                      }
-                    case REACT_PORTAL_TYPE:
-                      return $$typeof;
-                  }
-                }
-
-                return undefined;
-              }
-
-              // AsyncMode is deprecated along with isAsyncMode
-              var AsyncMode = REACT_ASYNC_MODE_TYPE;
-              var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
-              var ContextConsumer = REACT_CONTEXT_TYPE;
-              var ContextProvider = REACT_PROVIDER_TYPE;
-              var Element = REACT_ELEMENT_TYPE;
-              var ForwardRef = REACT_FORWARD_REF_TYPE;
-              var Fragment = REACT_FRAGMENT_TYPE;
-              var Profiler = REACT_PROFILER_TYPE;
-              var Portal = REACT_PORTAL_TYPE;
-              var StrictMode = REACT_STRICT_MODE_TYPE;
-
-              var hasWarnedAboutDeprecatedIsAsyncMode = false;
-
-              // AsyncMode should be deprecated
-              function isAsyncMode(object) {
-                {
-                  if (!hasWarnedAboutDeprecatedIsAsyncMode) {
-                    hasWarnedAboutDeprecatedIsAsyncMode = true;
-                    lowPriorityWarning$1(
-                      false,
-                      'The ReactIs.isAsyncMode() alias has been deprecated, ' +
-                        'and will be removed in React 17+. Update your code to use ' +
-                        'ReactIs.isConcurrentMode() instead. It has the exact same API.'
-                    );
-                  }
-                }
-                return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
-              }
-              function isConcurrentMode(object) {
-                return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
-              }
-              function isContextConsumer(object) {
-                return typeOf(object) === REACT_CONTEXT_TYPE;
-              }
-              function isContextProvider(object) {
-                return typeOf(object) === REACT_PROVIDER_TYPE;
-              }
-              function isElement(object) {
-                return (
-                  typeof object === 'object' &&
-                  object !== null &&
-                  object.$$typeof === REACT_ELEMENT_TYPE
-                );
-              }
-              function isForwardRef(object) {
-                return typeOf(object) === REACT_FORWARD_REF_TYPE;
-              }
-              function isFragment(object) {
-                return typeOf(object) === REACT_FRAGMENT_TYPE;
-              }
-              function isProfiler(object) {
-                return typeOf(object) === REACT_PROFILER_TYPE;
-              }
-              function isPortal(object) {
-                return typeOf(object) === REACT_PORTAL_TYPE;
-              }
-              function isStrictMode(object) {
-                return typeOf(object) === REACT_STRICT_MODE_TYPE;
-              }
-
-              exports.typeOf = typeOf;
-              exports.AsyncMode = AsyncMode;
-              exports.ConcurrentMode = ConcurrentMode;
-              exports.ContextConsumer = ContextConsumer;
-              exports.ContextProvider = ContextProvider;
-              exports.Element = Element;
-              exports.ForwardRef = ForwardRef;
-              exports.Fragment = Fragment;
-              exports.Profiler = Profiler;
-              exports.Portal = Portal;
-              exports.StrictMode = StrictMode;
-              exports.isValidElementType = isValidElementType;
-              exports.isAsyncMode = isAsyncMode;
-              exports.isConcurrentMode = isConcurrentMode;
-              exports.isContextConsumer = isContextConsumer;
-              exports.isContextProvider = isContextProvider;
-              exports.isElement = isElement;
-              exports.isForwardRef = isForwardRef;
-              exports.isFragment = isFragment;
-              exports.isProfiler = isProfiler;
-              exports.isPortal = isPortal;
-              exports.isStrictMode = isStrictMode;
-            })();
-          }
-        }.call(this, require('_process')));
+        arguments[4][24][0].apply(exports, arguments);
       },
-      { _process: 18 },
+      {
+        './cjs/react-is.development.js': 28,
+        './cjs/react-is.production.min.js': 29,
+        _process: 16,
+        dup: 24,
+      },
     ],
     31: [
       function(require, module, exports) {
-        /** @license React v16.6.1
-         * react-is.production.min.js
-         *
-         * Copyright (c) Facebook, Inc. and its affiliates.
-         *
-         * This source code is licensed under the MIT license found in the
-         * LICENSE file in the root directory of this source tree.
-         */
-
         'use strict';
-        Object.defineProperty(exports, '__esModule', { value: !0 });
-        var b = 'function' === typeof Symbol && Symbol.for,
-          c = b ? Symbol.for('react.element') : 60103,
-          d = b ? Symbol.for('react.portal') : 60106,
-          e = b ? Symbol.for('react.fragment') : 60107,
-          f = b ? Symbol.for('react.strict_mode') : 60108,
-          g = b ? Symbol.for('react.profiler') : 60114,
-          h = b ? Symbol.for('react.provider') : 60109,
-          k = b ? Symbol.for('react.context') : 60110,
-          l = b ? Symbol.for('react.async_mode') : 60111,
-          m = b ? Symbol.for('react.concurrent_mode') : 60111,
-          n = b ? Symbol.for('react.forward_ref') : 60112,
-          p = b ? Symbol.for('react.suspense') : 60113,
-          r = b ? Symbol.for('react.memo') : 60115,
-          t = b ? Symbol.for('react.lazy') : 60116;
-        function u(a) {
-          if ('object' === typeof a && null !== a) {
-            var q = a.$$typeof;
-            switch (q) {
-              case c:
-                switch (((a = a.type), a)) {
-                  case l:
-                  case m:
-                  case e:
-                  case g:
-                  case f:
-                    return a;
-                  default:
-                    switch (((a = a && a.$$typeof), a)) {
-                      case k:
-                      case n:
-                      case h:
-                        return a;
-                      default:
-                        return q;
-                    }
-                }
-              case d:
-                return q;
-            }
-          }
-        }
-        function v(a) {
-          return u(a) === m;
-        }
-        exports.typeOf = u;
-        exports.AsyncMode = l;
-        exports.ConcurrentMode = m;
-        exports.ContextConsumer = k;
-        exports.ContextProvider = h;
-        exports.Element = c;
-        exports.ForwardRef = n;
-        exports.Fragment = e;
-        exports.Profiler = g;
-        exports.Portal = d;
-        exports.StrictMode = f;
-        exports.isValidElementType = function(a) {
-          return (
-            'string' === typeof a ||
-            'function' === typeof a ||
-            a === e ||
-            a === m ||
-            a === g ||
-            a === f ||
-            a === p ||
-            ('object' === typeof a &&
-              null !== a &&
-              (a.$$typeof === t ||
-                a.$$typeof === r ||
-                a.$$typeof === h ||
-                a.$$typeof === k ||
-                a.$$typeof === n))
-          );
-        };
-        exports.isAsyncMode = function(a) {
-          return v(a) || u(a) === l;
-        };
-        exports.isConcurrentMode = v;
-        exports.isContextConsumer = function(a) {
-          return u(a) === k;
-        };
-        exports.isContextProvider = function(a) {
-          return u(a) === h;
-        };
-        exports.isElement = function(a) {
-          return 'object' === typeof a && null !== a && a.$$typeof === c;
-        };
-        exports.isForwardRef = function(a) {
-          return u(a) === n;
-        };
-        exports.isFragment = function(a) {
-          return u(a) === e;
-        };
-        exports.isProfiler = function(a) {
-          return u(a) === g;
-        };
-        exports.isPortal = function(a) {
-          return u(a) === d;
-        };
-        exports.isStrictMode = function(a) {
-          return u(a) === f;
-        };
+
+        var _interopRequireDefault = require('@babel/runtime/helpers/interopRequireDefault');
+
+        exports.__esModule = true;
+        exports['default'] = exports.ReactReduxContext = void 0;
+
+        var _react = _interopRequireDefault(require('react'));
+
+        var ReactReduxContext = _react['default'].createContext(null);
+
+        exports.ReactReduxContext = ReactReduxContext;
+        var _default = ReactReduxContext;
+        exports['default'] = _default;
       },
-      {},
+      { '@babel/runtime/helpers/interopRequireDefault': 2, react: 55 },
     ],
     32: [
       function(require, module, exports) {
-        arguments[4][26][0].apply(exports, arguments);
+        'use strict';
+
+        var _interopRequireDefault = require('@babel/runtime/helpers/interopRequireDefault');
+
+        var _interopRequireWildcard = require('@babel/runtime/helpers/interopRequireWildcard');
+
+        exports.__esModule = true;
+        exports['default'] = void 0;
+
+        var _react = _interopRequireWildcard(require('react'));
+
+        var _propTypes = _interopRequireDefault(require('prop-types'));
+
+        var _Context = require('./Context');
+
+        var _Subscription = _interopRequireDefault(require('../utils/Subscription'));
+
+        function Provider(_ref) {
+          var store = _ref.store,
+            context = _ref.context,
+            children = _ref.children;
+          var contextValue = (0, _react.useMemo)(
+            function() {
+              var subscription = new _Subscription['default'](store);
+              subscription.onStateChange = subscription.notifyNestedSubs;
+              return {
+                store: store,
+                subscription: subscription,
+              };
+            },
+            [store]
+          );
+          var previousState = (0, _react.useMemo)(
+            function() {
+              return store.getState();
+            },
+            [store]
+          );
+          (0, _react.useEffect)(
+            function() {
+              var subscription = contextValue.subscription;
+              subscription.trySubscribe();
+
+              if (previousState !== store.getState()) {
+                subscription.notifyNestedSubs();
+              }
+
+              return function() {
+                subscription.tryUnsubscribe();
+                subscription.onStateChange = null;
+              };
+            },
+            [contextValue, previousState]
+          );
+          var Context = context || _Context.ReactReduxContext;
+          return _react['default'].createElement(
+            Context.Provider,
+            {
+              value: contextValue,
+            },
+            children
+          );
+        }
+
+        Provider.propTypes = {
+          store: _propTypes['default'].shape({
+            subscribe: _propTypes['default'].func.isRequired,
+            dispatch: _propTypes['default'].func.isRequired,
+            getState: _propTypes['default'].func.isRequired,
+          }),
+          context: _propTypes['default'].object,
+          children: _propTypes['default'].any,
+        };
+        var _default = Provider;
+        exports['default'] = _default;
       },
       {
-        './cjs/react-is.development.js': 30,
-        './cjs/react-is.production.min.js': 31,
-        _process: 18,
-        dup: 26,
+        '../utils/Subscription': 46,
+        './Context': 31,
+        '@babel/runtime/helpers/interopRequireDefault': 2,
+        '@babel/runtime/helpers/interopRequireWildcard': 3,
+        'prop-types': 20,
+        react: 55,
       },
     ],
     33: [
@@ -61288,134 +61051,12 @@ object-assign
         (function(process) {
           'use strict';
 
-          var _interopRequireDefault = require('@babel/runtime/helpers/interopRequireDefault');
-
-          exports.__esModule = true;
-          exports.createProvider = createProvider;
-          exports.default = void 0;
-
-          var _inheritsLoose2 = _interopRequireDefault(
-            require('@babel/runtime/helpers/inheritsLoose')
-          );
-
-          var _react = require('react');
-
-          var _propTypes = _interopRequireDefault(require('prop-types'));
-
-          var _PropTypes = require('../utils/PropTypes');
-
-          var _warning = _interopRequireDefault(require('../utils/warning'));
-
-          var didWarnAboutReceivingStore = false;
-
-          function warnAboutReceivingStore() {
-            if (didWarnAboutReceivingStore) {
-              return;
-            }
-
-            didWarnAboutReceivingStore = true;
-            (0, _warning.default)(
-              '<Provider> does not support changing `store` on the fly. ' +
-                'It is most likely that you see this error because you updated to ' +
-                'Redux 2.x and React Redux 2.x which no longer hot reload reducers ' +
-                'automatically. See https://github.com/reduxjs/react-redux/releases/' +
-                'tag/v2.0.0 for the migration instructions.'
-            );
-          }
-
-          function createProvider(storeKey) {
-            var _Provider$childContex;
-
-            if (storeKey === void 0) {
-              storeKey = 'store';
-            }
-
-            var subscriptionKey = storeKey + 'Subscription';
-
-            var Provider =
-              /*#__PURE__*/
-              (function(_Component) {
-                (0, _inheritsLoose2.default)(Provider, _Component);
-                var _proto = Provider.prototype;
-
-                _proto.getChildContext = function getChildContext() {
-                  var _ref;
-
-                  return (
-                    (_ref = {}),
-                    (_ref[storeKey] = this[storeKey]),
-                    (_ref[subscriptionKey] = null),
-                    _ref
-                  );
-                };
-
-                function Provider(props, context) {
-                  var _this;
-
-                  _this = _Component.call(this, props, context) || this;
-                  _this[storeKey] = props.store;
-                  return _this;
-                }
-
-                _proto.render = function render() {
-                  return _react.Children.only(this.props.children);
-                };
-
-                return Provider;
-              })(_react.Component);
-
-            if (process.env.NODE_ENV !== 'production') {
-              Provider.prototype.componentWillReceiveProps = function(nextProps) {
-                if (this[storeKey] !== nextProps.store) {
-                  warnAboutReceivingStore();
-                }
-              };
-            }
-
-            Provider.propTypes = {
-              store: _PropTypes.storeShape.isRequired,
-              children: _propTypes.default.element.isRequired,
-            };
-            Provider.childContextTypes =
-              ((_Provider$childContex = {}),
-              (_Provider$childContex[storeKey] = _PropTypes.storeShape.isRequired),
-              (_Provider$childContex[subscriptionKey] = _PropTypes.subscriptionShape),
-              _Provider$childContex);
-            return Provider;
-          }
-
-          var _default = createProvider();
-
-          exports.default = _default;
-        }.call(this, require('_process')));
-      },
-      {
-        '../utils/PropTypes': 43,
-        '../utils/warning': 48,
-        '@babel/runtime/helpers/inheritsLoose': 3,
-        '@babel/runtime/helpers/interopRequireDefault': 4,
-        _process: 18,
-        'prop-types': 22,
-        react: 51,
-      },
-    ],
-    34: [
-      function(require, module, exports) {
-        (function(process) {
-          'use strict';
+          var _interopRequireWildcard = require('@babel/runtime/helpers/interopRequireWildcard');
 
           var _interopRequireDefault = require('@babel/runtime/helpers/interopRequireDefault');
 
           exports.__esModule = true;
-          exports.default = connectAdvanced;
-
-          var _inheritsLoose2 = _interopRequireDefault(
-            require('@babel/runtime/helpers/inheritsLoose')
-          );
-
-          var _assertThisInitialized2 = _interopRequireDefault(
-            require('@babel/runtime/helpers/assertThisInitialized')
-          );
+          exports['default'] = connectAdvanced;
 
           var _extends2 = _interopRequireDefault(require('@babel/runtime/helpers/extends'));
 
@@ -61427,39 +61068,45 @@ object-assign
 
           var _invariant = _interopRequireDefault(require('invariant'));
 
-          var _react = require('react');
+          var _react = _interopRequireWildcard(require('react'));
 
           var _reactIs = require('react-is');
 
           var _Subscription = _interopRequireDefault(require('../utils/Subscription'));
 
-          var _PropTypes = require('../utils/PropTypes');
+          var _Context = require('./Context');
 
-          var hotReloadingVersion = 0;
-          var dummyState = {};
+          // Define some constant arrays just to avoid re-creating these
+          var EMPTY_ARRAY = [];
+          var NO_SUBSCRIPTION_ARRAY = [null, null];
 
-          function noop() {}
+          var stringifyComponent = function stringifyComponent(Comp) {
+            try {
+              return JSON.stringify(Comp);
+            } catch (err) {
+              return String(Comp);
+            }
+          };
 
-          function makeSelectorStateful(sourceSelector, store) {
-            // wrap the selector in an object that tracks its results between runs.
-            var selector = {
-              run: function runComponentSelector(props) {
-                try {
-                  var nextProps = sourceSelector(store.getState(), props);
-
-                  if (nextProps !== selector.props || selector.error) {
-                    selector.shouldComponentUpdate = true;
-                    selector.props = nextProps;
-                    selector.error = null;
-                  }
-                } catch (error) {
-                  selector.shouldComponentUpdate = true;
-                  selector.error = error;
-                }
-              },
-            };
-            return selector;
+          function storeStateUpdatesReducer(state, action) {
+            var updateCount = state[1];
+            return [action.payload, updateCount + 1];
           }
+
+          var initStateUpdates = function initStateUpdates() {
+            return [null, 0];
+          }; // React currently throws a warning when using useLayoutEffect on the server.
+          // To get around it, we can conditionally useEffect on the server (no-op) and
+          // useLayoutEffect in the browser. We need useLayoutEffect because we want
+          // `connect` to perform sync updates to a ref to save the latest props after
+          // a render is actually committed to the DOM.
+
+          var useIsomorphicLayoutEffect =
+            typeof window !== 'undefined' &&
+            typeof window.document !== 'undefined' &&
+            typeof window.document.createElement !== 'undefined'
+              ? _react.useLayoutEffect
+              : _react.useEffect;
 
           function connectAdvanced(
             /*
@@ -61479,8 +61126,6 @@ object-assign
             selectorFactory, // options object:
             _ref
           ) {
-            var _contextTypes, _childContextTypes;
-
             if (_ref === void 0) {
               _ref = {};
             }
@@ -61505,298 +61150,383 @@ object-assign
               storeKey = _ref2$storeKey === void 0 ? 'store' : _ref2$storeKey,
               _ref2$withRef = _ref2.withRef,
               withRef = _ref2$withRef === void 0 ? false : _ref2$withRef,
-              connectOptions = (0, _objectWithoutPropertiesLoose2.default)(_ref2, [
+              _ref2$forwardRef = _ref2.forwardRef,
+              forwardRef = _ref2$forwardRef === void 0 ? false : _ref2$forwardRef,
+              _ref2$context = _ref2.context,
+              context = _ref2$context === void 0 ? _Context.ReactReduxContext : _ref2$context,
+              connectOptions = (0, _objectWithoutPropertiesLoose2['default'])(_ref2, [
                 'getDisplayName',
                 'methodName',
                 'renderCountProp',
                 'shouldHandleStateChanges',
                 'storeKey',
                 'withRef',
+                'forwardRef',
+                'context',
               ]);
-            var subscriptionKey = storeKey + 'Subscription';
-            var version = hotReloadingVersion++;
-            var contextTypes =
-              ((_contextTypes = {}),
-              (_contextTypes[storeKey] = _PropTypes.storeShape),
-              (_contextTypes[subscriptionKey] = _PropTypes.subscriptionShape),
-              _contextTypes);
-            var childContextTypes =
-              ((_childContextTypes = {}),
-              (_childContextTypes[subscriptionKey] = _PropTypes.subscriptionShape),
-              _childContextTypes);
+            (0, _invariant['default'])(
+              renderCountProp === undefined,
+              'renderCountProp is removed. render counting is built into the latest React Dev Tools profiling extension'
+            );
+            (0, _invariant['default'])(
+              !withRef,
+              'withRef is removed. To access the wrapped instance, use a ref on the connected component'
+            );
+            var customStoreWarningMessage =
+              'To use a custom Redux store for specific components, create a custom React context with ' +
+              "React.createContext(), and pass the context object to React Redux's Provider and specific components" +
+              ' like: <Provider context={MyContext}><ConnectedComponent context={MyContext} /></Provider>. ' +
+              'You may also pass a {context : MyContext} option to connect';
+            (0, _invariant['default'])(
+              storeKey === 'store',
+              'storeKey has been removed and does not do anything. ' + customStoreWarningMessage
+            );
+            var Context = context;
             return function wrapWithConnect(WrappedComponent) {
-              (0, _invariant.default)(
-                (0, _reactIs.isValidElementType)(WrappedComponent),
-                'You must pass a component to the function returned by ' +
-                  (methodName + '. Instead received ' + JSON.stringify(WrappedComponent))
-              );
+              if (process.env.NODE_ENV !== 'production') {
+                (0, _invariant['default'])(
+                  (0, _reactIs.isValidElementType)(WrappedComponent),
+                  'You must pass a component to the function returned by ' +
+                    (methodName + '. Instead received ' + stringifyComponent(WrappedComponent))
+                );
+              }
+
               var wrappedComponentName =
                 WrappedComponent.displayName || WrappedComponent.name || 'Component';
               var displayName = getDisplayName(wrappedComponentName);
-              var selectorFactoryOptions = (0, _extends2.default)({}, connectOptions, {
+              var selectorFactoryOptions = (0, _extends2['default'])({}, connectOptions, {
                 getDisplayName: getDisplayName,
                 methodName: methodName,
                 renderCountProp: renderCountProp,
                 shouldHandleStateChanges: shouldHandleStateChanges,
                 storeKey: storeKey,
-                withRef: withRef,
                 displayName: displayName,
                 wrappedComponentName: wrappedComponentName,
-                WrappedComponent: WrappedComponent, // TODO Actually fix our use of componentWillReceiveProps
-
-                /* eslint-disable react/no-deprecated */
+                WrappedComponent: WrappedComponent,
               });
+              var pure = connectOptions.pure;
 
-              var Connect =
-                /*#__PURE__*/
-                (function(_Component) {
-                  (0, _inheritsLoose2.default)(Connect, _Component);
+              function createChildSelector(store) {
+                return selectorFactory(store.dispatch, selectorFactoryOptions);
+              } // If we aren't running in "pure" mode, we don't want to memoize values.
+              // To avoid conditionally calling hooks, we fall back to a tiny wrapper
+              // that just executes the given callback immediately.
 
-                  function Connect(props, context) {
-                    var _this;
+              var usePureOnlyMemo = pure
+                ? _react.useMemo
+                : function(callback) {
+                    return callback();
+                  };
 
-                    _this = _Component.call(this, props, context) || this;
-                    _this.version = version;
-                    _this.state = {};
-                    _this.renderCount = 0;
-                    _this.store = props[storeKey] || context[storeKey];
-                    _this.propsMode = Boolean(props[storeKey]);
-                    _this.setWrappedInstance = _this.setWrappedInstance.bind(
-                      (0, _assertThisInitialized2.default)(
-                        (0, _assertThisInitialized2.default)(_this)
+              function ConnectFunction(props) {
+                var _useMemo = (0, _react.useMemo)(
+                    function() {
+                      // Distinguish between actual "data" props that were passed to the wrapper component,
+                      // and values needed to control behavior (forwarded refs, alternate context instances).
+                      // To maintain the wrapperProps object reference, memoize this destructuring.
+                      var forwardedRef = props.forwardedRef,
+                        wrapperProps = (0, _objectWithoutPropertiesLoose2['default'])(props, [
+                          'forwardedRef',
+                        ]);
+                      return [props.context, forwardedRef, wrapperProps];
+                    },
+                    [props]
+                  ),
+                  propsContext = _useMemo[0],
+                  forwardedRef = _useMemo[1],
+                  wrapperProps = _useMemo[2];
+
+                var ContextToUse = (0, _react.useMemo)(
+                  function() {
+                    // Users may optionally pass in a custom context instance to use instead of our ReactReduxContext.
+                    // Memoize the check that determines which context instance we should use.
+                    return propsContext &&
+                      propsContext.Consumer &&
+                      (0, _reactIs.isContextConsumer)(
+                        _react['default'].createElement(propsContext.Consumer, null)
                       )
-                    );
-                    (0, _invariant.default)(
-                      _this.store,
-                      'Could not find "' +
-                        storeKey +
-                        '" in either the context or props of ' +
-                        ('"' +
-                          displayName +
-                          '". Either wrap the root component in a <Provider>, ') +
-                        ('or explicitly pass "' +
-                          storeKey +
-                          '" as a prop to "' +
-                          displayName +
-                          '".')
-                    );
+                      ? propsContext
+                      : Context;
+                  },
+                  [propsContext, Context]
+                ); // Retrieve the store and ancestor subscription via context, if available
 
-                    _this.initSelector();
+                var contextValue = (0, _react.useContext)(ContextToUse); // The store _must_ exist as either a prop or in context
 
-                    _this.initSubscription();
+                var didStoreComeFromProps = Boolean(props.store);
+                var didStoreComeFromContext = Boolean(contextValue) && Boolean(contextValue.store);
+                (0, _invariant['default'])(
+                  didStoreComeFromProps || didStoreComeFromContext,
+                  'Could not find "store" in the context of ' +
+                    ('"' + displayName + '". Either wrap the root component in a <Provider>, ') +
+                    'or pass a custom React context provider to <Provider> and the corresponding ' +
+                    ('React context consumer to ' + displayName + ' in connect options.')
+                );
+                var store = props.store || contextValue.store;
+                var childPropsSelector = (0, _react.useMemo)(
+                  function() {
+                    // The child props selector needs the store reference as an input.
+                    // Re-create this selector whenever the store changes.
+                    return createChildSelector(store);
+                  },
+                  [store]
+                );
 
-                    return _this;
+                var _useMemo2 = (0, _react.useMemo)(
+                    function() {
+                      if (!shouldHandleStateChanges) return NO_SUBSCRIPTION_ARRAY; // This Subscription's source should match where store came from: props vs. context. A component
+                      // connected to the store via props shouldn't use subscription from context, or vice versa.
+
+                      var subscription = new _Subscription['default'](
+                        store,
+                        didStoreComeFromProps ? null : contextValue.subscription
+                      ); // `notifyNestedSubs` is duplicated to handle the case where the component is unmounted in
+                      // the middle of the notification loop, where `subscription` will then be null. This can
+                      // probably be avoided if Subscription's listeners logic is changed to not call listeners
+                      // that have been unsubscribed in the  middle of the notification loop.
+
+                      var notifyNestedSubs = subscription.notifyNestedSubs.bind(subscription);
+                      return [subscription, notifyNestedSubs];
+                    },
+                    [store, didStoreComeFromProps, contextValue]
+                  ),
+                  subscription = _useMemo2[0],
+                  notifyNestedSubs = _useMemo2[1]; // Determine what {store, subscription} value should be put into nested context, if necessary,
+                // and memoize that value to avoid unnecessary context updates.
+
+                var overriddenContextValue = (0, _react.useMemo)(
+                  function() {
+                    if (didStoreComeFromProps) {
+                      // This component is directly subscribed to a store from props.
+                      // We don't want descendants reading from this store - pass down whatever
+                      // the existing context value is from the nearest connected ancestor.
+                      return contextValue;
+                    } // Otherwise, put this component's subscription instance into context, so that
+                    // connected descendants won't update until after this component is done
+
+                    return (0, _extends2['default'])({}, contextValue, {
+                      subscription: subscription,
+                    });
+                  },
+                  [didStoreComeFromProps, contextValue, subscription]
+                ); // We need to force this wrapper component to re-render whenever a Redux store update
+                // causes a change to the calculated child component props (or we caught an error in mapState)
+
+                var _useReducer = (0, _react.useReducer)(
+                    storeStateUpdatesReducer,
+                    EMPTY_ARRAY,
+                    initStateUpdates
+                  ),
+                  _useReducer$ = _useReducer[0],
+                  previousStateUpdateResult = _useReducer$[0],
+                  forceComponentUpdateDispatch = _useReducer[1]; // Propagate any mapState/mapDispatch errors upwards
+
+                if (previousStateUpdateResult && previousStateUpdateResult.error) {
+                  throw previousStateUpdateResult.error;
+                } // Set up refs to coordinate values between the subscription effect and the render logic
+
+                var lastChildProps = (0, _react.useRef)();
+                var lastWrapperProps = (0, _react.useRef)(wrapperProps);
+                var childPropsFromStoreUpdate = (0, _react.useRef)();
+                var renderIsScheduled = (0, _react.useRef)(false);
+                var actualChildProps = usePureOnlyMemo(
+                  function() {
+                    // Tricky logic here:
+                    // - This render may have been triggered by a Redux store update that produced new child props
+                    // - However, we may have gotten new wrapper props after that
+                    // If we have new child props, and the same wrapper props, we know we should use the new child props as-is.
+                    // But, if we have new wrapper props, those might change the child props, so we have to recalculate things.
+                    // So, we'll use the child props from store update only if the wrapper props are the same as last time.
+                    if (
+                      childPropsFromStoreUpdate.current &&
+                      wrapperProps === lastWrapperProps.current
+                    ) {
+                      return childPropsFromStoreUpdate.current;
+                    } // TODO We're reading the store directly in render() here. Bad idea?
+                    // This will likely cause Bad Things (TM) to happen in Concurrent Mode.
+                    // Note that we do this because on renders _not_ caused by store updates, we need the latest store state
+                    // to determine what the child props should be.
+
+                    return childPropsSelector(store.getState(), wrapperProps);
+                  },
+                  [store, previousStateUpdateResult, wrapperProps]
+                ); // We need this to execute synchronously every time we re-render. However, React warns
+                // about useLayoutEffect in SSR, so we try to detect environment and fall back to
+                // just useEffect instead to avoid the warning, since neither will run anyway.
+
+                useIsomorphicLayoutEffect(function() {
+                  // We want to capture the wrapper props and child props we used for later comparisons
+                  lastWrapperProps.current = wrapperProps;
+                  lastChildProps.current = actualChildProps;
+                  renderIsScheduled.current = false; // If the render was from a store update, clear out that reference and cascade the subscriber update
+
+                  if (childPropsFromStoreUpdate.current) {
+                    childPropsFromStoreUpdate.current = null;
+                    notifyNestedSubs();
                   }
+                }); // Our re-subscribe logic only runs when the store/subscription setup changes
 
-                  var _proto = Connect.prototype;
+                useIsomorphicLayoutEffect(
+                  function() {
+                    // If we're not subscribed to the store, nothing to do here
+                    if (!shouldHandleStateChanges) return; // Capture values for checking if and when this component unmounts
 
-                  _proto.getChildContext = function getChildContext() {
-                    var _ref3;
+                    var didUnsubscribe = false;
+                    var lastThrownError = null; // We'll run this callback every time a store subscription update propagates to this component
 
-                    // If this component received store from props, its subscription should be transparent
-                    // to any descendants receiving store+subscription from context; it passes along
-                    // subscription passed to it. Otherwise, it shadows the parent subscription, which allows
-                    // Connect to control ordering of notifications to flow top-down.
-                    var subscription = this.propsMode ? null : this.subscription;
-                    return (
-                      (_ref3 = {}),
-                      (_ref3[subscriptionKey] = subscription || this.context[subscriptionKey]),
-                      _ref3
+                    var checkForUpdates = function checkForUpdates() {
+                      if (didUnsubscribe) {
+                        // Don't run stale listeners.
+                        // Redux doesn't guarantee unsubscriptions happen until next dispatch.
+                        return;
+                      }
+
+                      var latestStoreState = store.getState();
+                      var newChildProps, error;
+
+                      try {
+                        // Actually run the selector with the most recent store state and wrapper props
+                        // to determine what the child props should be
+                        newChildProps = childPropsSelector(
+                          latestStoreState,
+                          lastWrapperProps.current
+                        );
+                      } catch (e) {
+                        error = e;
+                        lastThrownError = e;
+                      }
+
+                      if (!error) {
+                        lastThrownError = null;
+                      } // If the child props haven't changed, nothing to do here - cascade the subscription update
+
+                      if (newChildProps === lastChildProps.current) {
+                        if (!renderIsScheduled.current) {
+                          notifyNestedSubs();
+                        }
+                      } else {
+                        // Save references to the new child props.  Note that we track the "child props from store update"
+                        // as a ref instead of a useState/useReducer because we need a way to determine if that value has
+                        // been processed.  If this went into useState/useReducer, we couldn't clear out the value without
+                        // forcing another re-render, which we don't want.
+                        lastChildProps.current = newChildProps;
+                        childPropsFromStoreUpdate.current = newChildProps;
+                        renderIsScheduled.current = true; // If the child props _did_ change (or we caught an error), this wrapper component needs to re-render
+
+                        forceComponentUpdateDispatch({
+                          type: 'STORE_UPDATED',
+                          payload: {
+                            latestStoreState: latestStoreState,
+                            error: error,
+                          },
+                        });
+                      }
+                    }; // Actually subscribe to the nearest connected ancestor (or store)
+
+                    subscription.onStateChange = checkForUpdates;
+                    subscription.trySubscribe(); // Pull data from the store after first render in case the store has
+                    // changed since we began.
+
+                    checkForUpdates();
+
+                    var unsubscribeWrapper = function unsubscribeWrapper() {
+                      didUnsubscribe = true;
+                      subscription.tryUnsubscribe();
+                      subscription.onStateChange = null;
+
+                      if (lastThrownError) {
+                        // It's possible that we caught an error due to a bad mapState function, but the
+                        // parent re-rendered without this component and we're about to unmount.
+                        // This shouldn't happen as long as we do top-down subscriptions correctly, but
+                        // if we ever do those wrong, this throw will surface the error in our tests.
+                        // In that case, throw the error from here so it doesn't get lost.
+                        throw lastThrownError;
+                      }
+                    };
+
+                    return unsubscribeWrapper;
+                  },
+                  [store, subscription, childPropsSelector]
+                ); // Now that all that's done, we can finally try to actually render the child component.
+                // We memoize the elements for the rendered child component as an optimization.
+
+                var renderedWrappedComponent = (0, _react.useMemo)(
+                  function() {
+                    return _react['default'].createElement(
+                      WrappedComponent,
+                      (0, _extends2['default'])({}, actualChildProps, {
+                        ref: forwardedRef,
+                      })
                     );
-                  };
+                  },
+                  [forwardedRef, WrappedComponent, actualChildProps]
+                ); // If React sees the exact same element reference as last time, it bails out of re-rendering
+                // that child, same as if it was wrapped in React.memo() or returned false from shouldComponentUpdate.
 
-                  _proto.componentDidMount = function componentDidMount() {
-                    if (!shouldHandleStateChanges) return; // componentWillMount fires during server side rendering, but componentDidMount and
-                    // componentWillUnmount do not. Because of this, trySubscribe happens during ...didMount.
-                    // Otherwise, unsubscription would never take place during SSR, causing a memory leak.
-                    // To handle the case where a child component may have triggered a state change by
-                    // dispatching an action in its componentWillMount, we have to re-run the select and maybe
-                    // re-render.
-
-                    this.subscription.trySubscribe();
-                    this.selector.run(this.props);
-                    if (this.selector.shouldComponentUpdate) this.forceUpdate();
-                  };
-
-                  _proto.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
-                    this.selector.run(nextProps);
-                  };
-
-                  _proto.shouldComponentUpdate = function shouldComponentUpdate() {
-                    return this.selector.shouldComponentUpdate;
-                  };
-
-                  _proto.componentWillUnmount = function componentWillUnmount() {
-                    if (this.subscription) this.subscription.tryUnsubscribe();
-                    this.subscription = null;
-                    this.notifyNestedSubs = noop;
-                    this.store = null;
-                    this.selector.run = noop;
-                    this.selector.shouldComponentUpdate = false;
-                  };
-
-                  _proto.getWrappedInstance = function getWrappedInstance() {
-                    (0, _invariant.default)(
-                      withRef,
-                      'To access the wrapped instance, you need to specify ' +
-                        ('{ withRef: true } in the options argument of the ' +
-                          methodName +
-                          '() call.')
-                    );
-                    return this.wrappedInstance;
-                  };
-
-                  _proto.setWrappedInstance = function setWrappedInstance(ref) {
-                    this.wrappedInstance = ref;
-                  };
-
-                  _proto.initSelector = function initSelector() {
-                    var sourceSelector = selectorFactory(
-                      this.store.dispatch,
-                      selectorFactoryOptions
-                    );
-                    this.selector = makeSelectorStateful(sourceSelector, this.store);
-                    this.selector.run(this.props);
-                  };
-
-                  _proto.initSubscription = function initSubscription() {
-                    if (!shouldHandleStateChanges) return; // parentSub's source should match where store came from: props vs. context. A component
-                    // connected to the store via props shouldn't use subscription from context, or vice versa.
-
-                    var parentSub = (this.propsMode ? this.props : this.context)[subscriptionKey];
-                    this.subscription = new _Subscription.default(
-                      this.store,
-                      parentSub,
-                      this.onStateChange.bind(this)
-                    ); // `notifyNestedSubs` is duplicated to handle the case where the component is unmounted in
-                    // the middle of the notification loop, where `this.subscription` will then be null. An
-                    // extra null check every change can be avoided by copying the method onto `this` and then
-                    // replacing it with a no-op on unmount. This can probably be avoided if Subscription's
-                    // listeners logic is changed to not call listeners that have been unsubscribed in the
-                    // middle of the notification loop.
-
-                    this.notifyNestedSubs = this.subscription.notifyNestedSubs.bind(
-                      this.subscription
-                    );
-                  };
-
-                  _proto.onStateChange = function onStateChange() {
-                    this.selector.run(this.props);
-
-                    if (!this.selector.shouldComponentUpdate) {
-                      this.notifyNestedSubs();
-                    } else {
-                      this.componentDidUpdate = this.notifyNestedSubsOnComponentDidUpdate;
-                      this.setState(dummyState);
-                    }
-                  };
-
-                  _proto.notifyNestedSubsOnComponentDidUpdate = function notifyNestedSubsOnComponentDidUpdate() {
-                    // `componentDidUpdate` is conditionally implemented when `onStateChange` determines it
-                    // needs to notify nested subs. Once called, it unimplements itself until further state
-                    // changes occur. Doing it this way vs having a permanent `componentDidUpdate` that does
-                    // a boolean check every time avoids an extra method call most of the time, resulting
-                    // in some perf boost.
-                    this.componentDidUpdate = undefined;
-                    this.notifyNestedSubs();
-                  };
-
-                  _proto.isSubscribed = function isSubscribed() {
-                    return Boolean(this.subscription) && this.subscription.isSubscribed();
-                  };
-
-                  _proto.addExtraProps = function addExtraProps(props) {
-                    if (!withRef && !renderCountProp && !(this.propsMode && this.subscription))
-                      return props; // make a shallow copy so that fields added don't leak to the original selector.
-                    // this is especially important for 'ref' since that's a reference back to the component
-                    // instance. a singleton memoized selector would then be holding a reference to the
-                    // instance, preventing the instance from being garbage collected, and that would be bad
-
-                    var withExtras = (0, _extends2.default)({}, props);
-                    if (withRef) withExtras.ref = this.setWrappedInstance;
-                    if (renderCountProp) withExtras[renderCountProp] = this.renderCount++;
-                    if (this.propsMode && this.subscription)
-                      withExtras[subscriptionKey] = this.subscription;
-                    return withExtras;
-                  };
-
-                  _proto.render = function render() {
-                    var selector = this.selector;
-                    selector.shouldComponentUpdate = false;
-
-                    if (selector.error) {
-                      throw selector.error;
-                    } else {
-                      return (0, _react.createElement)(
-                        WrappedComponent,
-                        this.addExtraProps(selector.props)
+                var renderedChild = (0, _react.useMemo)(
+                  function() {
+                    if (shouldHandleStateChanges) {
+                      // If this component is subscribed to store updates, we need to pass its own
+                      // subscription instance down to our descendants. That means rendering the same
+                      // Context instance, and putting a different value into the context.
+                      return _react['default'].createElement(
+                        ContextToUse.Provider,
+                        {
+                          value: overriddenContextValue,
+                        },
+                        renderedWrappedComponent
                       );
                     }
-                  };
 
-                  return Connect;
-                })(_react.Component);
-              /* eslint-enable react/no-deprecated */
+                    return renderedWrappedComponent;
+                  },
+                  [ContextToUse, renderedWrappedComponent, overriddenContextValue]
+                );
+                return renderedChild;
+              } // If we're in "pure" mode, ensure our wrapper component only re-renders when incoming props have changed.
 
+              var Connect = pure ? _react['default'].memo(ConnectFunction) : ConnectFunction;
               Connect.WrappedComponent = WrappedComponent;
               Connect.displayName = displayName;
-              Connect.childContextTypes = childContextTypes;
-              Connect.contextTypes = contextTypes;
-              Connect.propTypes = contextTypes;
 
-              if (process.env.NODE_ENV !== 'production') {
-                Connect.prototype.componentWillUpdate = function componentWillUpdate() {
-                  var _this2 = this;
+              if (forwardRef) {
+                var forwarded = _react['default'].forwardRef(function forwardConnectRef(
+                  props,
+                  ref
+                ) {
+                  return _react['default'].createElement(
+                    Connect,
+                    (0, _extends2['default'])({}, props, {
+                      forwardedRef: ref,
+                    })
+                  );
+                });
 
-                  // We are hot reloading!
-                  if (this.version !== version) {
-                    this.version = version;
-                    this.initSelector(); // If any connected descendants don't hot reload (and resubscribe in the process), their
-                    // listeners will be lost when we unsubscribe. Unfortunately, by copying over all
-                    // listeners, this does mean that the old versions of connected descendants will still be
-                    // notified of state changes; however, their onStateChange function is a no-op so this
-                    // isn't a huge deal.
-
-                    var oldListeners = [];
-
-                    if (this.subscription) {
-                      oldListeners = this.subscription.listeners.get();
-                      this.subscription.tryUnsubscribe();
-                    }
-
-                    this.initSubscription();
-
-                    if (shouldHandleStateChanges) {
-                      this.subscription.trySubscribe();
-                      oldListeners.forEach(function(listener) {
-                        return _this2.subscription.listeners.subscribe(listener);
-                      });
-                    }
-                  }
-                };
+                forwarded.displayName = displayName;
+                forwarded.WrappedComponent = WrappedComponent;
+                return (0, _hoistNonReactStatics['default'])(forwarded, WrappedComponent);
               }
 
-              return (0, _hoistNonReactStatics.default)(Connect, WrappedComponent);
+              return (0, _hoistNonReactStatics['default'])(Connect, WrappedComponent);
             };
           }
         }.call(this, require('_process')));
       },
       {
-        '../utils/PropTypes': 43,
-        '../utils/Subscription': 44,
-        '@babel/runtime/helpers/assertThisInitialized': 1,
-        '@babel/runtime/helpers/extends': 2,
-        '@babel/runtime/helpers/inheritsLoose': 3,
-        '@babel/runtime/helpers/interopRequireDefault': 4,
-        '@babel/runtime/helpers/objectWithoutPropertiesLoose': 6,
-        _process: 18,
-        'hoist-non-react-statics': 13,
-        invariant: 14,
-        react: 51,
-        'react-is': 32,
+        '../utils/Subscription': 46,
+        './Context': 31,
+        '@babel/runtime/helpers/extends': 1,
+        '@babel/runtime/helpers/interopRequireDefault': 2,
+        '@babel/runtime/helpers/interopRequireWildcard': 3,
+        '@babel/runtime/helpers/objectWithoutPropertiesLoose': 4,
+        _process: 16,
+        'hoist-non-react-statics': 11,
+        invariant: 12,
+        react: 55,
+        'react-is': 30,
       },
     ],
-    35: [
+    34: [
       function(require, module, exports) {
         'use strict';
 
@@ -61804,7 +61534,7 @@ object-assign
 
         exports.__esModule = true;
         exports.createConnect = createConnect;
-        exports.default = void 0;
+        exports['default'] = void 0;
 
         var _extends2 = _interopRequireDefault(require('@babel/runtime/helpers/extends'));
 
@@ -61867,21 +61597,23 @@ object-assign
         function createConnect(_temp) {
           var _ref = _temp === void 0 ? {} : _temp,
             _ref$connectHOC = _ref.connectHOC,
-            connectHOC = _ref$connectHOC === void 0 ? _connectAdvanced.default : _ref$connectHOC,
+            connectHOC = _ref$connectHOC === void 0 ? _connectAdvanced['default'] : _ref$connectHOC,
             _ref$mapStateToPropsF = _ref.mapStateToPropsFactories,
             mapStateToPropsFactories =
-              _ref$mapStateToPropsF === void 0 ? _mapStateToProps.default : _ref$mapStateToPropsF,
+              _ref$mapStateToPropsF === void 0
+                ? _mapStateToProps['default']
+                : _ref$mapStateToPropsF,
             _ref$mapDispatchToPro = _ref.mapDispatchToPropsFactories,
             mapDispatchToPropsFactories =
               _ref$mapDispatchToPro === void 0
-                ? _mapDispatchToProps.default
+                ? _mapDispatchToProps['default']
                 : _ref$mapDispatchToPro,
             _ref$mergePropsFactor = _ref.mergePropsFactories,
             mergePropsFactories =
-              _ref$mergePropsFactor === void 0 ? _mergeProps.default : _ref$mergePropsFactor,
+              _ref$mergePropsFactor === void 0 ? _mergeProps['default'] : _ref$mergePropsFactor,
             _ref$selectorFactory = _ref.selectorFactory,
             selectorFactory =
-              _ref$selectorFactory === void 0 ? _selectorFactory.default : _ref$selectorFactory;
+              _ref$selectorFactory === void 0 ? _selectorFactory['default'] : _ref$selectorFactory;
 
           return function connect(mapStateToProps, mapDispatchToProps, mergeProps, _ref2) {
             if (_ref2 === void 0) {
@@ -61895,14 +61627,14 @@ object-assign
               areStatesEqual = _ref3$areStatesEqual === void 0 ? strictEqual : _ref3$areStatesEqual,
               _ref3$areOwnPropsEqua = _ref3.areOwnPropsEqual,
               areOwnPropsEqual =
-                _ref3$areOwnPropsEqua === void 0 ? _shallowEqual.default : _ref3$areOwnPropsEqua,
+                _ref3$areOwnPropsEqua === void 0 ? _shallowEqual['default'] : _ref3$areOwnPropsEqua,
               _ref3$areStatePropsEq = _ref3.areStatePropsEqual,
               areStatePropsEqual =
-                _ref3$areStatePropsEq === void 0 ? _shallowEqual.default : _ref3$areStatePropsEq,
+                _ref3$areStatePropsEq === void 0 ? _shallowEqual['default'] : _ref3$areStatePropsEq,
               _ref3$areMergedPropsE = _ref3.areMergedPropsEqual,
               areMergedPropsEqual =
-                _ref3$areMergedPropsE === void 0 ? _shallowEqual.default : _ref3$areMergedPropsE,
-              extraOptions = (0, _objectWithoutPropertiesLoose2.default)(_ref3, [
+                _ref3$areMergedPropsE === void 0 ? _shallowEqual['default'] : _ref3$areMergedPropsE,
+              extraOptions = (0, _objectWithoutPropertiesLoose2['default'])(_ref3, [
                 'pure',
                 'areStatesEqual',
                 'areOwnPropsEqual',
@@ -61922,7 +61654,7 @@ object-assign
             var initMergeProps = match(mergeProps, mergePropsFactories, 'mergeProps');
             return connectHOC(
               selectorFactory,
-              (0, _extends2.default)(
+              (0, _extends2['default'])(
                 {
                   // used in error messages
                   methodName: 'connect',
@@ -61950,21 +61682,21 @@ object-assign
 
         var _default = createConnect();
 
-        exports.default = _default;
+        exports['default'] = _default;
       },
       {
-        '../components/connectAdvanced': 34,
-        '../utils/shallowEqual': 46,
-        './mapDispatchToProps': 36,
-        './mapStateToProps': 37,
-        './mergeProps': 38,
-        './selectorFactory': 39,
-        '@babel/runtime/helpers/extends': 2,
-        '@babel/runtime/helpers/interopRequireDefault': 4,
-        '@babel/runtime/helpers/objectWithoutPropertiesLoose': 6,
+        '../components/connectAdvanced': 33,
+        '../utils/shallowEqual': 50,
+        './mapDispatchToProps': 35,
+        './mapStateToProps': 36,
+        './mergeProps': 37,
+        './selectorFactory': 38,
+        '@babel/runtime/helpers/extends': 1,
+        '@babel/runtime/helpers/interopRequireDefault': 2,
+        '@babel/runtime/helpers/objectWithoutPropertiesLoose': 4,
       },
     ],
-    36: [
+    35: [
       function(require, module, exports) {
         'use strict';
 
@@ -61972,7 +61704,7 @@ object-assign
         exports.whenMapDispatchToPropsIsFunction = whenMapDispatchToPropsIsFunction;
         exports.whenMapDispatchToPropsIsMissing = whenMapDispatchToPropsIsMissing;
         exports.whenMapDispatchToPropsIsObject = whenMapDispatchToPropsIsObject;
-        exports.default = void 0;
+        exports['default'] = void 0;
 
         var _redux = require('redux');
 
@@ -62007,18 +61739,18 @@ object-assign
           whenMapDispatchToPropsIsMissing,
           whenMapDispatchToPropsIsObject,
         ];
-        exports.default = _default;
+        exports['default'] = _default;
       },
-      { './wrapMapToProps': 41, redux: 52 },
+      { './wrapMapToProps': 40, redux: 56 },
     ],
-    37: [
+    36: [
       function(require, module, exports) {
         'use strict';
 
         exports.__esModule = true;
         exports.whenMapStateToPropsIsFunction = whenMapStateToPropsIsFunction;
         exports.whenMapStateToPropsIsMissing = whenMapStateToPropsIsMissing;
-        exports.default = void 0;
+        exports['default'] = void 0;
 
         var _wrapMapToProps = require('./wrapMapToProps');
 
@@ -62037,11 +61769,11 @@ object-assign
         }
 
         var _default = [whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing];
-        exports.default = _default;
+        exports['default'] = _default;
       },
-      { './wrapMapToProps': 41 },
+      { './wrapMapToProps': 40 },
     ],
-    38: [
+    37: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -62053,14 +61785,14 @@ object-assign
           exports.wrapMergePropsFunc = wrapMergePropsFunc;
           exports.whenMergePropsIsFunction = whenMergePropsIsFunction;
           exports.whenMergePropsIsOmitted = whenMergePropsIsOmitted;
-          exports.default = void 0;
+          exports['default'] = void 0;
 
           var _extends2 = _interopRequireDefault(require('@babel/runtime/helpers/extends'));
 
           var _verifyPlainObject = _interopRequireDefault(require('../utils/verifyPlainObject'));
 
           function defaultMergeProps(stateProps, dispatchProps, ownProps) {
-            return (0, _extends2.default)({}, ownProps, stateProps, dispatchProps);
+            return (0, _extends2['default'])({}, ownProps, {}, stateProps, {}, dispatchProps);
           }
 
           function wrapMergePropsFunc(mergeProps) {
@@ -62080,7 +61812,7 @@ object-assign
                   hasRunOnce = true;
                   mergedProps = nextMergedProps;
                   if (process.env.NODE_ENV !== 'production')
-                    (0, _verifyPlainObject.default)(mergedProps, displayName, 'mergeProps');
+                    (0, _verifyPlainObject['default'])(mergedProps, displayName, 'mergeProps');
                 }
 
                 return mergedProps;
@@ -62101,17 +61833,17 @@ object-assign
           }
 
           var _default = [whenMergePropsIsFunction, whenMergePropsIsOmitted];
-          exports.default = _default;
+          exports['default'] = _default;
         }.call(this, require('_process')));
       },
       {
-        '../utils/verifyPlainObject': 47,
-        '@babel/runtime/helpers/extends': 2,
-        '@babel/runtime/helpers/interopRequireDefault': 4,
-        _process: 18,
+        '../utils/verifyPlainObject': 51,
+        '@babel/runtime/helpers/extends': 1,
+        '@babel/runtime/helpers/interopRequireDefault': 2,
+        _process: 16,
       },
     ],
-    39: [
+    38: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -62121,7 +61853,7 @@ object-assign
           exports.__esModule = true;
           exports.impureFinalPropsSelectorFactory = impureFinalPropsSelectorFactory;
           exports.pureFinalPropsSelectorFactory = pureFinalPropsSelectorFactory;
-          exports.default = finalPropsSelectorFactory;
+          exports['default'] = finalPropsSelectorFactory;
 
           var _objectWithoutPropertiesLoose2 = _interopRequireDefault(
             require('@babel/runtime/helpers/objectWithoutPropertiesLoose')
@@ -62221,7 +61953,7 @@ object-assign
             var initMapStateToProps = _ref2.initMapStateToProps,
               initMapDispatchToProps = _ref2.initMapDispatchToProps,
               initMergeProps = _ref2.initMergeProps,
-              options = (0, _objectWithoutPropertiesLoose2.default)(_ref2, [
+              options = (0, _objectWithoutPropertiesLoose2['default'])(_ref2, [
                 'initMapStateToProps',
                 'initMapDispatchToProps',
                 'initMergeProps',
@@ -62231,7 +61963,7 @@ object-assign
             var mergeProps = initMergeProps(dispatch, options);
 
             if (process.env.NODE_ENV !== 'production') {
-              (0, _verifySubselectors.default)(
+              (0, _verifySubselectors['default'])(
                 mapStateToProps,
                 mapDispatchToProps,
                 mergeProps,
@@ -62253,20 +61985,20 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        './verifySubselectors': 40,
-        '@babel/runtime/helpers/interopRequireDefault': 4,
-        '@babel/runtime/helpers/objectWithoutPropertiesLoose': 6,
-        _process: 18,
+        './verifySubselectors': 39,
+        '@babel/runtime/helpers/interopRequireDefault': 2,
+        '@babel/runtime/helpers/objectWithoutPropertiesLoose': 4,
+        _process: 16,
       },
     ],
-    40: [
+    39: [
       function(require, module, exports) {
         'use strict';
 
         var _interopRequireDefault = require('@babel/runtime/helpers/interopRequireDefault');
 
         exports.__esModule = true;
-        exports.default = verifySubselectors;
+        exports['default'] = verifySubselectors;
 
         var _warning = _interopRequireDefault(require('../utils/warning'));
 
@@ -62274,8 +62006,8 @@ object-assign
           if (!selector) {
             throw new Error('Unexpected value for ' + methodName + ' in ' + displayName + '.');
           } else if (methodName === 'mapStateToProps' || methodName === 'mapDispatchToProps') {
-            if (!selector.hasOwnProperty('dependsOnOwnProps')) {
-              (0, _warning.default)(
+            if (!Object.prototype.hasOwnProperty.call(selector, 'dependsOnOwnProps')) {
+              (0, _warning['default'])(
                 'The selector for ' +
                   methodName +
                   ' of ' +
@@ -62292,9 +62024,9 @@ object-assign
           verify(mergeProps, 'mergeProps', displayName);
         }
       },
-      { '../utils/warning': 48, '@babel/runtime/helpers/interopRequireDefault': 4 },
+      { '../utils/warning': 52, '@babel/runtime/helpers/interopRequireDefault': 2 },
     ],
-    41: [
+    40: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -62369,7 +62101,7 @@ object-assign
                 }
 
                 if (process.env.NODE_ENV !== 'production')
-                  (0, _verifyPlainObject.default)(props, displayName, methodName);
+                  (0, _verifyPlainObject['default'])(props, displayName, methodName);
                 return props;
               };
 
@@ -62379,10 +62111,69 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        '../utils/verifyPlainObject': 47,
-        '@babel/runtime/helpers/interopRequireDefault': 4,
-        _process: 18,
+        '../utils/verifyPlainObject': 51,
+        '@babel/runtime/helpers/interopRequireDefault': 2,
+        _process: 16,
       },
+    ],
+    41: [
+      function(require, module, exports) {
+        'use strict';
+
+        exports.__esModule = true;
+        exports.createDispatchHook = createDispatchHook;
+        exports.useDispatch = void 0;
+
+        var _Context = require('../components/Context');
+
+        var _useStore = require('./useStore');
+
+        /**
+         * Hook factory, which creates a `useDispatch` hook bound to a given context.
+         *
+         * @param {Function} [context=ReactReduxContext] Context passed to your `<Provider>`.
+         * @returns {Function} A `useDispatch` hook bound to the specified context.
+         */
+        function createDispatchHook(context) {
+          if (context === void 0) {
+            context = _Context.ReactReduxContext;
+          }
+
+          var useStore =
+            context === _Context.ReactReduxContext
+              ? _useStore.useStore
+              : (0, _useStore.createStoreHook)(context);
+          return function useDispatch() {
+            var store = useStore();
+            return store.dispatch;
+          };
+        }
+        /**
+         * A hook to access the redux `dispatch` function.
+         *
+         * @returns {any|function} redux store's `dispatch` function
+         *
+         * @example
+         *
+         * import React, { useCallback } from 'react'
+         * import { useDispatch } from 'react-redux'
+         *
+         * export const CounterComponent = ({ value }) => {
+         *   const dispatch = useDispatch()
+         *   const increaseCounter = useCallback(() => dispatch({ type: 'increase-counter' }), [])
+         *   return (
+         *     <div>
+         *       <span>{value}</span>
+         *       <button onClick={increaseCounter}>Increase counter</button>
+         *     </div>
+         *   )
+         * }
+         */
+
+        var useDispatch = createDispatchHook();
+        exports.useDispatch = useDispatch;
+      },
+      { '../components/Context': 31, './useStore': 44 },
     ],
     42: [
       function(require, module, exports) {
@@ -62390,29 +62181,45 @@ object-assign
 
         var _interopRequireDefault = require('@babel/runtime/helpers/interopRequireDefault');
 
-        var _interopRequireWildcard = require('@babel/runtime/helpers/interopRequireWildcard');
-
         exports.__esModule = true;
+        exports.useReduxContext = useReduxContext;
 
-        var _Provider = _interopRequireWildcard(require('./components/Provider'));
+        var _react = require('react');
 
-        exports.Provider = _Provider.default;
-        exports.createProvider = _Provider.createProvider;
+        var _invariant = _interopRequireDefault(require('invariant'));
 
-        var _connectAdvanced = _interopRequireDefault(require('./components/connectAdvanced'));
+        var _Context = require('../components/Context');
 
-        exports.connectAdvanced = _connectAdvanced.default;
-
-        var _connect = _interopRequireDefault(require('./connect/connect'));
-
-        exports.connect = _connect.default;
+        /**
+         * A hook to access the value of the `ReactReduxContext`. This is a low-level
+         * hook that you should usually not need to call directly.
+         *
+         * @returns {any} the value of the `ReactReduxContext`
+         *
+         * @example
+         *
+         * import React from 'react'
+         * import { useReduxContext } from 'react-redux'
+         *
+         * export const CounterComponent = ({ value }) => {
+         *   const { store } = useReduxContext()
+         *   return <div>{store.getState()}</div>
+         * }
+         */
+        function useReduxContext() {
+          var contextValue = (0, _react.useContext)(_Context.ReactReduxContext);
+          (0, _invariant['default'])(
+            contextValue,
+            'could not find react-redux context value; please ensure the component is wrapped in a <Provider>'
+          );
+          return contextValue;
+        }
       },
       {
-        './components/Provider': 33,
-        './components/connectAdvanced': 34,
-        './connect/connect': 35,
-        '@babel/runtime/helpers/interopRequireDefault': 4,
-        '@babel/runtime/helpers/interopRequireWildcard': 5,
+        '../components/Context': 31,
+        '@babel/runtime/helpers/interopRequireDefault': 2,
+        invariant: 12,
+        react: 55,
       },
     ],
     43: [
@@ -62422,35 +62229,309 @@ object-assign
         var _interopRequireDefault = require('@babel/runtime/helpers/interopRequireDefault');
 
         exports.__esModule = true;
-        exports.storeShape = exports.subscriptionShape = void 0;
+        exports.createSelectorHook = createSelectorHook;
+        exports.useSelector = void 0;
 
-        var _propTypes = _interopRequireDefault(require('prop-types'));
+        var _react = require('react');
 
-        var subscriptionShape = _propTypes.default.shape({
-          trySubscribe: _propTypes.default.func.isRequired,
-          tryUnsubscribe: _propTypes.default.func.isRequired,
-          notifyNestedSubs: _propTypes.default.func.isRequired,
-          isSubscribed: _propTypes.default.func.isRequired,
-        });
+        var _invariant = _interopRequireDefault(require('invariant'));
 
-        exports.subscriptionShape = subscriptionShape;
+        var _useReduxContext2 = require('./useReduxContext');
 
-        var storeShape = _propTypes.default.shape({
-          subscribe: _propTypes.default.func.isRequired,
-          dispatch: _propTypes.default.func.isRequired,
-          getState: _propTypes.default.func.isRequired,
-        });
+        var _Subscription = _interopRequireDefault(require('../utils/Subscription'));
 
-        exports.storeShape = storeShape;
+        var _Context = require('../components/Context');
+
+        // React currently throws a warning when using useLayoutEffect on the server.
+        // To get around it, we can conditionally useEffect on the server (no-op) and
+        // useLayoutEffect in the browser. We need useLayoutEffect to ensure the store
+        // subscription callback always has the selector from the latest render commit
+        // available, otherwise a store update may happen between render and the effect,
+        // which may cause missed updates; we also must ensure the store subscription
+        // is created synchronously, otherwise a store update may occur before the
+        // subscription is created and an inconsistent state may be observed
+        var useIsomorphicLayoutEffect =
+          typeof window !== 'undefined' ? _react.useLayoutEffect : _react.useEffect;
+
+        var refEquality = function refEquality(a, b) {
+          return a === b;
+        };
+
+        function useSelectorWithStoreAndSubscription(selector, equalityFn, store, contextSub) {
+          var _useReducer = (0, _react.useReducer)(function(s) {
+              return s + 1;
+            }, 0),
+            forceRender = _useReducer[1];
+
+          var subscription = (0, _react.useMemo)(
+            function() {
+              return new _Subscription['default'](store, contextSub);
+            },
+            [store, contextSub]
+          );
+          var latestSubscriptionCallbackError = (0, _react.useRef)();
+          var latestSelector = (0, _react.useRef)();
+          var latestSelectedState = (0, _react.useRef)();
+          var selectedState;
+
+          try {
+            if (selector !== latestSelector.current || latestSubscriptionCallbackError.current) {
+              selectedState = selector(store.getState());
+            } else {
+              selectedState = latestSelectedState.current;
+            }
+          } catch (err) {
+            var errorMessage =
+              'An error occured while selecting the store state: ' + err.message + '.';
+
+            if (latestSubscriptionCallbackError.current) {
+              errorMessage +=
+                '\nThe error may be correlated with this previous error:\n' +
+                latestSubscriptionCallbackError.current.stack +
+                '\n\nOriginal stack trace:';
+            }
+
+            throw new Error(errorMessage);
+          }
+
+          useIsomorphicLayoutEffect(function() {
+            latestSelector.current = selector;
+            latestSelectedState.current = selectedState;
+            latestSubscriptionCallbackError.current = undefined;
+          });
+          useIsomorphicLayoutEffect(
+            function() {
+              function checkForUpdates() {
+                try {
+                  var newSelectedState = latestSelector.current(store.getState());
+
+                  if (equalityFn(newSelectedState, latestSelectedState.current)) {
+                    return;
+                  }
+
+                  latestSelectedState.current = newSelectedState;
+                } catch (err) {
+                  // we ignore all errors here, since when the component
+                  // is re-rendered, the selectors are called again, and
+                  // will throw again, if neither props nor store state
+                  // changed
+                  latestSubscriptionCallbackError.current = err;
+                }
+
+                forceRender({});
+              }
+
+              subscription.onStateChange = checkForUpdates;
+              subscription.trySubscribe();
+              checkForUpdates();
+              return function() {
+                return subscription.tryUnsubscribe();
+              };
+            },
+            [store, subscription]
+          );
+          return selectedState;
+        }
+        /**
+         * Hook factory, which creates a `useSelector` hook bound to a given context.
+         *
+         * @param {Function} [context=ReactReduxContext] Context passed to your `<Provider>`.
+         * @returns {Function} A `useSelector` hook bound to the specified context.
+         */
+
+        function createSelectorHook(context) {
+          if (context === void 0) {
+            context = _Context.ReactReduxContext;
+          }
+
+          var useReduxContext =
+            context === _Context.ReactReduxContext
+              ? _useReduxContext2.useReduxContext
+              : function() {
+                  return (0, _react.useContext)(context);
+                };
+          return function useSelector(selector, equalityFn) {
+            if (equalityFn === void 0) {
+              equalityFn = refEquality;
+            }
+
+            (0, _invariant['default'])(selector, 'You must pass a selector to useSelectors');
+
+            var _useReduxContext = useReduxContext(),
+              store = _useReduxContext.store,
+              contextSub = _useReduxContext.subscription;
+
+            return useSelectorWithStoreAndSubscription(selector, equalityFn, store, contextSub);
+          };
+        }
+        /**
+         * A hook to access the redux store's state. This hook takes a selector function
+         * as an argument. The selector is called with the store state.
+         *
+         * This hook takes an optional equality comparison function as the second parameter
+         * that allows you to customize the way the selected state is compared to determine
+         * whether the component needs to be re-rendered.
+         *
+         * @param {Function} selector the selector function
+         * @param {Function=} equalityFn the function that will be used to determine equality
+         *
+         * @returns {any} the selected state
+         *
+         * @example
+         *
+         * import React from 'react'
+         * import { useSelector } from 'react-redux'
+         *
+         * export const CounterComponent = () => {
+         *   const counter = useSelector(state => state.counter)
+         *   return <div>{counter}</div>
+         * }
+         */
+
+        var useSelector = createSelectorHook();
+        exports.useSelector = useSelector;
       },
-      { '@babel/runtime/helpers/interopRequireDefault': 4, 'prop-types': 22 },
+      {
+        '../components/Context': 31,
+        '../utils/Subscription': 46,
+        './useReduxContext': 42,
+        '@babel/runtime/helpers/interopRequireDefault': 2,
+        invariant: 12,
+        react: 55,
+      },
     ],
     44: [
       function(require, module, exports) {
         'use strict';
 
         exports.__esModule = true;
-        exports.default = void 0;
+        exports.createStoreHook = createStoreHook;
+        exports.useStore = void 0;
+
+        var _react = require('react');
+
+        var _Context = require('../components/Context');
+
+        var _useReduxContext2 = require('./useReduxContext');
+
+        /**
+         * Hook factory, which creates a `useStore` hook bound to a given context.
+         *
+         * @param {Function} [context=ReactReduxContext] Context passed to your `<Provider>`.
+         * @returns {Function} A `useStore` hook bound to the specified context.
+         */
+        function createStoreHook(context) {
+          if (context === void 0) {
+            context = _Context.ReactReduxContext;
+          }
+
+          var useReduxContext =
+            context === _Context.ReactReduxContext
+              ? _useReduxContext2.useReduxContext
+              : function() {
+                  return (0, _react.useContext)(context);
+                };
+          return function useStore() {
+            var _useReduxContext = useReduxContext(),
+              store = _useReduxContext.store;
+
+            return store;
+          };
+        }
+        /**
+         * A hook to access the redux store.
+         *
+         * @returns {any} the redux store
+         *
+         * @example
+         *
+         * import React from 'react'
+         * import { useStore } from 'react-redux'
+         *
+         * export const ExampleComponent = () => {
+         *   const store = useStore()
+         *   return <div>{store.getState()}</div>
+         * }
+         */
+
+        var useStore = createStoreHook();
+        exports.useStore = useStore;
+      },
+      { '../components/Context': 31, './useReduxContext': 42, react: 55 },
+    ],
+    45: [
+      function(require, module, exports) {
+        'use strict';
+
+        var _interopRequireDefault = require('@babel/runtime/helpers/interopRequireDefault');
+
+        exports.__esModule = true;
+
+        var _Provider = _interopRequireDefault(require('./components/Provider'));
+
+        exports.Provider = _Provider['default'];
+
+        var _connectAdvanced = _interopRequireDefault(require('./components/connectAdvanced'));
+
+        exports.connectAdvanced = _connectAdvanced['default'];
+
+        var _Context = require('./components/Context');
+
+        exports.ReactReduxContext = _Context.ReactReduxContext;
+
+        var _connect = _interopRequireDefault(require('./connect/connect'));
+
+        exports.connect = _connect['default'];
+
+        var _useDispatch = require('./hooks/useDispatch');
+
+        exports.useDispatch = _useDispatch.useDispatch;
+        exports.createDispatchHook = _useDispatch.createDispatchHook;
+
+        var _useSelector = require('./hooks/useSelector');
+
+        exports.useSelector = _useSelector.useSelector;
+        exports.createSelectorHook = _useSelector.createSelectorHook;
+
+        var _useStore = require('./hooks/useStore');
+
+        exports.useStore = _useStore.useStore;
+        exports.createStoreHook = _useStore.createStoreHook;
+
+        var _batch = require('./utils/batch');
+
+        var _reactBatchedUpdates = require('./utils/reactBatchedUpdates');
+
+        exports.batch = _reactBatchedUpdates.unstable_batchedUpdates;
+
+        var _shallowEqual = _interopRequireDefault(require('./utils/shallowEqual'));
+
+        exports.shallowEqual = _shallowEqual['default'];
+        (0, _batch.setBatch)(_reactBatchedUpdates.unstable_batchedUpdates);
+      },
+      {
+        './components/Context': 31,
+        './components/Provider': 32,
+        './components/connectAdvanced': 33,
+        './connect/connect': 34,
+        './hooks/useDispatch': 41,
+        './hooks/useSelector': 43,
+        './hooks/useStore': 44,
+        './utils/batch': 47,
+        './utils/reactBatchedUpdates': 49,
+        './utils/shallowEqual': 50,
+        '@babel/runtime/helpers/interopRequireDefault': 2,
+      },
+    ],
+    46: [
+      function(require, module, exports) {
+        'use strict';
+
+        exports.__esModule = true;
+        exports['default'] = void 0;
+
+        var _batch = require('./batch');
+
         // encapsulates the subscription logic for connecting a component to the redux store, as
         // well as nesting subscriptions of descendant components, so that we can ensure the
         // ancestor components re-render before descendants
@@ -62460,8 +62541,9 @@ object-assign
         };
 
         function createListenerCollection() {
-          // the current/next pattern is copied from redux's createStore code.
+          var batch = (0, _batch.getBatch)(); // the current/next pattern is copied from redux's createStore code.
           // TODO: refactor+expose that code to be reusable here?
+
           var current = [];
           var next = [];
           return {
@@ -62471,10 +62553,11 @@ object-assign
             },
             notify: function notify() {
               var listeners = (current = next);
-
-              for (var i = 0; i < listeners.length; i++) {
-                listeners[i]();
-              }
+              batch(function() {
+                for (var i = 0; i < listeners.length; i++) {
+                  listeners[i]();
+                }
+              });
             },
             get: function get() {
               return next;
@@ -62496,12 +62579,12 @@ object-assign
         var Subscription =
           /*#__PURE__*/
           (function() {
-            function Subscription(store, parentSub, onStateChange) {
+            function Subscription(store, parentSub) {
               this.store = store;
               this.parentSub = parentSub;
-              this.onStateChange = onStateChange;
               this.unsubscribe = null;
               this.listeners = nullListeners;
+              this.handleChangeWrapper = this.handleChangeWrapper.bind(this);
             }
 
             var _proto = Subscription.prototype;
@@ -62515,6 +62598,12 @@ object-assign
               this.listeners.notify();
             };
 
+            _proto.handleChangeWrapper = function handleChangeWrapper() {
+              if (this.onStateChange) {
+                this.onStateChange();
+              }
+            };
+
             _proto.isSubscribed = function isSubscribed() {
               return Boolean(this.unsubscribe);
             };
@@ -62522,8 +62611,8 @@ object-assign
             _proto.trySubscribe = function trySubscribe() {
               if (!this.unsubscribe) {
                 this.unsubscribe = this.parentSub
-                  ? this.parentSub.addNestedSub(this.onStateChange)
-                  : this.store.subscribe(this.onStateChange);
+                  ? this.parentSub.addNestedSub(this.handleChangeWrapper)
+                  : this.store.subscribe(this.handleChangeWrapper);
                 this.listeners = createListenerCollection();
               }
             };
@@ -62540,16 +62629,44 @@ object-assign
             return Subscription;
           })();
 
-        exports.default = Subscription;
+        exports['default'] = Subscription;
       },
-      {},
+      { './batch': 47 },
     ],
-    45: [
+    47: [
       function(require, module, exports) {
         'use strict';
 
         exports.__esModule = true;
-        exports.default = isPlainObject;
+        exports.getBatch = exports.setBatch = void 0;
+
+        // Default to a dummy "batch" implementation that just runs the callback
+        function defaultNoopBatch(callback) {
+          callback();
+        }
+
+        var batch = defaultNoopBatch; // Allow injecting another batching function later
+
+        var setBatch = function setBatch(newBatch) {
+          return (batch = newBatch);
+        }; // Supply a getter just to skip dealing with ESM bindings
+
+        exports.setBatch = setBatch;
+
+        var getBatch = function getBatch() {
+          return batch;
+        };
+
+        exports.getBatch = getBatch;
+      },
+      {},
+    ],
+    48: [
+      function(require, module, exports) {
+        'use strict';
+
+        exports.__esModule = true;
+        exports['default'] = isPlainObject;
 
         /**
          * @param {any} obj The object to inspect.
@@ -62570,12 +62687,25 @@ object-assign
       },
       {},
     ],
-    46: [
+    49: [
       function(require, module, exports) {
         'use strict';
 
         exports.__esModule = true;
-        exports.default = shallowEqual;
+        exports.unstable_batchedUpdates = void 0;
+
+        var _reactDom = require('react-dom');
+
+        exports.unstable_batchedUpdates = _reactDom.unstable_batchedUpdates;
+      },
+      { 'react-dom': 27 },
+    ],
+    50: [
+      function(require, module, exports) {
+        'use strict';
+
+        exports.__esModule = true;
+        exports['default'] = shallowEqual;
         var hasOwn = Object.prototype.hasOwnProperty;
 
         function is(x, y) {
@@ -62613,22 +62743,22 @@ object-assign
       },
       {},
     ],
-    47: [
+    51: [
       function(require, module, exports) {
         'use strict';
 
         var _interopRequireDefault = require('@babel/runtime/helpers/interopRequireDefault');
 
         exports.__esModule = true;
-        exports.default = verifyPlainObject;
+        exports['default'] = verifyPlainObject;
 
         var _isPlainObject = _interopRequireDefault(require('./isPlainObject'));
 
         var _warning = _interopRequireDefault(require('./warning'));
 
         function verifyPlainObject(value, displayName, methodName) {
-          if (!(0, _isPlainObject.default)(value)) {
-            (0, _warning.default)(
+          if (!(0, _isPlainObject['default'])(value)) {
+            (0, _warning['default'])(
               methodName +
                 '() in ' +
                 displayName +
@@ -62639,14 +62769,14 @@ object-assign
           }
         }
       },
-      { './isPlainObject': 45, './warning': 48, '@babel/runtime/helpers/interopRequireDefault': 4 },
+      { './isPlainObject': 48, './warning': 52, '@babel/runtime/helpers/interopRequireDefault': 2 },
     ],
-    48: [
+    52: [
       function(require, module, exports) {
         'use strict';
 
         exports.__esModule = true;
-        exports.default = warning;
+        exports['default'] = warning;
 
         /**
          * Prints a warning in the console if it exists.
@@ -62673,7 +62803,7 @@ object-assign
       },
       {},
     ],
-    49: [
+    53: [
       function(require, module, exports) {
         (function(process) {
           /** @license React v16.10.1
@@ -65318,9 +65448,9 @@ object-assign
           }
         }.call(this, require('_process')));
       },
-      { _process: 18, 'object-assign': 17, 'prop-types/checkPropTypes': 19 },
+      { _process: 16, 'object-assign': 15, 'prop-types/checkPropTypes': 17 },
     ],
-    50: [
+    54: [
       function(require, module, exports) {
         /** @license React v16.10.1
          * react.production.min.js
@@ -65703,9 +65833,9 @@ object-assign
           Z = (Y && X) || Y;
         module.exports = Z.default || Z;
       },
-      { 'object-assign': 17 },
+      { 'object-assign': 15 },
     ],
-    51: [
+    55: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -65717,9 +65847,9 @@ object-assign
           }
         }.call(this, require('_process')));
       },
-      { './cjs/react.development.js': 49, './cjs/react.production.min.js': 50, _process: 18 },
+      { './cjs/react.development.js': 53, './cjs/react.production.min.js': 54, _process: 16 },
     ],
-    52: [
+    56: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -66511,9 +66641,9 @@ object-assign
           exports.createStore = createStore;
         }.call(this, require('_process')));
       },
-      { _process: 18, 'symbol-observable': 59 },
+      { _process: 16, 'symbol-observable': 63 },
     ],
-    53: [
+    57: [
       function(require, module, exports) {
         (function(process) {
           /** @license React v0.16.1
@@ -66949,9 +67079,9 @@ object-assign
           }
         }.call(this, require('_process')));
       },
-      { _process: 18 },
+      { _process: 16 },
     ],
-    54: [
+    58: [
       function(require, module, exports) {
         /** @license React v0.16.1
          * scheduler-tracing.production.min.js
@@ -66987,7 +67117,7 @@ object-assign
       },
       {},
     ],
-    55: [
+    59: [
       function(require, module, exports) {
         (function(process) {
           /** @license React v0.16.1
@@ -68044,9 +68174,9 @@ object-assign
           }
         }.call(this, require('_process')));
       },
-      { _process: 18 },
+      { _process: 16 },
     ],
-    56: [
+    60: [
       function(require, module, exports) {
         /** @license React v0.16.1
          * scheduler.production.min.js
@@ -68380,7 +68510,7 @@ object-assign
       },
       {},
     ],
-    57: [
+    61: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -68393,12 +68523,12 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        './cjs/scheduler.development.js': 55,
-        './cjs/scheduler.production.min.js': 56,
-        _process: 18,
+        './cjs/scheduler.development.js': 59,
+        './cjs/scheduler.production.min.js': 60,
+        _process: 16,
       },
     ],
-    58: [
+    62: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -68411,12 +68541,12 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        './cjs/scheduler-tracing.development.js': 53,
-        './cjs/scheduler-tracing.production.min.js': 54,
-        _process: 18,
+        './cjs/scheduler-tracing.development.js': 57,
+        './cjs/scheduler-tracing.production.min.js': 58,
+        _process: 16,
       },
     ],
-    59: [
+    63: [
       function(require, module, exports) {
         (function(global) {
           'use strict';
@@ -68460,9 +68590,9 @@ object-assign
             : {}
         ));
       },
-      { './ponyfill.js': 60 },
+      { './ponyfill.js': 64 },
     ],
-    60: [
+    64: [
       function(require, module, exports) {
         'use strict';
 
@@ -68490,7 +68620,7 @@ object-assign
       },
       {},
     ],
-    61: [
+    65: [
       function(require, module, exports) {
         function typeCheck(val) {
           let returnValue = val;
@@ -68539,7 +68669,7 @@ object-assign
       },
       {},
     ],
-    62: [
+    66: [
       function(require, module, exports) {
         'use strict';
 
@@ -68752,9 +68882,9 @@ object-assign
 
         module.exports = FullScreen;
       },
-      { fscreen: 11, react: 51 },
+      { fscreen: 9, react: 55 },
     ],
-    63: [
+    67: [
       function(require, module, exports) {
         'use strict';
 
@@ -68784,7 +68914,7 @@ object-assign
       },
       {},
     ],
-    64: [
+    68: [
       function(require, module, exports) {
         'use strict';
 
@@ -68935,9 +69065,9 @@ object-assign
 
         module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Manifest);
       },
-      { './manifest-reducer': 63, react: 51, 'react-redux': 42, redux: 52 },
+      { './manifest-reducer': 67, react: 55, 'react-redux': 45, redux: 56 },
     ],
-    65: [
+    69: [
       function(require, module, exports) {
         'use strict';
 
@@ -69108,7 +69238,7 @@ object-assign
       },
       {},
     ],
-    66: [
+    70: [
       function(require, module, exports) {
         'use strict';
 
@@ -69721,17 +69851,17 @@ object-assign
         module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Navigation);
       },
       {
-        './full-screen': 62,
-        './navigation-reducer': 65,
-        keycode: 15,
-        lodash: 16,
-        'prop-types': 22,
-        react: 51,
-        'react-redux': 42,
-        redux: 52,
+        './full-screen': 66,
+        './navigation-reducer': 69,
+        keycode: 13,
+        lodash: 14,
+        'prop-types': 20,
+        react: 55,
+        'react-redux': 45,
+        redux: 56,
       },
     ],
-    67: [
+    71: [
       function(require, module, exports) {
         'use strict';
 
@@ -69836,7 +69966,7 @@ object-assign
       },
       {},
     ],
-    68: [
+    72: [
       function(require, module, exports) {
         'use strict';
 
@@ -70007,9 +70137,9 @@ object-assign
 
         module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Offline);
       },
-      { './offline-reducer': 67, 'prop-types': 22, react: 51, 'react-redux': 42, redux: 52 },
+      { './offline-reducer': 71, 'prop-types': 20, react: 55, 'react-redux': 45, redux: 56 },
     ],
-    69: [
+    73: [
       function(require, module, exports) {
         'use strict';
 
@@ -70206,9 +70336,9 @@ object-assign
 
         module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Toc);
       },
-      { 'prop-types': 22, react: 51, 'react-redux': 42, redux: 52 },
+      { 'prop-types': 20, react: 55, 'react-redux': 45, redux: 56 },
     ],
-    70: [
+    74: [
       function(require, module, exports) {
         'use strict';
 
@@ -70379,9 +70509,9 @@ object-assign
 
         module.exports = reducer;
       },
-      { 'to-milliseconds': 61 },
+      { 'to-milliseconds': 65 },
     ],
-    71: [
+    75: [
       function(require, module, exports) {
         'use strict';
 
@@ -70559,15 +70689,15 @@ object-assign
         module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Trace);
       },
       {
-        './trace-reducer': 70,
-        lodash: 16,
-        'prop-types': 22,
-        react: 51,
-        'react-redux': 42,
-        redux: 52,
+        './trace-reducer': 74,
+        lodash: 14,
+        'prop-types': 20,
+        react: 55,
+        'react-redux': 45,
+        redux: 56,
       },
     ],
-    72: [
+    76: [
       function(require, module, exports) {
         'use strict';
 
@@ -70649,18 +70779,18 @@ object-assign
         }
       },
       {
-        './reducer': 73,
-        './shared': 74,
-        './views': 75,
-        'headroom.js': 12,
-        lodash: 16,
-        react: 51,
-        'react-dom': 29,
-        'react-redux': 42,
-        redux: 52,
+        './reducer': 77,
+        './shared': 78,
+        './views': 79,
+        'headroom.js': 10,
+        lodash: 14,
+        react: 55,
+        'react-dom': 27,
+        'react-redux': 45,
+        redux: 56,
       },
     ],
-    73: [
+    77: [
       function(require, module, exports) {
         'use strict';
 
@@ -70686,14 +70816,14 @@ object-assign
         });
       },
       {
-        './components/manifest-reducer': 63,
-        './components/navigation-reducer': 65,
-        './components/offline-reducer': 67,
-        './components/trace-reducer': 70,
-        redux: 52,
+        './components/manifest-reducer': 67,
+        './components/navigation-reducer': 69,
+        './components/offline-reducer': 71,
+        './components/trace-reducer': 74,
+        redux: 56,
       },
     ],
-    74: [
+    78: [
       function(require, module, exports) {
         'use strict';
 
@@ -70740,9 +70870,9 @@ object-assign
           loadManifest: loadManifest,
         };
       },
-      { cuid: 7 },
+      { cuid: 5 },
     ],
-    75: [
+    79: [
       function(require, module, exports) {
         'use strict';
 
@@ -70769,14 +70899,14 @@ object-assign
         };
       },
       {
-        './components/manifest': 64,
-        './components/navigation': 66,
-        './components/offline': 68,
-        './components/toc': 69,
-        './components/trace': 71,
+        './components/manifest': 68,
+        './components/navigation': 70,
+        './components/offline': 72,
+        './components/toc': 73,
+        './components/trace': 75,
       },
     ],
   },
   {},
-  [72]
+  [76]
 );

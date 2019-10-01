@@ -19,8 +19,12 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.6.2",
+    "@babel/core": "^7.6.2",
     "@babel/preset-env": "^7.6.2",
     "@babel/preset-react": "^7.0.0",
+    "babelify": "^10.0.0",
+    "browserslist": "^4.7.0",
+    "caniuse-lite": "^1.0.30000997",
     "browserify": "^16.5.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^3.6.0",
@@ -35,10 +39,6 @@
     "pretty-quick": "^1.11.1"
   },
   "dependencies": {
-    "@babel/core": "^7.6.2",
-    "babelify": "^10.0.0",
-    "browserslist": "^4.7.0",
-    "caniuse-lite": "^1.0.30000997",
     "cuid": "^2.1.6",
     "fscreen": "^1.0.2",
     "headroom.js": "^0.9.4",
@@ -48,7 +48,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.10.1",
     "react-dom": "^16.10.1",
-    "react-redux": "^5.1.1",
+    "react-redux": "^7.1.1",
     "redux": "^4.0.4",
     "to-milliseconds": "^1.1.0"
   },
