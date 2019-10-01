@@ -70534,7 +70534,7 @@ object-assign
 
         Trace.propTypes = {
           navigation: _propTypes['default'].shape({
-            chapter: _propTypes['default'].number.isRequired,
+            chapterNum: _propTypes['default'].number.isRequired,
             firstIdeaInView: _propTypes['default'].number.isRequired,
           }),
           addMoment: _propTypes['default'].func.isRequired,

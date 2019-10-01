@@ -35,7 +35,7 @@ class Trace extends React.Component {
 
 Trace.propTypes = {
   navigation: PropTypes.shape({
-    chapter: PropTypes.number.isRequired,
+    chapterNum: PropTypes.number.isRequired,
     firstIdeaInView: PropTypes.number.isRequired,
   }),
   addMoment: PropTypes.func.isRequired,
