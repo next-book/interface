@@ -70724,11 +70724,6 @@ object-assign
         }
 
         /* global window */
-        document.addEventListener('DOMContentLoaded', function() {
-          initBook();
-          initHeadroom();
-        });
-
         function initBook() {
           (0, _shared.loadManifest)().then(function(manifest) {
             var persistedState = localStorage.getItem(manifest.slug);
@@ -70777,11 +70772,16 @@ object-assign
           var headroom = new _headroom['default'](window.document.body);
           headroom.init();
         }
+
+        module.exports = {
+          initBook: initBook,
+          initHeadroom: initHeadroom,
+        };
       },
       {
         './reducer': 77,
         './shared': 78,
-        './views': 79,
+        './views': 80,
         'headroom.js': 10,
         lodash: 14,
         react: 55,
@@ -70876,6 +70876,19 @@ object-assign
       function(require, module, exports) {
         'use strict';
 
+        var _index = require('./index.js');
+
+        document.addEventListener('DOMContentLoaded', function() {
+          (0, _index.initBook)();
+          (0, _index.initHeadroom)();
+        });
+      },
+      { './index.js': 76 },
+    ],
+    80: [
+      function(require, module, exports) {
+        'use strict';
+
         var _navigation = _interopRequireDefault(require('./components/navigation'));
 
         var _manifest = _interopRequireDefault(require('./components/manifest'));
@@ -70908,5 +70921,5 @@ object-assign
     ],
   },
   {},
-  [76]
+  [79]
 );

@@ -6,9 +6,44 @@ See an [example of an e-book][fc] created with the next-book tools.
 
 ## Use
 
-Include `dist/nb-base.js` and `dist/nb-base.css` in your next-book for basic functionality.
+Some web tech knowledge and command line use is needed to produce a next-book at the time. But we‘re preparing an easier way right now! (If you want to know when it’s out, please subscribe to our newsletter 💌).
 
-Use `book.getState()` to get current e-book state (returns a redux state).
+### 1. Add `nb-mapper` dependency
+
+(`nb-base` is installed as its dependency.)
+
+You can install nb-mapper
+
+- via Yarn `yarn add nb-mapper`
+- via NPM `npm install nb-mapper`
+
+### 2\. Import `nb-base` styles in your SCSS
+
+```scss
+@import './../../node_modules/nb-mapper/node_modules/nb-base/src/scss/style.scss';
+```
+
+### 3\. Import `nb-base` module in your scripts
+
+```javascript
+import {
+  initBook,
+  initHeadroom,
+} from './../../node_modules/nb-mapper/node_modules/nb-base/src/js/index.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+  initBook();
+  initHeadroom();
+});
+```
+
+### Stand-alone use (without SCSS/JS imports)
+
+You may include `dist/nb-base.js` and `dist/nb-base.css` in your next-book (before any other scripts.
+
+## Getting current book state
+
+You may use `book.getState()` to get current e-book state — it returns a serialized redux state with user data.
 
 ## Contributing
 

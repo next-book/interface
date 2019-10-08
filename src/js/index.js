@@ -12,11 +12,6 @@ import { loadManifest, plantRoot } from './shared';
 import reducer from './reducer';
 import views from './views';
 
-document.addEventListener('DOMContentLoaded', () => {
-  initBook();
-  initHeadroom();
-});
-
 function initBook() {
   loadManifest().then(manifest => {
     const persistedState = localStorage.getItem(manifest.slug);
@@ -54,3 +49,8 @@ function initHeadroom() {
   const headroom = new Headroom(window.document.body);
   headroom.init();
 }
+
+module.exports = {
+  initBook,
+  initHeadroom,
+};

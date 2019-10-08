@@ -1,19 +1,16 @@
 {
   "name": "nb-base",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "description": "Next-book’s base browser library",
   "repository": "https://github.com/next-book/nb-base",
   "main": "src/js/index.js",
   "scripts": {
     "build:css": "node-sass src/scss/style.scss dist/nb-base.css",
-    "build:js": "browserify src/js/index.js -o dist/nb-base.js",
+    "build:js": "browserify src/js/standalone.js -o dist/nb-base.js",
     "build": "rm -r dist && mkdir dist && npm run build:js && npm run build:css",
     "build:watch-css": "npm run build:css && onchange 'src/scss/**.scss' -v -- npm run build:css",
     "build:watch-js": "npm run build:js && onchange 'src/js/**.js' -v -- npm run build:js",
     "test": "jest"
-  },
-  "bin": {
-    "copy-nb-base-assets": "./bin/copy-assets.js"
   },
   "author": "Jan Martinek",
   "license": "MIT",
