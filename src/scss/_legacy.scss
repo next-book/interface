@@ -1,0 +1,79 @@
+.noteBox {
+  z-index: 1;
+
+  display: block;
+  box-sizing: border-box;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-height: 30%;
+
+  padding: 0px 30px 30px;
+  overflow: scroll;
+  background: white;
+
+  border-top: 1px solid;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  border-radius: 0;
+
+  .closeBox {
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+
+    font-size: 40px;
+    line-height: 40px;
+    text-decoration: none;
+  }
+}
+
+.chunk:hover .dictionary-term {
+  background: #eef;
+  border-bottom: 2px solid #ccf;
+}
+
+.bibliography {
+  color: inherit;
+  text-decoration: inherit;
+
+  &:after {
+    // vertical-align: baseline;
+    // display: inline-block;
+    // padding: 0px 10px;
+    // border-radius: 10px;
+    // background: #ddd;
+    // margin-left: 5px;
+    // font-size: 80%;
+
+    content: '📚';
+    -webkit-filter: grayscale(1);
+    filter: grayscale(1);
+    margin-left: 0.2em;
+  }
+
+  &:hover {
+    padding: 2px 0;
+    color: blue;
+    text-decoration: underline;
+    //border-bottom: 3px solid #fcc;
+
+    &:visited {
+      background: purple;
+    }
+
+    &:after {
+      -webkit-filter: grayscale(0);
+      filter: grayscale(0);
+    }
+  }
+}
+
+.csl-bib-body {
+  margin: 1rem 0;
+}
+
+.csl-left-margin {
+  display: none;
+}

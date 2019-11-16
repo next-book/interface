@@ -1,93 +1,93 @@
 #peeks {
-	max-height: 60vh;
-	position: fixed;
-	z-index: 2;
-	left: 0;
-	right: 0;
-	bottom: 0;
+  max-height: 60vh;
+  position: fixed;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
 
-	.peek {
-		position: relative;
-		box-sizing: border-box;
-		background: #ddd;
-		border: 1px solid #aaa;
-		border-radius: 8px 8px 0 0;
-		box-shadow: 0 0 3px #777;
-		overflow: hidden;
+  .peek {
+    position: relative;
+    box-sizing: border-box;
+    background: #ddd;
+    border: 1px solid #aaa;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 0 3px #777;
+    overflow: hidden;
 
-		transition: bottom 0.2s ease-out;
-		animation: slide-up 0.2s ease-out;
+    transition: bottom 0.2s ease-out;
+    animation: slide-up 0.2s ease-out;
 
-		display: none;
+    display: none;
 
-		.peek-content {
-			padding: 3rem 1rem 2rem;
-			overflow: auto;
-			background: white;
-		}
+    .peek-content {
+      padding: 3rem 1rem 2rem;
+      overflow: auto;
+      background: white;
+    }
 
-		.peek-head {
-			position: absolute;
-			display: flex;
-			top: 0;
-			left: 0;
-			right: 0;
-			height: 2rem;
-			line-height: 2rem;
-			text-align: left;
-			background: #ddd;
+    .peek-head {
+      position: absolute;
+      display: flex;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2rem;
+      line-height: 2rem;
+      text-align: left;
+      background: #ddd;
 
-			.peek-info {
-				flex-grow: 1;
-				padding: 0 1rem;
+      .peek-info {
+        flex-grow: 1;
+        padding: 0 1rem;
 
-				p {
-					margin: 0;
-				}
-			}
+        p {
+          margin: 0;
+        }
+      }
 
-			.peek-close {
-				display: block;
-				width: 2rem;
-				height: 2rem;
-				font-size: 1rem;
+      .peek-close {
+        display: block;
+        width: 2rem;
+        height: 2rem;
+        font-size: 1rem;
 
-				border: none;
-				color: black;
-				background: none;
-				cursor: pointer;
-				text-align: center;
-			}
-		}
-	}
+        border: none;
+        color: black;
+        background: none;
+        cursor: pointer;
+        text-align: center;
+      }
+    }
+  }
 
-	.peek:nth-last-child(3),
-	.peek:nth-last-child(2) {
-		display: block;
-		height: 2vh;
-		margin-bottom: -1vh;
+  .peek:nth-last-child(3),
+  .peek:nth-last-child(2) {
+    display: block;
+    height: 2vh;
+    margin-bottom: -1vh;
 
-		.peek-head,
-		.peek-content {
-			display: none;
-		}
-	}
+    .peek-head,
+    .peek-content {
+      display: none;
+    }
+  }
 
-	.peek:last-child {
-		display: block;
-		height: auto;
-		margin-bottom: 0;
-	}
+  .peek:last-child {
+    display: block;
+    height: auto;
+    margin-bottom: 0;
+  }
 }
 
 @keyframes slide-up {
-	0% {
-		transform: translateY(30vh);
-		opacity: 0;
-	}
+  0% {
+    transform: translateY(30vh);
+    opacity: 0;
+  }
 
-	100% {
-		transform: translateY(0);
-		opacity: 1;
-	}
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
