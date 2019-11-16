@@ -375,483 +375,6 @@
     ],
     10: [
       function(require, module, exports) {
-        /*!
-         * headroom.js v0.9.4 - Give your page some headroom. Hide your header until you need it
-         * Copyright (c) 2017 Nick Williams - http://wicky.nillia.ms/headroom.js
-         * License: MIT
-         */
-
-        (function(root, factory) {
-          'use strict';
-
-          if (typeof define === 'function' && define.amd) {
-            // AMD. Register as an anonymous module.
-            define([], factory);
-          } else if (typeof exports === 'object') {
-            // COMMONJS
-            module.exports = factory();
-          } else {
-            // BROWSER
-            root.Headroom = factory();
-          }
-        })(this, function() {
-          'use strict';
-
-          /* exported features */
-
-          var features = {
-            bind: !!function() {}.bind,
-            classList: 'classList' in document.documentElement,
-            rAF: !!(
-              window.requestAnimationFrame ||
-              window.webkitRequestAnimationFrame ||
-              window.mozRequestAnimationFrame
-            ),
-          };
-          window.requestAnimationFrame =
-            window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame;
-
-          /**
-           * Handles debouncing of events via requestAnimationFrame
-           * @see http://www.html5rocks.com/en/tutorials/speed/animations/
-           * @param {Function} callback The callback to handle whichever event
-           */
-          function Debouncer(callback) {
-            this.callback = callback;
-            this.ticking = false;
-          }
-          Debouncer.prototype = {
-            constructor: Debouncer,
-
-            /**
-             * dispatches the event to the supplied callback
-             * @private
-             */
-            update: function() {
-              this.callback && this.callback();
-              this.ticking = false;
-            },
-
-            /**
-             * ensures events don't get stacked
-             * @private
-             */
-            requestTick: function() {
-              if (!this.ticking) {
-                requestAnimationFrame(
-                  this.rafCallback || (this.rafCallback = this.update.bind(this))
-                );
-                this.ticking = true;
-              }
-            },
-
-            /**
-             * Attach this as the event listeners
-             */
-            handleEvent: function() {
-              this.requestTick();
-            },
-          };
-          /**
-           * Check if object is part of the DOM
-           * @constructor
-           * @param {Object} obj element to check
-           */
-          function isDOMElement(obj) {
-            return obj && typeof window !== 'undefined' && (obj === window || obj.nodeType);
-          }
-
-          /**
-           * Helper function for extending objects
-           */
-          function extend(object /*, objectN ... */) {
-            if (arguments.length <= 0) {
-              throw new Error('Missing arguments in extend function');
-            }
-
-            var result = object || {},
-              key,
-              i;
-
-            for (i = 1; i < arguments.length; i++) {
-              var replacement = arguments[i] || {};
-
-              for (key in replacement) {
-                // Recurse into object except if the object is a DOM element
-                if (typeof result[key] === 'object' && !isDOMElement(result[key])) {
-                  result[key] = extend(result[key], replacement[key]);
-                } else {
-                  result[key] = result[key] || replacement[key];
-                }
-              }
-            }
-
-            return result;
-          }
-
-          /**
-           * Helper function for normalizing tolerance option to object format
-           */
-          function normalizeTolerance(t) {
-            return t === Object(t) ? t : { down: t, up: t };
-          }
-
-          /**
-           * UI enhancement for fixed headers.
-           * Hides header when scrolling down
-           * Shows header when scrolling up
-           * @constructor
-           * @param {DOMElement} elem the header element
-           * @param {Object} options options for the widget
-           */
-          function Headroom(elem, options) {
-            options = extend(options, Headroom.options);
-
-            this.lastKnownScrollY = 0;
-            this.elem = elem;
-            this.tolerance = normalizeTolerance(options.tolerance);
-            this.classes = options.classes;
-            this.offset = options.offset;
-            this.scroller = options.scroller;
-            this.initialised = false;
-            this.onPin = options.onPin;
-            this.onUnpin = options.onUnpin;
-            this.onTop = options.onTop;
-            this.onNotTop = options.onNotTop;
-            this.onBottom = options.onBottom;
-            this.onNotBottom = options.onNotBottom;
-          }
-          Headroom.prototype = {
-            constructor: Headroom,
-
-            /**
-             * Initialises the widget
-             */
-            init: function() {
-              if (!Headroom.cutsTheMustard) {
-                return;
-              }
-
-              this.debouncer = new Debouncer(this.update.bind(this));
-              this.elem.classList.add(this.classes.initial);
-
-              // defer event registration to handle browser
-              // potentially restoring previous scroll position
-              setTimeout(this.attachEvent.bind(this), 100);
-
-              return this;
-            },
-
-            /**
-             * Unattaches events and removes any classes that were added
-             */
-            destroy: function() {
-              var classes = this.classes;
-
-              this.initialised = false;
-
-              for (var key in classes) {
-                if (classes.hasOwnProperty(key)) {
-                  this.elem.classList.remove(classes[key]);
-                }
-              }
-
-              this.scroller.removeEventListener('scroll', this.debouncer, false);
-            },
-
-            /**
-             * Attaches the scroll event
-             * @private
-             */
-            attachEvent: function() {
-              if (!this.initialised) {
-                this.lastKnownScrollY = this.getScrollY();
-                this.initialised = true;
-                this.scroller.addEventListener('scroll', this.debouncer, false);
-
-                this.debouncer.handleEvent();
-              }
-            },
-
-            /**
-             * Unpins the header if it's currently pinned
-             */
-            unpin: function() {
-              var classList = this.elem.classList,
-                classes = this.classes;
-
-              if (classList.contains(classes.pinned) || !classList.contains(classes.unpinned)) {
-                classList.add(classes.unpinned);
-                classList.remove(classes.pinned);
-                this.onUnpin && this.onUnpin.call(this);
-              }
-            },
-
-            /**
-             * Pins the header if it's currently unpinned
-             */
-            pin: function() {
-              var classList = this.elem.classList,
-                classes = this.classes;
-
-              if (classList.contains(classes.unpinned)) {
-                classList.remove(classes.unpinned);
-                classList.add(classes.pinned);
-                this.onPin && this.onPin.call(this);
-              }
-            },
-
-            /**
-             * Handles the top states
-             */
-            top: function() {
-              var classList = this.elem.classList,
-                classes = this.classes;
-
-              if (!classList.contains(classes.top)) {
-                classList.add(classes.top);
-                classList.remove(classes.notTop);
-                this.onTop && this.onTop.call(this);
-              }
-            },
-
-            /**
-             * Handles the not top state
-             */
-            notTop: function() {
-              var classList = this.elem.classList,
-                classes = this.classes;
-
-              if (!classList.contains(classes.notTop)) {
-                classList.add(classes.notTop);
-                classList.remove(classes.top);
-                this.onNotTop && this.onNotTop.call(this);
-              }
-            },
-
-            bottom: function() {
-              var classList = this.elem.classList,
-                classes = this.classes;
-
-              if (!classList.contains(classes.bottom)) {
-                classList.add(classes.bottom);
-                classList.remove(classes.notBottom);
-                this.onBottom && this.onBottom.call(this);
-              }
-            },
-
-            /**
-             * Handles the not top state
-             */
-            notBottom: function() {
-              var classList = this.elem.classList,
-                classes = this.classes;
-
-              if (!classList.contains(classes.notBottom)) {
-                classList.add(classes.notBottom);
-                classList.remove(classes.bottom);
-                this.onNotBottom && this.onNotBottom.call(this);
-              }
-            },
-
-            /**
-             * Gets the Y scroll position
-             * @see https://developer.mozilla.org/en-US/docs/Web/API/Window.scrollY
-             * @return {Number} pixels the page has scrolled along the Y-axis
-             */
-            getScrollY: function() {
-              return this.scroller.pageYOffset !== undefined
-                ? this.scroller.pageYOffset
-                : this.scroller.scrollTop !== undefined
-                ? this.scroller.scrollTop
-                : (document.documentElement || document.body.parentNode || document.body).scrollTop;
-            },
-
-            /**
-             * Gets the height of the viewport
-             * @see http://andylangton.co.uk/blog/development/get-viewport-size-width-and-height-javascript
-             * @return {int} the height of the viewport in pixels
-             */
-            getViewportHeight: function() {
-              return (
-                window.innerHeight ||
-                document.documentElement.clientHeight ||
-                document.body.clientHeight
-              );
-            },
-
-            /**
-             * Gets the physical height of the DOM element
-             * @param  {Object}  elm the element to calculate the physical height of which
-             * @return {int}     the physical height of the element in pixels
-             */
-            getElementPhysicalHeight: function(elm) {
-              return Math.max(elm.offsetHeight, elm.clientHeight);
-            },
-
-            /**
-             * Gets the physical height of the scroller element
-             * @return {int} the physical height of the scroller element in pixels
-             */
-            getScrollerPhysicalHeight: function() {
-              return this.scroller === window || this.scroller === document.body
-                ? this.getViewportHeight()
-                : this.getElementPhysicalHeight(this.scroller);
-            },
-
-            /**
-             * Gets the height of the document
-             * @see http://james.padolsey.com/javascript/get-document-height-cross-browser/
-             * @return {int} the height of the document in pixels
-             */
-            getDocumentHeight: function() {
-              var body = document.body,
-                documentElement = document.documentElement;
-
-              return Math.max(
-                body.scrollHeight,
-                documentElement.scrollHeight,
-                body.offsetHeight,
-                documentElement.offsetHeight,
-                body.clientHeight,
-                documentElement.clientHeight
-              );
-            },
-
-            /**
-             * Gets the height of the DOM element
-             * @param  {Object}  elm the element to calculate the height of which
-             * @return {int}     the height of the element in pixels
-             */
-            getElementHeight: function(elm) {
-              return Math.max(elm.scrollHeight, elm.offsetHeight, elm.clientHeight);
-            },
-
-            /**
-             * Gets the height of the scroller element
-             * @return {int} the height of the scroller element in pixels
-             */
-            getScrollerHeight: function() {
-              return this.scroller === window || this.scroller === document.body
-                ? this.getDocumentHeight()
-                : this.getElementHeight(this.scroller);
-            },
-
-            /**
-             * determines if the scroll position is outside of document boundaries
-             * @param  {int}  currentScrollY the current y scroll position
-             * @return {bool} true if out of bounds, false otherwise
-             */
-            isOutOfBounds: function(currentScrollY) {
-              var pastTop = currentScrollY < 0,
-                pastBottom =
-                  currentScrollY + this.getScrollerPhysicalHeight() > this.getScrollerHeight();
-
-              return pastTop || pastBottom;
-            },
-
-            /**
-             * determines if the tolerance has been exceeded
-             * @param  {int} currentScrollY the current scroll y position
-             * @return {bool} true if tolerance exceeded, false otherwise
-             */
-            toleranceExceeded: function(currentScrollY, direction) {
-              return Math.abs(currentScrollY - this.lastKnownScrollY) >= this.tolerance[direction];
-            },
-
-            /**
-             * determine if it is appropriate to unpin
-             * @param  {int} currentScrollY the current y scroll position
-             * @param  {bool} toleranceExceeded has the tolerance been exceeded?
-             * @return {bool} true if should unpin, false otherwise
-             */
-            shouldUnpin: function(currentScrollY, toleranceExceeded) {
-              var scrollingDown = currentScrollY > this.lastKnownScrollY,
-                pastOffset = currentScrollY >= this.offset;
-
-              return scrollingDown && pastOffset && toleranceExceeded;
-            },
-
-            /**
-             * determine if it is appropriate to pin
-             * @param  {int} currentScrollY the current y scroll position
-             * @param  {bool} toleranceExceeded has the tolerance been exceeded?
-             * @return {bool} true if should pin, false otherwise
-             */
-            shouldPin: function(currentScrollY, toleranceExceeded) {
-              var scrollingUp = currentScrollY < this.lastKnownScrollY,
-                pastOffset = currentScrollY <= this.offset;
-
-              return (scrollingUp && toleranceExceeded) || pastOffset;
-            },
-
-            /**
-             * Handles updating the state of the widget
-             */
-            update: function() {
-              var currentScrollY = this.getScrollY(),
-                scrollDirection = currentScrollY > this.lastKnownScrollY ? 'down' : 'up',
-                toleranceExceeded = this.toleranceExceeded(currentScrollY, scrollDirection);
-
-              if (this.isOutOfBounds(currentScrollY)) {
-                // Ignore bouncy scrolling in OSX
-                return;
-              }
-
-              if (currentScrollY <= this.offset) {
-                this.top();
-              } else {
-                this.notTop();
-              }
-
-              if (currentScrollY + this.getViewportHeight() >= this.getScrollerHeight()) {
-                this.bottom();
-              } else {
-                this.notBottom();
-              }
-
-              if (this.shouldUnpin(currentScrollY, toleranceExceeded)) {
-                this.unpin();
-              } else if (this.shouldPin(currentScrollY, toleranceExceeded)) {
-                this.pin();
-              }
-
-              this.lastKnownScrollY = currentScrollY;
-            },
-          };
-          /**
-           * Default options
-           * @type {Object}
-           */
-          Headroom.options = {
-            tolerance: {
-              up: 0,
-              down: 0,
-            },
-            offset: 0,
-            scroller: window,
-            classes: {
-              pinned: 'headroom--pinned',
-              unpinned: 'headroom--unpinned',
-              top: 'headroom--top',
-              notTop: 'headroom--not-top',
-              bottom: 'headroom--bottom',
-              notBottom: 'headroom--not-bottom',
-              initial: 'headroom',
-            },
-          };
-          Headroom.cutsTheMustard =
-            typeof features !== 'undefined' && features.rAF && features.bind && features.classList;
-
-          return Headroom;
-        });
-      },
-      {},
-    ],
-    11: [
-      function(require, module, exports) {
         'use strict';
 
         /**
@@ -961,9 +484,9 @@
 
         module.exports = hoistNonReactStatics;
       },
-      { 'react-is': 30 },
+      { 'react-is': 29 },
     ],
-    12: [
+    11: [
       function(require, module, exports) {
         (function(process) {
           /**
@@ -1019,9 +542,9 @@
           module.exports = invariant;
         }.call(this, require('_process')));
       },
-      { _process: 16 },
+      { _process: 15 },
     ],
-    13: [
+    12: [
       function(require, module, exports) {
         // Source: http://jsfiddle.net/vWx8V/
         // http://stackoverflow.com/questions/5603195/full-list-of-javascript-keycodes
@@ -1207,7 +730,7 @@
       },
       {},
     ],
-    14: [
+    13: [
       function(require, module, exports) {
         (function(global) {
           /**
@@ -18924,7 +18447,7 @@
       },
       {},
     ],
-    15: [
+    14: [
       function(require, module, exports) {
         /*
 object-assign
@@ -19020,7 +18543,7 @@ object-assign
       },
       {},
     ],
-    16: [
+    15: [
       function(require, module, exports) {
         // shim for using process in browser
         var process = (module.exports = {});
@@ -19210,7 +18733,7 @@ object-assign
       },
       {},
     ],
-    17: [
+    16: [
       function(require, module, exports) {
         (function(process) {
           /**
@@ -19341,9 +18864,9 @@ object-assign
           module.exports = checkPropTypes;
         }.call(this, require('_process')));
       },
-      { './lib/ReactPropTypesSecret': 21, _process: 16 },
+      { './lib/ReactPropTypesSecret': 20, _process: 15 },
     ],
-    18: [
+    17: [
       function(require, module, exports) {
         /**
          * Copyright (c) 2013-present, Facebook, Inc.
@@ -19410,9 +18933,9 @@ object-assign
           return ReactPropTypes;
         };
       },
-      { './lib/ReactPropTypesSecret': 21 },
+      { './lib/ReactPropTypesSecret': 20 },
     ],
-    19: [
+    18: [
       function(require, module, exports) {
         (function(process) {
           /**
@@ -20208,14 +19731,14 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        './checkPropTypes': 17,
-        './lib/ReactPropTypesSecret': 21,
-        _process: 16,
-        'object-assign': 15,
-        'react-is': 24,
+        './checkPropTypes': 16,
+        './lib/ReactPropTypesSecret': 20,
+        _process: 15,
+        'object-assign': 14,
+        'react-is': 23,
       },
     ],
-    20: [
+    19: [
       function(require, module, exports) {
         (function(process) {
           /**
@@ -20243,13 +19766,13 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        './factoryWithThrowingShims': 18,
-        './factoryWithTypeCheckers': 19,
-        _process: 16,
-        'react-is': 24,
+        './factoryWithThrowingShims': 17,
+        './factoryWithTypeCheckers': 18,
+        _process: 15,
+        'react-is': 23,
       },
     ],
-    21: [
+    20: [
       function(require, module, exports) {
         /**
          * Copyright (c) 2013-present, Facebook, Inc.
@@ -20266,7 +19789,7 @@ object-assign
       },
       {},
     ],
-    22: [
+    21: [
       function(require, module, exports) {
         (function(process) {
           /** @license React v16.10.1
@@ -20550,9 +20073,9 @@ object-assign
           }
         }.call(this, require('_process')));
       },
-      { _process: 16 },
+      { _process: 15 },
     ],
-    23: [
+    22: [
       function(require, module, exports) {
         /** @license React v16.10.1
          * react-is.production.min.js
@@ -20692,7 +20215,7 @@ object-assign
       },
       {},
     ],
-    24: [
+    23: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -20704,9 +20227,9 @@ object-assign
           }
         }.call(this, require('_process')));
       },
-      { './cjs/react-is.development.js': 22, './cjs/react-is.production.min.js': 23, _process: 16 },
+      { './cjs/react-is.development.js': 21, './cjs/react-is.production.min.js': 22, _process: 15 },
     ],
-    25: [
+    24: [
       function(require, module, exports) {
         (function(process) {
           /** @license React v16.10.1
@@ -53712,15 +53235,15 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        _process: 16,
-        'object-assign': 15,
-        'prop-types/checkPropTypes': 17,
-        react: 55,
-        scheduler: 61,
-        'scheduler/tracing': 62,
+        _process: 15,
+        'object-assign': 14,
+        'prop-types/checkPropTypes': 16,
+        react: 54,
+        scheduler: 60,
+        'scheduler/tracing': 61,
       },
     ],
-    26: [
+    25: [
       function(require, module, exports) {
         /** @license React v16.10.1
          * react-dom.production.min.js
@@ -60866,9 +60389,9 @@ object-assign
           yk = (xk && wk) || xk;
         module.exports = yk.default || yk;
       },
-      { 'object-assign': 15, react: 55, scheduler: 61 },
+      { 'object-assign': 14, react: 54, scheduler: 60 },
     ],
-    27: [
+    26: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -60912,35 +60435,35 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        './cjs/react-dom.development.js': 25,
-        './cjs/react-dom.production.min.js': 26,
-        _process: 16,
+        './cjs/react-dom.development.js': 24,
+        './cjs/react-dom.production.min.js': 25,
+        _process: 15,
       },
+    ],
+    27: [
+      function(require, module, exports) {
+        arguments[4][21][0].apply(exports, arguments);
+      },
+      { _process: 15, dup: 21 },
     ],
     28: [
       function(require, module, exports) {
         arguments[4][22][0].apply(exports, arguments);
       },
-      { _process: 16, dup: 22 },
+      { dup: 22 },
     ],
     29: [
       function(require, module, exports) {
         arguments[4][23][0].apply(exports, arguments);
       },
-      { dup: 23 },
+      {
+        './cjs/react-is.development.js': 27,
+        './cjs/react-is.production.min.js': 28,
+        _process: 15,
+        dup: 23,
+      },
     ],
     30: [
-      function(require, module, exports) {
-        arguments[4][24][0].apply(exports, arguments);
-      },
-      {
-        './cjs/react-is.development.js': 28,
-        './cjs/react-is.production.min.js': 29,
-        _process: 16,
-        dup: 24,
-      },
-    ],
-    31: [
       function(require, module, exports) {
         'use strict';
 
@@ -60957,9 +60480,9 @@ object-assign
         var _default = ReactReduxContext;
         exports['default'] = _default;
       },
-      { '@babel/runtime/helpers/interopRequireDefault': 2, react: 55 },
+      { '@babel/runtime/helpers/interopRequireDefault': 2, react: 54 },
     ],
-    32: [
+    31: [
       function(require, module, exports) {
         'use strict';
 
@@ -61038,15 +60561,15 @@ object-assign
         exports['default'] = _default;
       },
       {
-        '../utils/Subscription': 46,
-        './Context': 31,
+        '../utils/Subscription': 45,
+        './Context': 30,
         '@babel/runtime/helpers/interopRequireDefault': 2,
         '@babel/runtime/helpers/interopRequireWildcard': 3,
-        'prop-types': 20,
-        react: 55,
+        'prop-types': 19,
+        react: 54,
       },
     ],
-    33: [
+    32: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -61513,20 +61036,20 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        '../utils/Subscription': 46,
-        './Context': 31,
+        '../utils/Subscription': 45,
+        './Context': 30,
         '@babel/runtime/helpers/extends': 1,
         '@babel/runtime/helpers/interopRequireDefault': 2,
         '@babel/runtime/helpers/interopRequireWildcard': 3,
         '@babel/runtime/helpers/objectWithoutPropertiesLoose': 4,
-        _process: 16,
-        'hoist-non-react-statics': 11,
-        invariant: 12,
-        react: 55,
-        'react-is': 30,
+        _process: 15,
+        'hoist-non-react-statics': 10,
+        invariant: 11,
+        react: 54,
+        'react-is': 29,
       },
     ],
-    34: [
+    33: [
       function(require, module, exports) {
         'use strict';
 
@@ -61685,18 +61208,18 @@ object-assign
         exports['default'] = _default;
       },
       {
-        '../components/connectAdvanced': 33,
-        '../utils/shallowEqual': 50,
-        './mapDispatchToProps': 35,
-        './mapStateToProps': 36,
-        './mergeProps': 37,
-        './selectorFactory': 38,
+        '../components/connectAdvanced': 32,
+        '../utils/shallowEqual': 49,
+        './mapDispatchToProps': 34,
+        './mapStateToProps': 35,
+        './mergeProps': 36,
+        './selectorFactory': 37,
         '@babel/runtime/helpers/extends': 1,
         '@babel/runtime/helpers/interopRequireDefault': 2,
         '@babel/runtime/helpers/objectWithoutPropertiesLoose': 4,
       },
     ],
-    35: [
+    34: [
       function(require, module, exports) {
         'use strict';
 
@@ -61741,9 +61264,9 @@ object-assign
         ];
         exports['default'] = _default;
       },
-      { './wrapMapToProps': 40, redux: 56 },
+      { './wrapMapToProps': 39, redux: 55 },
     ],
-    36: [
+    35: [
       function(require, module, exports) {
         'use strict';
 
@@ -61771,9 +61294,9 @@ object-assign
         var _default = [whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing];
         exports['default'] = _default;
       },
-      { './wrapMapToProps': 40 },
+      { './wrapMapToProps': 39 },
     ],
-    37: [
+    36: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -61837,13 +61360,13 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        '../utils/verifyPlainObject': 51,
+        '../utils/verifyPlainObject': 50,
         '@babel/runtime/helpers/extends': 1,
         '@babel/runtime/helpers/interopRequireDefault': 2,
-        _process: 16,
+        _process: 15,
       },
     ],
-    38: [
+    37: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -61985,13 +61508,13 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        './verifySubselectors': 39,
+        './verifySubselectors': 38,
         '@babel/runtime/helpers/interopRequireDefault': 2,
         '@babel/runtime/helpers/objectWithoutPropertiesLoose': 4,
-        _process: 16,
+        _process: 15,
       },
     ],
-    39: [
+    38: [
       function(require, module, exports) {
         'use strict';
 
@@ -62024,9 +61547,9 @@ object-assign
           verify(mergeProps, 'mergeProps', displayName);
         }
       },
-      { '../utils/warning': 52, '@babel/runtime/helpers/interopRequireDefault': 2 },
+      { '../utils/warning': 51, '@babel/runtime/helpers/interopRequireDefault': 2 },
     ],
-    40: [
+    39: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -62111,12 +61634,12 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        '../utils/verifyPlainObject': 51,
+        '../utils/verifyPlainObject': 50,
         '@babel/runtime/helpers/interopRequireDefault': 2,
-        _process: 16,
+        _process: 15,
       },
     ],
-    41: [
+    40: [
       function(require, module, exports) {
         'use strict';
 
@@ -62173,9 +61696,9 @@ object-assign
         var useDispatch = createDispatchHook();
         exports.useDispatch = useDispatch;
       },
-      { '../components/Context': 31, './useStore': 44 },
+      { '../components/Context': 30, './useStore': 43 },
     ],
-    42: [
+    41: [
       function(require, module, exports) {
         'use strict';
 
@@ -62216,13 +61739,13 @@ object-assign
         }
       },
       {
-        '../components/Context': 31,
+        '../components/Context': 30,
         '@babel/runtime/helpers/interopRequireDefault': 2,
-        invariant: 12,
-        react: 55,
+        invariant: 11,
+        react: 54,
       },
     ],
-    43: [
+    42: [
       function(require, module, exports) {
         'use strict';
 
@@ -62392,15 +61915,15 @@ object-assign
         exports.useSelector = useSelector;
       },
       {
-        '../components/Context': 31,
-        '../utils/Subscription': 46,
-        './useReduxContext': 42,
+        '../components/Context': 30,
+        '../utils/Subscription': 45,
+        './useReduxContext': 41,
         '@babel/runtime/helpers/interopRequireDefault': 2,
-        invariant: 12,
-        react: 55,
+        invariant: 11,
+        react: 54,
       },
     ],
-    44: [
+    43: [
       function(require, module, exports) {
         'use strict';
 
@@ -62457,9 +61980,9 @@ object-assign
         var useStore = createStoreHook();
         exports.useStore = useStore;
       },
-      { '../components/Context': 31, './useReduxContext': 42, react: 55 },
+      { '../components/Context': 30, './useReduxContext': 41, react: 54 },
     ],
-    45: [
+    44: [
       function(require, module, exports) {
         'use strict';
 
@@ -62510,20 +62033,20 @@ object-assign
         (0, _batch.setBatch)(_reactBatchedUpdates.unstable_batchedUpdates);
       },
       {
-        './components/Context': 31,
-        './components/Provider': 32,
-        './components/connectAdvanced': 33,
-        './connect/connect': 34,
-        './hooks/useDispatch': 41,
-        './hooks/useSelector': 43,
-        './hooks/useStore': 44,
-        './utils/batch': 47,
-        './utils/reactBatchedUpdates': 49,
-        './utils/shallowEqual': 50,
+        './components/Context': 30,
+        './components/Provider': 31,
+        './components/connectAdvanced': 32,
+        './connect/connect': 33,
+        './hooks/useDispatch': 40,
+        './hooks/useSelector': 42,
+        './hooks/useStore': 43,
+        './utils/batch': 46,
+        './utils/reactBatchedUpdates': 48,
+        './utils/shallowEqual': 49,
         '@babel/runtime/helpers/interopRequireDefault': 2,
       },
     ],
-    46: [
+    45: [
       function(require, module, exports) {
         'use strict';
 
@@ -62631,9 +62154,9 @@ object-assign
 
         exports['default'] = Subscription;
       },
-      { './batch': 47 },
+      { './batch': 46 },
     ],
-    47: [
+    46: [
       function(require, module, exports) {
         'use strict';
 
@@ -62661,7 +62184,7 @@ object-assign
       },
       {},
     ],
-    48: [
+    47: [
       function(require, module, exports) {
         'use strict';
 
@@ -62687,7 +62210,7 @@ object-assign
       },
       {},
     ],
-    49: [
+    48: [
       function(require, module, exports) {
         'use strict';
 
@@ -62698,9 +62221,9 @@ object-assign
 
         exports.unstable_batchedUpdates = _reactDom.unstable_batchedUpdates;
       },
-      { 'react-dom': 27 },
+      { 'react-dom': 26 },
     ],
-    50: [
+    49: [
       function(require, module, exports) {
         'use strict';
 
@@ -62743,7 +62266,7 @@ object-assign
       },
       {},
     ],
-    51: [
+    50: [
       function(require, module, exports) {
         'use strict';
 
@@ -62769,9 +62292,9 @@ object-assign
           }
         }
       },
-      { './isPlainObject': 48, './warning': 52, '@babel/runtime/helpers/interopRequireDefault': 2 },
+      { './isPlainObject': 47, './warning': 51, '@babel/runtime/helpers/interopRequireDefault': 2 },
     ],
-    52: [
+    51: [
       function(require, module, exports) {
         'use strict';
 
@@ -62803,7 +62326,7 @@ object-assign
       },
       {},
     ],
-    53: [
+    52: [
       function(require, module, exports) {
         (function(process) {
           /** @license React v16.10.1
@@ -65448,9 +64971,9 @@ object-assign
           }
         }.call(this, require('_process')));
       },
-      { _process: 16, 'object-assign': 15, 'prop-types/checkPropTypes': 17 },
+      { _process: 15, 'object-assign': 14, 'prop-types/checkPropTypes': 16 },
     ],
-    54: [
+    53: [
       function(require, module, exports) {
         /** @license React v16.10.1
          * react.production.min.js
@@ -65833,9 +65356,9 @@ object-assign
           Z = (Y && X) || Y;
         module.exports = Z.default || Z;
       },
-      { 'object-assign': 15 },
+      { 'object-assign': 14 },
     ],
-    55: [
+    54: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -65847,9 +65370,9 @@ object-assign
           }
         }.call(this, require('_process')));
       },
-      { './cjs/react.development.js': 53, './cjs/react.production.min.js': 54, _process: 16 },
+      { './cjs/react.development.js': 52, './cjs/react.production.min.js': 53, _process: 15 },
     ],
-    56: [
+    55: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -66641,9 +66164,9 @@ object-assign
           exports.createStore = createStore;
         }.call(this, require('_process')));
       },
-      { _process: 16, 'symbol-observable': 63 },
+      { _process: 15, 'symbol-observable': 62 },
     ],
-    57: [
+    56: [
       function(require, module, exports) {
         (function(process) {
           /** @license React v0.16.1
@@ -67079,9 +66602,9 @@ object-assign
           }
         }.call(this, require('_process')));
       },
-      { _process: 16 },
+      { _process: 15 },
     ],
-    58: [
+    57: [
       function(require, module, exports) {
         /** @license React v0.16.1
          * scheduler-tracing.production.min.js
@@ -67117,7 +66640,7 @@ object-assign
       },
       {},
     ],
-    59: [
+    58: [
       function(require, module, exports) {
         (function(process) {
           /** @license React v0.16.1
@@ -68174,9 +67697,9 @@ object-assign
           }
         }.call(this, require('_process')));
       },
-      { _process: 16 },
+      { _process: 15 },
     ],
-    60: [
+    59: [
       function(require, module, exports) {
         /** @license React v0.16.1
          * scheduler.production.min.js
@@ -68510,7 +68033,7 @@ object-assign
       },
       {},
     ],
-    61: [
+    60: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -68523,12 +68046,12 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        './cjs/scheduler.development.js': 59,
-        './cjs/scheduler.production.min.js': 60,
-        _process: 16,
+        './cjs/scheduler.development.js': 58,
+        './cjs/scheduler.production.min.js': 59,
+        _process: 15,
       },
     ],
-    62: [
+    61: [
       function(require, module, exports) {
         (function(process) {
           'use strict';
@@ -68541,12 +68064,12 @@ object-assign
         }.call(this, require('_process')));
       },
       {
-        './cjs/scheduler-tracing.development.js': 57,
-        './cjs/scheduler-tracing.production.min.js': 58,
-        _process: 16,
+        './cjs/scheduler-tracing.development.js': 56,
+        './cjs/scheduler-tracing.production.min.js': 57,
+        _process: 15,
       },
     ],
-    63: [
+    62: [
       function(require, module, exports) {
         (function(global) {
           'use strict';
@@ -68590,9 +68113,9 @@ object-assign
             : {}
         ));
       },
-      { './ponyfill.js': 64 },
+      { './ponyfill.js': 63 },
     ],
-    64: [
+    63: [
       function(require, module, exports) {
         'use strict';
 
@@ -68620,7 +68143,7 @@ object-assign
       },
       {},
     ],
-    65: [
+    64: [
       function(require, module, exports) {
         function typeCheck(val) {
           let returnValue = val;
@@ -68669,7 +68192,7 @@ object-assign
       },
       {},
     ],
-    66: [
+    65: [
       function(require, module, exports) {
         'use strict';
 
@@ -68882,9 +68405,9 @@ object-assign
 
         module.exports = FullScreen;
       },
-      { fscreen: 9, react: 55 },
+      { fscreen: 9, react: 54 },
     ],
-    67: [
+    66: [
       function(require, module, exports) {
         'use strict';
 
@@ -68914,7 +68437,7 @@ object-assign
       },
       {},
     ],
-    68: [
+    67: [
       function(require, module, exports) {
         'use strict';
 
@@ -69065,9 +68588,9 @@ object-assign
 
         module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Manifest);
       },
-      { './manifest-reducer': 67, react: 55, 'react-redux': 45, redux: 56 },
+      { './manifest-reducer': 66, react: 54, 'react-redux': 44, redux: 55 },
     ],
-    69: [
+    68: [
       function(require, module, exports) {
         'use strict';
 
@@ -69238,7 +68761,7 @@ object-assign
       },
       {},
     ],
-    70: [
+    69: [
       function(require, module, exports) {
         'use strict';
 
@@ -69459,13 +68982,20 @@ object-assign
               {
                 key: 'handleInvisibleNav',
                 value: function handleInvisibleNav(event) {
-                  if (event.target.tagName != 'A' && event.target.closest('A') === null) {
-                    if (window.innerWidth / 2 > event.clientX) {
+                  if (
+                    event.target.tagName != 'A' &&
+                    event.target.tagName != 'BUTTON' &&
+                    event.target.tagName != 'INPUT' &&
+                    event.target.tagName != 'LABEL' &&
+                    event.target.closest('A') === null &&
+                    event.target.closest('LABEL') === null
+                  ) {
+                    if (event.clientX < window.innerWidth / 5) {
                       return moveBackward(
                         event,
                         this.props.navigation.readingOrder[this.props.navigation.chapterNum].prev
                       );
-                    } else {
+                    } else if (event.clientX > (window.innerWidth / 5) * 4) {
                       return moveForward(
                         event,
                         this.props.navigation.readingOrder[this.props.navigation.chapterNum].next
@@ -69634,7 +69164,7 @@ object-assign
                   className: 'chapter',
                 },
                 props.chapter.order + 1,
-                ' / ',
+                '\xA0/\xA0',
                 props.chapter.title
               )
             ),
@@ -69756,16 +69286,29 @@ object-assign
 
         function moveForward(event, nextChapter) {
           event.preventDefault();
-          if (!isPageScrolledToBottom())
+
+          if (!isPageScrolledToBottom()) {
+            displayPagination('forward');
             window.scrollTo(window.scrollX, window.scrollY + getScrollStep());
-          else if (nextChapter) window.location.assign(nextChapter);
+          } else if (nextChapter) window.location.assign(nextChapter);
+        }
+
+        function displayPagination(dir) {
+          if (['forward', 'back'].includes(dir)) {
+            document.body.classList.add('paginated-'.concat(dir));
+            window.setTimeout(function() {
+              document.body.classList.remove('paginated-'.concat(dir));
+            }, 300);
+          }
         }
 
         function moveBackward(event, prevChapter) {
           event.preventDefault();
-          if (!isPageScrolledToTop())
+
+          if (!isPageScrolledToTop()) {
+            displayPagination('back');
             window.scrollTo(window.scrollX, window.scrollY - getScrollStep());
-          else if (prevChapter) window.location.assign(''.concat(prevChapter, '#chapter-end'));
+          } else if (prevChapter) window.location.assign(''.concat(prevChapter, '#chapter-end'));
         }
 
         function isPageScrolledToBottom() {
@@ -69777,7 +69320,11 @@ object-assign
         }
 
         function getScrollStep() {
-          return window.innerHeight - document.querySelector('.catchword-bar').offsetHeight;
+          var bottomOffset = Math.max(
+            document.getElementById('peeks').offsetHeight + 10,
+            document.querySelector('.catchword-bar').offsetHeight
+          );
+          return window.innerHeight - bottomOffset;
         }
 
         function getChapterPixels(chapter, totalWords) {
@@ -69851,17 +69398,17 @@ object-assign
         module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Navigation);
       },
       {
-        './full-screen': 66,
-        './navigation-reducer': 69,
-        keycode: 13,
-        lodash: 14,
-        'prop-types': 20,
-        react: 55,
-        'react-redux': 45,
-        redux: 56,
+        './full-screen': 65,
+        './navigation-reducer': 68,
+        keycode: 12,
+        lodash: 13,
+        'prop-types': 19,
+        react: 54,
+        'react-redux': 44,
+        redux: 55,
       },
     ],
-    71: [
+    70: [
       function(require, module, exports) {
         'use strict';
 
@@ -69966,7 +69513,7 @@ object-assign
       },
       {},
     ],
-    72: [
+    71: [
       function(require, module, exports) {
         'use strict';
 
@@ -70137,9 +69684,363 @@ object-assign
 
         module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Offline);
       },
-      { './offline-reducer': 71, 'prop-types': 20, react: 55, 'react-redux': 45, redux: 56 },
+      { './offline-reducer': 70, 'prop-types': 19, react: 54, 'react-redux': 44, redux: 55 },
+    ],
+    72: [
+      function(require, module, exports) {
+        'use strict';
+
+        function _toConsumableArray(arr) {
+          return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+        }
+
+        function _nonIterableSpread() {
+          throw new TypeError('Invalid attempt to spread non-iterable instance');
+        }
+
+        function _iterableToArray(iter) {
+          if (
+            Symbol.iterator in Object(iter) ||
+            Object.prototype.toString.call(iter) === '[object Arguments]'
+          )
+            return Array.from(iter);
+        }
+
+        function _arrayWithoutHoles(arr) {
+          if (Array.isArray(arr)) {
+            for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+              arr2[i] = arr[i];
+            }
+            return arr2;
+          }
+        }
+
+        var ADD_PEEK = 'nb-base/peeks/ADD_PEEK';
+        var DESTROY_PEEK = 'nb-base/peeks/DESTROY_PEEK';
+        var defaultState = [];
+
+        function reducer() {
+          var state =
+            arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultState;
+          var action = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+          switch (action.type) {
+            case ADD_PEEK:
+              return addPeek(state, action.payload);
+
+            case DESTROY_PEEK:
+              return destroyPeek(state, action.payload);
+
+            default:
+              return state;
+          }
+        }
+
+        function addPeek(state, payload) {
+          return [].concat(_toConsumableArray(state), [
+            {
+              title: payload.title,
+              content: payload.content,
+              source: payload.source,
+              showSource: payload.showSource,
+            },
+          ]);
+        }
+
+        function destroyPeek(state, payload) {
+          return state.filter(function(item, index) {
+            return index !== payload;
+          });
+        }
+
+        reducer.addPeek = function(data) {
+          return {
+            type: ADD_PEEK,
+            payload: data,
+          };
+        };
+
+        reducer.destroyPeek = function(data) {
+          return {
+            type: DESTROY_PEEK,
+            payload: data,
+          };
+        };
+
+        module.exports = reducer;
+      },
+      {},
     ],
     73: [
+      function(require, module, exports) {
+        'use strict';
+
+        var _react = _interopRequireDefault(require('react'));
+
+        var _peeksReducer = _interopRequireDefault(require('./peeks-reducer'));
+
+        var _propTypes = _interopRequireDefault(require('prop-types'));
+
+        var _reactRedux = require('react-redux');
+
+        var _redux = require('redux');
+
+        function _interopRequireDefault(obj) {
+          return obj && obj.__esModule ? obj : { default: obj };
+        }
+
+        function _typeof(obj) {
+          if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+            _typeof = function _typeof(obj) {
+              return typeof obj;
+            };
+          } else {
+            _typeof = function _typeof(obj) {
+              return obj &&
+                typeof Symbol === 'function' &&
+                obj.constructor === Symbol &&
+                obj !== Symbol.prototype
+                ? 'symbol'
+                : typeof obj;
+            };
+          }
+          return _typeof(obj);
+        }
+
+        function _classCallCheck(instance, Constructor) {
+          if (!(instance instanceof Constructor)) {
+            throw new TypeError('Cannot call a class as a function');
+          }
+        }
+
+        function _defineProperties(target, props) {
+          for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];
+            descriptor.enumerable = descriptor.enumerable || false;
+            descriptor.configurable = true;
+            if ('value' in descriptor) descriptor.writable = true;
+            Object.defineProperty(target, descriptor.key, descriptor);
+          }
+        }
+
+        function _createClass(Constructor, protoProps, staticProps) {
+          if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+          if (staticProps) _defineProperties(Constructor, staticProps);
+          return Constructor;
+        }
+
+        function _possibleConstructorReturn(self, call) {
+          if (call && (_typeof(call) === 'object' || typeof call === 'function')) {
+            return call;
+          }
+          return _assertThisInitialized(self);
+        }
+
+        function _getPrototypeOf(o) {
+          _getPrototypeOf = Object.setPrototypeOf
+            ? Object.getPrototypeOf
+            : function _getPrototypeOf(o) {
+                return o.__proto__ || Object.getPrototypeOf(o);
+              };
+          return _getPrototypeOf(o);
+        }
+
+        function _assertThisInitialized(self) {
+          if (self === void 0) {
+            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+          }
+          return self;
+        }
+
+        function _inherits(subClass, superClass) {
+          if (typeof superClass !== 'function' && superClass !== null) {
+            throw new TypeError('Super expression must either be null or a function');
+          }
+          subClass.prototype = Object.create(superClass && superClass.prototype, {
+            constructor: { value: subClass, writable: true, configurable: true },
+          });
+          if (superClass) _setPrototypeOf(subClass, superClass);
+        }
+
+        function _setPrototypeOf(o, p) {
+          _setPrototypeOf =
+            Object.setPrototypeOf ||
+            function _setPrototypeOf(o, p) {
+              o.__proto__ = p;
+              return o;
+            };
+          return _setPrototypeOf(o, p);
+        }
+
+        var Peeks =
+          /*#__PURE__*/
+          (function(_React$Component) {
+            _inherits(Peeks, _React$Component);
+
+            function Peeks(props) {
+              var _this;
+
+              _classCallCheck(this, Peeks);
+
+              _this = _possibleConstructorReturn(this, _getPrototypeOf(Peeks).call(this, props));
+              _this.handleFootnoteDisplay = _this.handleFootnoteDisplay.bind(
+                _assertThisInitialized(_this)
+              );
+              return _this;
+            }
+
+            _createClass(Peeks, [
+              {
+                key: 'handleFootnoteDisplay',
+                value: function handleFootnoteDisplay(id, source) {
+                  this.props.addPeek({
+                    content: document.getElementById(id).innerHTML,
+                    title: 'Footnote',
+                    source: source,
+                    showSource: false,
+                  });
+                },
+              },
+              {
+                key: 'componentDidMount',
+                value: function componentDidMount() {
+                  var _this2 = this;
+
+                  window.addEventListener('click', function(e) {
+                    if (e.target.href) {
+                      var attrHref = e.target.getAttribute('href');
+
+                      if (attrHref.startsWith('#fn:')) {
+                        e.preventDefault();
+
+                        _this2.handleFootnoteDisplay(attrHref.replace(/^#/, ''), e.target.href);
+                      }
+                    }
+                  });
+                },
+              },
+              {
+                key: 'componentWillUnmount',
+                value: function componentWillUnmount() {},
+              },
+              {
+                key: 'render',
+                value: function render() {
+                  var _this3 = this;
+
+                  return _react['default'].createElement(
+                    'div',
+                    {
+                      id: 'peeks',
+                    },
+                    this.props.peeks.map(function(peek, index) {
+                      return _react['default'].createElement(Peek, {
+                        key: index,
+                        index: index,
+                        source: peek.source,
+                        showSource: peek.showSource,
+                        title: peek.title,
+                        content: peek.content,
+                        destroy: _this3.props.destroyPeek,
+                      });
+                    })
+                  );
+                },
+              },
+            ]);
+
+            return Peeks;
+          })(_react['default'].Component);
+
+        Peeks.propTypes = {
+          peeks: _propTypes['default'].arrayOf(_propTypes['default'].object),
+          addPeek: _propTypes['default'].func.isRequired,
+          destroyPeek: _propTypes['default'].func.isRequired,
+        };
+
+        function Peek(props) {
+          function html() {
+            return {
+              __html: props.content,
+            };
+          }
+
+          return _react['default'].createElement(
+            'div',
+            {
+              className: 'peek',
+            },
+            _react['default'].createElement(
+              'div',
+              {
+                className: 'peek-head',
+              },
+              _react['default'].createElement(
+                'div',
+                {
+                  className: 'peek-info',
+                },
+                _react['default'].createElement(
+                  'p',
+                  null,
+                  props.showSource &&
+                    _react['default'].createElement(
+                      'a',
+                      {
+                        href: props.source,
+                      },
+                      props.title
+                    ),
+                  !props.showSource && props.title
+                )
+              ),
+              _react['default'].createElement(
+                'button',
+                {
+                  className: 'peek-close',
+                  onClick: function onClick() {
+                    return props.destroy(props.index);
+                  },
+                },
+                '\u2573'
+              )
+            ),
+            _react['default'].createElement('div', {
+              className: 'peek-content',
+              dangerouslySetInnerHTML: html(),
+            })
+          );
+        }
+
+        Peek.propTypes = {
+          content: _propTypes['default'].string.isRequired,
+          title: _propTypes['default'].string.isRequired,
+          source: _propTypes['default'].string.isRequired,
+          showSource: _propTypes['default'].bool.isRequired,
+          destroy: _propTypes['default'].func.isRequired,
+        };
+
+        var mapStateToProps = function mapStateToProps(state) {
+          return {
+            peeks: state.peeks,
+          };
+        };
+
+        var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+          return (0, _redux.bindActionCreators)(
+            {
+              addPeek: _peeksReducer['default'].addPeek,
+              destroyPeek: _peeksReducer['default'].destroyPeek,
+            },
+            dispatch
+          );
+        };
+
+        module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Peeks);
+      },
+      { './peeks-reducer': 72, 'prop-types': 19, react: 54, 'react-redux': 44, redux: 55 },
+    ],
+    74: [
       function(require, module, exports) {
         'use strict';
 
@@ -70336,9 +70237,9 @@ object-assign
 
         module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Toc);
       },
-      { 'prop-types': 20, react: 55, 'react-redux': 45, redux: 56 },
+      { 'prop-types': 19, react: 54, 'react-redux': 44, redux: 55 },
     ],
-    74: [
+    75: [
       function(require, module, exports) {
         'use strict';
 
@@ -70509,9 +70410,9 @@ object-assign
 
         module.exports = reducer;
       },
-      { 'to-milliseconds': 65 },
+      { 'to-milliseconds': 64 },
     ],
-    75: [
+    76: [
       function(require, module, exports) {
         'use strict';
 
@@ -70689,15 +70590,15 @@ object-assign
         module.exports = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Trace);
       },
       {
-        './trace-reducer': 74,
-        lodash: 14,
-        'prop-types': 20,
-        react: 55,
-        'react-redux': 45,
-        redux: 56,
+        './trace-reducer': 75,
+        lodash: 13,
+        'prop-types': 19,
+        react: 54,
+        'react-redux': 44,
+        redux: 55,
       },
     ],
-    76: [
+    77: [
       function(require, module, exports) {
         'use strict';
 
@@ -70710,8 +70611,6 @@ object-assign
         var _reactDom = _interopRequireDefault(require('react-dom'));
 
         var _lodash = require('lodash');
-
-        var _headroom = _interopRequireDefault(require('headroom.js'));
 
         var _shared = require('./shared');
 
@@ -70768,29 +70667,22 @@ object-assign
           });
         }
 
-        function initHeadroom() {
-          var headroom = new _headroom['default'](window.document.body);
-          headroom.init();
-        }
-
         module.exports = {
           initBook: initBook,
-          initHeadroom: initHeadroom,
         };
       },
       {
-        './reducer': 77,
-        './shared': 78,
-        './views': 80,
-        'headroom.js': 10,
-        lodash: 14,
-        react: 55,
-        'react-dom': 27,
-        'react-redux': 45,
-        redux: 56,
+        './reducer': 78,
+        './shared': 79,
+        './views': 81,
+        lodash: 13,
+        react: 54,
+        'react-dom': 26,
+        'react-redux': 44,
+        redux: 55,
       },
     ],
-    77: [
+    78: [
       function(require, module, exports) {
         'use strict';
 
@@ -70799,6 +70691,8 @@ object-assign
         var _navigationReducer = _interopRequireDefault(require('./components/navigation-reducer'));
 
         var _manifestReducer = _interopRequireDefault(require('./components/manifest-reducer'));
+
+        var _peeksReducer = _interopRequireDefault(require('./components/peeks-reducer'));
 
         var _traceReducer = _interopRequireDefault(require('./components/trace-reducer'));
 
@@ -70811,19 +70705,21 @@ object-assign
         module.exports = (0, _redux.combineReducers)({
           navigation: _navigationReducer['default'],
           manifest: _manifestReducer['default'],
+          peeks: _peeksReducer['default'],
           trace: _traceReducer['default'],
           offline: _offlineReducer['default'],
         });
       },
       {
-        './components/manifest-reducer': 67,
-        './components/navigation-reducer': 69,
-        './components/offline-reducer': 71,
-        './components/trace-reducer': 74,
-        redux: 56,
+        './components/manifest-reducer': 66,
+        './components/navigation-reducer': 68,
+        './components/offline-reducer': 70,
+        './components/peeks-reducer': 72,
+        './components/trace-reducer': 75,
+        redux: 55,
       },
     ],
-    78: [
+    79: [
       function(require, module, exports) {
         'use strict';
 
@@ -70872,7 +70768,7 @@ object-assign
       },
       { cuid: 5 },
     ],
-    79: [
+    80: [
       function(require, module, exports) {
         'use strict';
 
@@ -70880,18 +70776,19 @@ object-assign
 
         document.addEventListener('DOMContentLoaded', function() {
           (0, _index.initBook)();
-          (0, _index.initHeadroom)();
         });
       },
-      { './index.js': 76 },
+      { './index.js': 77 },
     ],
-    80: [
+    81: [
       function(require, module, exports) {
         'use strict';
 
         var _navigation = _interopRequireDefault(require('./components/navigation'));
 
         var _manifest = _interopRequireDefault(require('./components/manifest'));
+
+        var _peeks = _interopRequireDefault(require('./components/peeks'));
 
         var _toc = _interopRequireDefault(require('./components/toc'));
 
@@ -70906,20 +70803,22 @@ object-assign
         module.exports = {
           navigation: _navigation['default'],
           manifest: _manifest['default'],
+          peeks: _peeks['default'],
           toc: _toc['default'],
           trace: _trace['default'],
           offline: _offline['default'],
         };
       },
       {
-        './components/manifest': 68,
-        './components/navigation': 70,
-        './components/offline': 72,
-        './components/toc': 73,
-        './components/trace': 75,
+        './components/manifest': 67,
+        './components/navigation': 69,
+        './components/offline': 71,
+        './components/peeks': 73,
+        './components/toc': 74,
+        './components/trace': 76,
       },
     ],
   },
   {},
-  [79]
+  [80]
 );
