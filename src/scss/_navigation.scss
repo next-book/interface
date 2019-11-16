@@ -3,9 +3,46 @@ body {
 	scroll-behavior: smooth;
 }
 
-body {
-	padding-top: 30px;
-	padding-bottom: 10px;
+body.paginated-back,
+body.paginated-forward {
+	&::after {
+		content: '>';
+
+		display: block;
+		opacity: 0;
+		width: 20vw;
+
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+
+		color: rgba(255, 255, 255, 0.6);
+		background: rgba(0, 0, 0, 0.2);
+		line-height: 100vh;
+		font-size: 20vw;
+		text-align: center;
+		animation: pagination-bar-fade 0.2s ease-in;
+	}
+}
+
+body.paginated-back::after {
+	content: '<';
+	left: 0;
+	right: auto;
+}
+
+@keyframes pagination-bar-fade {
+	0% {
+		display: block;
+		opacity: 1;
+	}
+
+	100% {
+		display: block;
+		opacity: 0;
+		display: none;
+	}
 }
 
 .nb-navigation nav {
