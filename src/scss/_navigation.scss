@@ -198,20 +198,3 @@ body.paginated-back::after {
 		display: none;
 	}
 }
-
-.headroom .nb-navigation nav {
-	.nav-bar,
-	.top-bar {
-		transition: transform 200ms ease-in;
-		will-change: transform;
-	}
-}
-
-.headroom--unpinned .nb-navigation nav {
-	.top-bar {
-		transform: translateY(-100%);
-	}
-	.nav-bar {
-		transform: translateY(40px);
-	}
-}

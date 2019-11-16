@@ -1,6 +1,5 @@
-import { initBook, initHeadroom } from './index.js';
+import { initBook } from './index.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initBook();
-  initHeadroom();
 });

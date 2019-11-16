@@ -6,8 +6,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { debounce } from 'lodash';
 
-import Headroom from 'headroom.js';
-
 import { loadManifest, plantRoot } from './shared';
 import reducer from './reducer';
 import views from './views';
@@ -45,12 +43,6 @@ function initBook() {
   });
 }
 
-function initHeadroom() {
-  const headroom = new Headroom(window.document.body);
-  headroom.init();
-}
-
 module.exports = {
   initBook,
-  initHeadroom,
 };

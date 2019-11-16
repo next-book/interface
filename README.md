@@ -8,11 +8,9 @@ See an [example of an e-book][fc] created with the next-book tools.
 
 Some web tech knowledge and command line use is needed to produce a next-book at the time. But we‘re preparing an easier way right now! (If you want to know when it’s out, please subscribe to our newsletter 💌).
 
-### 1. Add `nb-mapper` dependency
+### 1. Add `nb-mapper` and `nb-base` dependencies
 
-(`nb-base` is installed as its dependency.)
-
-You can install nb-mapper
+You can install nb-mapper and nb-base:
 
 - via Yarn `yarn add nb-mapper`
 - via NPM `npm install nb-mapper`
@@ -20,20 +18,16 @@ You can install nb-mapper
 ### 2\. Import `nb-base` styles in your SCSS
 
 ```scss
-@import './../../node_modules/nb-mapper/node_modules/nb-base/src/scss/style.scss';
+@import './../../node_modules/nb-base/src/scss/style.scss';
 ```
 
 ### 3\. Import `nb-base` module in your scripts
 
 ```javascript
-import {
-  initBook,
-  initHeadroom,
-} from './../../node_modules/nb-mapper/node_modules/nb-base/src/js/index.js';
+import { initBook } from './../../node_modules/nb-base/src/js/index.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initBook();
-  initHeadroom();
 });
 ```
 
