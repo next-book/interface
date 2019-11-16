@@ -62,13 +62,20 @@ class Navigation extends React.Component {
   }
 
   handleInvisibleNav(event) {
-    if (event.target.tagName != 'A' && event.target.closest('A') === null) {
-      if (window.innerWidth / 2 > event.clientX) {
+    if (
+      event.target.tagName != 'A' &&
+      event.target.tagName != 'BUTTON' &&
+      event.target.tagName != 'INPUT' &&
+      event.target.tagName != 'LABEL' &&
+      event.target.closest('A') === null &&
+      event.target.closest('LABEL') === null
+    ) {
+      if (event.clientX < window.innerWidth / 5) {
         return moveBackward(
           event,
           this.props.navigation.readingOrder[this.props.navigation.chapterNum].prev
         );
-      } else {
+      } else if (event.clientX > (window.innerWidth / 5) * 4) {
         return moveForward(
           event,
           this.props.navigation.readingOrder[this.props.navigation.chapterNum].next
@@ -266,15 +273,28 @@ ChapterLink.propTypes = {
 function moveForward(event, nextChapter) {
   event.preventDefault();
 
-  if (!isPageScrolledToBottom()) window.scrollTo(window.scrollX, window.scrollY + getScrollStep());
-  else if (nextChapter) window.location.href = nextChapter;
+  if (!isPageScrolledToBottom()) {
+    displayPagination('forward');
+    window.scrollTo(window.scrollX, window.scrollY + getScrollStep());
+  } else if (nextChapter) window.location.assign(nextChapter);
+}
+
+function displayPagination(dir) {
+  if (['forward', 'back'].includes(dir)) {
+    document.body.classList.add(`paginated-${dir}`);
+    window.setTimeout(() => {
+      document.body.classList.remove(`paginated-${dir}`);
+    }, 300);
+  }
 }
 
 function moveBackward(event, prevChapter) {
   event.preventDefault();
 
-  if (!isPageScrolledToTop()) window.scrollTo(window.scrollX, window.scrollY - getScrollStep());
-  else if (prevChapter) window.location.href = `${prevChapter}#chapter-end`;
+  if (!isPageScrolledToTop()) {
+    displayPagination('back');
+    window.scrollTo(window.scrollX, window.scrollY - getScrollStep());
+  } else if (prevChapter) window.location.assign(`${prevChapter}#chapter-end`);
 }
 
 function isPageScrolledToBottom() {
@@ -286,7 +306,12 @@ function isPageScrolledToTop() {
 }
 
 function getScrollStep() {
-  return window.innerHeight - document.querySelector('.catchword-bar').offsetHeight;
+  const bottomOffset = Math.max(
+    document.getElementById('peeks').offsetHeight + 10,
+    document.querySelector('.catchword-bar').offsetHeight
+  );
+
+  return window.innerHeight - bottomOffset;
 }
 
 function getChapterPixels(chapter, totalWords) {
