@@ -187,7 +187,7 @@ function TopBar(props) {
           {props.manifest.title}
         </a>
         <span className="chapter">
-          {props.chapter.order + 1} / {props.chapter.title}
+          {props.chapter.order + 1}&nbsp;/&nbsp;{props.chapter.title}
         </span>
       </p>
       <p className="tools">

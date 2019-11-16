@@ -1,6 +1,7 @@
-html,
 body {
-	scroll-behavior: smooth;
+	padding-top: 10vh;
+	padding-bottom: 5vh;
+	will-change: transform;
 }
 
 body.paginated-back,
@@ -87,26 +88,24 @@ body.paginated-back::after {
 
 	/* nav bar */
 	.nav-bar {
-		--height: 10px;
+		--height: 7px;
 
 		display: block;
 		position: fixed;
-		left: 35px;
-		right: 35px;
-		bottom: 5px;
+		left: 1vw;
+		width: 98vw;
+		bottom: 1vw;
 
 		height: var(--height);
 		margin: 0;
-
 		list-style-type: none;
-		overflow: hidden;
+		box-sizing: border-box;
 
 		opacity: 0.5;
-		border: 0.5px solid #000;
-		border-radius: 3px;
 
 		.chapter {
 			display: block;
+			border: 0.5px solid #000;
 			list-style-type: none;
 			position: absolute;
 			top: 0;
@@ -116,14 +115,13 @@ body.paginated-back::after {
 			color: white;
 
 			box-sizing: border-box;
-			padding: 2px 3px;
 			font-size: 14px;
 			white-space: nowrap;
 			overflow: hidden;
 		}
 
 		.chapter:nth-child(even) {
-			background: #666;
+			background: #888;
 		}
 
 		.info {
@@ -134,38 +132,27 @@ body.paginated-back::after {
 			display: block;
 			list-style-type: none;
 			position: absolute;
-			height: calc(var(--height) - 2px);
-			width: calc(var(--height) - 2px);
+			height: calc(var(--height) + 2px);
+			width: calc(var(--height) + 2px);
 			z-index: 1;
 
-			margin: 1px 0 0 calc(var(--height) * -0.5);
+			margin: -2px 0 0 calc(var(--height) * -0.5);
 			border-radius: var(--height);
-			background: white;
-		}
-
-		&:hover {
-			--height: 25px;
-
-			ul.chapters {
-				opacity: 1;
-			}
-
-			.info {
-				visibility: visible;
-			}
+			background: rgba(255, 255, 255, 0.5);
+			border: 1px solid black;
 		}
 	}
 
 	/* top menu */
 	.top-bar {
-		position: fixed;
+		position: absolute;
 		top: 0;
 		left: 0;
 		width: 100%;
 		overflow: hidden;
 
 		box-sizing: border-box;
-		padding: 0.5rem 1rem;
+		padding: 0.5rem 0.5rem 0.5rem 1rem;
 
 		background: rgba(230, 230, 230, 100);
 
@@ -173,14 +160,15 @@ body.paginated-back::after {
 
 		p {
 			margin: 0;
-			white-space: nowrap;
 		}
 
 		p.info {
 			flex-grow: 1;
 			margin-right: 2rem;
-			overflow: hidden;
-			height: 1.5rem;
+
+			.chapter {
+				display: inline-block;
+			}
 		}
 
 		p.tools {
