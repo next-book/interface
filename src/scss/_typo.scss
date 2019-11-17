@@ -1,0 +1,89 @@
+p,
+blockquote,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+dl,
+fieldset,
+figure,
+ul,
+ol,
+table,
+button,
+input,
+li,
+dd,
+dt,
+td,
+th,
+figcaption {
+  line-height: 1.4em;
+  font-size: 1rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.25em;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+h2 {
+  font-size: 2rem;
+}
+h3 {
+  font-size: 1.725rem;
+}
+h4 {
+  font-size: 1.5rem;
+}
+h5 {
+  font-size: 1.25rem;
+}
+h6 {
+  font-size: 1.125rem;
+}
+
+p,
+blockquote,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+dl,
+fieldset,
+figure,
+ul,
+ol,
+table {
+  margin: 0 0 0.5rem;
+}
+
+ul,
+ol {
+  padding-left: 1.125rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 1.5rem 0 0.125rem;
+}
+
+hr {
+  margin: 3rem 0;
+  border: 1px solid;
+}
