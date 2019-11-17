@@ -69892,41 +69892,38 @@ object-assign
             _createClass(Peeks, [
               {
                 key: 'handleFootnoteDisplay',
-                value: function handleFootnoteDisplay(id, source) {
-                  this.props.addPeek({
-                    content: document.getElementById(id).innerHTML,
-                    title: 'Footnote',
-                    source: source,
-                    showSource: false,
-                  });
+                value: function handleFootnoteDisplay(event) {
+                  if (event.target.href) {
+                    var attrHref = event.target.getAttribute('href');
+
+                    if (attrHref.startsWith('#fn:')) {
+                      event.preventDefault();
+                      this.props.addPeek({
+                        content: document.getElementById(attrHref.replace(/^#/, '')).innerHTML,
+                        title: 'Footnote',
+                        source: event.target.href,
+                        showSource: false,
+                      });
+                    }
+                  }
                 },
               },
               {
                 key: 'componentDidMount',
                 value: function componentDidMount() {
-                  var _this2 = this;
-
-                  window.addEventListener('click', function(e) {
-                    if (e.target.href) {
-                      var attrHref = e.target.getAttribute('href');
-
-                      if (attrHref.startsWith('#fn:')) {
-                        e.preventDefault();
-
-                        _this2.handleFootnoteDisplay(attrHref.replace(/^#/, ''), e.target.href);
-                      }
-                    }
-                  });
+                  window.addEventListener('click', this.handleFootnoteDisplay);
                 },
               },
               {
                 key: 'componentWillUnmount',
-                value: function componentWillUnmount() {},
+                value: function componentWillUnmount() {
+                  window.removeEventListener('click', this.handleFootnoteDisplay);
+                },
               },
               {
                 key: 'render',
                 value: function render() {
-                  var _this3 = this;
+                  var _this2 = this;
 
                   return _react['default'].createElement(
                     'div',
@@ -69941,7 +69938,7 @@ object-assign
                         showSource: peek.showSource,
                         title: peek.title,
                         content: peek.content,
-                        destroy: _this3.props.destroyPeek,
+                        destroy: _this2.props.destroyPeek,
                       });
                     })
                   );

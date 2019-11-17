@@ -1,5 +1,16 @@
+:root {
+  font-size: 18px;
+  --base-padding: 1rem;
+}
+
+body {
+  margin: 0;
+}
+
 .content {
-  padding: 2rem 1rem 4rem;
+  margin: 0 auto;
+  max-width: 32rem;
+  padding: 10vh var(--base-padding) 10rem;
 }
 .content .idea {
   padding: 1px 0;
@@ -20,12 +31,6 @@
 :target + dd {
   background: #ffc;
   border-radius: 2px;
-}
-
-body {
-  padding-top: 10vh;
-  padding-bottom: 5vh;
-  will-change: transform;
 }
 
 body.paginated-back::after,
@@ -149,7 +154,7 @@ body.paginated-back::after {
   width: 100%;
   overflow: hidden;
   box-sizing: border-box;
-  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  padding: 0.5rem;
   background: #e6e6e6;
   display: flex;
 }
@@ -161,7 +166,7 @@ body.paginated-back::after {
   margin-right: 2rem;
 }
 .nb-navigation nav .top-bar p.info .chapter {
-  display: inline-block;
+  display: none;
 }
 .nb-navigation nav .top-bar p.tools {
   text-align: right;
@@ -169,6 +174,9 @@ body.paginated-back::after {
 }
 .nb-navigation nav .top-bar .book {
   margin-right: 1rem;
+}
+.nb-navigation nav .top-bar .fixed p.info .chapter {
+  display: inline-block;
 }
 .nb-navigation nav .next,
 .nb-navigation nav .prev {
@@ -212,14 +220,14 @@ body.paginated-back::after {
   background: #ddd;
   border: 1px solid #aaa;
   border-radius: 8px 8px 0 0;
-  box-shadow: 0 0 3px #777;
+  box-shadow: 0 0 7px #aaa;
   overflow: hidden;
   transition: bottom 0.2s ease-out;
   animation: slide-up 0.2s ease-out;
   display: none;
 }
 #peeks .peek .peek-content {
-  padding: 3rem 1rem 2rem;
+  padding: 4rem 1rem 2rem;
   overflow: auto;
   background: white;
 }
@@ -229,8 +237,8 @@ body.paginated-back::after {
   top: 0;
   left: 0;
   right: 0;
-  height: 2rem;
-  line-height: 2rem;
+  height: 3rem;
+  line-height: 3rem;
   text-align: left;
   background: #ddd;
 }
@@ -240,11 +248,12 @@ body.paginated-back::after {
 }
 #peeks .peek .peek-head .peek-info p {
   margin: 0;
+  line-height: 3rem;
 }
 #peeks .peek .peek-head .peek-close {
   display: block;
-  width: 2rem;
-  height: 2rem;
+  width: 3rem;
+  height: 3rem;
   font-size: 1rem;
   border: none;
   color: black;
@@ -279,4 +288,99 @@ body.paginated-back::after {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+p,
+blockquote,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+dl,
+fieldset,
+figure,
+ul,
+ol,
+table,
+button,
+input,
+li,
+dd,
+dt,
+td,
+th,
+figcaption {
+  line-height: 1.4em;
+  font-size: 1rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.25em;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.725rem;
+}
+
+h4 {
+  font-size: 1.5rem;
+}
+
+h5 {
+  font-size: 1.25rem;
+}
+
+h6 {
+  font-size: 1.125rem;
+}
+
+p,
+blockquote,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+dl,
+fieldset,
+figure,
+ul,
+ol,
+table {
+  margin: 0 0 0.5rem;
+}
+
+ul,
+ol {
+  padding-left: 1.125rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 1.5rem 0 0.125rem;
+}
+
+hr {
+  margin: 3rem 0;
+  border: 1px solid;
 }
