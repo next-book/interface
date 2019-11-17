@@ -1,9 +1,3 @@
-body {
-  padding-top: 10vh;
-  padding-bottom: 5vh;
-  will-change: transform;
-}
-
 body.paginated-back,
 body.paginated-forward {
   &::after {
@@ -152,7 +146,7 @@ body.paginated-back::after {
     overflow: hidden;
 
     box-sizing: border-box;
-    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    padding: 0.5rem;
 
     background: rgba(230, 230, 230, 100);
 
@@ -167,7 +161,7 @@ body.paginated-back::after {
       margin-right: 2rem;
 
       .chapter {
-        display: inline-block;
+        display: none;
       }
     }
 
@@ -178,6 +172,12 @@ body.paginated-back::after {
 
     .book {
       margin-right: 1rem;
+    }
+  }
+
+  .top-bar .fixed {
+    p.info .chapter {
+      display: inline-block;
     }
   }
 

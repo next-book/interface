@@ -1,5 +1,16 @@
+:root {
+  font-size: 18px;
+  --base-padding: 1rem;
+}
+
+body {
+  margin: 0;
+}
+
 .content {
-  padding: 2rem 1rem 4rem;
+  margin: 0 auto;
+  max-width: 32rem;
+  padding: 10vh var(--base-padding) 10rem;
 
   .idea {
     padding: 1px 0;
