@@ -1,6 +1,7 @@
 :root {
   font-size: 18px;
   --base-padding: 1rem;
+  --highlight-color: rgba(255, 255, 0, 1);
 }
 
 body {
@@ -14,6 +15,10 @@ body {
 
   .idea {
     padding: 1px 0;
+  }
+
+  #chunk1 {
+    padding-top: 2rem;
   }
 }
 
@@ -33,5 +38,32 @@ body {
   & + dd {
     background: #ffc;
     border-radius: 2px;
+  }
+}
+
+.highlighted {
+  animation: highlight 0.5s ease-in-out;
+  will-change: background-color;
+}
+
+@keyframes highlight {
+  0% {
+    background-color: var(--highlight-color);
+  }
+
+  100% {
+    background-color: rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    transform: translateY(30vh);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
   }
 }

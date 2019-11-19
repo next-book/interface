@@ -1,12 +1,18 @@
-const SET_CHAPTER_NUM = 'nb-base/navigation/SET_CHAPTER_NUM';
 const SET_POSITION = 'nb-base/navigation/SET_POSITION';
-const SET_FIRST_IDEA = 'nb-base/navigation/SET_FIRST_IDEA';
 const SET_READING_ORDER = 'nb-base/navigation/SET_READING_ORDER';
 
 const defaultState = {
-  chapterNum: 0,
-  position: 0,
-  firstIdeaInView: 1,
+  position: {
+    chapterNum: null,
+    scrollRatio: null,
+    idea: null,
+  },
+  sequentialPosition: {
+    chapterNum: null,
+    scrollRatio: null,
+    idea: null,
+  },
+  sequential: null,
   readingOrder: [],
   config: {
     keyboardNav: true,
@@ -16,17 +22,32 @@ const defaultState = {
 
 function reducer(state = defaultState, action = {}) {
   switch (action.type) {
-    case SET_CHAPTER_NUM:
-      return { ...state, ...{ chapterNum: parseInt(action.payload, 10) } };
     case SET_POSITION:
-      return { ...state, ...{ position: parseFloat(action.payload) } };
-    case SET_FIRST_IDEA:
-      return { ...state, ...{ firstIdeaInView: parseInt(action.payload, 10) } };
+      return setPosition(state, action.payload);
     case SET_READING_ORDER:
       return { ...state, ...{ readingOrder: prepReadingOrder(action.payload) } };
     default:
       return state;
   }
+}
+
+function setPosition(state, payload) {
+  const position = {
+    chapterNum: parseInt(payload.chapterNum, 10),
+    scrollRatio: parseFloat(payload.scrollRatio),
+    idea: parseInt(payload.idea, 10),
+  };
+
+  if (isNaN(position.chapterNum) || isNaN(position.idea)) return { ...state };
+
+  const sequentialPosition = payload.sequential ? position : state.sequentialPosition;
+
+  return {
+    ...state,
+    sequential: payload.sequential,
+    sequentialPosition,
+    position,
+  };
 }
 
 function prepReadingOrder(documents) {
@@ -54,24 +75,10 @@ reducer.setReadingOrder = function(documents) {
   };
 };
 
-reducer.setPosition = function(position) {
+reducer.setPosition = function(chapterNum, idea, scrollRatio, sequential) {
   return {
     type: SET_POSITION,
-    payload: position,
-  };
-};
-
-reducer.setFirstIdeaInView = function(firstIdea) {
-  return {
-    type: SET_FIRST_IDEA,
-    payload: firstIdea,
-  };
-};
-
-reducer.setChapterNum = function(pos) {
-  return {
-    type: SET_CHAPTER_NUM,
-    payload: pos,
+    payload: { chapterNum, idea, scrollRatio, sequential },
   };
 };
 
