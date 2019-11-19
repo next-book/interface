@@ -68639,14 +68639,20 @@ object-assign
           return obj;
         }
 
-        var SET_CHAPTER_NUM = 'nb-base/navigation/SET_CHAPTER_NUM';
         var SET_POSITION = 'nb-base/navigation/SET_POSITION';
-        var SET_FIRST_IDEA = 'nb-base/navigation/SET_FIRST_IDEA';
         var SET_READING_ORDER = 'nb-base/navigation/SET_READING_ORDER';
         var defaultState = {
-          chapterNum: 0,
-          position: 0,
-          firstIdeaInView: 1,
+          position: {
+            chapterNum: null,
+            scrollRatio: null,
+            idea: null,
+          },
+          sequentialPosition: {
+            chapterNum: null,
+            scrollRatio: null,
+            idea: null,
+          },
+          sequential: null,
           readingOrder: [],
           config: {
             keyboardNav: true,
@@ -68660,35 +68666,8 @@ object-assign
           var action = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
           switch (action.type) {
-            case SET_CHAPTER_NUM:
-              return _objectSpread(
-                {},
-                state,
-                {},
-                {
-                  chapterNum: parseInt(action.payload, 10),
-                }
-              );
-
             case SET_POSITION:
-              return _objectSpread(
-                {},
-                state,
-                {},
-                {
-                  position: parseFloat(action.payload),
-                }
-              );
-
-            case SET_FIRST_IDEA:
-              return _objectSpread(
-                {},
-                state,
-                {},
-                {
-                  firstIdeaInView: parseInt(action.payload, 10),
-                }
-              );
+              return setPosition(state, action.payload);
 
             case SET_READING_ORDER:
               return _objectSpread(
@@ -68703,6 +68682,21 @@ object-assign
             default:
               return state;
           }
+        }
+
+        function setPosition(state, payload) {
+          var position = {
+            chapterNum: parseInt(payload.chapterNum, 10),
+            scrollRatio: parseFloat(payload.scrollRatio),
+            idea: parseInt(payload.idea, 10),
+          };
+          if (isNaN(position.chapterNum) || isNaN(position.idea)) return _objectSpread({}, state);
+          var sequentialPosition = payload.sequential ? position : state.sequentialPosition;
+          return _objectSpread({}, state, {
+            sequential: payload.sequential,
+            sequentialPosition: sequentialPosition,
+            position: position,
+          });
         }
 
         function prepReadingOrder(documents) {
@@ -68736,24 +68730,15 @@ object-assign
           };
         };
 
-        reducer.setPosition = function(position) {
+        reducer.setPosition = function(chapterNum, idea, scrollRatio, sequential) {
           return {
             type: SET_POSITION,
-            payload: position,
-          };
-        };
-
-        reducer.setFirstIdeaInView = function(firstIdea) {
-          return {
-            type: SET_FIRST_IDEA,
-            payload: firstIdea,
-          };
-        };
-
-        reducer.setChapterNum = function(pos) {
-          return {
-            type: SET_CHAPTER_NUM,
-            payload: pos,
+            payload: {
+              chapterNum: chapterNum,
+              idea: idea,
+              scrollRatio: scrollRatio,
+              sequential: sequential,
+            },
           };
         };
 
@@ -68908,71 +68893,59 @@ object-assign
                 _getPrototypeOf(Navigation).call(this, props)
               );
               _this.getScrollHandler = _this.getScrollHandler.bind(_assertThisInitialized(_this));
-              _this.setCurrentPosition = _this.setCurrentPosition.bind(
-                _assertThisInitialized(_this)
-              );
-              _this.setCurrentIdea = _this.setCurrentIdea.bind(_assertThisInitialized(_this));
-              _this.setCurrentUriIdea = _this.setCurrentUriIdea.bind(_assertThisInitialized(_this));
+              _this.setPosition = _this.setPosition.bind(_assertThisInitialized(_this));
               _this.handleKeyboardNav = _this.handleKeyboardNav.bind(_assertThisInitialized(_this));
               _this.handleInvisibleNav = _this.handleInvisibleNav.bind(
                 _assertThisInitialized(_this)
               );
+              _this.isChapter = getChapterNum() !== null;
               return _this;
             }
 
             _createClass(Navigation, [
               {
-                key: 'setCurrentPosition',
-                value: function setCurrentPosition() {
-                  this.props.setPosition(getPosition());
-                },
-              },
-              {
-                key: 'setCurrentIdea',
-                value: function setCurrentIdea() {
-                  this.props.setFirstIdeaInView(getFirstIdeaShown());
-                },
-              },
-              {
-                key: 'setCurrentUriIdea',
-                value: function setCurrentUriIdea() {
-                  setUriIdea(this.props.navigation.firstIdeaInView);
+                key: 'setPosition',
+                value: function setPosition(resetSequence) {
+                  var idea = getFirstIdeaShown();
+                  var chapterNum = getChapterNum();
+                  var scrollRatio = getScrollRatio();
+                  var sequential =
+                    resetSequence ||
+                    checkSequence(
+                      this.props.sequentialPosition,
+                      {
+                        idea: idea,
+                        chapterNum: chapterNum,
+                        scrollRatio: scrollRatio,
+                      },
+                      this.props.sequential
+                    );
+                  this.props.setPosition(chapterNum, idea, scrollRatio, sequential);
+                  setUriIdea(idea);
                 },
               },
               {
                 key: 'getScrollHandler',
                 value: function getScrollHandler() {
-                  var t1 = (0, _lodash.throttle)(this.setCurrentPosition, 50, {
-                    leading: true,
-                  });
-                  var t2 = (0, _lodash.throttle)(this.setCurrentIdea, 500, {
-                    leading: true,
-                  });
-                  var t3 = (0, _lodash.throttle)(this.setCurrentUriIdea, 500, {
-                    leading: true,
+                  var t1 = (0, _lodash.throttle)(this.setPosition, 500, {
+                    leading: false,
                   });
                   return function throttled() {
                     t1();
-                    t2();
-                    t3();
                   };
                 },
               },
               {
                 key: 'handleKeyboardNav',
                 value: function handleKeyboardNav(event) {
+                  var chapter = this.props.readingOrder[this.props.position.chapterNum];
+
                   switch ((0, _keycode['default'])(event)) {
                     case 'left':
-                      return moveBackward(
-                        event,
-                        this.props.navigation.readingOrder[this.props.navigation.chapterNum].prev
-                      );
+                      return moveBackward(event, chapter.prev);
 
                     case 'right':
-                      return moveForward(
-                        event,
-                        this.props.navigation.readingOrder[this.props.navigation.chapterNum].next
-                      );
+                      return moveForward(event, chapter.next);
 
                     default:
                       return;
@@ -68982,6 +68955,8 @@ object-assign
               {
                 key: 'handleInvisibleNav',
                 value: function handleInvisibleNav(event) {
+                  var chapter = this.props.readingOrder[this.props.position.chapterNum];
+
                   if (
                     event.target.tagName != 'A' &&
                     event.target.tagName != 'BUTTON' &&
@@ -68991,15 +68966,9 @@ object-assign
                     event.target.closest('LABEL') === null
                   ) {
                     if (event.clientX < window.innerWidth / 5) {
-                      return moveBackward(
-                        event,
-                        this.props.navigation.readingOrder[this.props.navigation.chapterNum].prev
-                      );
+                      return moveBackward(event, chapter.prev);
                     } else if (event.clientX > (window.innerWidth / 5) * 4) {
-                      return moveForward(
-                        event,
-                        this.props.navigation.readingOrder[this.props.navigation.chapterNum].next
-                      );
+                      return moveForward(event, chapter.next);
                     }
                   }
                 },
@@ -69009,18 +68978,16 @@ object-assign
                 value: function componentDidMount() {
                   window.addEventListener('scroll', this.getScrollHandler());
 
-                  if (this.props.navigation.config.keyboardNav) {
+                  if (this.props.config.keyboardNav) {
                     window.document.body.addEventListener('keydown', this.handleKeyboardNav);
                   }
 
-                  if (this.props.navigation.config.invisibleNav) {
+                  if (this.props.config.invisibleNav) {
                     window.document.addEventListener('click', this.handleInvisibleNav);
                   }
 
                   this.props.setReadingOrder(this.props.manifest.documents);
-                  this.props.setChapterNum(getChapterNum());
-                  this.props.setPosition(getPosition());
-                  setUriIdea(this.props.navigation.firstIdeaInView);
+                  this.setPosition();
                 },
               },
               {
@@ -69028,11 +68995,11 @@ object-assign
                 value: function componentWillUnmount() {
                   window.removeEventListener('scroll', this.getScrollHandler());
 
-                  if (this.props.navigation.config.keyboardNav) {
+                  if (this.props.config.keyboardNav) {
                     window.document.body.removeEventListener('keydown', this.handleKeyboardNav);
                   }
 
-                  if (this.props.navigation.config.invisibleNav) {
+                  if (this.props.config.invisibleNav) {
                     window.document.body.removeEventListener('click', this.handleInvisibleNav);
                   }
                 },
@@ -69040,31 +69007,43 @@ object-assign
               {
                 key: 'render',
                 value: function render() {
-                  var nav = this.props.navigation;
-                  if (nav.readingOrder.length === 0 || nav.chapterNum === -1) return null;
-                  var chapter = nav.readingOrder[nav.chapterNum];
-                  var totalWords = nav.readingOrder[nav.readingOrder.length - 1].totalWords;
+                  var ro = this.props.readingOrder;
+                  if (ro.length === 0) return null;
+                  var pos = this.props.position;
+                  var chapter = pos.chapterNum !== null ? ro[pos.chapterNum] : null;
+                  var thisChapter =
+                    pos.chapterNum !== null
+                      ? this.props.sequentialPosition.chapterNum === chapter.order
+                      : false;
+                  var totalWords = ro[ro.length - 1].totalWords;
                   return _react['default'].createElement(
                     'nav',
                     null,
                     _react['default'].createElement(CatchWord, null),
-                    _react['default'].createElement(NavBar, {
-                      readingOrder: nav.readingOrder,
-                      chapter: chapter,
-                      position: nav.position,
-                      totalWords: totalWords,
-                    }),
-                    _react['default'].createElement(TopBar, {
-                      manifest: this.props.manifest,
-                      chapter: chapter,
-                    }),
-                    _react['default'].createElement(ChapterLink, {
-                      rel: 'prev',
-                      chapter: chapter,
-                    }),
-                    _react['default'].createElement(ChapterLink, {
-                      rel: 'next',
-                      chapter: chapter,
+                    chapter &&
+                      _react['default'].createElement(
+                        'div',
+                        null,
+                        _react['default'].createElement(NavBar, {
+                          readingOrder: ro,
+                          chapter: chapter,
+                          scrollRatio: pos.scrollRatio,
+                          idea: pos.idea,
+                          totalWords: totalWords,
+                        }),
+                        _react['default'].createElement(TopBar, {
+                          manifest: this.props.manifest,
+                          chapter: chapter,
+                        })
+                      ),
+                    _react['default'].createElement(SeqReturn, {
+                      isChapter: this.isChapter,
+                      thisChapter: thisChapter,
+                      targetChapter: ro[this.props.sequentialPosition.chapterNum],
+                      idea: this.props.sequentialPosition.idea,
+                      setPosition: this.setPosition,
+                      sequential: this.props.sequential,
+                      startLink: ro[0].file,
                     })
                   );
                 },
@@ -69078,11 +69057,163 @@ object-assign
           manifest: _propTypes['default'].shape({
             documents: _propTypes['default'].arrayOf(_propTypes['default'].object),
           }),
+          config: _propTypes['default'].object.isRequired,
+          position: _propTypes['default'].object.isRequired,
+          sequentialPosition: _propTypes['default'].object.isRequired,
+          readingOrder: _propTypes['default'].array.isRequired,
+          sequential: _propTypes['default'].bool,
           setPosition: _propTypes['default'].func.isRequired,
-          setFirstIdeaInView: _propTypes['default'].func.isRequired,
           setReadingOrder: _propTypes['default'].func.isRequired,
-          setChapterNum: _propTypes['default'].func.isRequired,
-          navigation: _propTypes['default'].object.isRequired,
+        };
+
+        function SeqReturn(props) {
+          var link = props.targetChapter
+            ? './'.concat(props.targetChapter.file, '#idea').concat(props.idea)
+            : null;
+
+          var resetPosition = function resetPosition(e) {
+            e.preventDefault();
+            props.setPosition(true);
+          };
+
+          var highlightPosition = function highlightPosition() {
+            highlightIdea(props.idea);
+          };
+
+          if (props.idea === null) {
+            return _react['default'].createElement(
+              'div',
+              {
+                className: 'seq-return-wrapper',
+              },
+              _react['default'].createElement(
+                'div',
+                {
+                  className: 'seq-return',
+                },
+                _react['default'].createElement(
+                  'p',
+                  null,
+                  _react['default'].createElement(
+                    'span',
+                    null,
+                    'This book remembers where you stopped reading. Onboarding message is',
+                    ' ',
+                    _react['default'].createElement(
+                      'a',
+                      {
+                        href: '',
+                      },
+                      'long'
+                    ),
+                    '.'
+                  )
+                ),
+                _react['default'].createElement(
+                  'span',
+                  {
+                    className: 'seq-buttons',
+                  },
+                  _react['default'].createElement(
+                    'a',
+                    {
+                      href: props.startLink,
+                    },
+                    _react['default'].createElement('b', null, 'Start reading')
+                  )
+                )
+              )
+            );
+          }
+
+          var readingPosition =
+            !props.isChapter || !props.thisChapter
+              ? _react['default'].createElement(
+                  'p',
+                  null,
+                  'You read up to ',
+                  _react['default'].createElement(
+                    'a',
+                    {
+                      href: link,
+                    },
+                    'sentence #',
+                    props.idea
+                  ),
+                  ' in chapter',
+                  ' ',
+                  _react['default'].createElement('b', null, props.targetChapter.title),
+                  '.'
+                )
+              : _react['default'].createElement(
+                  'p',
+                  null,
+                  'You read up to sentence',
+                  ' ',
+                  _react['default'].createElement(
+                    'a',
+                    {
+                      href: link,
+                      onClick: highlightPosition,
+                    },
+                    '#',
+                    props.idea,
+                    ' in this chapter'
+                  ),
+                  '.'
+                );
+          return (
+            (!props.sequential || !props.isChapter) &&
+            _react['default'].createElement(
+              'div',
+              {
+                className: 'seq-return-wrapper',
+              },
+              _react['default'].createElement(
+                'div',
+                {
+                  className: 'seq-return',
+                },
+                readingPosition,
+                _react['default'].createElement(
+                  'span',
+                  {
+                    className: 'seq-buttons',
+                  },
+                  props.isChapter &&
+                    _react['default'].createElement(
+                      'a',
+                      {
+                        href: '#',
+                        onClick: resetPosition,
+                      },
+                      'Continue from\xA0here'
+                    ),
+                  _react['default'].createElement(
+                    'a',
+                    {
+                      href: link,
+                      onClick: highlightPosition,
+                    },
+                    _react['default'].createElement(
+                      'b',
+                      null,
+                      props.isChapter ? 'Return back' : 'Continue reading'
+                    )
+                  )
+                )
+              )
+            )
+          );
+        }
+
+        SeqReturn.propTypes = {
+          idea: _propTypes['default'].number,
+          targetChapter: _propTypes['default'].object,
+          thisChapter: _propTypes['default'].bool.isRequired,
+          isChapter: _propTypes['default'].bool.isRequired,
+          setPosition: _propTypes['default'].func.isRequired,
+          startLink: _propTypes['default'].string.isRequired,
         };
 
         function CatchWord(props) {
@@ -69098,7 +69229,7 @@ object-assign
               className: 'nav-bar',
             },
             _react['default'].createElement(Pointer, {
-              position: props.position,
+              scrollRatio: props.scrollRatio,
               chapter: props.chapter,
               totalWords: props.totalWords,
             }),
@@ -69113,7 +69244,7 @@ object-assign
         }
 
         NavBar.propTypes = {
-          position: _propTypes['default'].number.isRequired,
+          scrollRatio: _propTypes['default'].number.isRequired,
           chapter: _propTypes['default'].object.isRequired,
           totalWords: _propTypes['default'].number.isRequired,
           readingOrder: _propTypes['default'].array.isRequired,
@@ -69124,7 +69255,7 @@ object-assign
             offset = _getChapterPixels.offset,
             width = _getChapterPixels.width;
 
-          var left = offset + width * props.position;
+          var left = offset + width * props.scrollRatio;
           return _react['default'].createElement('li', {
             className: 'pointer',
             style: {
@@ -69134,7 +69265,7 @@ object-assign
         }
 
         Pointer.propTypes = {
-          position: _propTypes['default'].number.isRequired,
+          scrollRatio: _propTypes['default'].number.isRequired,
           chapter: _propTypes['default'].object.isRequired,
           totalWords: _propTypes['default'].number.isRequired,
         };
@@ -69221,83 +69352,20 @@ object-assign
           totalWords: _propTypes['default'].number.isRequired,
         };
 
-        var ChapterLink =
-          /*#__PURE__*/
-          (function(_React$Component2) {
-            _inherits(ChapterLink, _React$Component2);
-
-            function ChapterLink(props) {
-              var _this2;
-
-              _classCallCheck(this, ChapterLink);
-
-              _this2 = _possibleConstructorReturn(
-                this,
-                _getPrototypeOf(ChapterLink).call(this, props)
-              );
-              _this2.handleClick = _this2.handleClick.bind(_assertThisInitialized(_this2));
-              return _this2;
-            }
-
-            _createClass(ChapterLink, [
-              {
-                key: 'handleClick',
-                value: function handleClick(event) {
-                  switch (this.props.rel) {
-                    case 'next':
-                      return moveForward(event, this.props.chapter.next);
-
-                    case 'prev':
-                      return moveBackward(event, this.props.chapter.prev);
-
-                    default:
-                      return;
-                  }
-                },
-              },
-              {
-                key: 'render',
-                value: function render() {
-                  if (this.props.chapter[this.props.rel]) {
-                    return _react['default'].createElement(
-                      'a',
-                      {
-                        className: this.props.rel,
-                        href: './'.concat(this.props.chapter[this.props.rel]),
-                        title: this.props.rel == 'next' ? 'next chapter' : 'previous chapter',
-                        onClick: this.handleClick,
-                      },
-                      this.props.rel == 'next' ? '>' : '<'
-                    );
-                  } else {
-                    return null;
-                  }
-                },
-              },
-            ]);
-
-            return ChapterLink;
-          })(_react['default'].Component);
-
-        ChapterLink.propTypes = {
-          rel: _propTypes['default'].string.isRequired,
-          chapter: _propTypes['default'].object.isRequired,
-        };
-
         function moveForward(event, nextChapter) {
           event.preventDefault();
 
           if (!isPageScrolledToBottom()) {
             displayPagination('forward');
             window.scrollTo(window.scrollX, window.scrollY + getScrollStep());
-          } else if (nextChapter) window.location.assign(nextChapter);
+          } else if (nextChapter) window.location.assign(''.concat(nextChapter, '#chunk1'));
         }
 
         function displayPagination(dir) {
           if (['forward', 'back'].includes(dir)) {
             document.body.classList.add('paginated-'.concat(dir));
             window.setTimeout(function() {
-              document.body.classList.remove('paginated-'.concat(dir));
+              return document.body.classList.remove('paginated-'.concat(dir));
             }, 300);
           }
         }
@@ -69312,17 +69380,33 @@ object-assign
         }
 
         function isPageScrolledToBottom() {
+          var nextLink = document.querySelector('.end-nav a[rel="next"]');
+
+          if (nextLink) {
+            return nextLink.getBoundingClientRect().top - window.innerHeight < -150;
+          }
+
           return window.innerHeight + Math.ceil(window.scrollY) >= document.body.scrollHeight;
         }
 
         function isPageScrolledToTop() {
-          return Math.floor(window.scrollY) == 0;
+          var prevLink = document.querySelector('.begin-nav a[rel="prev"]');
+
+          if (prevLink) {
+            return prevLink.getBoundingClientRect().bottom > -50;
+          }
+
+          return Math.floor(window.scrollY) < 20;
         }
 
         function getScrollStep() {
           var bottomOffset = Math.max(
-            document.getElementById('peeks').offsetHeight + 10,
-            document.querySelector('.catchword-bar').offsetHeight
+            document.getElementById('peeks')
+              ? document.getElementById('peeks').offsetHeight + 10
+              : 0,
+            document.querySelector('.catchword-bar')
+              ? document.querySelector('.catchword-bar').offsetHeight
+              : 0
           );
           return window.innerHeight - bottomOffset;
         }
@@ -69341,44 +69425,90 @@ object-assign
           };
         }
 
-        function getPosition() {
+        function getScrollRatio() {
           return window.scrollY / (document.body.scrollHeight - window.innerHeight);
         }
 
         function getChapterNum() {
           var el = document.querySelector('meta[name="order"]');
-          if (!el) return -1;
+          if (!el) return null;
           var number = parseInt(el.getAttribute('content'), 10);
-          return number >= 0 ? number : -1;
+          return number >= 0 ? number : null;
         }
 
         function getFirstIdeaShown() {
-          var shown = _toConsumableArray(document.querySelectorAll('.idea'))
-            .map(function(el) {
-              return {
-                el: el,
-                top: el.getBoundingClientRect().top,
-                bottom: el.getBoundingClientRect().bottom,
-              };
-            })
+          var ideas = _toConsumableArray(document.querySelectorAll('.idea')).map(function(el) {
+            return {
+              el: el,
+              top: el.getBoundingClientRect().top,
+              bottom: el.getBoundingClientRect().bottom,
+            };
+          });
+
+          var shown = ideas
             .filter(function(el) {
-              return el.bottom > 20;
+              return el.top > 20;
             })
             .sort(function(el1, el2) {
               return el1.bottom > el2.bottom;
             });
-
           if (shown.length > 0) return parseInt(shown[0].el.dataset.nbRefNumber, 10);
-          else return null;
+          else return parseInt(ideas[ideas.length - 1].el.dataset.nbRefNumber, 10);
+        }
+
+        function checkSequence(pos1, pos2, wasSequentialBefore) {
+          // no info
+          if (pos2.chapterNum === null) return wasSequentialBefore; // new book
+
+          if (pos1.chapterNum === null && pos2.chapterNum !== null) return true;
+          var scrollStep = getScrollStep();
+
+          if (wasSequentialBefore) {
+            // new chapter
+            if (pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) return true; // same chapter
+
+            if (pos1.chapterNum === pos2.chapterNum) {
+              // ~consecutive numbers
+              if (Math.abs(pos2.idea - pos1.idea) < 3) return true; // 1.5 scrollSteps down or up
+
+              var top1 = document.getElementById('idea'.concat(pos1.idea)).getBoundingClientRect()
+                .top;
+              var top2 = document.getElementById('idea'.concat(pos2.idea)).getBoundingClientRect()
+                .top;
+              if (Math.abs(top2 - top1) < 1.5 * scrollStep) return true;
+            }
+          } else {
+            if (pos1.chapterNum === pos2.chapterNum) {
+              // is back on screen
+              var _top = document.getElementById('idea'.concat(pos1.idea)).getBoundingClientRect()
+                .top;
+              if (_top > 0 && _top < scrollStep * 0.75) return true;
+            }
+          }
+
+          return false;
         }
 
         function setUriIdea(id) {
           window.history.replaceState(undefined, undefined, '#idea'.concat(id));
         }
 
+        function highlightIdea(id) {
+          var classList = document.getElementById('idea'.concat(id)).classList;
+          var className = 'highlighted';
+          classList.add(className);
+          window.setTimeout(function() {
+            classList.remove(className);
+          }, 1000);
+        }
+
         var mapStateToProps = function mapStateToProps(state) {
           return {
-            navigation: state.navigation,
+            config: state.navigation.config,
+            readingOrder: state.navigation.readingOrder,
+            position: state.navigation.position,
+            sequential: state.navigation.sequential,
+            sequentialPosition: state.navigation.sequentialPosition,
             manifest: state.manifest,
           };
         };
@@ -69386,9 +69516,7 @@ object-assign
         var mapDispatchToProps = function mapDispatchToProps(dispatch) {
           return (0, _redux.bindActionCreators)(
             {
-              setChapterNum: _navigationReducer['default'].setChapterNum,
               setPosition: _navigationReducer['default'].setPosition,
-              setFirstIdeaInView: _navigationReducer['default'].setFirstIdeaInView,
               setReadingOrder: _navigationReducer['default'].setReadingOrder,
             },
             dispatch
@@ -70351,7 +70479,7 @@ object-assign
           var sessionIsOld = isSessionOld(moment, lastSession, state.config.breakLength);
           if (sessionIsOld)
             return _objectSpread({}, state, {
-              sessions: [].concat(_toConsumableArray(state.sessions.slice(0, -2)), [
+              sessions: [].concat(_toConsumableArray(state.sessions.slice(0, -1)), [
                 concludeSession(lastSession),
                 startSession(moment),
               ]),
@@ -70394,13 +70522,14 @@ object-assign
           };
         }
 
-        reducer.addMoment = function(time, chapter, idea) {
+        reducer.addMoment = function(time, chapter, idea, sequential) {
           return {
             type: ADD_MOMENT,
             payload: {
               time: time,
               chapter: chapter,
               idea: idea,
+              sequential: sequential,
             },
           };
         };
@@ -70523,24 +70652,32 @@ object-assign
               _classCallCheck(this, Trace);
 
               _this = _possibleConstructorReturn(this, _getPrototypeOf(Trace).call(this, props));
-              _this.handleScroll = _this.handleScroll.bind(_assertThisInitialized(_this));
+              _this.addMoment = _this.addMoment.bind(_assertThisInitialized(_this));
               return _this;
             }
 
             _createClass(Trace, [
               {
-                key: 'handleScroll',
-                value: function handleScroll() {
-                  var nav = this.props.navigation;
-                  this.props.addMoment(new Date().getTime(), nav.chapter, nav.firstIdeaInView);
+                key: 'addMoment',
+                value: function addMoment() {
+                  if (
+                    this.props.chapterNum !== null &&
+                    this.props.idea !== null &&
+                    this.props.sequential !== null
+                  )
+                    this.props.addMoment(
+                      new Date().getTime(),
+                      this.props.chapterNum,
+                      this.props.idea,
+                      this.props.sequential
+                    );
                 },
               },
               {
                 key: 'componentDidMount',
                 value: function componentDidMount() {
-                  window.addEventListener('scroll', (0, _lodash.debounce)(this.handleScroll, 2000));
-                  var nav = this.props.navigation;
-                  this.props.addMoment(new Date().getTime(), nav.chapter, nav.firstIdeaInView);
+                  window.addEventListener('scroll', (0, _lodash.debounce)(this.addMoment, 2000));
+                  this.addMoment();
                 },
               },
               {
@@ -70561,17 +70698,18 @@ object-assign
           })(_react['default'].Component);
 
         Trace.propTypes = {
-          navigation: _propTypes['default'].shape({
-            chapterNum: _propTypes['default'].number.isRequired,
-            firstIdeaInView: _propTypes['default'].number.isRequired,
-          }),
+          chapterNum: _propTypes['default'].number,
+          idea: _propTypes['default'].number,
+          sequential: _propTypes['default'].bool,
           addMoment: _propTypes['default'].func.isRequired,
         };
 
         var mapStateToProps = function mapStateToProps(state) {
           return {
             trace: state.trace,
-            navigation: state.navigation,
+            chapterNum: state.navigation.position.chapterNum,
+            idea: state.navigation.position.idea,
+            sequential: state.navigation.sequential,
           };
         };
 
