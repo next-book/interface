@@ -25,11 +25,12 @@ function addMoment(state, moment) {
 
   const lastSession = state.sessions[state.sessions.length - 1];
   const sessionIsOld = isSessionOld(moment, lastSession, state.config.breakLength);
+
   if (sessionIsOld)
     return {
       ...state,
       sessions: [
-        ...state.sessions.slice(0, -2),
+        ...state.sessions.slice(0, -1),
         concludeSession(lastSession),
         startSession(moment),
       ],
@@ -72,10 +73,10 @@ function concludeSession(session) {
   };
 }
 
-reducer.addMoment = function(time, chapter, idea) {
+reducer.addMoment = function(time, chapter, idea, sequential) {
   return {
     type: ADD_MOMENT,
-    payload: { time, chapter, idea },
+    payload: { time, chapter, idea, sequential },
   };
 };
 

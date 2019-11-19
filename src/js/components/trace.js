@@ -9,19 +9,27 @@ class Trace extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleScroll = this.handleScroll.bind(this);
+    this.addMoment = this.addMoment.bind(this);
   }
 
-  handleScroll() {
-    const nav = this.props.navigation;
-    this.props.addMoment(new Date().getTime(), nav.chapter, nav.firstIdeaInView);
+  addMoment() {
+    if (
+      this.props.chapterNum !== null &&
+      this.props.idea !== null &&
+      this.props.sequential !== null
+    )
+      this.props.addMoment(
+        new Date().getTime(),
+        this.props.chapterNum,
+        this.props.idea,
+        this.props.sequential
+      );
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', debounce(this.handleScroll, 2000));
+    window.addEventListener('scroll', debounce(this.addMoment, 2000));
 
-    const nav = this.props.navigation;
-    this.props.addMoment(new Date().getTime(), nav.chapter, nav.firstIdeaInView);
+    this.addMoment();
   }
 
   componentWillUnmount() {
@@ -34,17 +42,18 @@ class Trace extends React.Component {
 }
 
 Trace.propTypes = {
-  navigation: PropTypes.shape({
-    chapterNum: PropTypes.number.isRequired,
-    firstIdeaInView: PropTypes.number.isRequired,
-  }),
+  chapterNum: PropTypes.number,
+  idea: PropTypes.number,
+  sequential: PropTypes.bool,
   addMoment: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     trace: state.trace,
-    navigation: state.navigation,
+    chapterNum: state.navigation.position.chapterNum,
+    idea: state.navigation.position.idea,
+    sequential: state.navigation.sequential,
   };
 };
 
