@@ -34,39 +34,39 @@ h6 {
 }
 
 h1 {
-  font-size: 2.5rem;
-}
-h2 {
   font-size: 2rem;
 }
-h3 {
-  font-size: 1.725rem;
-}
-h4 {
+h2 {
   font-size: 1.5rem;
 }
-h5 {
+h3 {
   font-size: 1.25rem;
 }
-h6 {
+h4 {
   font-size: 1.125rem;
+}
+h5 {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 1rem;
+}
+h6 {
+  text-transform: uppercase;
+  font-size: 1rem;
 }
 
 p,
 blockquote,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
 dl,
-fieldset,
-figure,
 ul,
-ol,
-table {
+ol {
   margin: 0 0 0.5rem;
+}
+
+table,
+fieldset,
+figure {
+  margin: 0 0 1rem;
 }
 
 ul,
