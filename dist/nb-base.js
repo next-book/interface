@@ -68640,16 +68640,16 @@ object-assign
         }
 
         var SET_POSITION = 'nb-base/navigation/SET_POSITION';
+        var SET_SCROLL_RATIO = 'nb-base/navigation/SET_SCROLL_RATIO';
         var SET_READING_ORDER = 'nb-base/navigation/SET_READING_ORDER';
         var defaultState = {
+          scrollRatio: 0,
           position: {
             chapterNum: null,
-            scrollRatio: null,
             idea: null,
           },
           sequentialPosition: {
             chapterNum: null,
-            scrollRatio: null,
             idea: null,
           },
           sequential: null,
@@ -68666,6 +68666,16 @@ object-assign
           var action = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
           switch (action.type) {
+            case SET_SCROLL_RATIO:
+              return _objectSpread(
+                {},
+                state,
+                {},
+                {
+                  scrollRatio: parseFloat(action.payload),
+                }
+              );
+
             case SET_POSITION:
               return setPosition(state, action.payload);
 
@@ -68687,7 +68697,6 @@ object-assign
         function setPosition(state, payload) {
           var position = {
             chapterNum: parseInt(payload.chapterNum, 10),
-            scrollRatio: parseFloat(payload.scrollRatio),
             idea: parseInt(payload.idea, 10),
           };
           if (isNaN(position.chapterNum) || isNaN(position.idea)) return _objectSpread({}, state);
@@ -68730,13 +68739,19 @@ object-assign
           };
         };
 
-        reducer.setPosition = function(chapterNum, idea, scrollRatio, sequential) {
+        reducer.setScrollRatio = function(scrollRatio) {
+          return {
+            type: SET_SCROLL_RATIO,
+            payload: scrollRatio,
+          };
+        };
+
+        reducer.setPosition = function(chapterNum, idea, sequential) {
           return {
             type: SET_POSITION,
             payload: {
               chapterNum: chapterNum,
               idea: idea,
-              scrollRatio: scrollRatio,
               sequential: sequential,
             },
           };
@@ -68764,7 +68779,11 @@ object-assign
 
         var _navigationReducer = _interopRequireDefault(require('./navigation-reducer'));
 
+        var _peeksReducer = _interopRequireDefault(require('./peeks-reducer'));
+
         var _fullScreen = _interopRequireDefault(require('./full-screen'));
+
+        var _toc = _interopRequireDefault(require('./toc'));
 
         function _interopRequireDefault(obj) {
           return obj && obj.__esModule ? obj : { default: obj };
@@ -68894,10 +68913,12 @@ object-assign
               );
               _this.getScrollHandler = _this.getScrollHandler.bind(_assertThisInitialized(_this));
               _this.setPosition = _this.setPosition.bind(_assertThisInitialized(_this));
+              _this.setScrollRatio = _this.setScrollRatio.bind(_assertThisInitialized(_this));
               _this.handleKeyboardNav = _this.handleKeyboardNav.bind(_assertThisInitialized(_this));
               _this.handleInvisibleNav = _this.handleInvisibleNav.bind(
                 _assertThisInitialized(_this)
               );
+              _this.showToc = _this.showToc.bind(_assertThisInitialized(_this));
               _this.isChapter = getChapterNum() !== null;
               return _this;
             }
@@ -68908,7 +68929,6 @@ object-assign
                 value: function setPosition(resetSequence) {
                   var idea = getFirstIdeaShown();
                   var chapterNum = getChapterNum();
-                  var scrollRatio = getScrollRatio();
                   var sequential =
                     resetSequence ||
                     checkSequence(
@@ -68916,12 +68936,17 @@ object-assign
                       {
                         idea: idea,
                         chapterNum: chapterNum,
-                        scrollRatio: scrollRatio,
                       },
                       this.props.sequential
                     );
-                  this.props.setPosition(chapterNum, idea, scrollRatio, sequential);
+                  this.props.setPosition(chapterNum, idea, sequential);
                   setUriIdea(idea);
+                },
+              },
+              {
+                key: 'setScrollRatio',
+                value: function setScrollRatio(resetSequence) {
+                  this.props.setScrollRatio(getScrollRatio());
                 },
               },
               {
@@ -68930,8 +68955,12 @@ object-assign
                   var t1 = (0, _lodash.throttle)(this.setPosition, 500, {
                     leading: false,
                   });
+                  var t2 = (0, _lodash.throttle)(this.setScrollRatio, 100, {
+                    leading: true,
+                  });
                   return function throttled() {
                     t1();
+                    t2();
                   };
                 },
               },
@@ -68974,6 +69003,17 @@ object-assign
                 },
               },
               {
+                key: 'showToc',
+                value: function showToc() {
+                  this.props.addPeek({
+                    content: _react['default'].createElement(_toc['default'], null),
+                    title: 'Table of Contents',
+                    source: 'toc-table',
+                    showSource: false,
+                  });
+                },
+              },
+              {
                 key: 'componentDidMount',
                 value: function componentDidMount() {
                   window.addEventListener('scroll', this.getScrollHandler());
@@ -69013,21 +69053,25 @@ object-assign
                   var chapter = pos.chapterNum !== null ? ro[pos.chapterNum] : null;
                   var thisChapter =
                     pos.chapterNum !== null
-                      ? this.props.sequentialPosition.chapterNum === chapter.order
+                      ? this.props.sequentialPosition.chapterNum === pos.chapterNum
                       : false;
                   var totalWords = ro[ro.length - 1].totalWords;
                   return _react['default'].createElement(
                     'nav',
                     null,
-                    _react['default'].createElement(CatchWord, null),
+                    _react['default'].createElement(CatchWord, {
+                      actions: {
+                        showToc: this.showToc,
+                      },
+                    }),
                     chapter &&
                       _react['default'].createElement(
-                        'div',
+                        _react['default'].Fragment,
                         null,
                         _react['default'].createElement(NavBar, {
                           readingOrder: ro,
                           chapter: chapter,
-                          scrollRatio: pos.scrollRatio,
+                          scrollRatio: this.props.scrollRatio,
                           idea: pos.idea,
                           totalWords: totalWords,
                         }),
@@ -69058,154 +69102,190 @@ object-assign
             documents: _propTypes['default'].arrayOf(_propTypes['default'].object),
           }),
           config: _propTypes['default'].object.isRequired,
+          scrollRatio: _propTypes['default'].number.isRequired,
           position: _propTypes['default'].object.isRequired,
           sequentialPosition: _propTypes['default'].object.isRequired,
           readingOrder: _propTypes['default'].array.isRequired,
           sequential: _propTypes['default'].bool,
           setPosition: _propTypes['default'].func.isRequired,
+          setScrollRatio: _propTypes['default'].func.isRequired,
           setReadingOrder: _propTypes['default'].func.isRequired,
+          addPeek: _propTypes['default'].func.isRequired,
         };
 
-        function SeqReturn(props) {
-          var link = props.targetChapter
-            ? './'.concat(props.targetChapter.file, '#idea').concat(props.idea)
-            : null;
+        var SeqReturn =
+          /*#__PURE__*/
+          (function(_React$Component2) {
+            _inherits(SeqReturn, _React$Component2);
 
-          var resetPosition = function resetPosition(e) {
-            e.preventDefault();
-            props.setPosition(true);
-          };
+            function SeqReturn(props) {
+              var _this2;
 
-          var highlightPosition = function highlightPosition() {
-            highlightIdea(props.idea);
-          };
+              _classCallCheck(this, SeqReturn);
 
-          if (props.idea === null) {
-            return _react['default'].createElement(
-              'div',
+              _this2 = _possibleConstructorReturn(
+                this,
+                _getPrototypeOf(SeqReturn).call(this, props)
+              );
+              _this2.resetPosition = _this2.resetPosition.bind(_assertThisInitialized(_this2));
+              _this2.highlightPosition = _this2.highlightPosition.bind(
+                _assertThisInitialized(_this2)
+              );
+              _this2.firstTime = _this2.firstTime.bind(_assertThisInitialized(_this2));
+              _this2.nthTime = _this2.nthTime.bind(_assertThisInitialized(_this2));
+              return _this2;
+            }
+
+            _createClass(SeqReturn, [
               {
-                className: 'seq-return-wrapper',
-              },
-              _react['default'].createElement(
-                'div',
-                {
-                  className: 'seq-return',
+                key: 'resetPosition',
+                value: function resetPosition(e) {
+                  e.preventDefault();
+                  this.props.setPosition(true);
                 },
-                _react['default'].createElement(
-                  'p',
-                  null,
-                  _react['default'].createElement(
-                    'span',
+              },
+              {
+                key: 'highlightPosition',
+                value: function highlightPosition() {
+                  highlightIdea(this.props.idea);
+                },
+              },
+              {
+                key: 'firstTime',
+                value: function firstTime() {
+                  return _react['default'].createElement(
+                    _react['default'].Fragment,
                     null,
-                    'This book remembers where you stopped reading. Onboarding message is',
-                    ' ',
                     _react['default'].createElement(
-                      'a',
-                      {
-                        href: '',
-                      },
-                      'long'
-                    ),
-                    '.'
-                  )
-                ),
-                _react['default'].createElement(
-                  'span',
-                  {
-                    className: 'seq-buttons',
-                  },
-                  _react['default'].createElement(
-                    'a',
-                    {
-                      href: props.startLink,
-                    },
-                    _react['default'].createElement('b', null, 'Start reading')
-                  )
-                )
-              )
-            );
-          }
-
-          var readingPosition =
-            !props.isChapter || !props.thisChapter
-              ? _react['default'].createElement(
-                  'p',
-                  null,
-                  'You read up to ',
-                  _react['default'].createElement(
-                    'a',
-                    {
-                      href: link,
-                    },
-                    'sentence #',
-                    props.idea
-                  ),
-                  ' in chapter',
-                  ' ',
-                  _react['default'].createElement('b', null, props.targetChapter.title),
-                  '.'
-                )
-              : _react['default'].createElement(
-                  'p',
-                  null,
-                  'You read up to sentence',
-                  ' ',
-                  _react['default'].createElement(
-                    'a',
-                    {
-                      href: link,
-                      onClick: highlightPosition,
-                    },
-                    '#',
-                    props.idea,
-                    ' in this chapter'
-                  ),
-                  '.'
-                );
-          return (
-            (!props.sequential || !props.isChapter) &&
-            _react['default'].createElement(
-              'div',
-              {
-                className: 'seq-return-wrapper',
-              },
-              _react['default'].createElement(
-                'div',
-                {
-                  className: 'seq-return',
-                },
-                readingPosition,
-                _react['default'].createElement(
-                  'span',
-                  {
-                    className: 'seq-buttons',
-                  },
-                  props.isChapter &&
-                    _react['default'].createElement(
-                      'a',
-                      {
-                        href: '#',
-                        onClick: resetPosition,
-                      },
-                      'Continue from\xA0here'
-                    ),
-                  _react['default'].createElement(
-                    'a',
-                    {
-                      href: link,
-                      onClick: highlightPosition,
-                    },
-                    _react['default'].createElement(
-                      'b',
+                      'p',
                       null,
-                      props.isChapter ? 'Return back' : 'Continue reading'
+                      'This book remembers where you stopped reading. You can view Table of Contents anytime by clicking the bottom bar where the next \u201Cpage\u201D is visible.'
+                    ),
+                    _react['default'].createElement(
+                      'div',
+                      {
+                        className: 'seq-buttons',
+                      },
+                      _react['default'].createElement(
+                        'a',
+                        {
+                          href: this.props.startLink,
+                        },
+                        _react['default'].createElement('b', null, 'Start reading')
+                      )
                     )
-                  )
-                )
-              )
-            )
-          );
-        }
+                  );
+                },
+              },
+              {
+                key: 'nthTime',
+                value: function nthTime() {
+                  var _this3 = this;
+
+                  var link = this.props.targetChapter
+                    ? './'.concat(this.props.targetChapter.file, '#idea').concat(this.props.idea)
+                    : null;
+                  var readingPosition =
+                    !this.props.isChapter || !this.props.thisChapter
+                      ? _react['default'].createElement(
+                          'p',
+                          null,
+                          'You read up to ',
+                          _react['default'].createElement(
+                            'a',
+                            {
+                              href: link,
+                            },
+                            'sentence #',
+                            this.props.idea
+                          ),
+                          ' in chapter',
+                          ' ',
+                          _react['default'].createElement(
+                            'b',
+                            null,
+                            this.props.targetChapter.title
+                          ),
+                          '.'
+                        )
+                      : _react['default'].createElement(
+                          'p',
+                          null,
+                          'You read up to sentence',
+                          ' ',
+                          _react['default'].createElement(
+                            'a',
+                            {
+                              href: link,
+                              onClick: this.highlightPosition,
+                            },
+                            '#',
+                            this.props.idea,
+                            ' in this chapter'
+                          ),
+                          '.'
+                        );
+                  return (
+                    (!this.props.sequential || !this.props.isChapter) &&
+                    _react['default'].createElement(
+                      _react['default'].Fragment,
+                      null,
+                      readingPosition,
+                      _react['default'].createElement(
+                        'div',
+                        {
+                          className: 'seq-buttons',
+                        },
+                        this.props.isChapter &&
+                          _react['default'].createElement(
+                            'a',
+                            {
+                              href: '#',
+                              onClick: this.resetPosition,
+                            },
+                            'Continue from\xA0here'
+                          ),
+                        _react['default'].createElement(
+                          'a',
+                          {
+                            href: link,
+                            onClick: function onClick() {
+                              _this3.props.thisChapter ? _this3.highlightPosition : null;
+                            },
+                          },
+                          _react['default'].createElement(
+                            'b',
+                            null,
+                            this.props.isChapter ? 'Return back' : 'Continue reading'
+                          )
+                        )
+                      )
+                    )
+                  );
+                },
+              },
+              {
+                key: 'render',
+                value: function render() {
+                  return _react['default'].createElement(
+                    'div',
+                    {
+                      className: 'seq-return-wrapper',
+                    },
+                    _react['default'].createElement(
+                      'div',
+                      {
+                        className: 'seq-return',
+                      },
+                      this.props.idea === null ? this.firstTime() : this.nthTime()
+                    )
+                  );
+                },
+              },
+            ]);
+
+            return SeqReturn;
+          })(_react['default'].Component);
 
         SeqReturn.propTypes = {
           idea: _propTypes['default'].number,
@@ -69213,14 +69293,52 @@ object-assign
           thisChapter: _propTypes['default'].bool.isRequired,
           isChapter: _propTypes['default'].bool.isRequired,
           setPosition: _propTypes['default'].func.isRequired,
+          sequential: _propTypes['default'].bool.isRequired,
           startLink: _propTypes['default'].string.isRequired,
         };
 
-        function CatchWord(props) {
-          return _react['default'].createElement('div', {
-            className: 'catchword-bar',
-          });
-        }
+        var CatchWord =
+          /*#__PURE__*/
+          (function(_React$Component3) {
+            _inherits(CatchWord, _React$Component3);
+
+            function CatchWord(props) {
+              var _this4;
+
+              _classCallCheck(this, CatchWord);
+
+              _this4 = _possibleConstructorReturn(
+                this,
+                _getPrototypeOf(CatchWord).call(this, props)
+              );
+              _this4.handleActions = _this4.handleActions.bind(_assertThisInitialized(_this4));
+              return _this4;
+            }
+
+            _createClass(CatchWord, [
+              {
+                key: 'handleActions',
+                value: function handleActions() {
+                  this.props.actions.showToc();
+                },
+              },
+              {
+                key: 'render',
+                value: function render() {
+                  return _react['default'].createElement('div', {
+                    onClick: this.handleActions,
+                    id: 'catchword-bar',
+                  });
+                },
+              },
+            ]);
+
+            return CatchWord;
+          })(_react['default'].Component);
+
+        CatchWord.propTypes = {
+          actions: _propTypes['default'].object.isRequired,
+        };
 
         function NavBar(props) {
           return _react['default'].createElement(
@@ -69404,8 +69522,8 @@ object-assign
             document.getElementById('peeks')
               ? document.getElementById('peeks').offsetHeight + 10
               : 0,
-            document.querySelector('.catchword-bar')
-              ? document.querySelector('.catchword-bar').offsetHeight
+            document.getElementById('catchword-bar')
+              ? document.getElementById('catchword-bar').offsetHeight
               : 0
           );
           return window.innerHeight - bottomOffset;
@@ -69507,6 +69625,7 @@ object-assign
             config: state.navigation.config,
             readingOrder: state.navigation.readingOrder,
             position: state.navigation.position,
+            scrollRatio: state.navigation.scrollRatio,
             sequential: state.navigation.sequential,
             sequentialPosition: state.navigation.sequentialPosition,
             manifest: state.manifest,
@@ -69516,7 +69635,9 @@ object-assign
         var mapDispatchToProps = function mapDispatchToProps(dispatch) {
           return (0, _redux.bindActionCreators)(
             {
+              addPeek: _peeksReducer['default'].addPeek,
               setPosition: _navigationReducer['default'].setPosition,
+              setScrollRatio: _navigationReducer['default'].setScrollRatio,
               setReadingOrder: _navigationReducer['default'].setReadingOrder,
             },
             dispatch
@@ -69528,6 +69649,8 @@ object-assign
       {
         './full-screen': 65,
         './navigation-reducer': 68,
+        './peeks-reducer': 72,
+        './toc': 74,
         keycode: 12,
         lodash: 13,
         'prop-types': 19,
@@ -70065,7 +70188,8 @@ object-assign
                         source: peek.source,
                         showSource: peek.showSource,
                         title: peek.title,
-                        content: peek.content,
+                        content: typeof peek.content !== 'string' ? peek.content : null,
+                        rawContent: typeof peek.content === 'string' ? peek.content : null,
                         destroy: _this2.props.destroyPeek,
                       });
                     })
@@ -70086,8 +70210,14 @@ object-assign
         function Peek(props) {
           function html() {
             return {
-              __html: props.content,
+              __html: props.rawContent,
             };
+          }
+
+          if (props.content !== null && !_react['default'].isValidElement(props.content)) {
+            console.log(props.content);
+            props.destroy(props.index);
+            return null;
           }
 
           return _react['default'].createElement(
@@ -70130,19 +70260,30 @@ object-assign
                 '\u2573'
               )
             ),
-            _react['default'].createElement('div', {
-              className: 'peek-content',
-              dangerouslySetInnerHTML: html(),
-            })
+            props.content &&
+              _react['default'].createElement(
+                'div',
+                {
+                  className: 'peek-content',
+                },
+                props.content
+              ),
+            props.rawContent &&
+              _react['default'].createElement('div', {
+                className: 'peek-content',
+                dangerouslySetInnerHTML: html(),
+              })
           );
         }
 
         Peek.propTypes = {
-          content: _propTypes['default'].string.isRequired,
+          content: _propTypes['default'].object,
+          rawContent: _propTypes['default'].string,
           title: _propTypes['default'].string.isRequired,
           source: _propTypes['default'].string.isRequired,
           showSource: _propTypes['default'].bool.isRequired,
           destroy: _propTypes['default'].func.isRequired,
+          index: _propTypes['default'].number.isRequired,
         };
 
         var mapStateToProps = function mapStateToProps(state) {
@@ -70326,7 +70467,6 @@ object-assign
             return Toc;
           })(_react['default'].Component);
 
-        Toc.wrapperId = 'nb-table-of-contents';
         Toc.propTypes = {
           readingOrder: _propTypes['default'].array.isRequired,
         };
@@ -70925,8 +71065,6 @@ object-assign
 
         var _peeks = _interopRequireDefault(require('./components/peeks'));
 
-        var _toc = _interopRequireDefault(require('./components/toc'));
-
         var _trace = _interopRequireDefault(require('./components/trace'));
 
         var _offline = _interopRequireDefault(require('./components/offline'));
@@ -70939,7 +71077,6 @@ object-assign
           navigation: _navigation['default'],
           manifest: _manifest['default'],
           peeks: _peeks['default'],
-          toc: _toc['default'],
           trace: _trace['default'],
           offline: _offline['default'],
         };
@@ -70949,7 +71086,6 @@ object-assign
         './components/navigation': 69,
         './components/offline': 71,
         './components/peeks': 73,
-        './components/toc': 74,
         './components/trace': 76,
       },
     ],
