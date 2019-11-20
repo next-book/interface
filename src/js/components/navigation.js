@@ -153,73 +153,95 @@ Navigation.propTypes = {
   setReadingOrder: PropTypes.func.isRequired,
 };
 
-function SeqReturn(props) {
-  const link = props.targetChapter ? `./${props.targetChapter.file}#idea${props.idea}` : null;
+class SeqReturn extends React.Component {
+  constructor(props) {
+    super(props);
 
-  const resetPosition = e => {
+    this.resetPosition = this.resetPosition.bind(this);
+    this.highlightPosition = this.highlightPosition.bind(this);
+    this.firstTime = this.firstTime.bind(this);
+    this.nthTime = this.nthTime.bind(this);
+  }
+
+  resetPosition(e) {
     e.preventDefault();
-    props.setPosition(true);
-  };
+    this.props.setPosition(true);
+  }
 
-  const highlightPosition = () => {
-    highlightIdea(props.idea);
-  };
+  highlightPosition() {
+    highlightIdea(this.props.idea);
+  }
 
-  if (props.idea === null) {
+  firstTime() {
+    return (
+      <>
+        <p>
+          This book remembers where you stopped reading. You can view Table of Contents anytime by
+          clicking the bottom bar where the next “page” is visible.
+        </p>
+        <div className="seq-buttons">
+          <a href={this.props.startLink}>
+            <b>Start reading</b>
+          </a>
+        </div>
+      </>
+    );
+  }
+
+  nthTime() {
+    const link = this.props.targetChapter
+      ? `./${this.props.targetChapter.file}#idea${this.props.idea}`
+      : null;
+
+    const readingPosition =
+      !this.props.isChapter || !this.props.thisChapter ? (
+        <p>
+          You read up to <a href={link}>sentence #{this.props.idea}</a> in chapter{' '}
+          <b>{this.props.targetChapter.title}</b>.
+        </p>
+      ) : (
+        <p>
+          You read up to sentence{' '}
+          <a href={link} onClick={this.highlightPosition}>
+            #{this.props.idea} in this chapter
+          </a>
+          .
+        </p>
+      );
+
+    return (
+      (!this.props.sequential || !this.props.isChapter) && (
+        <>
+          {readingPosition}
+          <div className="seq-buttons">
+            {this.props.isChapter && (
+              <a href="#" onClick={this.resetPosition}>
+                Continue from&nbsp;here
+              </a>
+            )}
+            <a
+              href={link}
+              onClick={() => {
+                this.props.thisChapter ? this.highlightPosition : null;
+              }}
+            >
+              <b>{this.props.isChapter ? 'Return back' : 'Continue reading'}</b>
+            </a>
+          </div>
+        </>
+      )
+    );
+  }
+
+  render() {
     return (
       <div className="seq-return-wrapper">
         <div className="seq-return">
-          <p>
-            <span>
-              This book remembers where you stopped reading. Onboarding message is{' '}
-              <a href="">long</a>.
-            </span>
-          </p>
-          <span className="seq-buttons">
-            <a href={props.startLink}>
-              <b>Start reading</b>
-            </a>
-          </span>
+          {this.props.idea === null ? this.firstTime() : this.nthTime()}
         </div>
       </div>
     );
   }
-
-  const readingPosition =
-    !props.isChapter || !props.thisChapter ? (
-      <p>
-        You read up to <a href={link}>sentence #{props.idea}</a> in chapter{' '}
-        <b>{props.targetChapter.title}</b>.
-      </p>
-    ) : (
-      <p>
-        You read up to sentence{' '}
-        <a href={link} onClick={highlightPosition}>
-          #{props.idea} in this chapter
-        </a>
-        .
-      </p>
-    );
-
-  return (
-    (!props.sequential || !props.isChapter) && (
-      <div className="seq-return-wrapper">
-        <div className="seq-return">
-          {readingPosition}
-          <span className="seq-buttons">
-            {props.isChapter && (
-              <a href="#" onClick={resetPosition}>
-                Continue from&nbsp;here
-              </a>
-            )}
-            <a href={link} onClick={highlightPosition}>
-              <b>{props.isChapter ? 'Return back' : 'Continue reading'}</b>
-            </a>
-          </span>
-        </div>
-      </div>
-    )
-  );
 }
 
 SeqReturn.propTypes = {
@@ -228,6 +250,7 @@ SeqReturn.propTypes = {
   thisChapter: PropTypes.bool.isRequired,
   isChapter: PropTypes.bool.isRequired,
   setPosition: PropTypes.func.isRequired,
+  sequential: PropTypes.bool.isRequired,
   startLink: PropTypes.string.isRequired,
 };
 

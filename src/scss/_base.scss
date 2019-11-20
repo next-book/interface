@@ -23,8 +23,7 @@ body {
 }
 
 :target {
-  border-radius: 2px;
-  padding: 4px 0;
+  animation: highlight 0.8s ease-in-out;
 
   &:before {
     display: block;
@@ -36,14 +35,18 @@ body {
   }
 
   & + dd {
-    background: #ffc;
-    border-radius: 2px;
+    animation: highlight 0.8s ease-in-out;
   }
 }
 
 .highlighted {
-  animation: highlight 0.5s ease-in-out;
+  animation: highlight 0.8s ease-in-out;
   will-change: background-color;
+}
+
+#idea1:target,
+#idea1.highlighted {
+  animation: none;
 }
 
 @keyframes highlight {
