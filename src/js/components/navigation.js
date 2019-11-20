@@ -129,7 +129,7 @@ class Navigation extends React.Component {
       <nav>
         <CatchWord actions={{ showToc: this.showToc }} />
         {chapter && (
-          <div>
+          <>
             <NavBar
               readingOrder={ro}
               chapter={chapter}
@@ -138,7 +138,7 @@ class Navigation extends React.Component {
               totalWords={totalWords}
             />
             <TopBar manifest={this.props.manifest} chapter={chapter} />
-          </div>
+          </>
         )}
         <SeqReturn
           isChapter={this.isChapter}
