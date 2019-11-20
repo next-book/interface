@@ -45,7 +45,8 @@ class Peeks extends React.Component {
             source={peek.source}
             showSource={peek.showSource}
             title={peek.title}
-            content={peek.content}
+            content={typeof peek.content !== 'string' ? peek.content : null}
+            rawContent={typeof peek.content === 'string' ? peek.content : null}
             destroy={this.props.destroyPeek}
           />
         ))}
@@ -62,7 +63,13 @@ Peeks.propTypes = {
 
 function Peek(props) {
   function html() {
-    return { __html: props.content };
+    return { __html: props.rawContent };
+  }
+
+  if (props.content !== null && !React.isValidElement(props.content)) {
+    console.log(props.content);
+    props.destroy(props.index);
+    return null;
   }
 
   return (
@@ -78,17 +85,20 @@ function Peek(props) {
           ╳
         </button>
       </div>
-      <div className="peek-content" dangerouslySetInnerHTML={html()} />
+      {props.content && <div className="peek-content">{props.content}</div>}
+      {props.rawContent && <div className="peek-content" dangerouslySetInnerHTML={html()} />}
     </div>
   );
 }
 
 Peek.propTypes = {
-  content: PropTypes.string.isRequired,
+  content: PropTypes.object,
+  rawContent: PropTypes.string,
   title: PropTypes.string.isRequired,
   source: PropTypes.string.isRequired,
   showSource: PropTypes.bool.isRequired,
   destroy: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => {

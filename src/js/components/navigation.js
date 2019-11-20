@@ -6,7 +6,9 @@ import keycode from 'keycode';
 import PropTypes from 'prop-types';
 
 import reducer from './navigation-reducer';
+import peeksReducer from './peeks-reducer';
 import FullScreen from './full-screen';
+import Toc from './toc';
 
 class Navigation extends React.Component {
   constructor(props) {
@@ -16,6 +18,7 @@ class Navigation extends React.Component {
     this.setPosition = this.setPosition.bind(this);
     this.handleKeyboardNav = this.handleKeyboardNav.bind(this);
     this.handleInvisibleNav = this.handleInvisibleNav.bind(this);
+    this.showToc = this.showToc.bind(this);
 
     this.isChapter = getChapterNum() !== null;
   }
@@ -77,6 +80,15 @@ class Navigation extends React.Component {
     }
   }
 
+  showToc() {
+    this.props.addPeek({
+      content: <Toc />,
+      title: 'Table of Contents',
+      source: 'toc-table',
+      showSource: false,
+    });
+  }
+
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
     if (this.props.config.keyboardNav) {
@@ -113,7 +125,7 @@ class Navigation extends React.Component {
 
     return (
       <nav>
-        <CatchWord />
+        <CatchWord actions={{ showToc: this.showToc }} />
         {chapter && (
           <div>
             <NavBar
@@ -151,6 +163,7 @@ Navigation.propTypes = {
   sequential: PropTypes.bool,
   setPosition: PropTypes.func.isRequired,
   setReadingOrder: PropTypes.func.isRequired,
+  addPeek: PropTypes.func.isRequired,
 };
 
 class SeqReturn extends React.Component {
@@ -254,9 +267,25 @@ SeqReturn.propTypes = {
   startLink: PropTypes.string.isRequired,
 };
 
-function CatchWord(props) {
-  return <div className="catchword-bar" />;
+class CatchWord extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.handleActions = this.handleActions.bind(this);
+  }
+
+  handleActions() {
+    this.props.actions.showToc();
+  }
+
+  render() {
+    return <div onClick={this.handleActions} id="catchword-bar" />;
+  }
 }
+
+CatchWord.propTypes = {
+  actions: PropTypes.object.isRequired,
+};
 
 function NavBar(props) {
   return (
@@ -391,8 +420,8 @@ function isPageScrolledToTop() {
 function getScrollStep() {
   const bottomOffset = Math.max(
     document.getElementById('peeks') ? document.getElementById('peeks').offsetHeight + 10 : 0,
-    document.querySelector('.catchword-bar')
-      ? document.querySelector('.catchword-bar').offsetHeight
+    document.getElementById('catchword-bar')
+      ? document.getElementById('catchword-bar').offsetHeight
       : 0
   );
 
@@ -495,6 +524,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
+      addPeek: peeksReducer.addPeek,
       setPosition: reducer.setPosition,
       setReadingOrder: reducer.setReadingOrder,
     },

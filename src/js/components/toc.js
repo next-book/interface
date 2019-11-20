@@ -34,8 +34,6 @@ class Toc extends React.Component {
   }
 }
 
-Toc.wrapperId = 'nb-table-of-contents';
-
 Toc.propTypes = {
   readingOrder: PropTypes.array.isRequired,
 };
