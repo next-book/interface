@@ -22,8 +22,10 @@
 
     .peek-content {
       padding: 4rem 1rem 2rem;
-      overflow: auto;
+      max-height: calc(60vh - 6rem);
       background: white;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
     }
 
     .peek-head {
@@ -36,6 +38,7 @@
       line-height: 3rem;
       text-align: left;
       background: #ddd;
+      z-index: 3;
 
       .peek-info {
         flex-grow: 1;
