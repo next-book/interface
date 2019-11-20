@@ -1,15 +1,15 @@
 const SET_POSITION = 'nb-base/navigation/SET_POSITION';
+const SET_SCROLL_RATIO = 'nb-base/navigation/SET_SCROLL_RATIO';
 const SET_READING_ORDER = 'nb-base/navigation/SET_READING_ORDER';
 
 const defaultState = {
+  scrollRatio: 0,
   position: {
     chapterNum: null,
-    scrollRatio: null,
     idea: null,
   },
   sequentialPosition: {
     chapterNum: null,
-    scrollRatio: null,
     idea: null,
   },
   sequential: null,
@@ -22,6 +22,8 @@ const defaultState = {
 
 function reducer(state = defaultState, action = {}) {
   switch (action.type) {
+    case SET_SCROLL_RATIO:
+      return { ...state, ...{ scrollRatio: parseFloat(action.payload) } };
     case SET_POSITION:
       return setPosition(state, action.payload);
     case SET_READING_ORDER:
@@ -34,7 +36,6 @@ function reducer(state = defaultState, action = {}) {
 function setPosition(state, payload) {
   const position = {
     chapterNum: parseInt(payload.chapterNum, 10),
-    scrollRatio: parseFloat(payload.scrollRatio),
     idea: parseInt(payload.idea, 10),
   };
 
@@ -75,10 +76,17 @@ reducer.setReadingOrder = function(documents) {
   };
 };
 
-reducer.setPosition = function(chapterNum, idea, scrollRatio, sequential) {
+reducer.setScrollRatio = function(scrollRatio) {
+  return {
+    type: SET_SCROLL_RATIO,
+    payload: scrollRatio,
+  };
+};
+
+reducer.setPosition = function(chapterNum, idea, sequential) {
   return {
     type: SET_POSITION,
-    payload: { chapterNum, idea, scrollRatio, sequential },
+    payload: { chapterNum, idea, sequential },
   };
 };
 

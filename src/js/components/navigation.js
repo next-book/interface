@@ -16,6 +16,7 @@ class Navigation extends React.Component {
 
     this.getScrollHandler = this.getScrollHandler.bind(this);
     this.setPosition = this.setPosition.bind(this);
+    this.setScrollRatio = this.setScrollRatio.bind(this);
     this.handleKeyboardNav = this.handleKeyboardNav.bind(this);
     this.handleInvisibleNav = this.handleInvisibleNav.bind(this);
     this.showToc = this.showToc.bind(this);
@@ -26,25 +27,26 @@ class Navigation extends React.Component {
   setPosition(resetSequence) {
     const idea = getFirstIdeaShown();
     const chapterNum = getChapterNum();
-    const scrollRatio = getScrollRatio();
     const sequential =
       resetSequence ||
-      checkSequence(
-        this.props.sequentialPosition,
-        { idea, chapterNum, scrollRatio },
-        this.props.sequential
-      );
+      checkSequence(this.props.sequentialPosition, { idea, chapterNum }, this.props.sequential);
 
-    this.props.setPosition(chapterNum, idea, scrollRatio, sequential);
+    this.props.setPosition(chapterNum, idea, sequential);
 
     setUriIdea(idea);
   }
 
+  setScrollRatio(resetSequence) {
+    this.props.setScrollRatio(getScrollRatio());
+  }
+
   getScrollHandler() {
     const t1 = throttle(this.setPosition, 500, { leading: false });
+    const t2 = throttle(this.setScrollRatio, 100, { leading: true });
 
     return function throttled() {
       t1();
+      t2();
     };
   }
 
@@ -120,7 +122,7 @@ class Navigation extends React.Component {
     const pos = this.props.position;
     const chapter = pos.chapterNum !== null ? ro[pos.chapterNum] : null;
     const thisChapter =
-      pos.chapterNum !== null ? this.props.sequentialPosition.chapterNum === chapter.order : false;
+      pos.chapterNum !== null ? this.props.sequentialPosition.chapterNum === pos.chapterNum : false;
     const { totalWords } = ro[ro.length - 1];
 
     return (
@@ -131,7 +133,7 @@ class Navigation extends React.Component {
             <NavBar
               readingOrder={ro}
               chapter={chapter}
-              scrollRatio={pos.scrollRatio}
+              scrollRatio={this.props.scrollRatio}
               idea={pos.idea}
               totalWords={totalWords}
             />
@@ -157,11 +159,13 @@ Navigation.propTypes = {
     documents: PropTypes.arrayOf(PropTypes.object),
   }),
   config: PropTypes.object.isRequired,
+  scrollRatio: PropTypes.number.isRequired,
   position: PropTypes.object.isRequired,
   sequentialPosition: PropTypes.object.isRequired,
   readingOrder: PropTypes.array.isRequired,
   sequential: PropTypes.bool,
   setPosition: PropTypes.func.isRequired,
+  setScrollRatio: PropTypes.func.isRequired,
   setReadingOrder: PropTypes.func.isRequired,
   addPeek: PropTypes.func.isRequired,
 };
@@ -515,6 +519,7 @@ const mapStateToProps = state => {
     config: state.navigation.config,
     readingOrder: state.navigation.readingOrder,
     position: state.navigation.position,
+    scrollRatio: state.navigation.scrollRatio,
     sequential: state.navigation.sequential,
     sequentialPosition: state.navigation.sequentialPosition,
     manifest: state.manifest,
@@ -526,6 +531,7 @@ const mapDispatchToProps = dispatch => {
     {
       addPeek: peeksReducer.addPeek,
       setPosition: reducer.setPosition,
+      setScrollRatio: reducer.setScrollRatio,
       setReadingOrder: reducer.setReadingOrder,
     },
     dispatch
