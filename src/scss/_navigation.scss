@@ -77,6 +77,12 @@
   }
 }
 
+@media screen and (max-width: 500px) {
+  .seq-return-wrapper {
+    left: 0.7rem;
+  }
+}
+
 body.paginated-back,
 body.paginated-forward {
   &::after {
