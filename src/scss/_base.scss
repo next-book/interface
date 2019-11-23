@@ -44,6 +44,8 @@ body {
   will-change: background-color;
 }
 
+#chunk1:target,
+#chunk1.highlighted,
 #idea1:target,
 #idea1.highlighted {
   animation: none;
