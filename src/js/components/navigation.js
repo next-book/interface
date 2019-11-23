@@ -251,12 +251,14 @@ class SeqReturn extends React.Component {
   }
 
   render() {
+    const content = this.props.idea === null ? this.firstTime() : this.nthTime();
+
     return (
-      <div className="seq-return-wrapper">
-        <div className="seq-return">
-          {this.props.idea === null ? this.firstTime() : this.nthTime()}
+      content && (
+        <div className="seq-return-wrapper">
+          <div className="seq-return">{content}</div>
         </div>
-      </div>
+      )
     );
   }
 }
