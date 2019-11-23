@@ -435,7 +435,9 @@ function getScrollStep() {
       : 0
   );
 
-  return window.innerHeight - bottomOffset;
+  const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+  return window.innerHeight - bottomOffset - remSize;
 }
 
 function getChapterPixels(chapter, totalWords) {
