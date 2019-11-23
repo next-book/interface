@@ -131,6 +131,7 @@ class Navigation extends React.Component {
         {chapter && (
           <>
             <NavBar
+              isChapter={this.isChapter}
               readingOrder={ro}
               chapter={chapter}
               scrollRatio={this.props.scrollRatio}
@@ -266,10 +267,10 @@ class SeqReturn extends React.Component {
 SeqReturn.propTypes = {
   idea: PropTypes.number,
   targetChapter: PropTypes.object,
+  sequential: PropTypes.bool,
   thisChapter: PropTypes.bool.isRequired,
   isChapter: PropTypes.bool.isRequired,
   setPosition: PropTypes.func.isRequired,
-  sequential: PropTypes.bool.isRequired,
   startLink: PropTypes.string.isRequired,
 };
 
@@ -296,11 +297,13 @@ CatchWord.propTypes = {
 function NavBar(props) {
   return (
     <ul className="nav-bar">
-      <Pointer
-        scrollRatio={props.scrollRatio}
-        chapter={props.chapter}
-        totalWords={props.totalWords}
-      />
+      {props.isChapter && (
+        <Pointer
+          scrollRatio={props.scrollRatio}
+          chapter={props.chapter}
+          totalWords={props.totalWords}
+        />
+      )}
       {props.readingOrder.map((chapter, index) => (
         <Chapter key={chapter.order} chapter={chapter} totalWords={props.totalWords} />
       ))}
@@ -310,6 +313,7 @@ function NavBar(props) {
 
 NavBar.propTypes = {
   scrollRatio: PropTypes.number.isRequired,
+  isChapter: PropTypes.bool.isRequired,
   chapter: PropTypes.object.isRequired,
   totalWords: PropTypes.number.isRequired,
   readingOrder: PropTypes.array.isRequired,
