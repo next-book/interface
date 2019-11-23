@@ -69069,6 +69069,7 @@ object-assign
                         _react['default'].Fragment,
                         null,
                         _react['default'].createElement(NavBar, {
+                          isChapter: this.isChapter,
                           readingOrder: ro,
                           chapter: chapter,
                           scrollRatio: this.props.scrollRatio,
@@ -69267,17 +69268,21 @@ object-assign
               {
                 key: 'render',
                 value: function render() {
-                  return _react['default'].createElement(
-                    'div',
-                    {
-                      className: 'seq-return-wrapper',
-                    },
+                  var content = this.props.idea === null ? this.firstTime() : this.nthTime();
+                  return (
+                    content &&
                     _react['default'].createElement(
                       'div',
                       {
-                        className: 'seq-return',
+                        className: 'seq-return-wrapper',
                       },
-                      this.props.idea === null ? this.firstTime() : this.nthTime()
+                      _react['default'].createElement(
+                        'div',
+                        {
+                          className: 'seq-return',
+                        },
+                        content
+                      )
                     )
                   );
                 },
@@ -69290,10 +69295,10 @@ object-assign
         SeqReturn.propTypes = {
           idea: _propTypes['default'].number,
           targetChapter: _propTypes['default'].object,
+          sequential: _propTypes['default'].bool,
           thisChapter: _propTypes['default'].bool.isRequired,
           isChapter: _propTypes['default'].bool.isRequired,
           setPosition: _propTypes['default'].func.isRequired,
-          sequential: _propTypes['default'].bool.isRequired,
           startLink: _propTypes['default'].string.isRequired,
         };
 
@@ -69346,11 +69351,12 @@ object-assign
             {
               className: 'nav-bar',
             },
-            _react['default'].createElement(Pointer, {
-              scrollRatio: props.scrollRatio,
-              chapter: props.chapter,
-              totalWords: props.totalWords,
-            }),
+            props.isChapter &&
+              _react['default'].createElement(Pointer, {
+                scrollRatio: props.scrollRatio,
+                chapter: props.chapter,
+                totalWords: props.totalWords,
+              }),
             props.readingOrder.map(function(chapter, index) {
               return _react['default'].createElement(Chapter, {
                 key: chapter.order,
@@ -69363,6 +69369,7 @@ object-assign
 
         NavBar.propTypes = {
           scrollRatio: _propTypes['default'].number.isRequired,
+          isChapter: _propTypes['default'].bool.isRequired,
           chapter: _propTypes['default'].object.isRequired,
           totalWords: _propTypes['default'].number.isRequired,
           readingOrder: _propTypes['default'].array.isRequired,
@@ -69526,7 +69533,8 @@ object-assign
               ? document.getElementById('catchword-bar').offsetHeight
               : 0
           );
-          return window.innerHeight - bottomOffset;
+          var remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+          return window.innerHeight - bottomOffset - remSize;
         }
 
         function getChapterPixels(chapter, totalWords) {

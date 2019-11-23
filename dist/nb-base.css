@@ -40,6 +40,8 @@ body {
   will-change: background-color;
 }
 
+#chunk1:target,
+#chunk1.highlighted,
 #idea1:target,
 #idea1.highlighted {
   animation: none;
@@ -138,6 +140,12 @@ body {
 }
 .seq-return-wrapper .seq-buttons a:last-child {
   border-width: 1px 0 0;
+}
+
+@media screen and (max-width: 500px) {
+  .seq-return-wrapper {
+    left: 0.7rem;
+  }
 }
 
 body.paginated-back::after,
