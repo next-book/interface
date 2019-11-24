@@ -6,7 +6,7 @@ const defaultState = {
   cacheIsAvailable: false,
 };
 
-function reducer(state = defaultState, action = {}) {
+export default function reducer(state = defaultState, action = {}) {
   switch (action.type) {
     case SET_OFFLINE_AVAILABILITY:
       return { ...state, ...{ offlineIsAvailable: action.payload } };
@@ -30,5 +30,3 @@ reducer.setCacheAvailability = function(status) {
     payload: status,
   };
 };
-
-module.exports = reducer;

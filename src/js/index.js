@@ -10,7 +10,7 @@ import { loadManifest, plantRoot } from './shared';
 import reducer from './reducer';
 import views from './views';
 
-function initBook() {
+export function initBook() {
   loadManifest().then(manifest => {
     const persistedState = localStorage.getItem(manifest.slug);
 
@@ -42,7 +42,3 @@ function initBook() {
     window.book = store;
   });
 }
-
-module.exports = {
-  initBook,
-};

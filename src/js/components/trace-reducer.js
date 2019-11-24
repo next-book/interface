@@ -80,4 +80,4 @@ reducer.addMoment = function(time, chapter, idea, sequential) {
   };
 };
 
-module.exports = reducer;
+export default reducer;

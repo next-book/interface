@@ -61,7 +61,7 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators({}, dispatch);
 };
 
-module.exports = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(Toc);

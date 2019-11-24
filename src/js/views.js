@@ -4,7 +4,7 @@ import peeks from './components/peeks';
 import trace from './components/trace';
 import offline from './components/offline';
 
-module.exports = {
+export default {
   navigation,
   manifest,
   peeks,

@@ -1,6 +1,6 @@
 const SET_SPINE_DATA = 'nb-base/manifest/SET_SPINE_DATA';
 
-function reducer(state = {}, action = {}) {
+export default function reducer(state = {}, action = {}) {
   switch (action.type) {
     case SET_SPINE_DATA:
       return action.payload;
@@ -15,5 +15,3 @@ reducer.setManifestData = function(data) {
     payload: data,
   };
 };
-
-module.exports = reducer;

@@ -5,7 +5,7 @@ import peeks from './components/peeks-reducer';
 import trace from './components/trace-reducer';
 import offline from './components/offline-reducer';
 
-module.exports = combineReducers({
+export default combineReducers({
   navigation,
   manifest,
   peeks,

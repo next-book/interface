@@ -1,6 +1,6 @@
 import cuid from 'cuid';
 
-function plantRoot(componentName, parent = document.querySelector('body')) {
+export function plantRoot(componentName, parent = document.querySelector('body')) {
   const id = cuid();
 
   const el = document.createElement('div');
@@ -21,11 +21,9 @@ function json(response) {
   return response.json();
 }
 
-function loadManifest() {
+export function loadManifest() {
   const uri = document.querySelector('link[rel="publication"]').getAttribute('href');
   return fetch(uri)
     .then(status)
     .then(json);
 }
-
-module.exports = { plantRoot, loadManifest };

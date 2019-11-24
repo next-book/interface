@@ -20,7 +20,7 @@ const defaultState = {
   },
 };
 
-function reducer(state = defaultState, action = {}) {
+export default function reducer(state = defaultState, action = {}) {
   switch (action.type) {
     case SET_SCROLL_RATIO:
       return { ...state, ...{ scrollRatio: parseFloat(action.payload) } };
@@ -89,5 +89,3 @@ reducer.setPosition = function(chapterNum, idea, sequential) {
     payload: { chapterNum, idea, sequential },
   };
 };
-
-module.exports = reducer;

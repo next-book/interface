@@ -1,7 +1,7 @@
 import React from 'react';
 import fscreen from 'fscreen';
 
-class FullScreen extends React.Component {
+export default class FullScreen extends React.Component {
   constructor(props) {
     super(props);
 
@@ -37,5 +37,3 @@ class FullScreen extends React.Component {
     );
   }
 }
-
-module.exports = FullScreen;

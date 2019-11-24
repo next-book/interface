@@ -3,7 +3,7 @@ const DESTROY_PEEK = 'nb-base/peeks/DESTROY_PEEK';
 
 const defaultState = [];
 
-function reducer(state = defaultState, action = {}) {
+export default function reducer(state = defaultState, action = {}) {
   switch (action.type) {
     case ADD_PEEK:
       return addPeek(state, action.payload);
@@ -43,5 +43,3 @@ reducer.destroyPeek = function(data) {
     payload: data,
   };
 };
-
-module.exports = reducer;

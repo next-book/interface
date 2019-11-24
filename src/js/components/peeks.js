@@ -115,7 +115,7 @@ const mapDispatchToProps = dispatch => {
   );
 };
 
-module.exports = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(Peeks);
