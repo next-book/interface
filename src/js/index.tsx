@@ -6,19 +6,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { debounce } from 'lodash';
 
-import { loadManifest, plantRoot } from './shared';
+import { loadManifest, parseManifest, plantRoot } from './shared';
 import reducer from './reducer';
 import views from './views';
 
 export function initBook() {
-  loadManifest().then(manifest => {
+  loadManifest().then(manifestData => {
+    const manifest = parseManifest(manifestData);
+
     const persistedState = localStorage.getItem(manifest.slug);
 
-    const store = createStore(
-      reducer,
-      persistedState ? JSON.parse(persistedState) : { manifest },
-      compose(window.devToolsExtension ? window.devToolsExtension() : f => f)
-    );
+    const store = createStore(reducer, persistedState ? JSON.parse(persistedState) : { manifest });
 
     Object.keys(views).forEach(key => {
       const wrapper = views[key].wrapperId
@@ -39,6 +37,6 @@ export function initBook() {
       }, 500)
     );
 
-    window.book = store;
+    (window as any).book = store;
   });
 }

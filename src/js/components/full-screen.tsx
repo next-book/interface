@@ -1,13 +1,18 @@
 import React from 'react';
 import fscreen from 'fscreen';
 
-export default class FullScreen extends React.Component {
-  constructor(props) {
-    super(props);
+export interface IState {
+  enabled: boolean;
+  active: boolean;
+}
 
-    this.state = { enabled: false, active: false };
-    this.toggleFullScreen = this.toggleFullScreen.bind(this);
-  }
+const INITIAL_STATE: IState = {
+  enabled: false,
+  active: false,
+};
+
+export class FullScreen extends React.Component<any, IState> {
+  public state = INITIAL_STATE;
 
   componentDidMount() {
     if (fscreen.fullscreenEnabled) {
@@ -15,12 +20,12 @@ export default class FullScreen extends React.Component {
     }
   }
 
-  toggleFullScreen() {
+  toggleFullScreen = () => {
     if (this.state.active) fscreen.exitFullscreen(window.document.querySelector('html'));
     else fscreen.requestFullscreen(window.document.querySelector('html'));
 
     this.setState({ ...this.state, active: !this.state.active });
-  }
+  };
 
   componentWillUnmount() {}
 

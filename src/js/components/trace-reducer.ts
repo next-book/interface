@@ -2,14 +2,42 @@ import toMs from 'to-milliseconds';
 
 const ADD_MOMENT = 'nb-base/trace/ADD_MOMENT';
 
-const defaultState = {
+interface IBreakLength {
+  hours?: number;
+  minutes?: number;
+}
+
+interface ISession {
+  start: number;
+  end: number;
+  open: boolean;
+  moments: IMoment[];
+}
+
+export interface IMoment {
+  time: number;
+  chapter: number;
+  idea: number;
+  sequential: boolean;
+}
+
+interface IConfig {
+  breakLength: IBreakLength;
+}
+
+export interface IState {
+  sessions: object[];
+  config: IConfig;
+}
+
+const INITIAL_STATE: IState = {
   sessions: [],
   config: {
     breakLength: { minutes: 10 },
   },
 };
 
-function reducer(state = defaultState, action = {}) {
+export function reducer(state = INITIAL_STATE, action: Action) {
   switch (action.type) {
     case ADD_MOMENT:
       return addMoment(state, action.payload);
@@ -42,11 +70,11 @@ function addMoment(state, moment) {
   };
 }
 
-function isSessionOld(moment, session, breakLength) {
+function isSessionOld(moment: IMoment, session: ISession, breakLength: IBreakLength) {
   return moment.time - toMs.convert(breakLength) > session.end;
 }
 
-function startSession(moment) {
+function startSession(moment: IMoment) {
   return {
     start: moment.time,
     end: moment.time,
@@ -55,7 +83,7 @@ function startSession(moment) {
   };
 }
 
-function prolongSession(session, moment) {
+function prolongSession(session: ISession, moment: IMoment) {
   return {
     start: session.start,
     end: moment.time,
@@ -64,7 +92,7 @@ function prolongSession(session, moment) {
   };
 }
 
-function concludeSession(session) {
+function concludeSession(session: ISession) {
   return {
     start: session.start,
     end: session.end,
@@ -73,11 +101,11 @@ function concludeSession(session) {
   };
 }
 
-reducer.addMoment = function(time, chapter, idea, sequential) {
+reducer.addMoment = function(moment: IMoment) {
   return {
     type: ADD_MOMENT,
-    payload: { time, chapter, idea, sequential },
+    payload: moment,
   };
 };
 
-export default reducer;
+export type Action = ReturnType<typeof reducer.addMoment>;

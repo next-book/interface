@@ -1,10 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import reducer from './offline-reducer';
+import { reducer, IState } from './offline-reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-class Offline extends React.Component {
+export interface IProps extends IState {
+  setCacheAvailability(status: boolean): void;
+  setOfflineAvailability(status: boolean): void;
+}
+
+export class Offline extends React.Component<IProps> {
   constructor(props) {
     super(props);
   }
@@ -29,13 +34,6 @@ class Offline extends React.Component {
     return null;
   }
 }
-
-Offline.propTypes = {
-  offlineIsAvailable: PropTypes.bool.isRequired,
-  cacheIsAvailable: PropTypes.bool.isRequired,
-  setCacheAvailability: PropTypes.func.isRequired,
-  setOfflineAvailability: PropTypes.func.isRequired,
-};
 
 function registerServiceWorker() {
   navigator.serviceWorker.register('./service-worker.js');

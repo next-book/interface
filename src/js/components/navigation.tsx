@@ -5,26 +5,38 @@ import { throttle } from 'lodash';
 import keycode from 'keycode';
 import PropTypes from 'prop-types';
 
-import reducer from './navigation-reducer';
-import peeksReducer from './peeks-reducer';
-import FullScreen from './full-screen';
+import { NavBar } from './nav-bar';
+import { TopBar } from './top-bar';
+import { CatchWord } from './catch-word';
+import { SeqReturn } from './seq-return';
+import { reducer, IPosition, INavDocument, IConfig } from './navigation-reducer';
+import { IState as IManifest, IDocument } from './manifest-reducer';
+import { reducer as peeksReducer, IPeek } from './peeks-reducer';
+
 import Toc from './toc';
 
-class Navigation extends React.Component {
+export interface IProps {
+  manifest?: IManifest;
+  config: IConfig;
+  scrollRatio: number;
+  position: IPosition;
+  sequentialPosition: IPosition;
+  readingOrder: INavDocument[];
+  sequential: boolean | null;
+  setPosition(chapterNum: number, idea: number, sequential: boolean): void;
+  setScrollRatio(number): void;
+  setReadingOrder(documents: IDocument[]): void;
+  addPeek(peek: IPeek): void;
+}
+
+export class Navigation extends React.Component<IProps> {
   constructor(props) {
     super(props);
-
-    this.getScrollHandler = this.getScrollHandler.bind(this);
-    this.setPosition = this.setPosition.bind(this);
-    this.setScrollRatio = this.setScrollRatio.bind(this);
-    this.handleKeyboardNav = this.handleKeyboardNav.bind(this);
-    this.handleInvisibleNav = this.handleInvisibleNav.bind(this);
-    this.showToc = this.showToc.bind(this);
-
-    this.isChapter = getChapterNum() !== null;
   }
 
-  setPosition(resetSequence) {
+  private isChapter = getChapterNum() !== null;
+
+  setPosition = (resetSequence?: boolean) => {
     const idea = getFirstIdeaShown();
     const chapterNum = getChapterNum();
     const sequential =
@@ -34,13 +46,13 @@ class Navigation extends React.Component {
     this.props.setPosition(chapterNum, idea, sequential);
 
     setUriIdea(idea);
-  }
+  };
 
-  setScrollRatio(resetSequence) {
+  setScrollRatio = () => {
     this.props.setScrollRatio(getScrollRatio());
-  }
+  };
 
-  getScrollHandler() {
+  getScrollHandler = () => {
     const t1 = throttle(this.setPosition, 500, { leading: false });
     const t2 = throttle(this.setScrollRatio, 100, { leading: true });
 
@@ -48,9 +60,9 @@ class Navigation extends React.Component {
       t1();
       t2();
     };
-  }
+  };
 
-  handleKeyboardNav(event) {
+  handleKeyboardNav = event => {
     const chapter = this.props.readingOrder[this.props.position.chapterNum];
 
     switch (keycode(event)) {
@@ -61,9 +73,9 @@ class Navigation extends React.Component {
       default:
         return;
     }
-  }
+  };
 
-  handleInvisibleNav(event) {
+  handleInvisibleNav = event => {
     const chapter = this.props.readingOrder[this.props.position.chapterNum];
 
     if (
@@ -80,16 +92,16 @@ class Navigation extends React.Component {
         return moveForward(event, chapter.next);
       }
     }
-  }
+  };
 
-  showToc() {
+  showToc = () => {
     this.props.addPeek({
       content: <Toc />,
       title: 'Table of Contents',
       source: 'toc-table',
       showSource: false,
     });
-  }
+  };
 
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
@@ -135,10 +147,9 @@ class Navigation extends React.Component {
               readingOrder={ro}
               chapter={chapter}
               scrollRatio={this.props.scrollRatio}
-              idea={pos.idea}
               totalWords={totalWords}
             />
-            <TopBar manifest={this.props.manifest} chapter={chapter} />
+            <TopBar title={this.props.manifest.title} chapter={chapter} />
           </>
         )}
         <SeqReturn
@@ -154,233 +165,6 @@ class Navigation extends React.Component {
     );
   }
 }
-
-Navigation.propTypes = {
-  manifest: PropTypes.shape({
-    documents: PropTypes.arrayOf(PropTypes.object),
-  }),
-  config: PropTypes.object.isRequired,
-  scrollRatio: PropTypes.number.isRequired,
-  position: PropTypes.object.isRequired,
-  sequentialPosition: PropTypes.object.isRequired,
-  readingOrder: PropTypes.array.isRequired,
-  sequential: PropTypes.bool,
-  setPosition: PropTypes.func.isRequired,
-  setScrollRatio: PropTypes.func.isRequired,
-  setReadingOrder: PropTypes.func.isRequired,
-  addPeek: PropTypes.func.isRequired,
-};
-
-class SeqReturn extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.resetPosition = this.resetPosition.bind(this);
-    this.highlightPosition = this.highlightPosition.bind(this);
-    this.firstTime = this.firstTime.bind(this);
-    this.nthTime = this.nthTime.bind(this);
-  }
-
-  resetPosition(e) {
-    e.preventDefault();
-    this.props.setPosition(true);
-  }
-
-  highlightPosition() {
-    highlightIdea(this.props.idea);
-  }
-
-  firstTime() {
-    return (
-      <>
-        <p>
-          This book remembers where you stopped reading. You can view Table of Contents anytime by
-          clicking the bottom bar where the next “page” is visible.
-        </p>
-        <div className="seq-buttons">
-          <a href={this.props.startLink}>
-            <b>Start reading</b>
-          </a>
-        </div>
-      </>
-    );
-  }
-
-  nthTime() {
-    const link = this.props.targetChapter
-      ? `./${this.props.targetChapter.file}#idea${this.props.idea}`
-      : null;
-
-    const readingPosition =
-      !this.props.isChapter || !this.props.thisChapter ? (
-        <p>
-          You read up to <a href={link}>sentence #{this.props.idea}</a> in chapter{' '}
-          <b>{this.props.targetChapter.title}</b>.
-        </p>
-      ) : (
-        <p>
-          You read up to sentence{' '}
-          <a href={link} onClick={this.highlightPosition}>
-            #{this.props.idea} in this chapter
-          </a>
-          .
-        </p>
-      );
-
-    return (
-      (!this.props.sequential || !this.props.isChapter) && (
-        <>
-          {readingPosition}
-          <div className="seq-buttons">
-            {this.props.isChapter && (
-              <a href="#" onClick={this.resetPosition}>
-                Continue from&nbsp;here
-              </a>
-            )}
-            <a
-              href={link}
-              onClick={() => {
-                this.props.thisChapter ? this.highlightPosition : null;
-              }}
-            >
-              <b>{this.props.isChapter ? 'Return back' : 'Continue reading'}</b>
-            </a>
-          </div>
-        </>
-      )
-    );
-  }
-
-  render() {
-    const content = this.props.idea === null ? this.firstTime() : this.nthTime();
-
-    return (
-      content && (
-        <div className="seq-return-wrapper">
-          <div className="seq-return">{content}</div>
-        </div>
-      )
-    );
-  }
-}
-
-SeqReturn.propTypes = {
-  idea: PropTypes.number,
-  targetChapter: PropTypes.object,
-  sequential: PropTypes.bool,
-  thisChapter: PropTypes.bool.isRequired,
-  isChapter: PropTypes.bool.isRequired,
-  setPosition: PropTypes.func.isRequired,
-  startLink: PropTypes.string.isRequired,
-};
-
-class CatchWord extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.handleActions = this.handleActions.bind(this);
-  }
-
-  handleActions() {
-    this.props.actions.showToc();
-  }
-
-  render() {
-    return <div onClick={this.handleActions} id="catchword-bar" />;
-  }
-}
-
-CatchWord.propTypes = {
-  actions: PropTypes.object.isRequired,
-};
-
-function NavBar(props) {
-  return (
-    <ul className="nav-bar">
-      {props.isChapter && (
-        <Pointer
-          scrollRatio={props.scrollRatio}
-          chapter={props.chapter}
-          totalWords={props.totalWords}
-        />
-      )}
-      {props.readingOrder.map((chapter, index) => (
-        <Chapter key={chapter.order} chapter={chapter} totalWords={props.totalWords} />
-      ))}
-    </ul>
-  );
-}
-
-NavBar.propTypes = {
-  scrollRatio: PropTypes.number.isRequired,
-  isChapter: PropTypes.bool.isRequired,
-  chapter: PropTypes.object.isRequired,
-  totalWords: PropTypes.number.isRequired,
-  readingOrder: PropTypes.array.isRequired,
-};
-
-function Pointer(props) {
-  const { offset, width } = getChapterPixels(props.chapter, props.totalWords);
-  const left = offset + width * props.scrollRatio;
-
-  return <li className="pointer" style={{ left: left + '%' }} />;
-}
-
-Pointer.propTypes = {
-  scrollRatio: PropTypes.number.isRequired,
-  chapter: PropTypes.object.isRequired,
-  totalWords: PropTypes.number.isRequired,
-};
-
-function TopBar(props) {
-  return (
-    <div className="top-bar">
-      <p className="info">
-        <a className="book" href="./index.html">
-          {props.manifest.title}
-        </a>
-        <span className="chapter">
-          {props.chapter.order + 1}&nbsp;/&nbsp;{props.chapter.title}
-        </span>
-      </p>
-      <p className="tools">
-        <FullScreen />
-      </p>
-    </div>
-  );
-}
-
-TopBar.propTypes = {
-  manifest: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-  }),
-  chapter: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    order: PropTypes.number.isRequired,
-  }),
-};
-
-function Chapter(props) {
-  const { offset, width } = getChapterPixels(props.chapter, props.totalWords);
-
-  return (
-    <li
-      className="chapter"
-      style={{ left: `${offset}%`, width: `${width}%` }}
-      data-order={props.chapter.order}
-      title={props.chapter.title}
-    >
-      <span className="info">
-        {props.chapter.order + 1}: {props.chapter.title}
-      </span>
-    </li>
-  );
-}
-
-Chapter.propTypes = {
-  chapter: PropTypes.object.isRequired,
-  totalWords: PropTypes.number.isRequired,
-};
 
 function moveForward(event, nextChapter) {
   event.preventDefault();
@@ -440,15 +224,6 @@ function getScrollStep() {
   return window.innerHeight - bottomOffset - remSize;
 }
 
-function getChapterPixels(chapter, totalWords) {
-  if (!chapter || !totalWords) return { offset: 0, width: 0 };
-
-  const offset = (chapter.offsetWords / totalWords) * 100;
-  const width = (chapter.words / totalWords) * 100;
-
-  return { offset, width };
-}
-
 function getScrollRatio() {
   return window.scrollY / (document.body.scrollHeight - window.innerHeight);
 }
@@ -467,10 +242,10 @@ function getFirstIdeaShown() {
     top: el.getBoundingClientRect().top,
     bottom: el.getBoundingClientRect().bottom,
   }));
-  const shown = ideas.filter(el => el.top > 20).sort((el1, el2) => el1.bottom > el2.bottom);
+  const shown = ideas.filter(el => el.top > 20).sort((el1, el2) => el1.bottom - el2.bottom);
 
-  if (shown.length > 0) return parseInt(shown[0].el.dataset.nbRefNumber, 10);
-  else return parseInt(ideas[ideas.length - 1].el.dataset.nbRefNumber, 10);
+  if (shown.length > 0) return parseInt(shown[0].el.getAttribute('data-nb-ref-number'), 10);
+  else return parseInt(ideas[ideas.length - 1].el.getAttribute('data-nb-ref-number'), 10);
 }
 
 function checkSequence(pos1, pos2, wasSequentialBefore) {
@@ -510,16 +285,6 @@ function checkSequence(pos1, pos2, wasSequentialBefore) {
 
 function setUriIdea(id) {
   window.history.replaceState(undefined, undefined, `#idea${id}`);
-}
-
-function highlightIdea(id) {
-  const classList = document.getElementById(`idea${id}`).classList;
-  const className = 'highlighted';
-
-  classList.add(className);
-  window.setTimeout(() => {
-    classList.remove(className);
-  }, 1000);
 }
 
 const mapStateToProps = state => {

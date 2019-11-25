@@ -3,7 +3,18 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-class Toc extends React.Component {
+interface IChapter {
+  title: string;
+  order: number;
+  file: string;
+  toc: HTMLElement[];
+}
+
+interface IProps {
+  readingOrder: IChapter[];
+}
+
+class Toc extends React.Component<IProps> {
   constructor(props) {
     super(props);
   }
@@ -21,7 +32,7 @@ class Toc extends React.Component {
               <a href={doc.file}>{doc.title}</a>
               <ul>
                 {doc.toc && doc.toc[0].children.length
-                  ? doc.toc[0].children.map((section, index) => {
+                  ? [...doc.toc[0].children].map((section, index) => {
                       return <Section key={index} file={doc.file} section={section} />;
                     })
                   : null}
@@ -33,10 +44,6 @@ class Toc extends React.Component {
     );
   }
 }
-
-Toc.propTypes = {
-  readingOrder: PropTypes.array.isRequired,
-};
 
 function Section(props) {
   return (

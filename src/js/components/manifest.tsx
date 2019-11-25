@@ -1,9 +1,14 @@
 import React from 'react';
-import reducer from './manifest-reducer';
+import { reducer, IState as IManifest } from './manifest-reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-class Manifest extends React.Component {
+export interface IProps {
+  manifest: IManifest;
+  setManifestData(data: object): void;
+}
+
+export class Manifest extends React.Component<IProps> {
   constructor(props) {
     super(props);
   }
