@@ -1,7 +1,7 @@
 /* global window */
 
 import { Provider } from 'react-redux';
-import { createStore, compose } from 'redux';
+import { createStore } from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { debounce } from 'lodash';
@@ -19,10 +19,7 @@ export function initBook() {
     const store = createStore(reducer, persistedState ? JSON.parse(persistedState) : { manifest });
 
     Object.keys(views).forEach(key => {
-      const wrapper = views[key].wrapperId
-        ? document.getElementById(views[key].wrapperId)
-        : plantRoot(key);
-
+      const wrapper = plantRoot(key);
       if (!wrapper) return;
 
       ReactDOM.render(

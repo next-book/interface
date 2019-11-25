@@ -2,12 +2,12 @@ import React from 'react';
 
 interface IProps {
   actions: {
-    showToc();
+    showToc(): void;
   };
 }
 
 export class CatchWord extends React.Component<IProps> {
-  constructor(props) {
+  constructor(props: IProps) {
     super(props);
   }
 

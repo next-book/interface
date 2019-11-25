@@ -1,8 +1,9 @@
 import React from 'react';
-import { reducer, IPeek, Action } from './peeks-reducer';
+import { reducer, IPeek } from './peeks-reducer';
+import { IState as ICombinedState } from '../reducer';
 import Peek from './peek';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { bindActionCreators, Dispatch } from 'redux';
 
 export interface IProps {
   peeks: IPeek[];
@@ -11,13 +12,15 @@ export interface IProps {
 }
 
 export class Peeks extends React.Component<IProps> {
-  constructor(props) {
+  constructor(props: IProps) {
     super(props);
   }
 
-  private handleFootnoteDisplay = event => {
-    if (event.target.href) {
-      const attrHref = event.target.getAttribute('href');
+  private handleFootnoteDisplay = (event: Event) => {
+    const target = event.target as HTMLAnchorElement;
+
+    if (target.href) {
+      const attrHref = target.getAttribute('href') || '';
       if (attrHref.startsWith('#fn:')) {
         event.preventDefault();
 
@@ -26,7 +29,7 @@ export class Peeks extends React.Component<IProps> {
           this.props.addPeek({
             content: footnoteEl.innerHTML,
             title: 'Footnote',
-            source: event.target.href,
+            source: target.href,
             showSource: false,
           });
       }
@@ -61,11 +64,11 @@ export class Peeks extends React.Component<IProps> {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: ICombinedState) => {
   return { peeks: state.peeks };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       addPeek: reducer.addPeek,

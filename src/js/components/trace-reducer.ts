@@ -1,4 +1,5 @@
-import toMs from 'to-milliseconds';
+/// <reference path="../types/to-ms.d.ts"/>
+import toMilliseconds from 'to-milliseconds';
 
 const ADD_MOMENT = 'nb-base/trace/ADD_MOMENT';
 
@@ -26,7 +27,7 @@ interface IConfig {
 }
 
 export interface IState {
-  sessions: object[];
+  sessions: ISession[];
   config: IConfig;
 }
 
@@ -37,7 +38,7 @@ const INITIAL_STATE: IState = {
   },
 };
 
-export function reducer(state = INITIAL_STATE, action: Action) {
+export function reducer(state = INITIAL_STATE, action: Action): IState {
   switch (action.type) {
     case ADD_MOMENT:
       return addMoment(state, action.payload);
@@ -46,7 +47,7 @@ export function reducer(state = INITIAL_STATE, action: Action) {
   }
 }
 
-function addMoment(state, moment) {
+function addMoment(state: IState, moment: IMoment): IState {
   if (state.sessions.length === 0) {
     return { ...state, sessions: [...state.sessions, startSession(moment)] };
   }
@@ -70,11 +71,11 @@ function addMoment(state, moment) {
   };
 }
 
-function isSessionOld(moment: IMoment, session: ISession, breakLength: IBreakLength) {
-  return moment.time - toMs.convert(breakLength) > session.end;
+function isSessionOld(moment: IMoment, session: ISession, breakLength: IBreakLength): boolean {
+  return moment.time - toMilliseconds.convert(breakLength) > session.end;
 }
 
-function startSession(moment: IMoment) {
+function startSession(moment: IMoment): ISession {
   return {
     start: moment.time,
     end: moment.time,
@@ -83,7 +84,7 @@ function startSession(moment: IMoment) {
   };
 }
 
-function prolongSession(session: ISession, moment: IMoment) {
+function prolongSession(session: ISession, moment: IMoment): ISession {
   return {
     start: session.start,
     end: moment.time,
@@ -92,7 +93,7 @@ function prolongSession(session: ISession, moment: IMoment) {
   };
 }
 
-function concludeSession(session: ISession) {
+function concludeSession(session: ISession): ISession {
   return {
     start: session.start,
     end: session.end,

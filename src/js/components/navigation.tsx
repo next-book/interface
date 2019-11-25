@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import { IState as ICombinedState } from '../reducer';
 import { throttle } from 'lodash';
 import keycode from 'keycode';
-import PropTypes from 'prop-types';
 
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
@@ -19,18 +19,18 @@ export interface IProps {
   manifest: IManifest;
   config: IConfig;
   scrollRatio: number;
-  position: IPosition;
-  sequentialPosition: IPosition;
+  position: IPosition | null;
+  sequentialPosition: IPosition | null;
   readingOrder: INavDocument[];
   sequential: boolean;
   setPosition(chapterNum: number, idea: number, sequential: boolean): void;
-  setScrollRatio(number): void;
+  setScrollRatio(scrollRatio: number): void;
   setReadingOrder(documents: IDocument[]): void;
   addPeek(peek: IPeek): void;
 }
 
 export class Navigation extends React.Component<IProps> {
-  constructor(props) {
+  constructor(props: IProps) {
     super(props);
   }
 
@@ -64,7 +64,9 @@ export class Navigation extends React.Component<IProps> {
     };
   };
 
-  handleKeyboardNav = event => {
+  handleKeyboardNav = (event: KeyboardEvent) => {
+    if (this.props.position === null) return;
+
     const chapter = this.props.readingOrder[this.props.position.chapterNum];
 
     switch (keycode(event)) {
@@ -77,16 +79,19 @@ export class Navigation extends React.Component<IProps> {
     }
   };
 
-  handleInvisibleNav = event => {
+  handleInvisibleNav = (event: MouseEvent) => {
+    if (this.props.position === null) return;
+
     const chapter = this.props.readingOrder[this.props.position.chapterNum];
+    const target = event.target as HTMLElement;
 
     if (
-      event.target.tagName != 'A' &&
-      event.target.tagName != 'BUTTON' &&
-      event.target.tagName != 'INPUT' &&
-      event.target.tagName != 'LABEL' &&
-      event.target.closest('A') === null &&
-      event.target.closest('LABEL') === null
+      target.tagName != 'A' &&
+      target.tagName != 'BUTTON' &&
+      target.tagName != 'INPUT' &&
+      target.tagName != 'LABEL' &&
+      target.closest('A') === null &&
+      target.closest('LABEL') === null
     ) {
       if (event.clientX < window.innerWidth / 5) {
         return moveBackward(event, chapter.prev);
@@ -136,7 +141,9 @@ export class Navigation extends React.Component<IProps> {
     const pos = this.props.position;
     const chapter = pos !== null ? ro[pos.chapterNum] : null;
     const thisChapter =
-      pos !== null ? this.props.sequentialPosition.chapterNum === pos.chapterNum : false;
+      pos !== null && this.props.sequentialPosition !== null
+        ? this.props.sequentialPosition.chapterNum === pos.chapterNum
+        : false;
     const { totalWords } = ro[ro.length - 1];
 
     return (
@@ -154,21 +161,23 @@ export class Navigation extends React.Component<IProps> {
             <TopBar title={this.props.manifest.title} chapter={chapter} />
           </>
         )}
-        <SeqReturn
-          isChapter={this.isChapter}
-          thisChapter={thisChapter}
-          targetChapter={ro[this.props.sequentialPosition.chapterNum]}
-          idea={this.props.sequentialPosition.idea}
-          setPosition={this.setPosition}
-          sequential={this.props.sequential}
-          startLink={ro[0].file}
-        />
+        {this.props.sequentialPosition !== null && (
+          <SeqReturn
+            isChapter={this.isChapter}
+            thisChapter={thisChapter}
+            targetChapter={ro[this.props.sequentialPosition.chapterNum]}
+            idea={this.props.sequentialPosition.idea}
+            setPosition={this.setPosition}
+            sequential={this.props.sequential}
+            startLink={ro[0].file}
+          />
+        )}
       </nav>
     );
   }
 }
 
-function moveForward(event, nextChapter) {
+function moveForward(event: MouseEvent | TouchEvent | KeyboardEvent, nextChapter: string | null) {
   event.preventDefault();
 
   if (!isPageScrolledToBottom()) {
@@ -177,14 +186,14 @@ function moveForward(event, nextChapter) {
   } else if (nextChapter) window.location.assign(`${nextChapter}#chunk1`);
 }
 
-function displayPagination(dir) {
+function displayPagination(dir: 'forward' | 'back') {
   if (['forward', 'back'].includes(dir)) {
     document.body.classList.add(`paginated-${dir}`);
     window.setTimeout(() => document.body.classList.remove(`paginated-${dir}`), 300);
   }
 }
 
-function moveBackward(event, prevChapter) {
+function moveBackward(event: MouseEvent | TouchEvent | KeyboardEvent, prevChapter: string | null) {
   event.preventDefault();
 
   if (!isPageScrolledToTop()) {
@@ -307,11 +316,11 @@ function checkSequence(
   return false;
 }
 
-function setUriIdea(id) {
+function setUriIdea(id: number) {
   window.history.replaceState(undefined, document.title, `#idea${id}`);
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: ICombinedState) => {
   return {
     config: state.navigation.config,
     readingOrder: state.navigation.readingOrder,
@@ -323,7 +332,7 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       addPeek: peeksReducer.addPeek,

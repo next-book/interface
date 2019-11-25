@@ -1,13 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { reducer, IMoment } from './trace-reducer';
+import { IPosition } from './navigation-reducer';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { bindActionCreators, Dispatch } from 'redux';
 import { debounce } from 'lodash';
+import { IState as ICombinedState } from '../reducer';
 
 export interface IProps {
-  chapterNum?: number;
-  idea?: number;
+  position: IPosition | null;
   sequential?: boolean;
   addMoment(moment: IMoment): void;
 }
@@ -23,17 +23,14 @@ export class Trace extends React.Component<IProps> {
 
   addMoment = () => {
     if (
-      this.props.chapterNum !== null &&
-      this.props.chapterNum !== undefined &&
-      this.props.idea !== null &&
-      this.props.idea !== undefined &&
+      this.props.position !== null &&
       this.props.sequential !== null &&
       this.props.sequential !== undefined
     )
       this.props.addMoment({
         time: new Date().getTime(),
-        chapter: this.props.chapterNum,
-        idea: this.props.idea,
+        chapter: this.props.position.chapterNum,
+        idea: this.props.position.idea,
         sequential: this.props.sequential,
       });
   };
@@ -53,16 +50,15 @@ export class Trace extends React.Component<IProps> {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: ICombinedState) => {
   return {
     trace: state.trace,
-    chapterNum: state.navigation.position.chapterNum,
-    idea: state.navigation.position.idea,
+    position: state.navigation.position,
     sequential: state.navigation.sequential,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       addMoment: reducer.addMoment,

@@ -1,7 +1,8 @@
 import React from 'react';
 import { reducer, IState as IManifest } from './manifest-reducer';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import { IState as ICombinedState } from '../reducer';
 
 export interface IProps {
   manifest: IManifest;
@@ -9,7 +10,7 @@ export interface IProps {
 }
 
 export class Manifest extends React.Component<IProps> {
-  constructor(props) {
+  constructor(props: IProps) {
     super(props);
   }
 
@@ -24,11 +25,11 @@ export class Manifest extends React.Component<IProps> {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: ICombinedState) => {
   return { manifest: state.manifest };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       setManifestData: reducer.setManifestData,

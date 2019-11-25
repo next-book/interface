@@ -22,14 +22,14 @@ export function reducer(state = INITIAL_STATE, action: Action) {
   }
 }
 
-reducer.setOfflineAvailability = function(status) {
+reducer.setOfflineAvailability = function(status: boolean) {
   return {
     type: SET_OFFLINE_AVAILABILITY,
     payload: status,
   };
 };
 
-reducer.setCacheAvailability = function(status) {
+reducer.setCacheAvailability = function(status: boolean) {
   return {
     type: SET_CACHE_AVAILABILITY,
     payload: status,

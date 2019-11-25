@@ -8,13 +8,11 @@ export interface IPeek {
   showSource: boolean;
 }
 
-export interface IState {
-  [index: number]: IPeek;
-}
+export type IState = IPeek[];
 
 const INITIAL_STATE: IState = [];
 
-export function reducer(state = INITIAL_STATE, action: Action) {
+export function reducer(state: IState = INITIAL_STATE, action: any) {
   switch (action.type) {
     case ADD_PEEK:
       return addPeek(state, action.payload);
@@ -25,7 +23,7 @@ export function reducer(state = INITIAL_STATE, action: Action) {
   }
 }
 
-function addPeek(state, payload) {
+function addPeek(state: IState, payload: IPeek) {
   return [
     ...state,
     {
@@ -37,8 +35,8 @@ function addPeek(state, payload) {
   ];
 }
 
-function destroyPeek(state, payload) {
-  return state.filter((item, index) => index !== payload);
+function destroyPeek(state: IState, payload: number) {
+  return state.filter((item: IPeek, index: number) => index !== payload);
 }
 
 reducer.addPeek = function(data: IPeek) {

@@ -27,7 +27,7 @@ export function loadManifest(): Promise<object> {
   const el = document.querySelector('link[rel="publication"]');
 
   if (el !== null) {
-    const uri = <string>el.getAttribute('href');
+    const uri = el.getAttribute('href') as string;
     return fetch(uri)
       .then(status)
       .then(json);

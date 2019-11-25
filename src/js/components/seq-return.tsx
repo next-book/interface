@@ -12,11 +12,11 @@ interface IProps {
 }
 
 export class SeqReturn extends React.Component<IProps> {
-  constructor(props) {
+  constructor(props: IProps) {
     super(props);
   }
 
-  resetPosition = e => {
+  resetPosition = (e: React.MouseEvent) => {
     e.preventDefault();
     this.props.setPosition(true);
   };
@@ -99,8 +99,7 @@ export class SeqReturn extends React.Component<IProps> {
   }
 }
 
-function highlightIdea(id) {
-  if (id === null) return null;
+function highlightIdea(id: number) {
   const el = document.getElementById(`idea${id}`);
 
   if (el === null) return null;

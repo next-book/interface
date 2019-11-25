@@ -1,8 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { reducer, IState } from './offline-reducer';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import { IState as ICombinedState } from '../reducer';
 
 export interface IProps extends IState {
   setCacheAvailability(status: boolean): void;
@@ -10,7 +10,7 @@ export interface IProps extends IState {
 }
 
 export class Offline extends React.Component<IProps> {
-  constructor(props) {
+  constructor(props: IProps) {
     super(props);
   }
 
@@ -39,14 +39,14 @@ function registerServiceWorker() {
   navigator.serviceWorker.register('./service-worker.js');
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: ICombinedState) => {
   return {
     offlineIsAvailable: state.offline.offlineIsAvailable,
     cacheIsAvailable: state.offline.cacheIsAvailable,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       setCacheAvailability: reducer.setCacheAvailability,

@@ -42,10 +42,10 @@ const INITIAL_STATE: IState = {
   },
 };
 
-export function reducer(state = INITIAL_STATE, action: Action) {
+export function reducer(state: IState = INITIAL_STATE, action: any) {
   switch (action.type) {
     case SET_SCROLL_RATIO:
-      return { ...state, ...{ scrollRatio: parseFloat(action.payload) } };
+      return { ...state, ...{ scrollRatio: action.payload } };
     case SET_POSITION:
       return setPosition(state, action.payload);
     case SET_READING_ORDER:
@@ -55,31 +55,32 @@ export function reducer(state = INITIAL_STATE, action: Action) {
   }
 }
 
-function setPosition(state, payload) {
-  const position = {
-    chapterNum: parseInt(payload.chapterNum, 10),
-    idea: parseInt(payload.idea, 10),
-  };
-
-  if (isNaN(position.chapterNum) || isNaN(position.idea)) return { ...state };
-
-  const sequentialPosition = payload.sequential ? position : state.sequentialPosition;
+function setPosition(
+  state: IState,
+  payload: { chapterNum: number; idea: number; sequential: boolean }
+) {
+  const position = { chapterNum: payload.chapterNum, idea: payload.idea };
 
   return {
     ...state,
     sequential: payload.sequential,
-    sequentialPosition,
+    sequentialPosition: payload.sequential ? position : state.sequentialPosition,
     position,
   };
 }
 
-function prepReadingOrder(documents) {
+function prepReadingOrder(documents: IDocument[]) {
   let totalChars = 0;
   let totalWords = 0;
 
   return documents
     .filter(doc => doc.isChapter)
-    .sort((a, b) => a.order - b.order)
+    .sort((a, b) => {
+      const oA = a.order !== null ? a.order : -1;
+      const oB = b.order !== null ? b.order : -1;
+
+      return oA - oB;
+    })
     .map(doc => {
       const offsetChars = totalChars;
       const offsetWords = totalWords;
@@ -91,21 +92,21 @@ function prepReadingOrder(documents) {
     });
 }
 
-reducer.setReadingOrder = function(documents) {
+reducer.setReadingOrder = function(documents: IDocument[]) {
   return {
     type: SET_READING_ORDER,
     payload: documents,
   };
 };
 
-reducer.setScrollRatio = function(scrollRatio) {
+reducer.setScrollRatio = function(scrollRatio: number) {
   return {
     type: SET_SCROLL_RATIO,
     payload: scrollRatio,
   };
 };
 
-reducer.setPosition = function(chapterNum, idea, sequential) {
+reducer.setPosition = function(chapterNum: number, idea: number, sequential: boolean) {
   return {
     type: SET_POSITION,
     payload: { chapterNum, idea, sequential },

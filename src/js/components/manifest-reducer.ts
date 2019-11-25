@@ -26,7 +26,7 @@ interface IDate {
   unix: number;
 }
 
-interface IToc {
+export interface IToc {
   index: number;
   level: number;
   name: string;
@@ -55,7 +55,7 @@ export function reducer(state: IState | null = null, action: Action) {
   }
 }
 
-reducer.setManifestData = function(data) {
+reducer.setManifestData = function(data: IState) {
   return {
     type: SET_SPINE_DATA,
     payload: data,

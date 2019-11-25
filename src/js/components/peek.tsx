@@ -1,7 +1,4 @@
 import React from 'react';
-import { reducer, IPeek, Action } from './peeks-reducer';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 export interface IProps {
   content: object | null;

@@ -1,4 +1,6 @@
 import React from 'react';
+
+/// <reference path="../types/fscreen.d.ts"/>
 import fscreen from 'fscreen';
 
 export interface IState {

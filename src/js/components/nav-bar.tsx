@@ -1,12 +1,12 @@
 import React from 'react';
-import { IDocument } from './manifest-reducer';
+import { INavDocument } from './navigation-reducer';
 
 interface IProps {
   scrollRatio: number;
   isChapter: boolean;
-  chapter: IDocument;
+  chapter: INavDocument;
   totalWords: number;
-  readingOrder: IDocument[];
+  readingOrder: INavDocument[];
 }
 
 export function NavBar(props: IProps) {
@@ -31,7 +31,7 @@ export function NavBar(props: IProps) {
 
 interface PointerProps {
   scrollRatio: number;
-  chapter: IDocument;
+  chapter: INavDocument;
   totalWords: number;
 }
 
@@ -43,7 +43,7 @@ function Pointer(props: PointerProps) {
 }
 
 interface ChapterProps {
-  chapter: IDocument;
+  chapter: INavDocument;
   totalWords: number;
 }
 
@@ -60,7 +60,7 @@ function Chapter(props: ChapterProps) {
   );
 }
 
-function getChapterPixels(chapter, totalWords) {
+function getChapterPixels(chapter: INavDocument, totalWords: number) {
   if (!chapter || !totalWords) return { offset: 0, width: 0 };
 
   const offset = (chapter.offsetWords / totalWords) * 100;
