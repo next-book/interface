@@ -13538,9 +13538,9 @@ object-assign
       Oe = 'nb-base/navigation/SET_READING_ORDER',
       Pe = {
         scrollRatio: 0,
-        position: { chapterNum: null, idea: null },
-        sequentialPosition: { chapterNum: null, idea: null },
-        sequential: null,
+        position: null,
+        sequentialPosition: null,
+        sequential: !0,
         readingOrder: [],
         config: { keyboardNav: !0, invisibleNav: !0 },
       };
@@ -13884,7 +13884,10 @@ object-assign
             totalWords: e.totalWords,
           }),
         e.readingOrder.map(function(t, n) {
-          return o.a.createElement(lt, { key: t.order, chapter: t, totalWords: e.totalWords });
+          return (
+            null !== t.order &&
+            o.a.createElement(lt, { key: t.order, chapter: t, totalWords: e.totalWords })
+          );
         })
       );
     }
@@ -13897,16 +13900,12 @@ object-assign
       var t = ct(e.chapter, e.totalWords),
         n = t.offset,
         r = t.width;
-      return o.a.createElement(
-        'li',
-        {
-          className: 'chapter',
-          style: { left: ''.concat(n, '%'), width: ''.concat(r, '%') },
-          'data-order': e.chapter.order,
-          title: e.chapter.title,
-        },
-        o.a.createElement('span', { className: 'info' }, e.chapter.order + 1, ': ', e.chapter.title)
-      );
+      return o.a.createElement('li', {
+        className: 'chapter',
+        style: { left: ''.concat(n, '%'), width: ''.concat(r, '%') },
+        'data-order': e.chapter.order,
+        title: e.chapter.title,
+      });
     }
     function ct(e, t) {
       return e && t
@@ -14073,8 +14072,7 @@ object-assign
           o.a.createElement(
             'span',
             { className: 'chapter' },
-            e.chapter.order + 1,
-            ' / ',
+            null !== e.chapter.order ? ''.concat(e.chapter.order + 1, '&nbsp;/&nbsp;') : null,
             e.chapter.title
           )
         ),
@@ -14222,12 +14220,15 @@ object-assign
             e.preventDefault(), n.props.setPosition(!0);
           }),
           (n.highlightPosition = function() {
-            var e, t;
-            (e = n.props.idea),
-              (t = document.getElementById('idea'.concat(e)).classList).add('highlighted'),
-              window.setTimeout(function() {
-                t.remove('highlighted');
-              }, 1e3);
+            !(function(e) {
+              if (null === e) return null;
+              var t = document.getElementById('idea'.concat(e));
+              if (null === t) return null;
+              t.classList.add('highlighted'),
+                window.setTimeout(function() {
+                  t.classList.remove('highlighted');
+                }, 1e3);
+            })(n.props.idea);
           }),
           (n.firstTime = function() {
             return o.a.createElement(
@@ -14252,7 +14253,7 @@ object-assign
           (n.nthTime = function() {
             var e = n.props.targetChapter
                 ? './'.concat(n.props.targetChapter.file, '#idea').concat(n.props.idea)
-                : null,
+                : '',
               t =
                 n.props.isChapter && n.props.thisChapter
                   ? o.a.createElement(
@@ -14276,7 +14277,11 @@ object-assign
                       o.a.createElement('a', { href: e }, 'sentence #', n.props.idea),
                       ' in chapter',
                       ' ',
-                      o.a.createElement('b', null, n.props.targetChapter.title),
+                      o.a.createElement(
+                        'b',
+                        null,
+                        n.props.targetChapter && n.props.targetChapter.title
+                      ),
                       '.'
                     );
             return (
@@ -14579,36 +14584,45 @@ object-assign
                   })
                   .sort(function(e, t) {
                     return e.bottom - t.bottom;
-                  })).length > 0
-                  ? parseInt(r[0].el.getAttribute('data-nb-ref-number'), 10)
-                  : parseInt(t[t.length - 1].el.getAttribute('data-nb-ref-number'), 10)),
-              u = tn(),
-              a =
-                e ||
-                (function(e, t, n) {
-                  if (null === t.chapterNum) return n;
-                  if (null === e.chapterNum && null !== t.chapterNum) return !0;
-                  var r = en();
-                  if (n) {
-                    if (t.chapterNum - e.chapterNum == 1 && t.idea <= 3) return !0;
-                    if (e.chapterNum === t.chapterNum) {
-                      if (Math.abs(t.idea - e.idea) < 3) return !0;
-                      var o = document.getElementById('idea'.concat(e.idea)).getBoundingClientRect()
-                          .top,
-                        i = document.getElementById('idea'.concat(t.idea)).getBoundingClientRect()
-                          .top;
-                      if (Math.abs(i - o) < 1.5 * r) return !0;
+                  })),
+                null !==
+                (o = (r.length > 0 ? r[0] : t[t.length - 1]).el.getAttribute('data-nb-ref-number'))
+                  ? parseInt(o, 10)
+                  : null),
+              u = tn();
+            if (null !== u && null !== i) {
+              var a,
+                l =
+                  e ||
+                  (function(e, t, n) {
+                    if (null === t) return n;
+                    if (null === e && null !== t) return !0;
+                    if (null !== e && null !== t) {
+                      var r = en();
+                      if (n) {
+                        if (t.chapterNum - e.chapterNum == 1 && t.idea <= 3) return !0;
+                        if (e.chapterNum === t.chapterNum) {
+                          if (Math.abs(t.idea - e.idea) < 3) return !0;
+                          var o = document.getElementById('idea'.concat(e.idea)),
+                            i = document.getElementById('idea'.concat(t.idea));
+                          if (null === o || null === i) return n;
+                          var u = o.getBoundingClientRect().top,
+                            a = i.getBoundingClientRect().top;
+                          if (Math.abs(a - u) < 1.5 * r) return !0;
+                        }
+                      } else if (e.chapterNum === t.chapterNum) {
+                        var l = document.getElementById('idea'.concat(e.idea));
+                        if (null === l) return n;
+                        var c = l.getBoundingClientRect().top;
+                        if (c > 0 && c < 0.75 * r) return !0;
+                      }
                     }
-                  } else if (e.chapterNum === t.chapterNum) {
-                    var u = document.getElementById('idea'.concat(e.idea)).getBoundingClientRect()
-                      .top;
-                    if (u > 0 && u < 0.75 * r) return !0;
-                  }
-                  return !1;
-                })(n.props.sequentialPosition, { idea: i, chapterNum: u }, n.props.sequential);
-            n.props.setPosition(u, i, a),
-              (o = i),
-              window.history.replaceState(void 0, void 0, '#idea'.concat(o));
+                    return !1;
+                  })(n.props.sequentialPosition, { idea: i, chapterNum: u }, n.props.sequential);
+              n.props.setPosition(u, i, l),
+                (a = i),
+                window.history.replaceState(void 0, document.title, '#idea'.concat(a));
+            }
           }),
           (n.setScrollRatio = function() {
             n.props.setScrollRatio(
@@ -14698,10 +14712,8 @@ object-assign
               var e = this.props.readingOrder;
               if (0 === e.length) return null;
               var t = this.props.position,
-                n = null !== t.chapterNum ? e[t.chapterNum] : null,
-                r =
-                  null !== t.chapterNum &&
-                  this.props.sequentialPosition.chapterNum === t.chapterNum,
+                n = null !== t ? e[t.chapterNum] : null,
+                r = null !== t && this.props.sequentialPosition.chapterNum === t.chapterNum,
                 i = e[e.length - 1].totalWords;
               return o.a.createElement(
                 'nav',
@@ -14765,20 +14777,18 @@ object-assign
           : t && window.location.assign(''.concat(t, '#chapter-end'));
     }
     function en() {
-      var e = Math.max(
-          document.getElementById('peeks') ? document.getElementById('peeks').offsetHeight + 10 : 0,
-          document.getElementById('catchword-bar')
-            ? document.getElementById('catchword-bar').offsetHeight
-            : 0
-        ),
-        t = parseFloat(getComputedStyle(document.documentElement).fontSize);
-      return window.innerHeight - e - t;
+      var e = document.getElementById('peeks'),
+        t = document.getElementById('catchword-bar'),
+        n = Math.max(null !== e ? e.offsetHeight + 10 : 0, t ? t.offsetHeight : 0),
+        r = parseFloat(getComputedStyle(document.documentElement).fontSize);
+      return window.innerHeight - n - r;
     }
     function tn() {
       var e = document.querySelector('meta[name="order"]');
       if (!e) return null;
-      var t = parseInt(e.getAttribute('content'), 10);
-      return t >= 0 ? t : null;
+      var t = e.getAttribute('content'),
+        n = null !== t ? parseInt(t, 10) : 0;
+      return n >= 0 ? n : null;
     }
     var nn = ce(
       function(e) {
@@ -14924,13 +14934,15 @@ object-assign
               )
             ),
             e.content && o.a.createElement('div', { className: 'peek-content' }, e.content),
-            e.rawContent &&
-              o.a.createElement('div', {
-                className: 'peek-content',
-                dangerouslySetInnerHTML: { __html: e.rawContent },
-              })
+            o.a.createElement('div', {
+              className: 'peek-content',
+              dangerouslySetInnerHTML:
+                null !== e.rawContent && void 0 !== e.rawContent
+                  ? { __html: e.rawContent }
+                  : { __html: '' },
+            })
           )
-        : (console.log(e.content), e.destroy(e.index), null);
+        : (e.destroy(e.index), null);
     }
     function pn(e) {
       return (pn =
@@ -14989,14 +15001,17 @@ object-assign
             ((n = hn(this, vn(t).call(this, e))).handleFootnoteDisplay = function(e) {
               if (e.target.href) {
                 var t = e.target.getAttribute('href');
-                t.startsWith('#fn:') &&
-                  (e.preventDefault(),
-                  n.props.addPeek({
-                    content: document.getElementById(t.replace(/^#/, '')).innerHTML,
-                    title: 'Footnote',
-                    source: e.target.href,
-                    showSource: !1,
-                  }));
+                if (t.startsWith('#fn:')) {
+                  e.preventDefault();
+                  var r = document.getElementById(t.replace(/^#/, ''));
+                  null !== r &&
+                    n.props.addPeek({
+                      content: r.innerHTML,
+                      title: 'Footnote',
+                      source: e.target.href,
+                      showSource: !1,
+                    });
+                }
               }
             }),
             n
@@ -15120,8 +15135,11 @@ object-assign
             }),
             (n.addMoment = function() {
               null !== n.props.chapterNum &&
+                void 0 !== n.props.chapterNum &&
                 null !== n.props.idea &&
+                void 0 !== n.props.idea &&
                 null !== n.props.sequential &&
+                void 0 !== n.props.sequential &&
                 n.props.addMoment({
                   time: new Date().getTime(),
                   chapter: n.props.chapterNum,
@@ -15305,7 +15323,7 @@ object-assign
             .then(_e)
             .then(Ee);
         }
-        return null;
+        return Promise.reject(new Error('Manifest not available.'));
       })().then(function(e) {
         var t,
           n =

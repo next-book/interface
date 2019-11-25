@@ -9,6 +9,12 @@ interface IProps {
 }
 
 export function TopBar(props: IProps) {
+  const chapterNumber = () => {
+    if (props.chapter.order !== null) {
+      return `${props.chapter.order + 1}&nbsp;/&nbsp;`;
+    } else return null;
+  };
+
   return (
     <div className="top-bar">
       <p className="info">
@@ -16,7 +22,8 @@ export function TopBar(props: IProps) {
           {props.title}
         </a>
         <span className="chapter">
-          {props.chapter.order + 1}&nbsp;/&nbsp;{props.chapter.title}
+          {chapterNumber()}
+          {props.chapter.title}
         </span>
       </p>
       <p className="tools">

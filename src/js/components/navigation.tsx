@@ -16,13 +16,13 @@ import { reducer as peeksReducer, IPeek } from './peeks-reducer';
 import Toc from './toc';
 
 export interface IProps {
-  manifest?: IManifest;
+  manifest: IManifest;
   config: IConfig;
   scrollRatio: number;
   position: IPosition;
   sequentialPosition: IPosition;
   readingOrder: INavDocument[];
-  sequential: boolean | null;
+  sequential: boolean;
   setPosition(chapterNum: number, idea: number, sequential: boolean): void;
   setScrollRatio(number): void;
   setReadingOrder(documents: IDocument[]): void;
@@ -39,6 +39,8 @@ export class Navigation extends React.Component<IProps> {
   setPosition = (resetSequence?: boolean) => {
     const idea = getFirstIdeaShown();
     const chapterNum = getChapterNum();
+    if (chapterNum === null || idea === null) return;
+
     const sequential =
       resetSequence ||
       checkSequence(this.props.sequentialPosition, { idea, chapterNum }, this.props.sequential);
@@ -132,9 +134,9 @@ export class Navigation extends React.Component<IProps> {
     if (ro.length === 0) return null;
 
     const pos = this.props.position;
-    const chapter = pos.chapterNum !== null ? ro[pos.chapterNum] : null;
+    const chapter = pos !== null ? ro[pos.chapterNum] : null;
     const thisChapter =
-      pos.chapterNum !== null ? this.props.sequentialPosition.chapterNum === pos.chapterNum : false;
+      pos !== null ? this.props.sequentialPosition.chapterNum === pos.chapterNum : false;
     const { totalWords } = ro[ro.length - 1];
 
     return (
@@ -212,11 +214,12 @@ function isPageScrolledToTop() {
 }
 
 function getScrollStep() {
+  const peeksEl = document.getElementById('peeks');
+  const catchWordEl = document.getElementById('catchword-bar');
+
   const bottomOffset = Math.max(
-    document.getElementById('peeks') ? document.getElementById('peeks').offsetHeight + 10 : 0,
-    document.getElementById('catchword-bar')
-      ? document.getElementById('catchword-bar').offsetHeight
-      : 0
+    peeksEl !== null ? peeksEl.offsetHeight + 10 : 0,
+    catchWordEl ? catchWordEl.offsetHeight : 0
   );
 
   const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -232,7 +235,8 @@ function getChapterNum() {
   const el = document.querySelector('meta[name="order"]');
   if (!el) return null;
 
-  const number = parseInt(el.getAttribute('content'), 10);
+  const content = el.getAttribute('content');
+  const number = content !== null ? parseInt(content, 10) : 0;
   return number >= 0 ? number : null;
 }
 
@@ -244,39 +248,59 @@ function getFirstIdeaShown() {
   }));
   const shown = ideas.filter(el => el.top > 20).sort((el1, el2) => el1.bottom - el2.bottom);
 
-  if (shown.length > 0) return parseInt(shown[0].el.getAttribute('data-nb-ref-number'), 10);
-  else return parseInt(ideas[ideas.length - 1].el.getAttribute('data-nb-ref-number'), 10);
+  const idea = shown.length > 0 ? shown[0] : ideas[ideas.length - 1];
+  const attr = idea.el.getAttribute('data-nb-ref-number');
+  return attr !== null ? parseInt(attr, 10) : null;
 }
 
-function checkSequence(pos1, pos2, wasSequentialBefore) {
+function checkSequence(
+  pos1: IPosition | null,
+  pos2: IPosition | null,
+  wasSequentialBefore: boolean
+) {
   // no info
-  if (pos2.chapterNum === null) return wasSequentialBefore;
+  if (pos2 === null) return wasSequentialBefore;
 
   // new book
-  if (pos1.chapterNum === null && pos2.chapterNum !== null) return true;
+  if (pos1 === null && pos2 !== null) return true;
 
-  const scrollStep = getScrollStep();
-  if (wasSequentialBefore) {
-    // new chapter
-    if (pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) return true;
+  if (pos1 !== null && pos2 !== null) {
+    const scrollStep = getScrollStep();
+    if (wasSequentialBefore) {
+      // new chapter
+      if (pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) return true;
 
-    // same chapter
-    if (pos1.chapterNum === pos2.chapterNum) {
-      // ~consecutive numbers
-      if (Math.abs(pos2.idea - pos1.idea) < 3) return true;
+      // same chapter
+      if (pos1.chapterNum === pos2.chapterNum) {
+        // ~consecutive numbers
+        if (Math.abs(pos2.idea - pos1.idea) < 3) return true;
 
-      // 1.5 scrollSteps down or up
-      const top1 = document.getElementById(`idea${pos1.idea}`).getBoundingClientRect().top;
-      const top2 = document.getElementById(`idea${pos2.idea}`).getBoundingClientRect().top;
+        // 1.5 scrollSteps down or up
+        const idea1 = document.getElementById(`idea${pos1.idea}`);
+        const idea2 = document.getElementById(`idea${pos2.idea}`);
 
-      if (Math.abs(top2 - top1) < 1.5 * scrollStep) return true;
-    }
-  } else {
-    if (pos1.chapterNum === pos2.chapterNum) {
-      // is back on screen
-      const top1 = document.getElementById(`idea${pos1.idea}`).getBoundingClientRect().top;
+        if (idea1 !== null && idea2 !== null) {
+          const top1 = idea1.getBoundingClientRect().top;
+          const top2 = idea2.getBoundingClientRect().top;
 
-      if (top1 > 0 && top1 < scrollStep * 0.75) return true;
+          if (Math.abs(top2 - top1) < 1.5 * scrollStep) return true;
+        } else {
+          return wasSequentialBefore;
+        }
+      }
+    } else {
+      if (pos1.chapterNum === pos2.chapterNum) {
+        // is back on screen
+        const idea1 = document.getElementById(`idea${pos1.idea}`);
+
+        if (idea1 !== null) {
+          const top1 = idea1.getBoundingClientRect().top;
+
+          if (top1 > 0 && top1 < scrollStep * 0.75) return true;
+        } else {
+          return wasSequentialBefore;
+        }
+      }
     }
   }
 
@@ -284,7 +308,7 @@ function checkSequence(pos1, pos2, wasSequentialBefore) {
 }
 
 function setUriIdea(id) {
-  window.history.replaceState(undefined, undefined, `#idea${id}`);
+  window.history.replaceState(undefined, document.title, `#idea${id}`);
 }
 
 const mapStateToProps = state => {

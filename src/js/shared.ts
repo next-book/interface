@@ -31,10 +31,10 @@ export function loadManifest(): Promise<object> {
     return fetch(uri)
       .then(status)
       .then(json);
-  } else return null;
+  } else return Promise.reject(new Error('Manifest not available.'));
 }
 
-export function parseManifest(data: any): IManifest {
+export function assignManifest(data: any): IManifest {
   return Object.assign(
     {
       title: data.title,

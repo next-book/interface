@@ -2,9 +2,9 @@ import React from 'react';
 import { IDocument } from './manifest-reducer';
 
 interface IProps {
-  idea?: number;
-  targetChapter?: IDocument;
-  sequential?: boolean;
+  idea: number;
+  targetChapter: IDocument;
+  sequential: boolean;
   thisChapter: boolean;
   isChapter: boolean;
   setPosition(resetSequence: boolean): void;
@@ -44,13 +44,13 @@ export class SeqReturn extends React.Component<IProps> {
   nthTime = () => {
     const link = this.props.targetChapter
       ? `./${this.props.targetChapter.file}#idea${this.props.idea}`
-      : null;
+      : '';
 
     const readingPosition =
       !this.props.isChapter || !this.props.thisChapter ? (
         <p>
           You read up to <a href={link}>sentence #{this.props.idea}</a> in chapter{' '}
-          <b>{this.props.targetChapter.title}</b>.
+          <b>{this.props.targetChapter && this.props.targetChapter.title}</b>.
         </p>
       ) : (
         <p>
@@ -100,11 +100,15 @@ export class SeqReturn extends React.Component<IProps> {
 }
 
 function highlightIdea(id) {
-  const classList = document.getElementById(`idea${id}`).classList;
+  if (id === null) return null;
+  const el = document.getElementById(`idea${id}`);
+
+  if (el === null) return null;
+
   const className = 'highlighted';
 
-  classList.add(className);
+  el.classList.add(className);
   window.setTimeout(() => {
-    classList.remove(className);
+    el.classList.remove(className);
   }, 1000);
 }

@@ -6,13 +6,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { debounce } from 'lodash';
 
-import { loadManifest, parseManifest, plantRoot } from './shared';
+import { loadManifest, assignManifest, plantRoot } from './shared';
 import reducer from './reducer';
 import views from './views';
 
 export function initBook() {
   loadManifest().then(manifestData => {
-    const manifest = parseManifest(manifestData);
+    const manifest = assignManifest(manifestData);
 
     const persistedState = localStorage.getItem(manifest.slug);
 

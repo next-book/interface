@@ -21,12 +21,14 @@ export class Peeks extends React.Component<IProps> {
       if (attrHref.startsWith('#fn:')) {
         event.preventDefault();
 
-        this.props.addPeek({
-          content: document.getElementById(attrHref.replace(/^#/, '')).innerHTML,
-          title: 'Footnote',
-          source: event.target.href,
-          showSource: false,
-        });
+        const footnoteEl = document.getElementById(attrHref.replace(/^#/, ''));
+        if (footnoteEl !== null)
+          this.props.addPeek({
+            content: footnoteEl.innerHTML,
+            title: 'Footnote',
+            source: event.target.href,
+            showSource: false,
+          });
       }
     }
   };

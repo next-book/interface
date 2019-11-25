@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 export interface IProps {
-  content?: object;
-  rawContent?: string;
+  content: object | null;
+  rawContent: string | null;
   title: string;
   source: string;
   showSource: boolean;
@@ -15,11 +15,13 @@ export interface IProps {
 
 export default function Peek(props: IProps) {
   function html() {
-    return { __html: props.rawContent };
+    if (props.rawContent !== null && props.rawContent !== undefined)
+      return { __html: props.rawContent };
+
+    return { __html: '' };
   }
 
   if (props.content !== null && !React.isValidElement(props.content)) {
-    console.log(props.content);
     props.destroy(props.index);
     return null;
   }
@@ -38,7 +40,7 @@ export default function Peek(props: IProps) {
         </button>
       </div>
       {props.content && <div className="peek-content">{props.content}</div>}
-      {props.rawContent && <div className="peek-content" dangerouslySetInnerHTML={html()} />}
+      {<div className="peek-content" dangerouslySetInnerHTML={html()} />}
     </div>
   );
 }

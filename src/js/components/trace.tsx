@@ -13,7 +13,7 @@ export interface IProps {
 }
 
 export class Trace extends React.Component<IProps> {
-  constructor(props: Iprops) {
+  constructor(props: IProps) {
     super(props);
   }
 
@@ -24,8 +24,11 @@ export class Trace extends React.Component<IProps> {
   addMoment = () => {
     if (
       this.props.chapterNum !== null &&
+      this.props.chapterNum !== undefined &&
       this.props.idea !== null &&
-      this.props.sequential !== null
+      this.props.idea !== undefined &&
+      this.props.sequential !== null &&
+      this.props.sequential !== undefined
     )
       this.props.addMoment({
         time: new Date().getTime(),

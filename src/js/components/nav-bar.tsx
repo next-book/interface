@@ -19,9 +19,12 @@ export function NavBar(props: IProps) {
           totalWords={props.totalWords}
         />
       )}
-      {props.readingOrder.map((chapter, index) => (
-        <Chapter key={chapter.order} chapter={chapter} totalWords={props.totalWords} />
-      ))}
+      {props.readingOrder.map(
+        (chapter, index) =>
+          chapter.order !== null && (
+            <Chapter key={chapter.order} chapter={chapter} totalWords={props.totalWords} />
+          )
+      )}
     </ul>
   );
 }
@@ -53,11 +56,7 @@ function Chapter(props: ChapterProps) {
       style={{ left: `${offset}%`, width: `${width}%` }}
       data-order={props.chapter.order}
       title={props.chapter.title}
-    >
-      <span className="info">
-        {props.chapter.order + 1}: {props.chapter.title}
-      </span>
-    </li>
+    ></li>
   );
 }
 

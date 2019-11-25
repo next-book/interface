@@ -6,9 +6,9 @@ const SET_READING_ORDER = 'nb-base/navigation/SET_READING_ORDER';
 
 export interface IState {
   scrollRatio: number;
-  position: IPosition;
-  sequentialPosition: IPosition;
-  sequential: boolean | null;
+  position: IPosition | null;
+  sequentialPosition: IPosition | null;
+  sequential: boolean;
   readingOrder: INavDocument[];
   config: IConfig;
 }
@@ -19,8 +19,8 @@ export interface IConfig {
 }
 
 export interface IPosition {
-  chapterNum: number | null;
-  idea: number | null;
+  chapterNum: number;
+  idea: number;
 }
 
 export interface INavDocument extends IDocument {
@@ -32,15 +32,9 @@ export interface INavDocument extends IDocument {
 
 const INITIAL_STATE: IState = {
   scrollRatio: 0,
-  position: {
-    chapterNum: null,
-    idea: null,
-  },
-  sequentialPosition: {
-    chapterNum: null,
-    idea: null,
-  },
-  sequential: null,
+  position: null,
+  sequentialPosition: null,
+  sequential: true,
   readingOrder: [],
   config: {
     keyboardNav: true,
