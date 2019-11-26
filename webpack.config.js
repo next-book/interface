@@ -1,18 +1,18 @@
 module.exports = {
-  entry: './src/js/standalone.js',
+  entry: './src/js/standalone.ts',
   output: {
     filename: './nb-base.js',
+  },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.json'],
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|tsx|ts)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
-          },
         },
       },
     ],

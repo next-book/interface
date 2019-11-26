@@ -1,15 +1,44 @@
-import toMs from 'to-milliseconds';
+/// <reference path="../types/to-ms.d.ts"/>
+import toMilliseconds from 'to-milliseconds';
 
 const ADD_MOMENT = 'nb-base/trace/ADD_MOMENT';
 
-const defaultState = {
+interface IBreakLength {
+  hours?: number;
+  minutes?: number;
+}
+
+interface ISession {
+  start: number;
+  end: number;
+  open: boolean;
+  moments: IMoment[];
+}
+
+export interface IMoment {
+  time: number;
+  chapter: number;
+  idea: number;
+  sequential: boolean;
+}
+
+interface IConfig {
+  breakLength: IBreakLength;
+}
+
+export interface IState {
+  sessions: ISession[];
+  config: IConfig;
+}
+
+const INITIAL_STATE: IState = {
   sessions: [],
   config: {
     breakLength: { minutes: 10 },
   },
 };
 
-function reducer(state = defaultState, action = {}) {
+export function reducer(state = INITIAL_STATE, action: Action): IState {
   switch (action.type) {
     case ADD_MOMENT:
       return addMoment(state, action.payload);
@@ -18,7 +47,7 @@ function reducer(state = defaultState, action = {}) {
   }
 }
 
-function addMoment(state, moment) {
+function addMoment(state: IState, moment: IMoment): IState {
   if (state.sessions.length === 0) {
     return { ...state, sessions: [...state.sessions, startSession(moment)] };
   }
@@ -42,11 +71,11 @@ function addMoment(state, moment) {
   };
 }
 
-function isSessionOld(moment, session, breakLength) {
-  return moment.time - toMs.convert(breakLength) > session.end;
+function isSessionOld(moment: IMoment, session: ISession, breakLength: IBreakLength): boolean {
+  return moment.time - toMilliseconds.convert(breakLength) > session.end;
 }
 
-function startSession(moment) {
+function startSession(moment: IMoment): ISession {
   return {
     start: moment.time,
     end: moment.time,
@@ -55,7 +84,7 @@ function startSession(moment) {
   };
 }
 
-function prolongSession(session, moment) {
+function prolongSession(session: ISession, moment: IMoment): ISession {
   return {
     start: session.start,
     end: moment.time,
@@ -64,7 +93,7 @@ function prolongSession(session, moment) {
   };
 }
 
-function concludeSession(session) {
+function concludeSession(session: ISession): ISession {
   return {
     start: session.start,
     end: session.end,
@@ -73,11 +102,11 @@ function concludeSession(session) {
   };
 }
 
-reducer.addMoment = function(time, chapter, idea, sequential) {
+reducer.addMoment = function(moment: IMoment) {
   return {
     type: ADD_MOMENT,
-    payload: { time, chapter, idea, sequential },
+    payload: moment,
   };
 };
 
-export default reducer;
+export type Action = ReturnType<typeof reducer.addMoment>;

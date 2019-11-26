@@ -1,10 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import { IState as ICombinedState } from '../reducer';
+import { IToc } from './manifest-reducer';
+import { INavDocument } from './navigation-reducer';
 
-class Toc extends React.Component {
-  constructor(props) {
+interface IProps {
+  readingOrder: INavDocument[];
+}
+
+class Toc extends React.Component<IProps> {
+  constructor(props: IProps) {
     super(props);
   }
 
@@ -17,7 +23,7 @@ class Toc extends React.Component {
       <ol>
         {this.props.readingOrder.map(doc => {
           return (
-            <li key={doc.order}>
+            <li key={doc.order !== null ? doc.order : ''}>
               <a href={doc.file}>{doc.title}</a>
               <ul>
                 {doc.toc && doc.toc[0].children.length
@@ -34,11 +40,12 @@ class Toc extends React.Component {
   }
 }
 
-Toc.propTypes = {
-  readingOrder: PropTypes.array.isRequired,
-};
+interface ISectionProps {
+  file: string;
+  section: IToc;
+}
 
-function Section(props) {
+function Section(props: ISectionProps) {
   return (
     <li>
       <a href={`${props.file}#${props.section.id}`}>{props.section.name}</a>
@@ -46,18 +53,13 @@ function Section(props) {
   );
 }
 
-Section.propTypes = {
-  section: PropTypes.object.isRequired,
-  file: PropTypes.string.isRequired,
-};
-
-const mapStateToProps = state => {
+const mapStateToProps = (state: ICombinedState) => {
   return {
     readingOrder: state.navigation.readingOrder,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators({}, dispatch);
 };
 
