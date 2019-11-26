@@ -2,7 +2,7 @@
 
 _Nb-base_ is a library providing functionality that builds on the structure of a [mapped next-book][mapper]. It provides basic e-reading functionalities.
 
-See an [example of an e-book][fc] created with the next-book tools.
+See an [example of an e-book][walden] created with the next-book tools.
 
 ## Use
 
@@ -24,7 +24,7 @@ You can install nb-mapper and nb-base:
 ### 3\. Import `nb-base` module in your scripts
 
 ```javascript
-import { initBook } from './../../node_modules/nb-base/src/js/index.js';
+import { initBook } from 'nb-base';
 
 document.addEventListener('DOMContentLoaded', () => {
   initBook();
@@ -43,7 +43,7 @@ You may use `book.getState()` to get current e-book state — it returns a seri
 
 Clone repository and install devDependencies. Build a complete project with `npm run build`. Limit PRs only to changed source files.
 
-[fc]: https://github.com/next-book/free-culture/
+[walden]: https://github.com/jan-martinek/henry-david-thoreau_walden/
 [mapper]: http://next-book.github.io/nb-mapper/
 [api]: http://next-book.github.io/nb-mapper/api
 [options]: http://next-book.github.io/nb-mapper/api/#options
