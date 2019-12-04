@@ -3,10 +3,10 @@
   display: none;
 }
 
-.footnote-ref {
+sup[id^='fnref'] {
   vertical-align: baseline;
 
-  a {
+  a.footnote-ref {
     font-weight: 700;
     color: #555;
     vertical-align: baseline;

@@ -255,9 +255,9 @@ body.paginated-back::after {
 .footnote-return {
   display: none; }
 
-.footnote-ref {
+sup[id^='fnref'] {
   vertical-align: baseline; }
-  .footnote-ref a {
+  sup[id^='fnref'] a.footnote-ref {
     font-weight: 700;
     color: #555;
     vertical-align: baseline;
