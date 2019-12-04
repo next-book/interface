@@ -2,8 +2,8 @@ import React from 'react';
 import { IDocument } from './manifest-reducer';
 
 interface IProps {
-  idea: number;
-  targetChapter: IDocument;
+  targetIdea: number | null;
+  targetChapter: IDocument | null;
   sequential: boolean;
   thisChapter: boolean;
   isChapter: boolean;
@@ -22,7 +22,7 @@ export class SeqReturn extends React.Component<IProps> {
   };
 
   highlightPosition = () => {
-    highlightIdea(this.props.idea);
+    if (this.props.targetIdea) highlightIdea(this.props.targetIdea);
   };
 
   firstTime = () => {
@@ -43,20 +43,20 @@ export class SeqReturn extends React.Component<IProps> {
 
   nthTime = () => {
     const link = this.props.targetChapter
-      ? `./${this.props.targetChapter.file}#idea${this.props.idea}`
+      ? `./${this.props.targetChapter.file}#idea${this.props.targetIdea}`
       : '';
 
     const readingPosition =
       !this.props.isChapter || !this.props.thisChapter ? (
         <p>
-          You read up to <a href={link}>sentence #{this.props.idea}</a> in chapter{' '}
+          You read up to <a href={link}>sentence #{this.props.targetIdea}</a> in chapter{' '}
           <b>{this.props.targetChapter && this.props.targetChapter.title}</b>.
         </p>
       ) : (
         <p>
           You read up to sentence{' '}
           <a href={link} onClick={this.highlightPosition}>
-            #{this.props.idea} in this chapter
+            #{this.props.targetIdea} in this chapter
           </a>
           .
         </p>
@@ -87,7 +87,7 @@ export class SeqReturn extends React.Component<IProps> {
   };
 
   render() {
-    const content = this.props.idea === null ? this.firstTime() : this.nthTime();
+    const content = this.props.targetIdea === null ? this.firstTime() : this.nthTime();
 
     return (
       content && (

@@ -149,29 +149,25 @@ export class Navigation extends React.Component<IProps> {
     return (
       <nav>
         <CatchWord actions={{ showToc: this.showToc }} />
-        {chapter && (
-          <>
-            <NavBar
-              isChapter={this.isChapter}
-              readingOrder={ro}
-              chapter={chapter}
-              scrollRatio={this.props.scrollRatio}
-              totalWords={totalWords}
-            />
-            <TopBar title={this.props.manifest.title} chapter={chapter} />
-          </>
-        )}
-        {this.props.sequentialPosition !== null && (
-          <SeqReturn
-            isChapter={this.isChapter}
-            thisChapter={thisChapter}
-            targetChapter={ro[this.props.sequentialPosition.chapterNum]}
-            idea={this.props.sequentialPosition.idea}
-            setPosition={this.setPosition}
-            sequential={this.props.sequential}
-            startLink={ro[0].file}
-          />
-        )}
+        <NavBar
+          isChapter={this.isChapter}
+          readingOrder={ro}
+          chapter={chapter}
+          scrollRatio={this.props.scrollRatio}
+          totalWords={totalWords}
+        />
+        {chapter && <TopBar title={this.props.manifest.title} chapter={chapter} />}
+        <SeqReturn
+          isChapter={this.isChapter}
+          thisChapter={thisChapter}
+          targetChapter={
+            this.props.sequentialPosition ? ro[this.props.sequentialPosition.chapterNum] : null
+          }
+          targetIdea={this.props.sequentialPosition ? this.props.sequentialPosition.idea : null}
+          setPosition={this.setPosition}
+          sequential={this.props.sequential}
+          startLink={ro[0].file}
+        />
       </nav>
     );
   }

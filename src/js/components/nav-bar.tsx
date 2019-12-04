@@ -4,7 +4,7 @@ import { INavDocument } from './navigation-reducer';
 interface IProps {
   scrollRatio: number;
   isChapter: boolean;
-  chapter: INavDocument;
+  chapter: INavDocument | null;
   totalWords: number;
   readingOrder: INavDocument[];
 }
@@ -12,7 +12,7 @@ interface IProps {
 export function NavBar(props: IProps) {
   return (
     <ul className="nav-bar">
-      {props.isChapter && (
+      {props.chapter && props.isChapter && (
         <Pointer
           scrollRatio={props.scrollRatio}
           chapter={props.chapter}
