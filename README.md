@@ -12,8 +12,8 @@ Some web tech knowledge and command line use is needed to produce a next-book at
 
 You can install nb-mapper and nb-base:
 
-- via Yarn `yarn add nb-mapper`
-- via NPM `npm install nb-mapper`
+- via Yarn `yarn add nb-mapper nb-base`
+- via NPM `npm install nb-mapper nb-base`
 
 ### 2\. Import `nb-base` styles in your SCSS
 
