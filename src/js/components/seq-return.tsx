@@ -11,9 +11,17 @@ interface IProps {
   startLink: string;
 }
 
-export class SeqReturn extends React.Component<IProps> {
+interface IState {
+  collapsed: boolean;
+}
+
+export class SeqReturn extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
+
+    this.state = {
+      collapsed: false,
+    };
   }
 
   resetPosition = (e: React.MouseEvent) => {
@@ -86,13 +94,25 @@ export class SeqReturn extends React.Component<IProps> {
     );
   };
 
+  toggleCollapse = () => {
+    this.setState({
+      ...this.state,
+      collapsed: !this.state.collapsed,
+    });
+  };
+
   render() {
     const content = this.props.targetIdea === null ? this.firstTime() : this.nthTime();
 
     return (
       content && (
         <div className="seq-return-wrapper">
-          <div className="seq-return">{content}</div>
+          <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
+            <div onClick={this.toggleCollapse} className="seq-return-toggle">
+              {this.state.collapsed ? '+' : '–'}
+            </div>
+            {content}
+          </div>
         </div>
       )
     );

@@ -38,6 +38,22 @@
   max-width: 20rem;
   animation: slide-up 0.2s ease-out;
 
+  .seq-return-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    font-weight: bold;
+    color: #aaa;
+    text-align: center;
+
+    &:hover {
+      color: #666;
+    }
+  }
+
   .seq-return {
     margin: 0 auto;
     background: #eee;
@@ -48,6 +64,12 @@
     border: 1px solid #aaa;
     border-radius: 8px;
     box-shadow: 0 0 7px #aaa;
+  }
+
+  .seq-return--collapsed {
+    width: 24px;
+    height: 0px;
+    padding-top: 24px;
   }
 
   p,
