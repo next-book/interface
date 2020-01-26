@@ -62,3 +62,12 @@ export function assignManifest(data: any): IManifest {
     data.keywords && { keywords: data.keywords }
   );
 }
+
+export function getChapterNum() {
+  const el = document.querySelector('meta[name="order"]');
+  if (!el) return null;
+
+  const content = el.getAttribute('content');
+  const number = content !== null ? parseInt(content, 10) : 0;
+  return number >= 0 ? number : null;
+}

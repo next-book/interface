@@ -5,6 +5,7 @@ import { IState as ICombinedState } from '../reducer';
 import { throttle } from 'lodash';
 import keycode from 'keycode';
 
+import { getChapterNum } from '../shared';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
 import { CatchWord } from './catch-word';
@@ -234,15 +235,6 @@ function getScrollStep() {
 
 function getScrollRatio() {
   return window.scrollY / (document.body.scrollHeight - window.innerHeight);
-}
-
-function getChapterNum() {
-  const el = document.querySelector('meta[name="order"]');
-  if (!el) return null;
-
-  const content = el.getAttribute('content');
-  const number = content !== null ? parseInt(content, 10) : 0;
-  return number >= 0 ? number : null;
 }
 
 function getFirstIdeaShown() {
