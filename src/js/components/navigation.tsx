@@ -16,6 +16,11 @@ import { reducer as peeksReducer, IPeek } from './peeks-reducer';
 
 import Toc from './toc';
 
+enum Direction {
+  Back = 'back',
+  Forward = 'forward',
+}
+
 export interface IProps {
   manifest: IManifest;
   config: IConfig;
@@ -94,12 +99,27 @@ export class Navigation extends React.Component<IProps> {
       target.closest('A') === null &&
       target.closest('LABEL') === null
     ) {
-      if (event.clientX < window.innerWidth / 5) {
+      if (this.isInPaginationRect(Direction.Back, event.clientX, event.clientY)) {
         return moveBackward(event, chapter.prev);
-      } else if (event.clientX > (window.innerWidth / 5) * 4) {
+      } else if (this.isInPaginationRect(Direction.Forward, event.clientX, event.clientY)) {
         return moveForward(event, chapter.next);
       }
     }
+  };
+
+  isInPaginationRect = (dir: Direction, x: number, y: number) => {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const rectW = w / 10;
+    const rectH = (h / 5) * 3;
+    const margin = 10;
+    const top = h / 5;
+    const bottom = h / 5 + rectH;
+
+    const left = dir === Direction.Back ? margin : w - margin - rectW;
+    const right = dir === Direction.Back ? margin + rectW : w - margin;
+
+    return x < right && x > left && y > top && y < bottom;
   };
 
   showToc = () => {
@@ -117,7 +137,7 @@ export class Navigation extends React.Component<IProps> {
       window.document.body.addEventListener('keydown', this.handleKeyboardNav);
     }
     if (this.props.config.invisibleNav) {
-      window.document.addEventListener('click', this.handleInvisibleNav);
+      window.document.addEventListener('mousedown', this.handleInvisibleNav);
     }
 
     this.props.setReadingOrder(this.props.manifest.documents);
@@ -131,7 +151,7 @@ export class Navigation extends React.Component<IProps> {
       window.document.body.removeEventListener('keydown', this.handleKeyboardNav);
     }
     if (this.props.config.invisibleNav) {
-      window.document.body.removeEventListener('click', this.handleInvisibleNav);
+      window.document.body.removeEventListener('mousedown', this.handleInvisibleNav);
     }
   }
 
@@ -178,13 +198,13 @@ function moveForward(event: MouseEvent | TouchEvent | KeyboardEvent, nextChapter
   event.preventDefault();
 
   if (!isPageScrolledToBottom()) {
-    displayPagination('forward');
+    displayPagination(Direction.Forward);
     window.scrollTo(window.scrollX, window.scrollY + getScrollStep());
   } else if (nextChapter) window.location.assign(`${nextChapter}#chunk1`);
 }
 
-function displayPagination(dir: 'forward' | 'back') {
-  if (['forward', 'back'].includes(dir)) {
+function displayPagination(dir: Direction) {
+  if ([Direction.Forward, Direction.Back].includes(dir)) {
     document.body.classList.add(`paginated-${dir}`);
     window.setTimeout(() => document.body.classList.remove(`paginated-${dir}`), 300);
   }
@@ -194,7 +214,7 @@ function moveBackward(event: MouseEvent | TouchEvent | KeyboardEvent, prevChapte
   event.preventDefault();
 
   if (!isPageScrolledToTop()) {
-    displayPagination('back');
+    displayPagination(Direction.Back);
     window.scrollTo(window.scrollX, window.scrollY - getScrollStep());
   } else if (prevChapter) window.location.assign(`${prevChapter}#chapter-end`);
 }
@@ -332,7 +352,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Navigation);
+export default connect(mapStateToProps, mapDispatchToProps)(Navigation);

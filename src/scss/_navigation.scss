@@ -112,12 +112,12 @@ body.paginated-forward {
 
     display: block;
     opacity: 0;
-    width: 20vw;
+    width: 10vw;
 
     position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
+    top: 20vh;
+    right: 10px;
+    bottom: 20vh;
 
     color: rgba(255, 255, 255, 0.6);
     background: rgba(0, 0, 0, 0.2);
@@ -125,12 +125,13 @@ body.paginated-forward {
     font-size: 20vw;
     text-align: center;
     animation: pagination-bar-fade 0.2s ease-in;
+    border-radius: 10px;
   }
 }
 
 body.paginated-back::after {
   content: '<';
-  left: 0;
+  left: 10px;
   right: auto;
 }
 
