@@ -121,10 +121,10 @@ body.paginated-forward {
 
     color: rgba(255, 255, 255, 0.6);
     background: rgba(0, 0, 0, 0.2);
-    line-height: 100vh;
-    font-size: 20vw;
+    line-height: 60vh;
+    font-size: 5vw;
     text-align: center;
-    animation: pagination-bar-fade 0.2s ease-in;
+    animation: pagination-bar-fade 0.2s ease-in-out;
     border-radius: 10px;
   }
 }
@@ -137,6 +137,11 @@ body.paginated-back::after {
 
 @keyframes pagination-bar-fade {
   0% {
+    display: block;
+    opacity: 0;
+  }
+
+  20% {
     display: block;
     opacity: 1;
   }

@@ -108,7 +108,7 @@ export class SeqReturn extends React.Component<IProps, IState> {
       content && (
         <div className="seq-return-wrapper">
           <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
-            <div onClick={this.toggleCollapse} className="seq-return-toggle">
+            <div onClick={this.toggleCollapse} className="seq-return-toggle ui-target">
               {this.state.collapsed ? '+' : '–'}
             </div>
             {content}

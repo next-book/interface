@@ -97,7 +97,8 @@ export class Navigation extends React.Component<IProps> {
       target.tagName != 'INPUT' &&
       target.tagName != 'LABEL' &&
       target.closest('A') === null &&
-      target.closest('LABEL') === null
+      target.closest('LABEL') === null &&
+      !target.classList.contains('ui-target')
     ) {
       if (this.isInPaginationRect(Direction.Back, event.clientX, event.clientY)) {
         return moveBackward(event, chapter.prev);
@@ -204,10 +205,8 @@ function moveForward(event: MouseEvent | TouchEvent | KeyboardEvent, nextChapter
 }
 
 function displayPagination(dir: Direction) {
-  if ([Direction.Forward, Direction.Back].includes(dir)) {
-    document.body.classList.add(`paginated-${dir}`);
-    window.setTimeout(() => document.body.classList.remove(`paginated-${dir}`), 300);
-  }
+  document.body.classList.add(`paginated-${dir}`);
+  window.setTimeout(() => document.body.classList.remove(`paginated-${dir}`), 300);
 }
 
 function moveBackward(event: MouseEvent | TouchEvent | KeyboardEvent, prevChapter: string | null) {
