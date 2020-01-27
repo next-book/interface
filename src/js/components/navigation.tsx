@@ -21,6 +21,11 @@ enum Direction {
   Forward = 'forward',
 }
 
+enum Position {
+  Bottom = 'bottom',
+  Top = 'top',
+}
+
 export interface IProps {
   manifest: IManifest;
   config: IConfig;
@@ -35,9 +40,30 @@ export interface IProps {
   addPeek(peek: IPeek): void;
 }
 
-export class Navigation extends React.Component<IProps> {
+export interface IState {
+  barHeight: IPosDouble | null;
+  windowHeight: number | null;
+  zonePadding: IPosDouble;
+  readingZone: IPosDouble;
+  lastScrollStart: number | null;
+}
+
+export type IPosDouble = {
+  [Position.Top]: number;
+  [Position.Bottom]: number;
+};
+
+export class Navigation extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
+
+    this.state = {
+      barHeight: null,
+      windowHeight: null,
+      zonePadding: { [Position.Top]: 12, [Position.Bottom]: 16 * 4 },
+      readingZone: { [Position.Top]: 0, [Position.Bottom]: 0 },
+      lastScrollStart: null,
+    };
   }
 
   private isChapter = getChapterNum() !== null;
@@ -49,7 +75,12 @@ export class Navigation extends React.Component<IProps> {
 
     const sequential =
       resetSequence ||
-      checkSequence(this.props.sequentialPosition, { idea, chapterNum }, this.props.sequential);
+      checkSequence(
+        this.props.sequentialPosition,
+        { idea, chapterNum },
+        this.props.sequential,
+        this.getScrollStep
+      );
 
     this.props.setPosition(chapterNum, idea, sequential);
 
@@ -60,13 +91,35 @@ export class Navigation extends React.Component<IProps> {
     this.props.setScrollRatio(getScrollRatio());
   };
 
+  collapseBars = () => {
+    if (this.state.barHeight === null) return;
+
+    const ms = new Date().getTime();
+    console.log(this.state.lastScrollStart);
+    if (this.state.lastScrollStart === null) {
+      this.setState({ ...this.state, lastScrollStart: ms });
+      return;
+    }
+
+    if (ms - this.state.lastScrollStart < 150) return;
+
+    if (ms - this.state.lastScrollStart < 250) {
+      this.setState({ ...this.state, barHeight: null, lastScrollStart: null });
+      return;
+    }
+
+    this.setState({ ...this.state, lastScrollStart: null });
+  };
+
   getScrollHandler = () => {
     const t1 = throttle(this.setPosition, 500, { leading: false });
     const t2 = throttle(this.setScrollRatio, 100, { leading: true });
+    const t3 = throttle(this.collapseBars, 100, { leading: true });
 
     return function throttled() {
       t1();
       t2();
+      t3();
     };
   };
 
@@ -77,9 +130,9 @@ export class Navigation extends React.Component<IProps> {
 
     switch (keycode(event)) {
       case 'left':
-        return moveBackward(event, chapter.prev);
+        return this.goBack(event, chapter.prev);
       case 'right':
-        return moveForward(event, chapter.next);
+        return this.goForward(event, chapter.next);
       default:
         return;
     }
@@ -100,27 +153,66 @@ export class Navigation extends React.Component<IProps> {
       target.closest('LABEL') === null &&
       !target.classList.contains('ui-target')
     ) {
-      if (this.isInPaginationRect(Direction.Back, event.clientX, event.clientY)) {
-        return moveBackward(event, chapter.prev);
-      } else if (this.isInPaginationRect(Direction.Forward, event.clientX, event.clientY)) {
-        return moveForward(event, chapter.next);
+      if (isInPaginationRect(Direction.Back, event.clientX, event.clientY)) {
+        return this.goBack(event, chapter.prev);
+      } else if (isInPaginationRect(Direction.Forward, event.clientX, event.clientY)) {
+        return this.goForward(event, chapter.next);
       }
     }
   };
 
-  isInPaginationRect = (dir: Direction, x: number, y: number) => {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const rectW = w / 10;
-    const rectH = (h / 5) * 3;
-    const margin = 10;
-    const top = h / 5;
-    const bottom = h / 5 + rectH;
+  setSizes = () => {
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
 
-    const left = dir === Direction.Back ? margin : w - margin - rectW;
-    const right = dir === Direction.Back ? margin + rectW : w - margin;
+    this.setState({
+      ...this.state,
+      windowHeight,
+      readingZone: {
+        [Position.Top]: this.state.zonePadding[Position.Top],
+        [Position.Bottom]: windowHeight - this.state.zonePadding[Position.Bottom],
+      },
+    });
+  };
 
-    return x < right && x > left && y > top && y < bottom;
+  goForward = (event: MouseEvent | TouchEvent | KeyboardEvent, nextChapter: string | null) => {
+    event.preventDefault();
+
+    if (!isPageScrolledToBottom()) {
+      pageForward(nextChapter, this.getScrollStep());
+      this.setPaddings();
+    } else if (nextChapter) window.location.assign(`${nextChapter}#chunk1`);
+  };
+
+  goBack = (event: MouseEvent | TouchEvent | KeyboardEvent, prevChapter: string | null) => {
+    event.preventDefault();
+
+    if (!isPageScrolledToTop()) {
+      pageBack(prevChapter, this.getScrollStep());
+      this.setPaddings();
+    } else if (prevChapter) window.location.assign(`${prevChapter}#chapter-end`);
+  };
+
+  setPaddings = () => {
+    if (this.state.windowHeight === null) return;
+
+    this.setState({
+      ...this.state,
+      barHeight: {
+        [Position.Top]: calcCutoff(Position.Top, this.state.readingZone),
+        [Position.Bottom]:
+          this.state.windowHeight - calcCutoff(Position.Bottom, this.state.readingZone),
+      },
+    });
+  };
+
+  getScrollStep = (): number | null => {
+    if (this.state.windowHeight === null) return null;
+    return (
+      this.state.windowHeight -
+      this.state.zonePadding[Position.Top] -
+      (this.state.barHeight === null ? 0 : this.state.barHeight[Position.Bottom]) -
+      5
+    );
   };
 
   showToc = () => {
@@ -144,6 +236,10 @@ export class Navigation extends React.Component<IProps> {
     this.props.setReadingOrder(this.props.manifest.documents);
 
     this.setPosition();
+
+    window.addEventListener('resize', this.setSizes);
+    this.setSizes();
+    this.setPaddings();
   }
 
   componentWillUnmount() {
@@ -168,9 +264,15 @@ export class Navigation extends React.Component<IProps> {
         : false;
     const { totalWords } = ro[ro.length - 1];
 
+    const barHeight = this.state.barHeight;
+
     return (
       <nav>
-        <CatchWord actions={{ showToc: this.showToc }} />
+        <CatchWord
+          topBarHeight={barHeight === null ? null : barHeight[Position.Top]}
+          bottomBarHeight={barHeight === null ? null : barHeight[Position.Bottom]}
+          actions={{ showToc: this.showToc }}
+        />
         <NavBar
           isChapter={this.isChapter}
           readingOrder={ro}
@@ -195,27 +297,9 @@ export class Navigation extends React.Component<IProps> {
   }
 }
 
-function moveForward(event: MouseEvent | TouchEvent | KeyboardEvent, nextChapter: string | null) {
-  event.preventDefault();
-
-  if (!isPageScrolledToBottom()) {
-    displayPagination(Direction.Forward);
-    window.scrollTo(window.scrollX, window.scrollY + getScrollStep());
-  } else if (nextChapter) window.location.assign(`${nextChapter}#chunk1`);
-}
-
 function displayPagination(dir: Direction) {
   document.body.classList.add(`paginated-${dir}`);
   window.setTimeout(() => document.body.classList.remove(`paginated-${dir}`), 300);
-}
-
-function moveBackward(event: MouseEvent | TouchEvent | KeyboardEvent, prevChapter: string | null) {
-  event.preventDefault();
-
-  if (!isPageScrolledToTop()) {
-    displayPagination(Direction.Back);
-    window.scrollTo(window.scrollX, window.scrollY - getScrollStep());
-  } else if (prevChapter) window.location.assign(`${prevChapter}#chapter-end`);
 }
 
 function isPageScrolledToBottom() {
@@ -228,7 +312,7 @@ function isPageScrolledToBottom() {
   return window.innerHeight + Math.ceil(window.scrollY) >= document.body.scrollHeight;
 }
 
-function isPageScrolledToTop() {
+function isPageScrolledToTop(): boolean {
   const prevLink = document.querySelector('.begin-nav a[rel="prev"]');
 
   if (prevLink) {
@@ -238,21 +322,7 @@ function isPageScrolledToTop() {
   return Math.floor(window.scrollY) < 20;
 }
 
-function getScrollStep() {
-  const peeksEl = document.getElementById('peeks');
-  const catchWordEl = document.getElementById('catchword-bar');
-
-  const bottomOffset = Math.max(
-    peeksEl !== null ? peeksEl.offsetHeight + 10 : 0,
-    catchWordEl ? catchWordEl.offsetHeight : 0
-  );
-
-  const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-  return window.innerHeight - bottomOffset - remSize;
-}
-
-function getScrollRatio() {
+function getScrollRatio(): number {
   return window.scrollY / (document.body.scrollHeight - window.innerHeight);
 }
 
@@ -272,7 +342,8 @@ function getFirstIdeaShown() {
 function checkSequence(
   pos1: IPosition | null,
   pos2: IPosition | null,
-  wasSequentialBefore: boolean
+  wasSequentialBefore: boolean,
+  getScrollStepCallback: { (): number | null }
 ) {
   // no info
   if (pos2 === null) return wasSequentialBefore;
@@ -281,7 +352,9 @@ function checkSequence(
   if (pos1 === null && pos2 !== null) return true;
 
   if (pos1 !== null && pos2 !== null) {
-    const scrollStep = getScrollStep();
+    const scrollStep = getScrollStepCallback();
+    if (scrollStep === null) return wasSequentialBefore;
+
     if (wasSequentialBefore) {
       // new chapter
       if (pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) return true;
@@ -325,6 +398,64 @@ function checkSequence(
 
 function setUriIdea(id: number) {
   window.history.replaceState(undefined, document.title, `#idea${id}`);
+}
+
+function isInPaginationRect(dir: Direction, x: number, y: number) {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const rectW = w / 6;
+  const rectH = (h / 5) * 3;
+  const margin = 2;
+  const top = h / 5;
+  const bottom = h / 5 + rectH;
+
+  const left = dir === Direction.Back ? margin : w - margin - rectW;
+  const right = dir === Direction.Back ? margin + rectW : w - margin;
+
+  return x < right && x > left && y > top && y < bottom;
+}
+
+function calcCutoff(from: Position, readingZone: IPosDouble) {
+  const els = [...document.querySelectorAll('.chunk')].filter(el =>
+    isElementOnTheEdge(el, readingZone[from])
+  );
+  if (!els.length) return readingZone[from];
+
+  const el = els[0];
+
+  const lineHeight = parseInt(window.getComputedStyle(el).lineHeight, 10);
+  const rect = el.getBoundingClientRect();
+  let height = rect[from];
+
+  if (from === Position.Top) {
+    while (height < readingZone[from]) {
+      height += lineHeight;
+    }
+  } else if (from === Position.Bottom) {
+    while (height > readingZone[from]) {
+      height -= lineHeight;
+    }
+  }
+
+  return height;
+}
+
+function isElementOnTheEdge(el: Element, edge: number) {
+  var rect = el.getBoundingClientRect();
+
+  return rect.top < edge && rect.bottom > edge;
+}
+
+function pageForward(nextChapter: string | null, step: number | null) {
+  if (step === null) return;
+  displayPagination(Direction.Forward);
+  window.scrollTo(window.scrollX, window.scrollY + step);
+}
+
+function pageBack(prevChapter: string | null, step: number | null) {
+  if (step === null) return;
+  displayPagination(Direction.Back);
+  window.scrollTo(window.scrollX, window.scrollY - step);
 }
 
 const mapStateToProps = (state: ICombinedState) => {

@@ -1,11 +1,15 @@
 :root {
-  font-size: 18px;
+  --base-font-size: 18px;
+  --background: white;
   --base-padding: 1rem;
   --highlight-color: rgba(255, 255, 0, 1);
+
+  font-size: var(--base-font-size);
 }
 
 body {
   margin: 0;
+  background: var(--background);
 }
 
 .content {

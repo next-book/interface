@@ -116,7 +116,7 @@ body.paginated-forward {
 
     position: fixed;
     top: 20vh;
-    right: 10px;
+    right: 2px;
     bottom: 20vh;
 
     color: rgba(255, 255, 255, 0.6);
@@ -131,7 +131,7 @@ body.paginated-forward {
 
 body.paginated-back::after {
   content: '<';
-  left: 10px;
+  left: 2px;
   right: auto;
 }
 
@@ -154,13 +154,26 @@ body.paginated-back::after {
 }
 
 .nb-navigation nav {
-  #catchword-bar {
+  #catchword-top,
+  #catchword-bottom {
     position: fixed;
-    bottom: 0;
     left: 0;
-    height: 4rem;
-    width: 100%;
+    width: 100vw;
+    background: var(--background);
+    box-sizing: border-box;
+  }
 
+  #catchword-top {
+    top: 0;
+    height: 0;
+  }
+
+  #catchword-bottom {
+    bottom: 0;
+    height: 4rem;
+  }
+
+  #catchword-bottom.catchword-bottom--collapsed {
     border-top: 1px solid rgba(100, 100, 100, 0.2);
     background: rgba(0, 0, 0, 0.03);
     background: linear-gradient(
