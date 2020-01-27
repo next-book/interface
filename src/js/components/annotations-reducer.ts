@@ -25,7 +25,8 @@ export interface IAnnotations {
   [key: number]: IAnnotation;
 }
 
-export interface INewAnnotation extends IAnnotation {
+export interface IAnnotationAndIdeas {
+  annotation: IAnnotation;
   ideas: IIdeas;
 }
 
@@ -51,43 +52,41 @@ export function reducer(state: IState = INITIAL_STATE, action: any) {
   }
 }
 
-function addAnnotation(state: IState, payload: INewAnnotation) {
-  const newState = { ...state };
-  const annotations = state[payload.chapterNum] ? state[payload.chapterNum].annotations : {};
+function addAnnotation(state: IState, payload: IAnnotationAndIdeas) {
+  const { annotation, ideas } = payload;
 
-  newState[payload.chapterNum] = {
+  const newState = { ...state };
+  const annotations = state[annotation.chapterNum] ? state[annotation.chapterNum].annotations : {};
+
+  newState[annotation.chapterNum] = {
     annotations: {
       ...annotations,
-      [payload.id]: {
-        id: payload.id,
-        chapterNum: payload.chapterNum,
-        symbol: payload.symbol,
-        format: payload.format,
-        note: payload.note,
-        links: [],
-      },
+      [annotation.id]: annotation,
     },
-    ideas: payload.ideas,
+    ideas: ideas,
   };
 
   return newState;
 }
 
-function destroyAnnotation(state: IState, payload: number) {
-  return state;
-  //  ...state,
-  //  annotations: state.annotations.filter((item: IAnnotation, index: number) => index !== payload),
-  //}
+function destroyAnnotation(state: IState, payload: IAnnotationAndIdeas) {
+  const { annotation, ideas } = payload;
+
+  const newState = { ...state };
+  delete newState[annotation.chapterNum].annotations[annotation.id];
+
+  newState[annotation.chapterNum].ideas = ideas;
+  return newState;
 }
 
-reducer.addAnnotation = function(data: INewAnnotation) {
+reducer.addAnnotation = function(data: IAnnotationAndIdeas) {
   return {
     type: ADD_ANNOTATION,
     payload: data,
   };
 };
 
-reducer.destroyAnnotation = function(data: number) {
+reducer.destroyAnnotation = function(data: IAnnotationAndIdeas) {
   return {
     type: DESTROY_ANNOTATION,
     payload: data,

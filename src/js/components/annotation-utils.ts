@@ -41,6 +41,26 @@ export const updateHead = (annotation: IAnnotation) => {
   head.innerHTML = annotation.symbol;
 };
 
+export const removeAnnotation = (id: number) => {
+  const toNormalize: Element[] = [];
+
+  const head = document.querySelector(`.annotation__head[data-id="${id}"]`);
+  if (head !== null) (head.parentNode as Element).removeChild(head);
+
+  const ranges = document.querySelectorAll(`.annotation[data-id="${id}"]`);
+  [...ranges].forEach(range => {
+    var parent = <Element>range.parentNode;
+    while (range.firstChild) parent.insertBefore(range.firstChild, range);
+    parent.removeChild(range);
+
+    if (!toNormalize.includes(parent)) toNormalize.push(parent);
+  });
+
+  toNormalize.forEach(el => {
+    el.normalize();
+  });
+};
+
 const areInBetweenNodesSelectable = (start: Node, end: Node) => {
   // Not implemented
   // TODO: check in-between
