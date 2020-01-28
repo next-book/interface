@@ -60,7 +60,7 @@ export class Navigation extends React.Component<IProps, IState> {
     this.state = {
       barHeight: null,
       windowHeight: null,
-      zonePadding: { [Position.Top]: 12, [Position.Bottom]: 16 * 4 },
+      zonePadding: { [Position.Top]: 12, [Position.Bottom]: 8 * 5 },
       readingZone: { [Position.Top]: 0, [Position.Bottom]: 0 },
       lastScrollStart: null,
     };
@@ -93,9 +93,8 @@ export class Navigation extends React.Component<IProps, IState> {
 
   collapseBars = () => {
     if (this.state.barHeight === null) return;
-
     const ms = new Date().getTime();
-    console.log(this.state.lastScrollStart);
+
     if (this.state.lastScrollStart === null) {
       this.setState({ ...this.state, lastScrollStart: ms });
       return;
@@ -216,12 +215,15 @@ export class Navigation extends React.Component<IProps, IState> {
   };
 
   showToc = () => {
-    this.props.addPeek({
-      content: <Toc />,
-      title: 'Table of Contents',
-      source: 'toc-table',
-      showSource: false,
-    });
+    if (this.props.position !== null)
+      this.props.addPeek({
+        content: (
+          <Toc idea={this.props.position.idea} chapterNum={this.props.position.chapterNum} />
+        ),
+        title: 'Table of Contents',
+        source: 'toc-table',
+        showSource: false,
+      });
   };
 
   componentDidMount() {
