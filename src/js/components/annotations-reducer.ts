@@ -1,18 +1,26 @@
 const ADD_ANNOTATION = 'nb-base/annotations/ADD_ANNOTATION';
+const UPDATE_ANNOTATION = 'nb-base/annotations/UPDATE_ANNOTATION';
 const DESTROY_ANNOTATION = 'nb-base/annotations/DESTROY_ANNOTATION';
 
 export enum IStyle {
-  Default,
-  Extra,
+  Default = 'default',
+  Secondary = 'secondary',
+  Strong = 'strong',
+}
+
+export interface IIdeaRange {
+  start: string;
+  end: string;
 }
 
 export interface IAnnotation {
-  // dateCreated:
-  // dateEdited:
+  dateCreated: number;
+  dateModified: number;
   id: number;
+  range: IIdeaRange;
   chapterNum: string;
   symbol: string;
-  format: IStyle;
+  style: IStyle;
   note: string;
   links: string[];
 }
@@ -45,6 +53,8 @@ export function reducer(state: IState = INITIAL_STATE, action: any) {
   switch (action.type) {
     case ADD_ANNOTATION:
       return addAnnotation(state, action.payload);
+    case UPDATE_ANNOTATION:
+      return updateAnnotation(state, action.payload);
     case DESTROY_ANNOTATION:
       return destroyAnnotation(state, action.payload);
     default:
@@ -54,6 +64,8 @@ export function reducer(state: IState = INITIAL_STATE, action: any) {
 
 function addAnnotation(state: IState, payload: IAnnotationAndIdeas) {
   const { annotation, ideas } = payload;
+  annotation.dateCreated = new Date().getTime();
+  annotation.dateModified = new Date().getTime();
 
   const newState = { ...state };
   const annotations = state[annotation.chapterNum] ? state[annotation.chapterNum].annotations : {};
@@ -66,6 +78,16 @@ function addAnnotation(state: IState, payload: IAnnotationAndIdeas) {
     ideas: ideas,
   };
 
+  return newState;
+}
+
+function updateAnnotation(state: IState, payload: IAnnotationAndIdeas) {
+  const { annotation, ideas } = payload;
+  annotation.dateModified = new Date().getTime();
+
+  const newState = { ...state };
+  newState[annotation.chapterNum].annotations[annotation.id] = annotation;
+  newState[annotation.chapterNum].ideas = ideas;
   return newState;
 }
 
@@ -86,6 +108,13 @@ reducer.addAnnotation = function(data: IAnnotationAndIdeas) {
   };
 };
 
+reducer.updateAnnotation = function(data: IAnnotationAndIdeas) {
+  return {
+    type: UPDATE_ANNOTATION,
+    payload: data,
+  };
+};
+
 reducer.destroyAnnotation = function(data: IAnnotationAndIdeas) {
   return {
     type: DESTROY_ANNOTATION,
@@ -93,4 +122,6 @@ reducer.destroyAnnotation = function(data: IAnnotationAndIdeas) {
   };
 };
 
-export type Action = ReturnType<typeof reducer.addAnnotation | typeof reducer.destroyAnnotation>;
+export type Action = ReturnType<
+  typeof reducer.addAnnotation | typeof reducer.updateAnnotation | typeof reducer.destroyAnnotation
+>;

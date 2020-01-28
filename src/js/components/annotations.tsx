@@ -11,7 +11,8 @@ import { getChapterNum } from '../shared';
 
 interface IProps {
   annotations: IState;
-  addAnnotation(annotation: IAnnotationAndIdeas): void;
+  addAnnotation(data: IAnnotationAndIdeas): void;
+  updateAnnotation(data: IAnnotationAndIdeas): void;
   destroyAnnotation(data: IAnnotationAndIdeas): void;
 }
 
@@ -39,6 +40,13 @@ export class Annotations extends React.Component<IProps, ILocalState> {
     });
   };
 
+  private deselectAnnotation = () => {
+    this.setState({
+      ...this.state,
+      selectedAnnotation: null,
+    });
+  };
+
   render() {
     if (this.state.chapterNum === null) return null;
 
@@ -53,11 +61,15 @@ export class Annotations extends React.Component<IProps, ILocalState> {
           ideas={ideas}
           addAnnotation={this.props.addAnnotation}
           selectAnnotation={this.selectAnnotation}
+          updateAnnotation={this.props.updateAnnotation}
+          selectedAnnotation={this.state.selectedAnnotation}
           chapterNum={this.state.chapterNum}
         />
         {this.state.chapterNum === null || this.state.selectedAnnotation === null ? null : (
           <AnnotationDetail
             annotation={annotations[this.state.selectedAnnotation]}
+            close={this.deselectAnnotation}
+            updateAnnotation={this.props.updateAnnotation}
             destroyAnnotation={this.props.destroyAnnotation}
           />
         )}
@@ -76,6 +88,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       addAnnotation: reducer.addAnnotation,
+      updateAnnotation: reducer.updateAnnotation,
       destroyAnnotation: reducer.destroyAnnotation,
     },
     dispatch

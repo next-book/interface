@@ -1,4 +1,4 @@
-import { IAnnotation, IIdeas, IStyle } from './annotations-reducer';
+import { IAnnotation, IIdeas, IStyle, IIdeaRange } from './annotations-reducer';
 
 export const checkSelection = () => {
   const selection = window.getSelection();
@@ -13,6 +13,19 @@ export const checkSelection = () => {
     areInBetweenNodesSelectable(range.startContainer, range.endContainer) &&
     isNodeSelectable(range.endContainer)
   );
+};
+
+export const getRangeBounds = (range: Range): IIdeaRange => {
+  const start = getIdeaId(range.startContainer);
+  const end = getIdeaId(range.endContainer);
+
+  return { start, end };
+};
+
+const getIdeaId = (node: Node): string => {
+  const el = node.nodeType === Node.TEXT_NODE ? <Element>node.parentNode : <Element>node;
+  const idea = <Element>el.closest('.idea');
+  return idea.getAttribute('id') as string;
 };
 
 export const getAnnotatedIdeas = (): IIdeas => {
@@ -36,8 +49,14 @@ export const updateHead = (annotation: IAnnotation) => {
   const head = document.querySelector(selector);
   if (head === null) return;
 
-  head.setAttribute('data-note', annotation.note);
-  head.setAttribute('data-format', IStyle[annotation.format]);
+  const note = annotation.note
+    .replace(/<[^>]+>/g, ' ')
+    .split(' ')
+    .slice(0, 5)
+    .join(' ');
+  head.setAttribute('data-note', note);
+
+  head.setAttribute('data-style', annotation.style);
   head.innerHTML = annotation.symbol;
 };
 
@@ -141,17 +160,25 @@ export const getSafeRanges = (dangerous: Range) => {
   return response;
 };
 
-export const highlightRange = (range: Range, id: number, isFirst: boolean) => {
+export const highlightRange = (range: Range, annotation: IAnnotation, isFirst: boolean) => {
   const span = document.createElement('SPAN');
   span.classList.add('annotation');
-  span.classList.add(`annotation-${id}`);
-  span.setAttribute('data-id', id.toString());
+  if (annotation.style !== IStyle.Default) span.classList.add(`annotation--${annotation.style}`);
+  span.setAttribute('data-id', annotation.id.toString());
   range.surroundContents(span);
 
   if (isFirst) {
     const head = document.createElement('SPAN');
     head.classList.add('annotation__head');
-    head.setAttribute('data-id', id.toString());
+    head.setAttribute('data-id', annotation.id.toString());
     span.insertBefore(head, span.firstChild);
   }
+};
+
+export const updateRanges = (annotation: IAnnotation) => {
+  const spans = document.querySelectorAll(`.annotation[data-id="${annotation.id}"]`);
+  spans.forEach(span => {
+    span.setAttribute('class', 'annotation');
+    if (annotation.style !== IStyle.Default) span.classList.add(`annotation--${annotation.style}`);
+  });
 };
