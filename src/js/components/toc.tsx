@@ -119,11 +119,14 @@ class GoTo extends React.Component<IGotoProps, IGotoState> {
           value={this.state.chapterNum}
           className="goto__chapter"
         >
-          {this.props.readingOrder.map(doc => (
-            <option key={doc.order} value={doc.order}>
+          {this.props.readingOrder.map(doc => {
+            if (doc.order === null) return null;
+
+            const value = doc.order.toString();
+            <option key={value} value={value}>
               {doc.order + 1} {doc.title}
-            </option>
-          ))}
+            </option>;
+          })}
         </select>
         <select className="goto__idea" onChange={this.setIdea} value={this.state.idea}>
           {ideaIds.map(i => (
