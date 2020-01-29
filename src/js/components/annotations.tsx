@@ -61,6 +61,7 @@ export class Annotations extends React.Component<IProps, ILocalState> {
           ideas={ideas}
           addAnnotation={this.props.addAnnotation}
           selectAnnotation={this.selectAnnotation}
+          deselectAnnotation={this.deselectAnnotation}
           updateAnnotation={this.props.updateAnnotation}
           selectedAnnotation={this.state.selectedAnnotation}
           chapterNum={this.state.chapterNum}

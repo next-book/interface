@@ -12,7 +12,7 @@ import {
   updateHead,
   updateRanges,
   getRangeBounds,
-  getSafeRanges,
+  getIdeaRanges,
   highlightRange,
 } from './annotation-utils';
 
@@ -24,6 +24,7 @@ interface IControlProps {
   addAnnotation(annotation: IAnnotationAndIdeas): void;
   updateAnnotation(data: IAnnotationAndIdeas): void;
   selectAnnotation(index: number): void;
+  deselectAnnotation(): void;
 }
 
 interface IControlState {
@@ -76,8 +77,8 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
       dateModified: 0,
     };
 
-    const safeRanges = getSafeRanges(range);
-    for (let i = 0; i < safeRanges.length; i++) highlightRange(safeRanges[i], annotation, i === 0);
+    const ideaRanges = getIdeaRanges(range);
+    for (let i = 0; i < ideaRanges.length; i++) highlightRange(ideaRanges[i], annotation, i === 0);
     updateHead(annotation);
 
     this.addAnnotation(annotation, getAnnotatedIdeas());
@@ -87,6 +88,10 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
   };
 
   private showControlsIfSelectionIsOkay = () => {
+    if (document.activeElement === document.body || document.activeElement === null) {
+      this.props.deselectAnnotation();
+    }
+
     this.showControls(checkSelection());
   };
 
@@ -131,7 +136,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
   }
 
   render() {
-    if (this.state.isVisible === null && this.props.selectedAnnotation === null) {
+    if (!this.state.isVisible && this.props.selectedAnnotation === null) {
       // display access to workdesk
       return null;
     }
@@ -143,7 +148,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
       : this.createAnnotationFromSelection;
 
     return (
-      <div className="annotation-control">
+      <div className="annotation-control ui-target">
         {styles.map((style, index) => (
           <StyleButton key={index} style={style} fn={() => fn({ style: style })} />
         ))}

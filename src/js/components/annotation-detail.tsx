@@ -18,7 +18,7 @@ interface IProps {
 
 interface IState {
   symbol: string;
-  note: { html: string };
+  note: string;
   style: IStyle;
 }
 
@@ -27,26 +27,20 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      note: { html: props.annotation.note },
+      note: props.annotation.note,
       symbol: props.annotation.symbol,
       style: IStyle.Default,
     };
   }
 
-  // private update = () => {
-  //   updateAnnotation(this.props.annotation);
-  //   this.props.updateAnnotation({
-  //     annotation: this.props.annotation,
-  //     ideas: getAnnotatedIdeas(),
-  //   });
-  // };
-
   private updateNote = (event: ContentEditableEvent) => {
-    this.setState({ ...this.state, note: { html: event.target.value } });
-    updateHead({ ...this.props.annotation, note: this.state.note.html });
+    this.setState({ ...this.state, note: event.target.value });
+
+    const annotation = { ...this.props.annotation, note: event.target.value };
+    updateHead(annotation);
 
     this.props.updateAnnotation({
-      annotation: { ...this.props.annotation, note: this.state.note.html },
+      annotation: annotation,
       ideas: getAnnotatedIdeas(),
     });
   };
@@ -69,14 +63,18 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
   render() {
     return this.props.annotation === undefined ? null : (
       <div className="annotation-detail">
-        <p style={{ textAlign: 'right' }} onClick={this.props.close}>
-          close
-        </p>
-        <a onClick={this.destroy}>delete</a>
+        <div className="annotation-detail__tools">
+          <button className="annotation-detail__close" onClick={this.props.close}>
+            <span>Close annotation</span>
+          </button>
+          <button className="annotation-detail__destroy" onClick={this.destroy}>
+            <span>Delete annotation</span>
+          </button>
+        </div>
 
         <ContentEditable
-          className="annotation-control__note"
-          html={this.state.note.html}
+          className="annotation-detail__note"
+          html={this.state.note}
           tagName="article"
           onChange={this.updateNote}
         />

@@ -49,11 +49,15 @@ export const updateHead = (annotation: IAnnotation) => {
   const head = document.querySelector(selector);
   if (head === null) return;
 
-  const note = annotation.note
-    .replace(/<[^>]+>/g, ' ')
-    .split(' ')
-    .slice(0, 5)
-    .join(' ');
+  const note =
+    annotation.note.length > 30
+      ? annotation.note
+          .replace(/&nbsp;|<[^>]+>/g, ' ')
+          .substr(0, 40)
+          .split(/\s+/)
+          .slice(0, 5)
+          .join(' ') + '…'
+      : annotation.note;
   head.setAttribute('data-note', note);
 
   head.setAttribute('data-style', annotation.style);
@@ -99,6 +103,35 @@ const isNodeSelectable = (node: Node) => {
   // MUST NOT be inside existing annotation
   if (el.closest('.annotation') !== null) return false;
   return true;
+};
+
+export const getIdeaRanges = (range: Range) => {
+  return getSafeRanges(range)
+    .filter(range => !range.collapsed)
+    .reduce((acc, range) => {
+      if (isNodeSelectable(range.startContainer)) {
+        acc.push(range);
+      } else if (range.startContainer === range.endContainer) {
+        for (let i = range.startOffset; i < range.endOffset; i++) {
+          const child = range.startContainer.childNodes[i];
+          if (!child.nodeType || child.nodeType == Node.TEXT_NODE) continue;
+          if (child.classList.contains('idea')) acc.push(rangeFromElContents(child));
+          else
+            child.querySelectorAll('.idea').forEach((idea: Node) => {
+              acc.push(rangeFromElContents(idea));
+            });
+        }
+      }
+
+      return acc;
+    }, []);
+};
+
+const rangeFromElContents = (el: Node) => {
+  const range = document.createRange();
+  range.setStart(el, 0);
+  range.setEndAfter(el.lastChild as Node);
+  return range;
 };
 
 // based on code from https://stackoverflow.com/a/12823606/3270421
