@@ -124,6 +124,7 @@ export class Navigation extends React.Component<IProps, IState> {
 
   handleKeyboardNav = (event: KeyboardEvent) => {
     if (this.props.position === null) return;
+    if (document.activeElement !== document.body || document.activeElement === null) return;
 
     const chapter = this.props.readingOrder[this.props.position.chapterNum];
 

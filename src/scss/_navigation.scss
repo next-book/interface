@@ -39,15 +39,15 @@
   animation: slide-up 0.2s ease-out;
 
   .seq-return-toggle {
-    position: absolute;
-    top: 0;
-    right: 0;
     width: 24px;
     height: 24px;
     line-height: 24px;
     font-weight: bold;
     color: #aaa;
     text-align: center;
+    float: right;
+    padding: 0 0 12px 12px;
+    cursor: pointer;
 
     &:hover {
       color: #666;
@@ -67,9 +67,8 @@
   }
 
   .seq-return--collapsed {
-    width: 24px;
-    height: 0px;
-    padding-top: 24px;
+    width: 26px;
+    height: 26px;
   }
 
   p,
