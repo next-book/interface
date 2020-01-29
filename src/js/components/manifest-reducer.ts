@@ -39,6 +39,7 @@ export interface IDocument {
   file: string;
   words: number;
   chars: number;
+  ideas: number;
   isChapter: boolean;
   order: number | null;
   prev: string | null;
