@@ -1,5 +1,5 @@
 import React from 'react';
-import { reducer, IState, IAnnotationAndIdeas } from './annotations-reducer';
+import { reducer, IState, IAnnotationAndIdeas, IChapterNote } from './annotations-reducer';
 import AnnotationControl from './annotation-control';
 import AnnotationDetail from './annotation-detail';
 import { IState as ICombinedState } from '../reducer';
@@ -13,6 +13,7 @@ interface IProps {
   annotations: IState;
   addAnnotation(data: IAnnotationAndIdeas): void;
   updateAnnotation(data: IAnnotationAndIdeas): void;
+  updateChapterNote(data: IChapterNote): void;
   destroyAnnotation(data: IAnnotationAndIdeas): void;
 }
 
@@ -59,10 +60,12 @@ export class Annotations extends React.Component<IProps, ILocalState> {
         <AnnotationControl
           annotations={annotations}
           ideas={ideas}
+          chapterNote={this.props.annotations[this.state.chapterNum.toString()].chapterNote}
           addAnnotation={this.props.addAnnotation}
           selectAnnotation={this.selectAnnotation}
           deselectAnnotation={this.deselectAnnotation}
           updateAnnotation={this.props.updateAnnotation}
+          updateChapterNote={this.props.updateChapterNote}
           selectedAnnotation={this.state.selectedAnnotation}
           chapterNum={this.state.chapterNum}
         />
@@ -90,6 +93,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     {
       addAnnotation: reducer.addAnnotation,
       updateAnnotation: reducer.updateAnnotation,
+      updateChapterNote: reducer.updateChapterNote,
       destroyAnnotation: reducer.destroyAnnotation,
     },
     dispatch

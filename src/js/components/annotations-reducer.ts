@@ -1,6 +1,7 @@
 const ADD_ANNOTATION = 'nb-base/annotations/ADD_ANNOTATION';
 const UPDATE_ANNOTATION = 'nb-base/annotations/UPDATE_ANNOTATION';
 const DESTROY_ANNOTATION = 'nb-base/annotations/DESTROY_ANNOTATION';
+const UPDATE_CHAPTER_NOTE = 'nb-base/annotations/UPDATE_CHAPTER_NOTE';
 
 export enum IStyle {
   Default = 'default',
@@ -38,9 +39,15 @@ export interface IAnnotationAndIdeas {
   ideas: IIdeas;
 }
 
+export interface IChapterNote {
+  note: string;
+  chapterNum: string;
+}
+
 export interface IAnnotationSet {
   annotations: IAnnotations;
   ideas: IIdeas;
+  chapterNote: string;
 }
 
 export interface IState {
@@ -53,6 +60,8 @@ export function reducer(state: IState = INITIAL_STATE, action: any) {
   switch (action.type) {
     case ADD_ANNOTATION:
       return addAnnotation(state, action.payload);
+    case UPDATE_CHAPTER_NOTE:
+      return updateChapterNote(state, action.payload);
     case UPDATE_ANNOTATION:
       return updateAnnotation(state, action.payload);
     case DESTROY_ANNOTATION:
@@ -60,6 +69,13 @@ export function reducer(state: IState = INITIAL_STATE, action: any) {
     default:
       return state;
   }
+}
+
+function updateChapterNote(state: IState, payload: IChapterNote) {
+  const newState = { ...state };
+  newState[payload.chapterNum].chapterNote = payload.note;
+
+  return newState;
 }
 
 function addAnnotation(state: IState, payload: IAnnotationAndIdeas) {
@@ -71,6 +87,7 @@ function addAnnotation(state: IState, payload: IAnnotationAndIdeas) {
   const annotations = state[annotation.chapterNum] ? state[annotation.chapterNum].annotations : {};
 
   newState[annotation.chapterNum] = {
+    ...newState[annotation.chapterNum],
     annotations: {
       ...annotations,
       [annotation.id]: annotation,
@@ -103,6 +120,13 @@ function destroyAnnotation(state: IState, payload: IAnnotationAndIdeas) {
   return newState;
 }
 
+reducer.updateChapterNote = function(data: IChapterNote) {
+  return {
+    type: UPDATE_CHAPTER_NOTE,
+    payload: data,
+  };
+};
+
 reducer.addAnnotation = function(data: IAnnotationAndIdeas) {
   return {
     type: ADD_ANNOTATION,
@@ -125,5 +149,8 @@ reducer.destroyAnnotation = function(data: IAnnotationAndIdeas) {
 };
 
 export type Action = ReturnType<
-  typeof reducer.addAnnotation | typeof reducer.updateAnnotation | typeof reducer.destroyAnnotation
+  | typeof reducer.updateChapterNote
+  | typeof reducer.addAnnotation
+  | typeof reducer.updateAnnotation
+  | typeof reducer.destroyAnnotation
 >;

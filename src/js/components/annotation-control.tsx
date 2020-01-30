@@ -4,6 +4,7 @@ import {
   IAnnotation,
   IAnnotations,
   IAnnotationAndIdeas,
+  IChapterNote,
   IStyle,
 } from './annotations-reducer';
 import {
@@ -18,21 +19,24 @@ import {
   getIdeaRanges,
   highlightRange,
 } from './annotation-utils';
-
+import AnnotationDesk from './annotation-desk';
 enum Controls {
   Add,
   Edit,
   ExtendCrop,
+  Desk,
   None,
 }
 
 interface IControlProps {
   annotations: IAnnotations;
   ideas: IIdeas;
+  chapterNote: string;
   chapterNum: string;
   selectedAnnotation: number | null;
   addAnnotation(annotation: IAnnotationAndIdeas): void;
   updateAnnotation(data: IAnnotationAndIdeas): void;
+  updateChapterNote(data: IChapterNote): void;
   selectAnnotation(index: number): void;
   deselectAnnotation(): void;
 }
@@ -107,7 +111,12 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     } else if (doesRangeOverlap()) {
       this.showControls(Controls.ExtendCrop);
     } else {
-      this.showControls(Controls.None);
+      if (
+        this.state.visible === Controls.Add ||
+        this.state.visible === Controls.Edit ||
+        this.state.visible === Controls.ExtendCrop
+      )
+        this.showControls(Controls.None);
     }
   };
 
@@ -172,6 +181,24 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
   }
 
   render() {
+    return (
+      <>
+        {this.state.visible === Controls.Desk ? (
+          <AnnotationDesk
+            annotations={this.props.annotations}
+            ideas={this.props.ideas}
+            chapterNote={this.props.chapterNote}
+            chapterNum={this.props.chapterNum}
+            updateChapterNote={this.props.updateChapterNote}
+            close={() => this.showControls(Controls.None)}
+          />
+        ) : null}
+        {this.renderButtons()}
+      </>
+    );
+  }
+
+  renderButtons() {
     if (this.state.visible === Controls.ExtendCrop) {
       const actions = [
         {
@@ -198,16 +225,17 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
       const actions = [
         {
           symbol: '📋',
-          fn: () => null,
+          fn: () => this.showControls(Controls.Desk),
         },
       ];
 
-      return null;
-      <div className="annotation-control ui-target">
-        {actions.map((action, index) => (
-          <ActionButton key={index} action={action.symbol} fn={action.fn} title="" />
-        ))}
-      </div>;
+      return (
+        <div className="annotation-control ui-target">
+          {actions.map((action, index) => (
+            <ActionButton key={index} action={action.symbol} fn={action.fn} title="" />
+          ))}
+        </div>
+      );
     }
 
     const styles = [IStyle.Default, IStyle.Secondary, IStyle.Strong];
@@ -238,7 +266,7 @@ interface IActionButtonProps {
 
 export function ActionButton(props: IActionButtonProps) {
   return (
-    <button className={`style-button`} onClick={props.fn} title={props.title}>
+    <button className={`action-button`} onClick={props.fn} title={props.title}>
       {props.action}
     </button>
   );
