@@ -83,10 +83,12 @@ function addAnnotation(state: IState, payload: IAnnotationAndIdeas) {
 
 function updateAnnotation(state: IState, payload: IAnnotationAndIdeas) {
   const { annotation, ideas } = payload;
-  annotation.dateModified = new Date().getTime();
 
   const newState = { ...state };
-  newState[annotation.chapterNum].annotations[annotation.id] = annotation;
+  newState[annotation.chapterNum].annotations[annotation.id] = {
+    ...annotation,
+    dateModified: new Date().getTime(),
+  };
   newState[annotation.chapterNum].ideas = ideas;
   return newState;
 }

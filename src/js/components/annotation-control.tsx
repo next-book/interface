@@ -8,13 +8,23 @@ import {
 } from './annotations-reducer';
 import {
   getAnnotatedIdeas,
-  checkSelection,
+  isRangeWithoutOverlap,
   updateHead,
   updateRanges,
+  doesRangeOverlap,
+  cropHighlight,
+  extendHighlight,
   getRangeBounds,
   getIdeaRanges,
   highlightRange,
 } from './annotation-utils';
+
+enum Controls {
+  Add,
+  Edit,
+  ExtendCrop,
+  None,
+}
 
 interface IControlProps {
   annotations: IAnnotations;
@@ -28,7 +38,7 @@ interface IControlProps {
 }
 
 interface IControlState {
-  isVisible: boolean;
+  visible: Controls;
 }
 
 export default class AnnotationControl extends React.Component<IControlProps, IControlState> {
@@ -36,14 +46,14 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     super(props);
 
     this.state = {
-      isVisible: false,
+      visible: Controls.None,
     };
   }
 
-  private showControls = (isVisible: boolean) => {
+  private showControls = (visible: Controls) => {
     this.setState({
       ...this.state,
-      isVisible,
+      visible,
     });
   };
 
@@ -59,7 +69,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     return keys.length > 0 ? Math.max(...keys) + 1 : 0;
   };
 
-  private createAnnotationFromSelection = (params: { style?: IStyle; symbol?: string }) => {
+  private createAnnotationFromRange = (params: { style?: IStyle; symbol?: string }) => {
     const selection = window.getSelection();
     if (selection === null) return;
     if (selection.rangeCount === 0) return;
@@ -83,16 +93,22 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
 
     this.addAnnotation(annotation, getAnnotatedIdeas());
 
-    this.showControls(false);
+    this.showControls(Controls.None);
     selection.removeAllRanges();
   };
 
-  private showControlsIfSelectionIsOkay = () => {
+  private showControlsIfRangeIsOkay = () => {
     if (document.activeElement === document.body || document.activeElement === null) {
       this.props.deselectAnnotation();
     }
 
-    this.showControls(checkSelection());
+    if (isRangeWithoutOverlap()) {
+      this.showControls(Controls.Add);
+    } else if (doesRangeOverlap()) {
+      this.showControls(Controls.ExtendCrop);
+    } else {
+      this.showControls(Controls.None);
+    }
   };
 
   private selectAnnotation = (event: MouseEvent) => {
@@ -120,32 +136,85 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     });
   };
 
+  private cropHighlight = () => {
+    const annotation = cropHighlight(this.props.annotations);
+
+    if (annotation !== null)
+      this.props.updateAnnotation({
+        annotation: annotation,
+        ideas: getAnnotatedIdeas(),
+      });
+  };
+
+  private extendHighlight = () => {
+    const annotation = extendHighlight(this.props.annotations);
+
+    if (annotation !== null)
+      this.props.updateAnnotation({
+        annotation: annotation,
+        ideas: getAnnotatedIdeas(),
+      });
+  };
+
   componentDidMount() {
     for (let [id, html] of Object.entries(this.props.ideas)) {
       const el = document.getElementById(id);
       if (el) el.innerHTML = html;
     }
 
-    document.addEventListener('selectionchange', this.showControlsIfSelectionIsOkay);
+    document.addEventListener('selectionchange', this.showControlsIfRangeIsOkay);
 
     document.addEventListener('click', this.selectAnnotation);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('selectionchange', this.showControlsIfSelectionIsOkay);
+    window.removeEventListener('selectionchange', this.showControlsIfRangeIsOkay);
   }
 
   render() {
-    if (!this.state.isVisible && this.props.selectedAnnotation === null) {
+    if (this.state.visible === Controls.ExtendCrop) {
+      const actions = [
+        {
+          symbol: '➖',
+          fn: this.cropHighlight,
+        },
+        {
+          symbol: '➕',
+          fn: this.extendHighlight,
+        },
+      ];
+
+      return (
+        <div className="annotation-control ui-target">
+          {actions.map((action, index) => (
+            <ActionButton key={index} action={action.symbol} fn={action.fn} title="" />
+          ))}
+        </div>
+      );
+    }
+
+    if (this.state.visible === Controls.None && this.props.selectedAnnotation === null) {
       // display access to workdesk
+      const actions = [
+        {
+          symbol: '📋',
+          fn: () => null,
+        },
+      ];
+
       return null;
+      <div className="annotation-control ui-target">
+        {actions.map((action, index) => (
+          <ActionButton key={index} action={action.symbol} fn={action.fn} title="" />
+        ))}
+      </div>;
     }
 
     const styles = [IStyle.Default, IStyle.Secondary, IStyle.Strong];
     const symbols = ['✏️', '‼️', '😳', '👍', '✅'];
     const fn = this.props.selectedAnnotation
       ? this.updateAnnotation
-      : this.createAnnotationFromSelection;
+      : this.createAnnotationFromRange;
 
     return (
       <div className="annotation-control ui-target">
@@ -159,6 +228,20 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
       </div>
     );
   }
+}
+
+interface IActionButtonProps {
+  action: string;
+  title: string;
+  fn(): void;
+}
+
+export function ActionButton(props: IActionButtonProps) {
+  return (
+    <button className={`style-button`} onClick={props.fn} title={props.title}>
+      {props.action}
+    </button>
+  );
 }
 
 interface IStyleButtonProps {
