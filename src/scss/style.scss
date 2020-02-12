@@ -1,3 +1,11 @@
+$z-indexes: (
+  'annotations': 1300,
+  'navigation': 1000,
+  'footnotes': 1200,
+  'peeks': 1000,
+  'toc': 1100
+);
+
 @import '_base';
 @import '_typo';
 

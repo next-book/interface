@@ -33,10 +33,11 @@
 
 .seq-return-wrapper {
   position: fixed;
-  bottom: 1.7rem;
-  right: 0.7rem;
+  bottom: calc(1vw + 12px);
+  right: 1vw;
   max-width: 20rem;
   animation: slide-up 0.2s ease-out;
+  z-index: map-get($z-indexes, 'annotations') + 30;
 
   .seq-return-toggle {
     width: 24px;
@@ -276,7 +277,7 @@ body.paginated-back::after {
       position: absolute;
       height: calc(var(--height) + 2px);
       width: calc(var(--height) + 2px);
-      z-index: 1;
+      z-index: map-get($z-indexes, 'navigation') + 10;
 
       margin: -2px 0 0 calc(var(--height) * -0.5);
       border-radius: var(--height);
@@ -338,4 +339,26 @@ body.paginated-back::after {
   .prev {
     display: none;
   }
+}
+
+.goto__current--position {
+  position: fixed;
+  box-sizing: border-box;
+  padding-bottom: calc(1vw + 9px);
+  padding-right: 1vw;
+  right: 0;
+  bottom: 0;
+  width: 48px;
+  height: 48px;
+  z-index: map-get($z-indexes, 'navigation') + 20;
+
+  border: none;
+  background: transparent;
+
+  display: block;
+  font-size: 12px;
+}
+
+.goto__navigator {
+  z-index: map-get($z-indexes, 'navigation') + 20;
 }

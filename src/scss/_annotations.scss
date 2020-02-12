@@ -74,7 +74,7 @@
   position: fixed;
   bottom: 20px;
   left: 0px;
-  z-index: 1110;
+  z-index: map-get($z-indexes, 'annotations') + 1;
   padding: 10px;
 
   display: flex;
@@ -139,7 +139,7 @@
   position: fixed;
   left: 70px;
   bottom: 32px;
-  z-index: 1110;
+  z-index: map-get($z-indexes, 'annotations') + 1;
   width: 100vw;
   max-width: 480px;
   border-radius: 3px;
@@ -212,7 +212,7 @@
   right: 0;
   height: 80vh;
   padding: 1rem 4rem;
-  z-index: 1200;
+  z-index: map-get($z-indexes, 'annotations') + 2;
   background: #eee;
   border-top: 1px solid #eee;
   border-radius: 3px 3px 0 0;
@@ -302,4 +302,44 @@
   margin-bottom: 2rem;
   width: 100%;
   box-sizing: border-box;
+}
+
+.annotation__toggle-button-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 48px;
+  height: 48px;
+  z-index: map-get($z-indexes, 'annotations') + 1;
+}
+
+.annotation__toggle-button {
+  position: absolute;
+  bottom: calc(1vw + 12px);
+  left: 1vw;
+
+  background: transparent;
+  padding: 0;
+  border: none;
+
+  display: block;
+  font-size: 12px;
+  text-align: center;
+
+  overflow: hidden;
+  width: 16px;
+  height: 16px;
+}
+
+.annotation__toggle-button:after {
+  content: '';
+  position: absolute;
+  width: 1100%;
+  height: 1100%;
+  top: 7px;
+  right: -500%;
+  background: #aaa;
+  transform-origin: 54% 0;
+  transform: rotate(45deg);
+  z-index: -1;
 }

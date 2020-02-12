@@ -1,7 +1,7 @@
-#peeks {
+.peeks {
   max-height: 60vh;
   position: fixed;
-  z-index: 2;
+  z-index: map-get($z-indexes, 'peeks') + 5;
   left: 0;
   right: 0;
   bottom: 0;
@@ -38,7 +38,7 @@
       line-height: 3rem;
       text-align: left;
       background: #ddd;
-      z-index: 3;
+      z-index: map-get($z-indexes, 'peeks') + 10;
 
       .peek-info {
         flex-grow: 1;
