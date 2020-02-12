@@ -1,0 +1,16 @@
+{
+  "common": {
+    "toggle-full-screen": "Toggle Full Screen View"
+  },
+  "navigation": {
+    "intro": "This book remembers where you stopped reading. You can view Table of Contents anytime by clicking the bottom bar where the next “page” is visible.",
+    "start": "Open first chapter",
+    "return": "Return back",
+    "continueReading": "Continue reading",
+    "continue": "Continue from here",
+    "seqReturnAnotherChapter": "You read up to <1>sentence #{{idea}}</1> in <3>{{chapter}}</3>.",
+    "seqReturnThisChapter": "You read up to <2>sentence #{{idea}}</2> in this chapter.",
+    "go": "Go",
+    "toc": "Table of Contents"
+  }
+}

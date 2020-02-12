@@ -1,0 +1,16 @@
+{
+  "common": {
+    "toggle-full-screen": "Přepnout na celou obrazovku"
+  },
+  "navigation": {
+    "intro": "This book remembers where you stopped reading. You can view Table of Contents anytime by clicking the bottom bar where the next “page” is visible.",
+    "start": "Otevřít první kapitolu",
+    "return": "Vrátit se",
+    "continueReading": "Číst dále",
+    "continue": "Číst dále odtud",
+    "seqReturnAnotherChapter": "Dočetli jste po <1>{{idea}}. větu</1> v kapitole <3>{{chapter}}</3>.",
+    "seqReturnThisChapter": "Dočetli jste po <2>{{idea}}. větu</2> v této kapitole.",
+    "go": "Přejít",
+    "toc": "Obsah"
+  }
+}

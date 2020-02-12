@@ -1,7 +1,10 @@
 import React from 'react';
 import { IDocument } from './manifest-reducer';
 
-interface IProps {
+import { WithT } from 'i18next';
+import { Trans } from 'react-i18next';
+
+interface IProps extends WithT {
   targetIdea: number | null;
   targetChapter: IDocument | null;
   sequential: boolean;
@@ -36,10 +39,7 @@ export class SeqReturn extends React.Component<IProps, IState> {
   firstTime = () => {
     return (
       <>
-        <p>
-          This book remembers where you stopped reading. You can view Table of Contents anytime by
-          clicking the bottom bar where the next “page” is visible.
-        </p>
+        <p>{this.props.t('intro')}</p>
         <div className="seq-buttons">
           <a href={this.props.startLink}>
             <b>Start reading</b>
@@ -53,20 +53,25 @@ export class SeqReturn extends React.Component<IProps, IState> {
     const link = this.props.targetChapter
       ? `./${this.props.targetChapter.file}#idea${this.props.targetIdea}`
       : '';
+    const idea = this.props.targetIdea;
+    const chapter = this.props.targetChapter && this.props.targetChapter.title;
 
     const readingPosition =
       !this.props.isChapter || !this.props.thisChapter ? (
         <p>
-          You read up to <a href={link}>sentence #{this.props.targetIdea}</a> in chapter{' '}
-          <b>{this.props.targetChapter && this.props.targetChapter.title}</b>.
+          <Trans i18nKey="navigation:seqReturnAnotherChapter">
+            You read up to <a href={link}>sentence #{{ idea }}</a> in chapter <b>{{ chapter }}</b>.
+          </Trans>
         </p>
       ) : (
         <p>
-          You read up to sentence{' '}
-          <a href={link} onClick={this.highlightPosition}>
-            #{this.props.targetIdea} in this chapter
-          </a>
-          .
+          <Trans i18nKey="navigation:seqReturnThisChapter">
+            You read up to{' '}
+            <a href={link} onClick={this.highlightPosition}>
+              sentence #{{ idea }}
+            </a>{' '}
+            in this chapter.
+          </Trans>
         </p>
       );
 
@@ -77,7 +82,7 @@ export class SeqReturn extends React.Component<IProps, IState> {
           <div className="seq-buttons">
             {this.props.isChapter && (
               <a href="#" onClick={this.resetPosition}>
-                Continue from&nbsp;here
+                {this.props.t('continueReading')}
               </a>
             )}
             <a
@@ -86,7 +91,7 @@ export class SeqReturn extends React.Component<IProps, IState> {
                 this.props.thisChapter ? this.highlightPosition : null;
               }}
             >
-              <b>{this.props.isChapter ? 'Return back' : 'Continue reading'}</b>
+              <b>{this.props.isChapter ? this.props.t('return') : this.props.t('continue')}</b>
             </a>
           </div>
         </>

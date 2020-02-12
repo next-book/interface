@@ -5,6 +5,8 @@ import { IState as ICombinedState } from '../reducer';
 import { throttle } from 'lodash';
 import keycode from 'keycode';
 
+import { withTranslation, WithTranslation } from 'react-i18next';
+
 import { getChapterNum } from '../shared';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
@@ -26,7 +28,7 @@ enum Position {
   Top = 'top',
 }
 
-export interface IProps {
+export interface IProps extends WithTranslation {
   manifest: IManifest;
   config: IConfig;
   scrollRatio: number;
@@ -221,7 +223,7 @@ export class Navigation extends React.Component<IProps, IState> {
         content: (
           <Toc idea={this.props.position.idea} chapterNum={this.props.position.chapterNum} />
         ),
-        title: 'Table of Contents',
+        title: this.props.t('toc'),
         source: 'toc-table',
         showSource: false,
       });
@@ -294,6 +296,7 @@ export class Navigation extends React.Component<IProps, IState> {
           setPosition={this.setPosition}
           sequential={this.props.sequential}
           startLink={ro[0].file}
+          t={this.props.t}
         />
       </nav>
     );
@@ -485,4 +488,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Navigation);
+export default withTranslation('navigation')(
+  connect(mapStateToProps, mapDispatchToProps)(Navigation)
+) as React.SFC; // currently withTranslation returns wrong type def

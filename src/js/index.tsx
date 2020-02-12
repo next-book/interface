@@ -5,6 +5,8 @@ import { createStore } from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { debounce } from 'lodash';
+import i18n from './i18n';
+import { I18nextProvider } from 'react-i18next';
 
 import { loadManifest, assignManifest, plantRoot } from './shared';
 import reducer from './reducer';
@@ -23,7 +25,9 @@ export function initBook() {
       if (!wrapper) return;
 
       ReactDOM.render(
-        <Provider store={store}>{React.createElement(views[key], null)}</Provider>,
+        <I18nextProvider i18n={i18n}>
+          <Provider store={store}>{React.createElement(views[key], null)}</Provider>
+        </I18nextProvider>,
         wrapper
       );
     });

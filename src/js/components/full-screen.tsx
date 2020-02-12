@@ -3,6 +3,10 @@ import React from 'react';
 /// <reference path="../types/fscreen.d.ts"/>
 import fscreen from 'fscreen';
 
+import { withTranslation, WithTranslation } from 'react-i18next';
+
+interface IProps extends WithTranslation {}
+
 export interface IState {
   enabled: boolean;
   active: boolean;
@@ -39,8 +43,10 @@ export class FullScreen extends React.Component<any, IState> {
         className={`toggleFullScreen ${this.state.active ? 'active' : ''}`}
         onClick={this.toggleFullScreen}
       >
-        Toggle Full Screen View
+        {this.props.t('toggle-full-screen')}
       </a>
     );
   }
 }
+
+export default withTranslation('common')(FullScreen) as React.SFC;
