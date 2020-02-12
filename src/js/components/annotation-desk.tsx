@@ -2,8 +2,9 @@ import React from 'react';
 import ContentEditable from 'react-contenteditable';
 import { ContentEditableEvent } from 'react-contenteditable';
 import { IAnnotation, IAnnotations, IIdeas, IChapterNote } from './annotations-reducer';
+import { withTranslation, WithTranslation } from 'react-i18next';
 
-interface IProps {
+interface IProps extends WithTranslation {
   annotations: IAnnotations;
   ideas: IIdeas;
   chapterNote: string;
@@ -24,7 +25,7 @@ enum Position {
   End = 'end',
 }
 
-export default class AnnotationDetail extends React.Component<IProps, IState> {
+class AnnotationDetail extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
@@ -113,14 +114,15 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
     // <label>
     //   <input type="checkbox" onChange={this.toggleAllChapters} /> show all chapters
     // </label>
+    const notes = Object.values(this.props.annotations)
+      .sort(this.sortAnnotationsByIdea)
+      .filter(annotation => annotation.note !== '');
 
     return (
       <div className="annotation__desk">
         <div className="annotation__desk__head">
           <div className="annotation__desk__info">
-            <p>
-              Work desk <button>Export notes</button>
-            </p>
+            <p>{this.props.t('work-desk')}</p>
           </div>
           <button className="annotation__desk__close" onClick={this.props.close}>
             ╳
@@ -129,15 +131,17 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
 
         <div className="annotation__desc_cols">
           <div className="annotation__list">
-            {this.state.groupedIdeas.map((group, groupKey) =>
-              !group.length ? null : (
-                <p key={groupKey} className="annotation__list__detail">
-                  {group.map((idea, ideaKey) => (
-                    <span key={ideaKey} dangerouslySetInnerHTML={{ __html: idea }}></span>
-                  ))}
-                </p>
-              )
-            )}
+            {this.state.groupedIdeas.length
+              ? this.state.groupedIdeas.map((group, groupKey) =>
+                  !group.length ? null : (
+                    <p key={groupKey} className="annotation__list__detail">
+                      {group.map((idea, ideaKey) => (
+                        <span key={ideaKey} dangerouslySetInnerHTML={{ __html: idea }}></span>
+                      ))}
+                    </p>
+                  )
+                )
+              : this.props.t('no-annotations-in-chapter')}
           </div>
           <div className="annotation__notes">
             <ContentEditable
@@ -147,31 +151,32 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
               onChange={this.updateNote}
             />
 
-            {Object.values(this.props.annotations)
-              .sort(this.sortAnnotationsByIdea)
-              .filter(annotation => annotation.note !== '')
-              .map((annotation, key) => (
-                <div key={key} className="annotation__note">
-                  <div dangerouslySetInnerHTML={{ __html: annotation.note }}></div>
-                  <small>
-                    {this.state.sortedIdeas
-                      .filter(
-                        (val, index) =>
-                          index >= this.ideaNumber(annotation, Position.Start) &&
-                          index <= this.ideaNumber(annotation, Position.End)
-                      )
-                      .map((idea, index2) => (
-                        <span key={index2}>
-                          <span dangerouslySetInnerHTML={{ __html: idea }}></span>{' '}
-                        </span>
-                      ))}
-                  </small>
-                  <hr />
-                </div>
-              ))}
+            {notes.length
+              ? notes.map((annotation, key) => (
+                  <div key={key} className="annotation__note">
+                    <div dangerouslySetInnerHTML={{ __html: annotation.note }}></div>
+                    <small>
+                      {this.state.sortedIdeas
+                        .filter(
+                          (val, index) =>
+                            index >= this.ideaNumber(annotation, Position.Start) &&
+                            index <= this.ideaNumber(annotation, Position.End)
+                        )
+                        .map((idea, index2) => (
+                          <span key={index2}>
+                            <span dangerouslySetInnerHTML={{ __html: idea }}></span>{' '}
+                          </span>
+                        ))}
+                    </small>
+                    <hr />
+                  </div>
+                ))
+              : this.props.t('no-notes-in-chapter')}
           </div>
         </div>
       </div>
     );
   }
 }
+
+export default withTranslation('annotations')(AnnotationDetail);

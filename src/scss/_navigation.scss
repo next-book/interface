@@ -1,5 +1,7 @@
 .begin-nav,
 .end-nav {
+  padding: var(--base-padding);
+
   ul,
   li {
     display: block;
@@ -15,14 +17,21 @@
   a[rel='prev'],
   a[rel='next'] {
     display: block;
-    color: inherit;
-    opacity: 0.7;
-    text-decoration: none;
   }
 
   a[rel='next'] {
-    text-align: right;
-    padding: 2rem 0;
+    padding-top: 5vh;
+    padding-bottom: 80vh;
+  }
+}
+
+body.paginated {
+  .begin-nav,
+  .end-nav {
+    a[rel='prev'],
+    a[rel='next'] {
+      text-indent: -9999px;
+    }
   }
 }
 
@@ -112,7 +121,7 @@ body.paginated-forward {
 
     display: block;
     opacity: 0;
-    width: 17vw;
+    width: calc(24px + 5vw);
 
     position: fixed;
     top: 20vh;
@@ -357,6 +366,13 @@ body.paginated-back::after {
 
   display: block;
   font-size: 12px;
+  text-align: right;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.goto__current--position:hover {
+  opacity: 1;
 }
 
 .goto__navigator {

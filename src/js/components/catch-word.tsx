@@ -24,7 +24,9 @@ export class CatchWord extends React.Component<IProps> {
         />
         <div
           id="catchword-top"
-          style={this.props.topBarHeight ? { height: `${this.props.topBarHeight}px` } : {}}
+          style={
+            this.props.topBarHeight ? { height: `${this.props.topBarHeight}px` } : { height: 0 }
+          }
         />
       </>
     );

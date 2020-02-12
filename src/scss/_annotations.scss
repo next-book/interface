@@ -311,6 +311,13 @@
   width: 48px;
   height: 48px;
   z-index: map-get($z-indexes, 'annotations') + 1;
+
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.annotation__toggle-button-wrapper:hover {
+  opacity: 1;
 }
 
 .annotation__toggle-button {

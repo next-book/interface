@@ -51,4 +51,4 @@ class FullScreen extends React.Component<IProps, IState> {
   }
 }
 
-export default withTranslation('common')(FullScreen) as React.SFC;
+export default withTranslation('common')(FullScreen);

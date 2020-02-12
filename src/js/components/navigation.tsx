@@ -113,10 +113,17 @@ export class Navigation extends React.Component<IProps, IState> {
     this.setState({ ...this.state, lastScrollStart: null });
   };
 
+  displayPaginated = () => {
+    this.collapseBars();
+
+    if (this.state.barHeight !== null) document.body.classList.add('paginated');
+    else document.body.classList.remove('paginated');
+  };
+
   getScrollHandler = () => {
     const t1 = throttle(this.setPosition, 500, { leading: false });
     const t2 = throttle(this.setScrollRatio, 100, { leading: true });
-    const t3 = throttle(this.collapseBars, 100, { leading: true });
+    const t3 = throttle(this.displayPaginated, 100, { leading: true });
 
     return function throttled() {
       t1();
@@ -167,14 +174,17 @@ export class Navigation extends React.Component<IProps, IState> {
   setSizes = () => {
     const windowHeight = window.innerHeight || document.documentElement.clientHeight;
 
-    this.setState({
-      ...this.state,
-      windowHeight,
-      readingZone: {
-        [Position.Top]: this.state.zonePadding[Position.Top],
-        [Position.Bottom]: windowHeight - this.state.zonePadding[Position.Bottom],
+    this.setState(
+      {
+        ...this.state,
+        windowHeight,
+        readingZone: {
+          [Position.Top]: this.state.zonePadding[Position.Top],
+          [Position.Bottom]: windowHeight - this.state.zonePadding[Position.Bottom],
+        },
       },
-    });
+      this.setPaddings
+    );
   };
 
   goForward = (event: MouseEvent | TouchEvent | KeyboardEvent, nextChapter: string | null) => {
@@ -321,7 +331,7 @@ function isPageScrolledToBottom() {
   const nextLink = document.querySelector('.end-nav a[rel="next"]');
 
   if (nextLink) {
-    return nextLink.getBoundingClientRect().top - window.innerHeight < -150;
+    return nextLink.getBoundingClientRect().top - window.innerHeight < -50;
   }
 
   return window.innerHeight + Math.ceil(window.scrollY) >= document.body.scrollHeight;
@@ -331,7 +341,7 @@ function isPageScrolledToTop(): boolean {
   const prevLink = document.querySelector('.begin-nav a[rel="prev"]');
 
   if (prevLink) {
-    return prevLink.getBoundingClientRect().bottom > -50;
+    return prevLink.getBoundingClientRect().bottom > -80;
   }
 
   return Math.floor(window.scrollY) < 20;
@@ -418,7 +428,7 @@ function setUriIdea(id: number) {
 function isInPaginationRect(dir: Direction, x: number, y: number) {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const rectW = w / 6;
+  const rectW = w / 20 + 24;
   const rectH = (h / 5) * 3;
   const margin = 2;
   const top = h / 5;
@@ -434,15 +444,18 @@ function calcCutoff(from: Position, readingZone: IPosDouble) {
   const els = [...document.querySelectorAll('.chunk')].filter(el =>
     isElementOnTheEdge(el, readingZone[from])
   );
-  if (!els.length) return readingZone[from];
+  if (!els.length) return from === Position.Top ? 0 : window.innerHeight;
 
   const el = els[0];
 
-  const lineHeight = parseInt(window.getComputedStyle(el).lineHeight, 10);
+  const cStyle = window.getComputedStyle(el);
+  const lineHeight = parseInt(cStyle.lineHeight, 10);
   const rect = el.getBoundingClientRect();
   let height = rect[from];
 
   if (from === Position.Top) {
+    height += parseInt(cStyle.paddingTop, 10);
+
     while (height < readingZone[from]) {
       height += lineHeight;
     }
@@ -512,4 +525,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 
 export default withTranslation('navigation')(
   connect(mapStateToProps, mapDispatchToProps)(Navigation)
-) as React.SFC; // currently withTranslation returns wrong type def
+);

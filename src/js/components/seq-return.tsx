@@ -42,7 +42,7 @@ export class SeqReturn extends React.Component<IProps, IState> {
         <p>{this.props.t('intro')}</p>
         <div className="seq-buttons">
           <a href={this.props.startLink}>
-            <b>Start reading</b>
+            <b>{this.props.t('start')}</b>
           </a>
         </div>
       </>

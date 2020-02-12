@@ -6,7 +6,7 @@ import peeks from './components/peeks';
 import trace from './components/trace';
 import offline from './components/offline';
 
-type IViews = { [key: string]: React.SFC };
+type IViews = { [key: string]: React.ComponentType };
 
 const views: IViews = {
   annotations,

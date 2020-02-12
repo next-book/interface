@@ -2,12 +2,19 @@
   "common": {
     "toggle-full-screen": "Přepnout na celou obrazovku"
   },
+  "annotations": {
+    "work-desk": "Pracovní plocha",
+    "no-annotations-in-chapter": "V textu kapitoly nemáte žádné anotace.",
+    "no-notes-in-chapter": "V textu kapitoly nemáte žádné poznámky."
+  },
   "navigation": {
     "intro": "This book remembers where you stopped reading. You can view Table of Contents anytime by clicking the bottom bar where the next “page” is visible.",
     "start": "Otevřít první kapitolu",
     "return": "Vrátit se",
-    "continueReading": "Číst dále",
-    "continue": "Číst dále odtud",
+    "continueReading": "Pokračovat ve čtení",
+    "continue": "Pokračovat odtud",
+    "prev-chapter": "Předchozí kapitola",
+    "next-chapter": "Následující kapitola",
     "seqReturnAnotherChapter": "Dočetli jste po <1>{{idea}}. větu</1> v kapitole <3>{{chapter}}</3>.",
     "seqReturnThisChapter": "Dočetli jste po <2>{{idea}}. větu</2> v této kapitole.",
     "go": "Přejít",
