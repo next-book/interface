@@ -10,6 +10,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import { getChapterNum } from '../shared';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
+import { GoTo } from './go-to';
 import { CatchWord } from './catch-word';
 import { SeqReturn } from './seq-return';
 import { reducer, IPosition, INavDocument, IConfig } from './navigation-reducer';
@@ -212,7 +213,7 @@ export class Navigation extends React.Component<IProps, IState> {
     return (
       this.state.windowHeight -
       this.state.zonePadding[Position.Top] -
-      (this.state.barHeight === null ? 0 : this.state.barHeight[Position.Bottom]) -
+      (this.state.barHeight === null ? 80 : this.state.barHeight[Position.Bottom]) -
       5
     );
   };
@@ -278,6 +279,14 @@ export class Navigation extends React.Component<IProps, IState> {
           bottomBarHeight={barHeight === null ? null : barHeight[Position.Bottom]}
           actions={{ showToc: this.showToc }}
         />
+        {this.props.position && (
+          <GoTo
+            currentChapterNum={this.props.position.chapterNum}
+            currentIdea={this.props.position.idea}
+            readingOrder={this.props.readingOrder}
+            t={this.props.t}
+          />
+        )}
         <NavBar
           isChapter={this.isChapter}
           readingOrder={ro}
@@ -438,7 +447,20 @@ function calcCutoff(from: Position, readingZone: IPosDouble) {
       height += lineHeight;
     }
   } else if (from === Position.Bottom) {
+    let remainingHeight = rect.height;
+
     while (height > readingZone[from]) {
+      height -= lineHeight;
+      remainingHeight -= lineHeight;
+    }
+
+    // cut off one-liners to prevent widows
+    if (remainingHeight <= lineHeight) {
+      height -= remainingHeight;
+    }
+
+    // cut two lines from n+1 long paragraph to prevent orphans
+    if (remainingHeight + lineHeight >= rect.height) {
       height -= lineHeight;
     }
   }

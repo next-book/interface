@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FullScreen } from './full-screen';
+import FullScreen from './full-screen';
 import { IDocument } from './manifest-reducer';
 
 interface IProps {

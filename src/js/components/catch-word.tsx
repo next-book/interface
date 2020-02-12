@@ -13,10 +13,6 @@ export class CatchWord extends React.Component<IProps> {
     super(props);
   }
 
-  handleActions = () => {
-    this.props.actions.showToc();
-  };
-
   render() {
     return (
       <>
@@ -24,7 +20,7 @@ export class CatchWord extends React.Component<IProps> {
           id="catchword-bottom"
           style={this.props.bottomBarHeight ? { height: `${this.props.bottomBarHeight}px` } : {}}
           className={this.props.bottomBarHeight === null ? 'catchword-bottom--collapsed' : ''}
-          onClick={this.handleActions}
+          onClick={this.props.actions.showToc}
         />
         <div
           id="catchword-top"

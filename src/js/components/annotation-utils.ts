@@ -188,7 +188,7 @@ export const updateHead = (annotation: IAnnotation) => {
           .split(/\s+/)
           .slice(0, 5)
           .join(' ') + '…'
-      : annotation.note;
+      : annotation.note.replace(/&nbsp;|<[^>]+>/g, ' ');
   head.setAttribute('data-note', note);
 
   head.setAttribute('data-style', annotation.style);

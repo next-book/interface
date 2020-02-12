@@ -12,13 +12,15 @@ export interface IState {
   active: boolean;
 }
 
-const INITIAL_STATE: IState = {
-  enabled: false,
-  active: false,
-};
+class FullScreen extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
 
-export class FullScreen extends React.Component<any, IState> {
-  public state = INITIAL_STATE;
+    this.state = {
+      enabled: false,
+      active: false,
+    };
+  }
 
   componentDidMount() {
     if (fscreen.fullscreenEnabled) {

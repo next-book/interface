@@ -222,19 +222,22 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
 
     if (this.state.visible === Controls.None && this.props.selectedAnnotation === null) {
       // display access to workdesk
+
+      const count = Object.keys(this.props.annotations).length;
+
       const actions = [
         {
-          symbol: '📋',
+          symbol: count > 0 ? count.toString() : ' ',
           fn: () => this.showControls(Controls.Desk),
         },
       ];
 
       return (
-        <div className="annotation-control ui-target">
+        <>
           {actions.map((action, index) => (
-            <ActionButton key={index} action={action.symbol} fn={action.fn} title="" />
+            <ToggleButton key={index} action={action.symbol} fn={action.fn} title="" />
           ))}
-        </div>
+        </>
       );
     }
 
@@ -269,6 +272,16 @@ export function ActionButton(props: IActionButtonProps) {
     <button className={`action-button`} onClick={props.fn} title={props.title}>
       {props.action}
     </button>
+  );
+}
+
+export function ToggleButton(props: IActionButtonProps) {
+  return (
+    <span className="annotation__toggle-button-wrapper" onClick={props.fn}>
+      <button className={`annotation__toggle-button`} title={props.title}>
+        {props.action}
+      </button>
+    </span>
   );
 }
 
