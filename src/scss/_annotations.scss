@@ -68,6 +68,7 @@
   background: var(--background);
   border-radius: 100px;
   line-height: 2rem;
+  width: 2rem;
 }
 
 .annotation-control {
@@ -118,7 +119,7 @@
   content: ' ';
 
   display: block;
-  width: 100vw;
+  width: calc(100vw - 90px);
   height: 48px;
   position: fixed;
   left: 0;
@@ -137,11 +138,11 @@
 
 .annotation-detail {
   position: fixed;
-  left: 70px;
+  left: calc(20px + 2rem);
   bottom: 32px;
   z-index: map-get($z-indexes, 'annotations') + 1;
   width: 100vw;
-  max-width: 480px;
+  max-width: calc(100vw - 35px - 2rem);
   border-radius: 3px;
   overflow: hidden;
   box-shadow: 0 0.5rem 0.5rem #888;

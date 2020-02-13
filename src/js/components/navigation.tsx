@@ -464,11 +464,9 @@ function calcCutoff(from: Position, readingZone: IPosDouble) {
       height += lineHeight;
     }
   } else if (from === Position.Bottom) {
-    let remainingHeight = rect.height;
 
     while (height > readingZone[from]) {
       height -= lineHeight;
-      remainingHeight -= lineHeight;
     }
 
     // cut off one-liners to prevent widows

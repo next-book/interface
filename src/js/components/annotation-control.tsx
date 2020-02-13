@@ -102,9 +102,6 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
   };
 
   private showControlsIfRangeIsOkay = () => {
-    if (document.activeElement === document.body || document.activeElement === null) {
-      this.props.deselectAnnotation();
-    }
 
     if (isRangeWithoutOverlap()) {
       this.showControls(Controls.Add);
@@ -120,7 +117,6 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     }
   };
 
-  private selectAnnotation = (event: MouseEvent) => {
     const el = event.target as Element;
 
     if (el && el.classList.contains('annotation')) {
