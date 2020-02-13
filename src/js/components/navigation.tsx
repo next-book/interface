@@ -63,7 +63,7 @@ export class Navigation extends React.Component<IProps, IState> {
     this.state = {
       barHeight: null,
       windowHeight: null,
-      zonePadding: { [Position.Top]: 12, [Position.Bottom]: 8 * 5 },
+      zonePadding: { [Position.Top]: 12, [Position.Bottom]: 8 * 6 },
       readingZone: { [Position.Top]: 0, [Position.Bottom]: 0 },
       lastScrollStart: null,
     };
@@ -444,7 +444,11 @@ function calcCutoff(from: Position, readingZone: IPosDouble) {
   const els = [...document.querySelectorAll('.chunk')].filter(el =>
     isElementOnTheEdge(el, readingZone[from])
   );
-  if (!els.length) return from === Position.Top ? 0 : window.innerHeight;
+
+  if (!els.length) {
+    if (window.scrollY > 30) return readingZone[from];
+    else return from === Position.Top ? 0 : window.innerHeight;
+  }
 
   const el = els[0];
 
@@ -468,14 +472,14 @@ function calcCutoff(from: Position, readingZone: IPosDouble) {
     }
 
     // cut off one-liners to prevent widows
-    if (remainingHeight <= lineHeight) {
-      height -= remainingHeight;
-    }
+    //if (remainingHeight <= lineHeight) {
+    //  height -= remainingHeight;
+    //}
 
     // cut two lines from n+1 long paragraph to prevent orphans
-    if (remainingHeight + lineHeight >= rect.height) {
-      height -= lineHeight;
-    }
+    //if (remainingHeight + lineHeight >= rect.height) {
+    //  height -= lineHeight;
+    //}
   }
 
   return height;
