@@ -82,7 +82,7 @@ export class SeqReturn extends React.Component<IProps, IState> {
           <div className="seq-buttons">
             {this.props.isChapter && (
               <a href="#" onClick={this.resetPosition}>
-                {this.props.t('continueReading')}
+                {this.props.t('continue')}
               </a>
             )}
             <a
@@ -91,7 +91,9 @@ export class SeqReturn extends React.Component<IProps, IState> {
                 this.props.thisChapter ? this.highlightPosition : null;
               }}
             >
-              <b>{this.props.isChapter ? this.props.t('return') : this.props.t('continue')}</b>
+              <b>
+                {this.props.isChapter ? this.props.t('return') : this.props.t('continueReading')}
+              </b>
             </a>
           </div>
         </>
