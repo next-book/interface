@@ -8,7 +8,7 @@
     "no-notes-in-chapter": "V textu kapitoly nemáte žádné poznámky."
   },
   "navigation": {
-    "intro": "This book remembers where you stopped reading. You can view Table of Contents anytime by clicking the bottom bar where the next “page” is visible.",
+    "intro": "Tato kniha si pamatuje, kam jste ji dočetli. Pro zobrazení obsahu knihy můžete kliknout na spodní lištu.",
     "start": "Otevřít první kapitolu",
     "return": "Vrátit se",
     "continueReading": "Pokračovat ve čtení",
