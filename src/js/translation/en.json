@@ -8,7 +8,7 @@
     "no-notes-in-chapter": "No notes in the text of this chapter."
   },
   "navigation": {
-    "intro": "This book remembers where you stopped reading. You can view Table of Contents anytime by clicking the bottom bar where the next “page” is visible.",
+    "intro": "This book remembers where you stopped reading. You can view Table of Contents anytime by clicking the bottom bar.",
     "start": "Open first chapter",
     "return": "Return back",
     "continueReading": "Continue reading",

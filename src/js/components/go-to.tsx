@@ -67,33 +67,35 @@ export class GoTo extends React.Component<IProps, IState> {
                 </button>
               </div>
               <div className="peek-content">
-                <select
-                  onChange={this.setChapterNum}
-                  value={this.state.chapterNum}
-                  className="goto__chapter"
-                >
-                  {this.props.readingOrder.map(doc => {
-                    if (doc.order === null) return null;
+                <div className="goto__navigator__content">
+                  <select
+                    onChange={this.setChapterNum}
+                    value={this.state.chapterNum}
+                    className="goto__chapter"
+                  >
+                    {this.props.readingOrder.map(doc => {
+                      if (doc.order === null) return null;
 
-                    const value = doc.order.toString();
-                    return (
-                      <option key={value} value={value}>
-                        {doc.order + 1} {doc.title}
+                      const value = doc.order.toString();
+                      return (
+                        <option key={value} value={value}>
+                          {doc.order + 1} {doc.title}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <select className="goto__idea" onChange={this.setIdea} value={this.state.idea}>
+                    {ideaIds.map(i => (
+                      <option key={i} value={i}>
+                        {i}
                       </option>
-                    );
-                  })}
-                </select>
-                <select className="goto__idea" onChange={this.setIdea} value={this.state.idea}>
-                  {ideaIds.map(i => (
-                    <option key={i} value={i}>
-                      {i}
-                    </option>
-                  ))}
-                </select>
-                {this.state.chapterNum !== this.props.currentChapterNum ||
-                this.state.idea !== this.props.currentIdea ? (
-                  <button onClick={this.navigate}>{this.props.t('navigation:go')} &rarr;</button>
-                ) : null}
+                    ))}
+                  </select>
+                  {this.state.chapterNum !== this.props.currentChapterNum ||
+                  this.state.idea !== this.props.currentIdea ? (
+                    <button onClick={this.navigate}>{this.props.t('navigation:go')} &rarr;</button>
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>
