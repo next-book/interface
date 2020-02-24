@@ -82,7 +82,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     const annotation = {
       id: this.getNewAnnotationId(),
       chapterNum: this.props.chapterNum,
-      symbol: params.symbol || '📝',
+      symbol: params.symbol || '🌼',
       style: params.style || IStyle.Default,
       note: '',
       links: [],
@@ -239,7 +239,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     }
 
     const styles = [IStyle.Default, IStyle.Secondary, IStyle.Strong];
-    const symbols = ['📝', '‼️', '😳', '👍', '✅'];
+    const symbols = ['📝', '😳', '👍', '❌', '✅'];
     const fn = this.props.selectedAnnotation
       ? this.updateAnnotation
       : this.createAnnotationFromRange;
