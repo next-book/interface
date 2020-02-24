@@ -70,7 +70,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
 
   private getNewAnnotationId = () => {
     const keys = Object.keys(this.props.annotations).map(key => parseInt(key, 10));
-    return keys.length > 0 ? Math.max(...keys) + 1 : 0;
+    return keys.length > 0 ? Math.max(...keys) + 1 : 1;
   };
 
   private createAnnotationFromRange = (params: { style?: IStyle; symbol?: string }) => {
@@ -82,7 +82,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     const annotation = {
       id: this.getNewAnnotationId(),
       chapterNum: this.props.chapterNum,
-      symbol: params.symbol || '✏️',
+      symbol: params.symbol || '📝',
       style: params.style || IStyle.Default,
       note: '',
       links: [],
@@ -117,6 +117,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     }
   };
 
+  private selectAnnotation = (event: Event) => {
     const el = event.target as Element;
 
     if (el && el.classList.contains('annotation')) {
@@ -238,7 +239,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     }
 
     const styles = [IStyle.Default, IStyle.Secondary, IStyle.Strong];
-    const symbols = ['✏️', '‼️', '😳', '👍', '✅'];
+    const symbols = ['📝', '‼️', '😳', '👍', '✅'];
     const fn = this.props.selectedAnnotation
       ? this.updateAnnotation
       : this.createAnnotationFromRange;
@@ -257,6 +258,11 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
   }
 }
 
+const buttonFn = (fn: () => void) => (event: React.SyntheticEvent): void => {
+  event.stopPropagation();
+  fn();
+};
+
 interface IActionButtonProps {
   action: string;
   title: string;
@@ -265,18 +271,18 @@ interface IActionButtonProps {
 
 export function ActionButton(props: IActionButtonProps) {
   return (
-    <button className={`action-button`} onClick={props.fn} title={props.title}>
+    <span className={`action-button`} onMouseDown={buttonFn(props.fn)} title={props.title}>
       {props.action}
-    </button>
+    </span>
   );
 }
 
 export function ToggleButton(props: IActionButtonProps) {
   return (
-    <span className="annotation__toggle-button-wrapper" onClick={props.fn}>
-      <button className={`annotation__toggle-button`} title={props.title}>
+    <span className="annotation__toggle-button-wrapper" onMouseDown={buttonFn(props.fn)}>
+      <span className={`annotation__toggle-button`} title={props.title}>
         {props.action}
-      </button>
+      </span>
     </span>
   );
 }
@@ -288,13 +294,13 @@ interface IStyleButtonProps {
 
 export function StyleButton(props: IStyleButtonProps) {
   return (
-    <button
+    <span
       className={`style-button style-button--${props.style}`}
-      onClick={props.fn}
+      onMouseDown={buttonFn(props.fn)}
       title={`Create annotation with ${props.style} style.`}
     >
       ab
-    </button>
+    </span>
   );
 }
 
@@ -305,12 +311,12 @@ interface ISymbolButtonProps {
 
 export function SymbolButton(props: ISymbolButtonProps) {
   return (
-    <button
+    <span
       className="symbol-button"
-      onClick={props.fn}
+      onMouseDown={buttonFn(props.fn)}
       title={`Create annotation with symbol ${props.symbol}.`}
     >
       {props.symbol}
-    </button>
+    </span>
   );
 }

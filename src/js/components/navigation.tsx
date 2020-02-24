@@ -159,9 +159,10 @@ export class Navigation extends React.Component<IProps, IState> {
       target.tagName != 'BUTTON' &&
       target.tagName != 'INPUT' &&
       target.tagName != 'LABEL' &&
+      !target.classList.contains('ui-target') &&
       target.closest('A') === null &&
       target.closest('LABEL') === null &&
-      !target.classList.contains('ui-target')
+      target.closest('.ui-target') === null
     ) {
       if (isInPaginationRect(Direction.Back, event.clientX, event.clientY)) {
         return this.goBack(event, chapter.prev);

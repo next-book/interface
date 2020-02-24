@@ -28,6 +28,9 @@
   tranform-origin: 50% 50%;
   transition: 0.2s ease-in;
   will-change: transform;
+  text-align: center;
+  padding: 3px;
+  box-sizing: border-box;
 
   &:hover {
     transform: scale(1.1);
@@ -64,11 +67,16 @@
 .symbol-button {
   display: block;
   border: none;
-  font-size: 1.5rem;
-  background: var(--background);
+  font-size: 1.25rem;
+  background: white;
   border-radius: 100px;
   line-height: 2rem;
   width: 2rem;
+  height: 2rem;
+  padding: 0rem;
+  margin-top: 0.25rem;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }
 
 .annotation-control {

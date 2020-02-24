@@ -21,7 +21,7 @@
 
   a[rel='next'] {
     padding-top: 5vh;
-    padding-bottom: 80vh;
+    padding-bottom: 5vh;
   }
 }
 
@@ -31,6 +31,10 @@ body.paginated {
     a[rel='prev'],
     a[rel='next'] {
       text-indent: -9999px;
+    }
+
+    a[rel='next'] {
+      padding-bottom: 80vh;
     }
   }
 }
@@ -377,4 +381,13 @@ body.paginated-back::after {
 
 .goto__navigator {
   z-index: map-get($z-indexes, 'navigation') + 20;
+}
+
+.goto__navigator__content {
+  display: flex;
+  margin-bottom: 1rem;
+
+  select {
+    flex-shrink: 0;
+  }
 }
