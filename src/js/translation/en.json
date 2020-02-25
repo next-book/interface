@@ -6,6 +6,8 @@
     "work-desk": "Work desk",
     "no-annotations-in-chapter": "No annotations in this chapter. Add annotation by selecting text.",
     "no-notes-in-chapter": "No notes in the text of this chapter.",
+    "annotations-in-text": "Annotations",
+    "notes": "Notes",
     "add-note": "Add note",
     "edit-note": "Edit note",
     "update-note": "Save note"
@@ -16,6 +18,9 @@
     "return": "Return back",
     "continueReading": "Continue reading",
     "continue": "Continue from here",
+    "chapter": "Chapter",
+    "sentence": "Sentence",
+    "percent-sign": "%",
     "prev-chapter": "Previous chapter",
     "next-chapter": "Next chapter",
     "seqReturnAnotherChapter": "You read up to <1>sentence #{{idea}}</1> in <3>{{chapter}}</3>.",

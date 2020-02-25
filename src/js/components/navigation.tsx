@@ -11,7 +11,7 @@ import { getChapterNum } from '../shared';
 import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
-import { GoTo } from './go-to';
+import GoTo from './go-to';
 import { CatchWord } from './catch-word';
 import { SeqReturn } from './seq-return';
 import { reducer, IPosition, INavDocument, IConfig } from './navigation-reducer';
@@ -304,6 +304,12 @@ export class Navigation extends React.Component<IProps, IState> {
 
     const barHeight = this.state.barHeight;
 
+    const { offset, fraction } =
+      chapter !== null ? getProgress(chapter, totalWords) : { offset: 0, fraction: 0 };
+
+    const progress = offset + fraction * this.props.scrollRatio;
+    const minutesLeftInChapter = chapter ? ((1 - this.props.scrollRatio) * chapter.words) / 240 : 0;
+
     return (
       <nav>
         <CatchWord
@@ -316,7 +322,8 @@ export class Navigation extends React.Component<IProps, IState> {
             currentChapterNum={this.props.position.chapterNum}
             currentIdea={this.props.position.idea}
             readingOrder={this.props.readingOrder}
-            t={this.props.t}
+            progress={Math.floor(progress)}
+            minutesLeft={Math.floor(minutesLeftInChapter)}
           />
         )}
         <NavBar
@@ -376,6 +383,15 @@ function isPageScrolledToTop(): boolean {
 
 function getScrollRatio(): number {
   return window.scrollY / (document.body.scrollHeight - window.innerHeight);
+}
+
+export function getProgress(chapter: INavDocument, totalWords: number) {
+  if (!chapter || !totalWords) return { offset: 0, fraction: 0 };
+
+  const offset = (chapter.offsetWords / totalWords) * 100;
+  const fraction = (chapter.words / totalWords) * 100;
+
+  return { offset, fraction };
 }
 
 function getFirstIdeaShown() {

@@ -83,5 +83,7 @@ hr {
 
 .button,
 button {
+  border: 1px solid #aaa;
+  background: #ddd;
   border-radius: var(--border-radius);
 }

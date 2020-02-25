@@ -1,11 +1,13 @@
 import React from 'react';
 import { INavDocument } from './navigation-reducer';
-import { WithT } from 'i18next';
+import { withTranslation, WithTranslation } from 'react-i18next';
 
-interface IProps extends WithT {
+interface IProps extends WithTranslation {
   readingOrder: INavDocument[];
   currentChapterNum: number;
   currentIdea: number;
+  progress: number;
+  minutesLeft: number | null;
 }
 
 interface IState {
@@ -14,7 +16,7 @@ interface IState {
   showNavigator: boolean;
 }
 
-export class GoTo extends React.Component<IProps, IState> {
+class GoTo extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
@@ -53,7 +55,10 @@ export class GoTo extends React.Component<IProps, IState> {
     return (
       <>
         <button className="goto__current--position" onClick={this.toggleNavigator}>
-          {this.props.currentChapterNum + 1}.{this.props.currentIdea}
+          {this.props.minutesLeft !== null ? <>{this.props.minutesLeft} min | </> : null}{' '}
+          {this.props.progress}
+          {this.props.t('percent-sign')} | {this.props.currentChapterNum + 1}.
+          {this.props.currentIdea}
         </button>
         {this.state.showNavigator && (
           <div className="peeks">
@@ -68,29 +73,42 @@ export class GoTo extends React.Component<IProps, IState> {
               </div>
               <div className="peek-content">
                 <div className="goto__navigator__content">
-                  <select
-                    onChange={this.setChapterNum}
-                    value={this.state.chapterNum}
-                    className="goto__chapter"
-                  >
-                    {this.props.readingOrder.map(doc => {
-                      if (doc.order === null) return null;
+                  <label className="goto__chapter">
+                    {this.props.t('chapter')}
+                    <br />
+                    <select
+                      onChange={this.setChapterNum}
+                      value={this.state.chapterNum}
+                      className="goto__chapter__select"
+                    >
+                      {this.props.readingOrder.map(doc => {
+                        if (doc.order === null) return null;
 
-                      const value = doc.order.toString();
-                      return (
-                        <option key={value} value={value}>
-                          {doc.order + 1} {doc.title}
+                        const value = doc.order.toString();
+                        return (
+                          <option key={value} value={value}>
+                            {doc.order + 1} {doc.title}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </label>
+                  <label className="goto__idea">
+                    {this.props.t('sentence')}
+                    <br />
+                    <select
+                      className="goto__idea__select"
+                      onChange={this.setIdea}
+                      value={this.state.idea}
+                    >
+                      {ideaIds.map(i => (
+                        <option key={i} value={i}>
+                          {i}
                         </option>
-                      );
-                    })}
-                  </select>
-                  <select className="goto__idea" onChange={this.setIdea} value={this.state.idea}>
-                    {ideaIds.map(i => (
-                      <option key={i} value={i}>
-                        {i}
-                      </option>
-                    ))}
-                  </select>
+                      ))}
+                    </select>
+                  </label>
+
                   {this.state.chapterNum !== this.props.currentChapterNum ||
                   this.state.idea !== this.props.currentIdea ? (
                     <button onClick={this.navigate}>{this.props.t('navigation:go')} &rarr;</button>
@@ -104,3 +122,5 @@ export class GoTo extends React.Component<IProps, IState> {
     );
   }
 }
+
+export default withTranslation('navigation')(GoTo);

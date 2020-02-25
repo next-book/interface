@@ -6,6 +6,8 @@
     "work-desk": "Pracovní plocha",
     "no-annotations-in-chapter": "V textu kapitoly nemáte žádné anotace.",
     "no-notes-in-chapter": "V textu kapitoly nemáte žádné poznámky.",
+    "annotations-in-text": "Anotace v textu",
+    "notes": "Poznámky",
     "add-note": "Přidat poznámku",
     "edit-note": "Upravit poznámku",
     "update-note": "Uložit poznámku"
@@ -16,6 +18,9 @@
     "return": "Vrátit se",
     "continueReading": "Pokračovat ve čtení",
     "continue": "Pokračovat odtud",
+    "chapter": "Kapitola",
+    "sentence": "Věta",
+    "percent-sign": " %",
     "prev-chapter": "Předchozí kapitola",
     "next-chapter": "Následující kapitola",
     "seqReturnAnotherChapter": "Dočetli jste po <1>{{idea}}. větu</1> v kapitole <3>{{chapter}}</3>.",

@@ -8,21 +8,4 @@
   font-weight: bold;
 }
 
-.goto {
-  display: flex;
-  background: #eee;
-  border: 1px solid #aaa;
-  border-radius: 3px;
 
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  max-width: 90vw;
-  padding: 1rem;
-}
-
-.goto__idea,
-.goto__chapter {
-  display: block;
-  flex-grow: 1;
-}

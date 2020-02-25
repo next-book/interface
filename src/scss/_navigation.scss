@@ -449,6 +449,20 @@ body.paginated-button-back {
   margin-bottom: 1rem;
 
   select {
-    flex-shrink: 0;
+    max-width: 100%;
+    padding: 0 0.25rem;
   }
+}
+
+.goto__idea,
+.goto__chapter {
+  display: block;
+  font-family: var(--ui-font);
+  flex-grow: 0;
+  flex-shrink: 1;
+  padding-right: 0.5rem;
+}
+
+.goto__chapter {
+  max-width: 40vw;
 }
