@@ -4,7 +4,8 @@ import {
   IAnnotation,
   IAnnotations,
   IAnnotationAndIdeas,
-  IChapterNote,
+  INote,
+  INotes,
   IStyle,
 } from './annotations-reducer';
 import {
@@ -31,12 +32,15 @@ enum Controls {
 interface IControlProps {
   annotations: IAnnotations;
   ideas: IIdeas;
-  chapterNote: string;
+  notes: INotes;
   chapterNum: string;
   selectedAnnotation: number | null;
   addAnnotation(annotation: IAnnotationAndIdeas): void;
   updateAnnotation(data: IAnnotationAndIdeas): void;
-  updateChapterNote(data: IChapterNote): void;
+  destroyAnnotation(data: IAnnotation): void;
+  addNote(data: INote): void;
+  updateNote(data: INote): void;
+  destroyNote(data: INote): void;
   selectAnnotation(index: number): void;
   deselectAnnotation(): void;
 }
@@ -82,7 +86,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     const annotation = {
       id: this.getNewAnnotationId(),
       chapterNum: this.props.chapterNum,
-      symbol: params.symbol || '🌼',
+      symbol: params.symbol || '📒',
       style: params.style || IStyle.Default,
       note: '',
       links: [],
@@ -120,7 +124,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
   private selectAnnotation = (event: Event) => {
     const el = event.target as Element;
 
-    if (el && el.classList.contains('annotation')) {
+    if (el && el.classList.contains('annotation__head')) {
       const id = el.getAttribute('data-id');
 
       if (id !== null) this.props.selectAnnotation(parseInt(id, 10));
@@ -162,19 +166,40 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
       });
   };
 
+  private addNote = (note: string) => {
+    this.props.addNote({
+      dateCreated: 0,
+      dateModified: 0,
+      id: this.getNewNoteId(),
+      text: note,
+      chapterNum: this.props.chapterNum,
+    });
+  };
+
+  private getNewNoteId = () => {
+    const keys = Object.keys(this.props.notes).map(key => parseInt(key, 10));
+    return keys.length > 0 ? Math.max(...keys) + 1 : 1;
+  };
+
   componentDidMount() {
     for (let [id, html] of Object.entries(this.props.ideas)) {
       const el = document.getElementById(id);
       if (el) el.innerHTML = html;
     }
 
-    document.addEventListener('selectionchange', this.showControlsIfRangeIsOkay);
-
-    document.addEventListener('click', this.selectAnnotation);
+    const wrapper = document.querySelector('.content');
+    if (wrapper) {
+      document.addEventListener('selectionchange', this.showControlsIfRangeIsOkay);
+      wrapper.addEventListener('click', this.selectAnnotation);
+    }
   }
 
   componentWillUnmount() {
-    window.removeEventListener('selectionchange', this.showControlsIfRangeIsOkay);
+    const wrapper = document.querySelector('.content');
+    if (wrapper) {
+      document.removeEventListener('selectionchange', this.showControlsIfRangeIsOkay);
+      wrapper.removeEventListener('click', this.selectAnnotation);
+    }
   }
 
   render() {
@@ -184,9 +209,12 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
           <AnnotationDesk
             annotations={this.props.annotations}
             ideas={this.props.ideas}
-            chapterNote={this.props.chapterNote}
+            notes={this.props.notes}
             chapterNum={this.props.chapterNum}
-            updateChapterNote={this.props.updateChapterNote}
+            addNote={this.addNote}
+            updateNote={this.props.updateNote}
+            destroyNote={this.props.destroyNote}
+            destroyAnnotation={this.props.destroyAnnotation}
             close={() => this.showControls(Controls.None)}
           />
         ) : null}
@@ -239,7 +267,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     }
 
     const styles = [IStyle.Default, IStyle.Secondary, IStyle.Strong];
-    const symbols = ['📝', '😳', '👍', '❌', '✅'];
+    const symbols = ['📒', '😳', '👍', '❌', '✅'];
     const fn = this.props.selectedAnnotation
       ? this.updateAnnotation
       : this.createAnnotationFromRange;

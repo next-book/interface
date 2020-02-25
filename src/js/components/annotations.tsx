@@ -1,11 +1,11 @@
 import React from 'react';
-import { reducer, IState, IAnnotationAndIdeas, IChapterNote } from './annotations-reducer';
+import { reducer, IState, IAnnotation, IAnnotationAndIdeas, INote } from './annotations-reducer';
 import AnnotationControl from './annotation-control';
 import AnnotationDetail from './annotation-detail';
 import { IState as ICombinedState } from '../reducer';
-//import Annotation from './annotation';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
+import { getAnnotatedIdeas, removeAnnotation } from './annotation-utils';
 
 import { getChapterNum } from '../shared';
 
@@ -13,8 +13,10 @@ interface IProps {
   annotations: IState;
   addAnnotation(data: IAnnotationAndIdeas): void;
   updateAnnotation(data: IAnnotationAndIdeas): void;
-  updateChapterNote(data: IChapterNote): void;
   destroyAnnotation(data: IAnnotationAndIdeas): void;
+  addNote(data: INote): void;
+  updateNote(data: INote): void;
+  destroyNote(data: INote): void;
 }
 
 interface ILocalState {
@@ -48,28 +50,38 @@ export class Annotations extends React.Component<IProps, ILocalState> {
     });
   };
 
+  private destroyAnnotation = (annotation: IAnnotation) => {
+    this.deselectAnnotation();
+    removeAnnotation(annotation.id);
+    this.props.destroyAnnotation({
+      annotation: annotation,
+      ideas: getAnnotatedIdeas(),
+    });
+  };
+
   render() {
     if (this.state.chapterNum === null) return null;
 
     const chapterAnnotations = this.props.annotations[this.state.chapterNum.toString()];
-    const annotations = chapterAnnotations ? chapterAnnotations.annotations : [];
-    const ideas = chapterAnnotations ? chapterAnnotations.ideas : {};
+    const annotations =
+      chapterAnnotations && chapterAnnotations.annotations ? chapterAnnotations.annotations : [];
+    const ideas = chapterAnnotations && chapterAnnotations.ideas ? chapterAnnotations.ideas : {};
+    const notes = chapterAnnotations && chapterAnnotations.notes ? chapterAnnotations.notes : {};
 
     return (
       <>
         <AnnotationControl
           annotations={annotations}
           ideas={ideas}
-          chapterNote={
-            this.props.annotations[this.state.chapterNum.toString()]
-              ? this.props.annotations[this.state.chapterNum.toString()].chapterNote
-              : ''
-          }
+          notes={notes}
           addAnnotation={this.props.addAnnotation}
+          destroyAnnotation={this.destroyAnnotation}
           selectAnnotation={this.selectAnnotation}
           deselectAnnotation={this.deselectAnnotation}
           updateAnnotation={this.props.updateAnnotation}
-          updateChapterNote={this.props.updateChapterNote}
+          addNote={this.props.addNote}
+          updateNote={this.props.updateNote}
+          destroyNote={this.props.destroyNote}
           selectedAnnotation={this.state.selectedAnnotation}
           chapterNum={this.state.chapterNum}
         />
@@ -78,7 +90,7 @@ export class Annotations extends React.Component<IProps, ILocalState> {
             annotation={annotations[this.state.selectedAnnotation]}
             close={this.deselectAnnotation}
             updateAnnotation={this.props.updateAnnotation}
-            destroyAnnotation={this.props.destroyAnnotation}
+            destroyAnnotation={this.destroyAnnotation}
           />
         )}
       </>
@@ -97,8 +109,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     {
       addAnnotation: reducer.addAnnotation,
       updateAnnotation: reducer.updateAnnotation,
-      updateChapterNote: reducer.updateChapterNote,
       destroyAnnotation: reducer.destroyAnnotation,
+      addNote: reducer.addNote,
+      updateNote: reducer.updateNote,
+      destroyNote: reducer.destroyNote,
     },
     dispatch
   );

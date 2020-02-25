@@ -17,7 +17,6 @@
   margin: 0 -0.125rem;
   color: var(--color);
   background: var(--highlight);
-  cursor: pointer;
   border-radius: 3px;
 }
 
@@ -31,6 +30,7 @@
   text-align: center;
   padding: 3px;
   box-sizing: border-box;
+  font-family: var(--ui-font);
 
   &:hover {
     transform: scale(1.1);
@@ -106,19 +106,29 @@
 .annotation__head {
   color: inherit;
   content: '‼️';
-  background: inherit;
+  background: transparent;
   font-size: 0.8em;
-  margin-top: var(--margin-top);
+
   position: absolute;
   opacity: 0.7;
   line-height: 1;
   border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  margin: var(--margin-top) 0 0 -0.7rem;
+  padding: 0.5rem;
+
+  transition: transform 0.2s ease-out;
+  will-change: transform;
+
+  &:hover {
+    transform: scale(1.2);
+  }
 }
 
 .annotation__head::after {
   content: attr(data-note);
   font-size: 0.8em;
-  margin: 0.3rem 0 0 0.1rem;
+  margin: -0.1rem 0 0 0.1rem;
   position: absolute;
   white-space: nowrap;
 }
@@ -178,6 +188,7 @@
 
 .annotation-detail__close,
 .annotation-detail__destroy {
+  font-size: 1.5rem;
   width: 2rem;
   text-indent: 3rem;
   border: none;
@@ -284,33 +295,88 @@
 }
 
 .annotation__desc_cols {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-gap: 2rem;
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+  padding-bottom: 2rem;
 
   position: absolute;
   top: 3rem;
-  left: 2rem;
+  left: 1rem;
   bottom: 0;
-  right: 2rem;
+  right: 1rem;
   overflow-y: auto;
 }
 
-.annotation__list,
-.annotation__notes {
+@media screen and (min-width: 700px) {
+  .annotation__desc_cols {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-gap: 1rem;
+
+    position: absolute;
+    top: 3rem;
+    left: 1rem;
+    bottom: 0;
+    right: 1rem;
+    overflow-y: auto;
+  }
+
+  .annotation__list {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .annotation__notes {
+    grid-column: 2;
+    grid-row: 1;
+  }
 }
 
-.annotation__chapter-note {
-  border: 1px solid #ddd;
+.desk--annotation {
+  margin-bottom: 1rem;
+  border: 1px solid #aaa;
   border-radius: 3px;
-  background: white;
-  min-height: 6rem;
   padding: 0.5rem;
-  margin-bottom: 2rem;
-  width: 100%;
-  box-sizing: border-box;
+
+  .desk--annotation__destroy {
+    display: block;
+    float: right;
+    margin: 0 0 0.5rem 0.5rem;
+
+    width: 2rem;
+    text-indent: 3rem;
+    border: none;
+    background-color: transparent;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: contain;
+
+    white-space: nowrap;
+
+    box-sizing: border-box;
+    margin-left: 1rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.2s ease-in;
+    will-change: transform;
+    transform-origin: 50% 50%;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    color: red;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='4 0 16 24' width='24' height='24' xmlns='http://www.w3.org/2000/svg'><path d='M19,4L15.5,4L14.5,3L9.5,3L8.5,4L5,4L5,6L19,6L19,4ZM5.979,7.967L6,19C6,20.1 6.9,21 8,21L16,21C17.1,21 18,20.1 18,19L17.979,7.967L5.979,7.967Z' fill='red'/></svg>");
+  }
+}
+
+.note-editor {
+  .note-editor__input {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    background: white;
+    min-height: 4rem;
+    padding: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
 }
 
 .annotation__toggle-button-wrapper {
@@ -331,8 +397,8 @@
 
 .annotation__toggle-button {
   position: absolute;
-  bottom: calc(1vw + 12px);
-  left: 1vw;
+  bottom: calc(12px);
+  left: var(--base-padding);
 
   background: transparent;
   padding: 0;
@@ -345,6 +411,7 @@
   overflow: hidden;
   width: 16px;
   height: 16px;
+  font-family: var(--ui-font);
 }
 
 .annotation__toggle-button:after {

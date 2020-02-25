@@ -2,18 +2,13 @@ import React from 'react';
 import ContentEditable from 'react-contenteditable';
 import { ContentEditableEvent } from 'react-contenteditable';
 import { IAnnotation, IAnnotationAndIdeas, IStyle } from './annotations-reducer';
-import {
-  getAnnotatedIdeas,
-  //updateAnnotation,
-  updateHead,
-  removeAnnotation,
-} from './annotation-utils';
+import { getAnnotatedIdeas, updateHead } from './annotation-utils';
 
 interface IProps {
   annotation: IAnnotation;
   close(): void;
   updateAnnotation(data: IAnnotationAndIdeas): void;
-  destroyAnnotation(data: IAnnotationAndIdeas): void;
+  destroyAnnotation(data: IAnnotation): void;
 }
 
 interface IState {
@@ -45,14 +40,6 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
     });
   };
 
-  private destroy = () => {
-    removeAnnotation(this.props.annotation.id);
-    this.props.destroyAnnotation({
-      annotation: this.props.annotation,
-      ideas: getAnnotatedIdeas(),
-    });
-  };
-
   // private pastePlainText = event => {
   //   event.preventDefault();
 
@@ -67,7 +54,10 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
           <button className="annotation-detail__close" onClick={this.props.close}>
             <span>Close annotation</span>
           </button>
-          <button className="annotation-detail__destroy" onClick={this.destroy}>
+          <button
+            className="annotation-detail__destroy"
+            onClick={() => this.props.destroyAnnotation(this.props.annotation)}
+          >
             <span>Delete annotation</span>
           </button>
         </div>

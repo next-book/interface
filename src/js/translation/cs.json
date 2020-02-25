@@ -5,7 +5,10 @@
   "annotations": {
     "work-desk": "Pracovní plocha",
     "no-annotations-in-chapter": "V textu kapitoly nemáte žádné anotace.",
-    "no-notes-in-chapter": "V textu kapitoly nemáte žádné poznámky."
+    "no-notes-in-chapter": "V textu kapitoly nemáte žádné poznámky.",
+    "add-note": "Přidat poznámku",
+    "edit-note": "Upravit poznámku",
+    "update-note": "Uložit poznámku"
   },
   "navigation": {
     "intro": "Tato kniha si pamatuje, kam jste ji dočetli. Pro zobrazení obsahu knihy můžete kliknout na spodní lištu.",

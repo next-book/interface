@@ -1,7 +1,9 @@
 const ADD_ANNOTATION = 'nb-base/annotations/ADD_ANNOTATION';
 const UPDATE_ANNOTATION = 'nb-base/annotations/UPDATE_ANNOTATION';
 const DESTROY_ANNOTATION = 'nb-base/annotations/DESTROY_ANNOTATION';
-const UPDATE_CHAPTER_NOTE = 'nb-base/annotations/UPDATE_CHAPTER_NOTE';
+const ADD_NOTE = 'nb-base/annotations/ADD_NOTE';
+const UPDATE_NOTE = 'nb-base/annotations/UPDATE_NOTE';
+const DESTROY_NOTE = 'nb-base/annotations/DESTROY_NOTE';
 
 export enum IStyle {
   Default = 'default',
@@ -39,15 +41,22 @@ export interface IAnnotationAndIdeas {
   ideas: IIdeas;
 }
 
-export interface IChapterNote {
-  note: string;
+export interface INote {
+  dateCreated: number;
+  dateModified: number;
+  id: number;
+  text: string;
   chapterNum: string;
+}
+
+export interface INotes {
+  [key: string]: INote;
 }
 
 export interface IAnnotationSet {
   annotations: IAnnotations;
   ideas: IIdeas;
-  chapterNote: string;
+  notes: INotes;
 }
 
 export interface IState {
@@ -60,20 +69,56 @@ export function reducer(state: IState = INITIAL_STATE, action: any) {
   switch (action.type) {
     case ADD_ANNOTATION:
       return addAnnotation(state, action.payload);
-    case UPDATE_CHAPTER_NOTE:
-      return updateChapterNote(state, action.payload);
     case UPDATE_ANNOTATION:
       return updateAnnotation(state, action.payload);
     case DESTROY_ANNOTATION:
       return destroyAnnotation(state, action.payload);
+    case ADD_NOTE:
+      return addNote(state, action.payload);
+    case UPDATE_NOTE:
+      return updateNote(state, action.payload);
+    case DESTROY_NOTE:
+      return destroyNote(state, action.payload);
     default:
       return state;
   }
 }
 
-function updateChapterNote(state: IState, payload: IChapterNote) {
+function addNote(state: IState, payload: INote) {
+  const note = { ...payload };
+  note.dateCreated = new Date().getTime();
+  note.dateModified = new Date().getTime();
+
   const newState = { ...state };
-  newState[payload.chapterNum].chapterNote = payload.note;
+  const notes = state[note.chapterNum] ? state[note.chapterNum].notes : {};
+
+  newState[note.chapterNum] = {
+    ...newState[note.chapterNum],
+    notes: {
+      ...notes,
+      [note.id]: note,
+    },
+  };
+
+  return newState;
+}
+
+function updateNote(state: IState, payload: INote) {
+  const note = { ...payload };
+  note.dateModified = new Date().getTime();
+
+  const newState = { ...state };
+  newState[payload.chapterNum].notes[note.id] = note;
+
+  return newState;
+}
+
+function destroyNote(state: IState, payload: INote) {
+  const note = { ...payload };
+
+  const newState = { ...state };
+  console.log(newState);
+  delete newState[note.chapterNum].notes[note.id];
 
   return newState;
 }
@@ -102,6 +147,7 @@ function updateAnnotation(state: IState, payload: IAnnotationAndIdeas) {
   const { annotation, ideas } = payload;
 
   const newState = { ...state };
+
   newState[annotation.chapterNum].annotations[annotation.id] = {
     ...annotation,
     dateModified: new Date().getTime(),
@@ -117,12 +163,28 @@ function destroyAnnotation(state: IState, payload: IAnnotationAndIdeas) {
   delete newState[annotation.chapterNum].annotations[annotation.id];
 
   newState[annotation.chapterNum].ideas = ideas;
+
+  console.log(newState);
   return newState;
 }
 
-reducer.updateChapterNote = function(data: IChapterNote) {
+reducer.addNote = function(data: INote) {
   return {
-    type: UPDATE_CHAPTER_NOTE,
+    type: ADD_NOTE,
+    payload: data,
+  };
+};
+
+reducer.updateNote = function(data: INote) {
+  return {
+    type: UPDATE_NOTE,
+    payload: data,
+  };
+};
+
+reducer.destroyNote = function(data: INote) {
+  return {
+    type: DESTROY_NOTE,
     payload: data,
   };
 };
@@ -149,7 +211,9 @@ reducer.destroyAnnotation = function(data: IAnnotationAndIdeas) {
 };
 
 export type Action = ReturnType<
-  | typeof reducer.updateChapterNote
+  | typeof reducer.addNote
+  | typeof reducer.updateNote
+  | typeof reducer.destroyNote
   | typeof reducer.addAnnotation
   | typeof reducer.updateAnnotation
   | typeof reducer.destroyAnnotation

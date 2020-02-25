@@ -118,35 +118,98 @@ body.paginated {
   }
 }
 
+.content .wrapper {
+  will-change: transform;
+}
+
 body.paginated-back,
 body.paginated-forward {
+  .content {
+    overflow: hidden;
+
+    .wrapper {
+      animation: forward 0.2s ease-out;
+    }
+  }
+}
+
+body.paginated-button-back {
+  .content .wrapper {
+    animation: back 0.2s ease-out;
+  }
+}
+
+body.paginated-button-back,
+body.paginated-button-forward {
+  &::before,
   &::after {
+    font-family: monospace;
     content: '>';
 
     display: block;
+    overflow: hidden;
     opacity: 0;
     width: calc(24px + 5vw);
+    padding: 0;
+    z-index: map-get($z-indexes, 'pagination');
 
     position: fixed;
-    top: 20vh;
+    top: 25vh;
     right: 0;
-    bottom: 20vh;
+    height: 50vh;
 
-    color: rgba(255, 255, 255, 0.6);
-    background: rgba(0, 0, 0, 0.2);
+    border: solid rgba(0, 0, 0, 0.2);
+    border-width: 2px;
+    color: rgba(0, 0, 0, 0.1);
     line-height: 60vh;
     font-size: 5vw;
     text-align: center;
     animation: pagination-bar-fade 0.2s ease-in-out;
     border-radius: 10px 0 0 10px;
   }
+
+  &::after {
+    content: '>';
+    left: 0;
+    right: auto;
+    border-radius: 0 10px 10px 0;
+  }
 }
 
-body.paginated-back::after {
-  content: '<';
-  left: 0;
-  right: auto;
-  border-radius: 0 10px 10px 0;
+body.paginated-button-back {
+  &::before,
+  &::after {
+    top: 2vh;
+    height: 18vh;
+    line-height: 20vh;
+
+    content: '<';
+  }
+
+  &::after {
+    content: '<';
+    left: 0;
+    right: auto;
+    border-radius: 0 10px 10px 0;
+  }
+}
+
+@keyframes forward {
+  0% {
+    transform: translateX(3px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes back {
+  0% {
+    transform: translateX(-3px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 @keyframes pagination-bar-fade {
@@ -157,7 +220,7 @@ body.paginated-back::after {
 
   20% {
     display: block;
-    opacity: 1;
+    opacity: 0.5;
   }
 
   100% {
@@ -248,9 +311,9 @@ body.paginated-back::after {
 
     display: block;
     position: fixed;
-    left: 1vw;
-    width: 98vw;
-    bottom: 1vw;
+    left: var(--base-padding);
+    width: calc(100vw - 2 * var(--base-padding));
+    bottom: -1px;
 
     height: var(--height);
     margin: 0;
@@ -292,7 +355,7 @@ body.paginated-back::after {
       width: calc(var(--height) + 2px);
       z-index: map-get($z-indexes, 'navigation') + 10;
 
-      margin: -2px 0 0 calc(var(--height) * -0.5);
+      margin: -2px 0 0 calc(-1px + var(--height) * -0.5);
       border-radius: var(--height);
       background: rgba(255, 255, 255, 0.5);
       border: 1px solid black;
@@ -356,13 +419,10 @@ body.paginated-back::after {
 
 .goto__current--position {
   position: fixed;
-  box-sizing: border-box;
-  padding-bottom: calc(1vw + 9px);
-  padding-right: 1vw;
   right: 0;
   bottom: 0;
-  width: 48px;
-  height: 48px;
+  margin: 0;
+  padding: 12px var(--base-padding);
   z-index: map-get($z-indexes, 'navigation') + 20;
 
   border: none;
@@ -370,6 +430,7 @@ body.paginated-back::after {
 
   display: block;
   font-size: 12px;
+  font-family: var(--ui-font);
   text-align: right;
   cursor: pointer;
   opacity: 0.5;
