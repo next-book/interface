@@ -46,7 +46,7 @@ export class Peeks extends React.Component<IProps> {
 
   render() {
     return (
-      <div className="peeks">
+      <div className="peeks ui-target">
         {this.props.peeks.map((peek, index) => (
           <Peek
             key={index}

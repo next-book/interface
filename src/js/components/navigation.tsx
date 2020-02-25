@@ -8,6 +8,7 @@ import keycode from 'keycode';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
 import { getChapterNum } from '../shared';
+import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
 import { GoTo } from './go-to';
@@ -19,7 +20,7 @@ import { reducer as peeksReducer, IPeek } from './peeks-reducer';
 
 import Toc from './toc';
 
-enum Direction {
+export enum Direction {
   Back = 'back',
   Forward = 'forward',
 }
@@ -148,6 +149,17 @@ export class Navigation extends React.Component<IProps, IState> {
     }
   };
 
+  handleSwipeNav = (event: TouchEvent, dir: Direction) => {
+    if (this.props.position === null) return;
+    const chapter = this.props.readingOrder[this.props.position.chapterNum];
+
+    if (dir === Direction.Forward) {
+      this.goForward(event, chapter.next, false);
+    } else if (dir === Direction.Back) {
+      this.goBack(event, chapter.prev, false);
+    }
+  };
+
   handleInvisibleNav = (event: MouseEvent) => {
     if (this.props.position === null) return;
 
@@ -188,20 +200,28 @@ export class Navigation extends React.Component<IProps, IState> {
     );
   };
 
-  goForward = (event: MouseEvent | TouchEvent | KeyboardEvent, nextChapter: string | null) => {
+  goForward = (
+    event: MouseEvent | TouchEvent | KeyboardEvent,
+    nextChapter: string | null,
+    showButtons?: boolean
+  ) => {
     event.preventDefault();
 
     if (!isPageScrolledToBottom()) {
-      pageForward(nextChapter, this.getScrollStep());
+      pageForward(nextChapter, this.getScrollStep(), showButtons);
       this.setPaddings();
     } else if (nextChapter) window.location.assign(`${nextChapter}#chunk1`);
   };
 
-  goBack = (event: MouseEvent | TouchEvent | KeyboardEvent, prevChapter: string | null) => {
+  goBack = (
+    event: MouseEvent | TouchEvent | KeyboardEvent,
+    prevChapter: string | null,
+    showButtons?: boolean
+  ) => {
     event.preventDefault();
 
     if (!isPageScrolledToTop()) {
-      pageBack(prevChapter, this.getScrollStep());
+      pageBack(prevChapter, this.getScrollStep(), showButtons);
       this.setPaddings();
     } else if (prevChapter) window.location.assign(`${prevChapter}#chapter-end`);
   };
@@ -249,6 +269,7 @@ export class Navigation extends React.Component<IProps, IState> {
     if (this.props.config.invisibleNav) {
       window.document.addEventListener('mousedown', this.handleInvisibleNav);
     }
+    initSwipeNav(this.handleSwipeNav);
 
     this.props.setReadingOrder(this.props.manifest.documents);
 
@@ -323,9 +344,14 @@ export class Navigation extends React.Component<IProps, IState> {
   }
 }
 
-function displayPagination(dir: Direction) {
+function displayPagination(dir: Direction, showButtons?: boolean) {
   document.body.classList.add(`paginated-${dir}`);
   window.setTimeout(() => document.body.classList.remove(`paginated-${dir}`), 300);
+
+  if (showButtons !== false) {
+    document.body.classList.add(`paginated-button-${dir}`);
+    window.setTimeout(() => document.body.classList.remove(`paginated-button-${dir}`), 300);
+  }
 }
 
 function isPageScrolledToBottom() {
@@ -429,16 +455,23 @@ function setUriIdea(id: number) {
 function isInPaginationRect(dir: Direction, x: number, y: number) {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const rectW = w / 20 + 24;
-  const rectH = (h / 5) * 3;
+
+  const rectW = w * 0.05 + 24;
   const margin = 2;
-  const top = h / 5;
-  const bottom = h / 5 + rectH;
 
-  const left = dir === Direction.Back ? margin : w - margin - rectW;
-  const right = dir === Direction.Back ? margin + rectW : w - margin;
+  if ((x > margin && x < margin + rectW) || (x < w - margin && x > w - margin - rectW)) {
+    const backTop = h * 0.02;
+    const backH = h * 0.18;
 
-  return x < right && x > left && y > top && y < bottom;
+    const forwardTop = h * 0.25;
+    const forwardH = h * 0.5;
+
+    if (y > forwardTop && y < forwardTop + forwardH)
+      return dir === Direction.Forward ? true : false;
+    else if (y > backTop && y < backTop + backH) return dir === Direction.Back ? true : false;
+  }
+
+  return false;
 }
 
 function calcCutoff(from: Position, readingZone: IPosDouble) {
@@ -490,16 +523,16 @@ function isElementOnTheEdge(el: Element, edge: number) {
   return rect.top < edge && rect.bottom > edge;
 }
 
-function pageForward(nextChapter: string | null, step: number | null) {
+function pageForward(nextChapter: string | null, step: number | null, showButtons?: boolean) {
   if (step === null) return;
-  displayPagination(Direction.Forward);
   window.scrollTo(window.scrollX, window.scrollY + step);
+  displayPagination(Direction.Forward, showButtons);
 }
 
-function pageBack(prevChapter: string | null, step: number | null) {
+function pageBack(prevChapter: string | null, step: number | null, showButtons?: boolean) {
   if (step === null) return;
-  displayPagination(Direction.Back);
   window.scrollTo(window.scrollX, window.scrollY - step);
+  displayPagination(Direction.Back, showButtons);
 }
 
 const mapStateToProps = (state: ICombinedState) => {
