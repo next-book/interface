@@ -142,9 +142,9 @@ export class Navigation extends React.Component<IProps, IState> {
 
     switch (keycode(event)) {
       case 'left':
-        return this.goBack(event, chapter.prev);
+        return this.goBack(event, chapter.prev, false);
       case 'right':
-        return this.goForward(event, chapter.next);
+        return this.goForward(event, chapter.next, false);
       default:
         return;
     }

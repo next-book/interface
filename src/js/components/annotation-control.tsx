@@ -266,6 +266,10 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
       );
     }
 
+    if (this.state.visible === Controls.Desk) {
+      return null;
+    }
+
     const styles = [IStyle.Default, IStyle.Secondary, IStyle.Strong];
     const symbols = ['📒', '😳', '👍', '❌', '✅'];
     const fn = this.props.selectedAnnotation

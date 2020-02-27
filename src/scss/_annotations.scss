@@ -167,6 +167,12 @@
   box-sizing: border-box;
 }
 
+@media screen and (min-width: 600px) {
+  .annotation-detail {
+    max-width: 25rem;
+  }
+}
+
 .annotation-detail__note {
   min-height: 4rem;
   border: 1px solid #aaa;
