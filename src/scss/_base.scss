@@ -1,5 +1,4 @@
 :root {
-  --base-font-size: 18px;
   --text-font: serif;
   --heading-font: sans-serif;
   --ui-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
@@ -10,7 +9,32 @@
   --base-padding: 1rem;
   --highlight-color: rgba(255, 255, 0, 1);
 
+  --base-font-size: 20px;
   font-size: var(--base-font-size);
+}
+
+@media only screen and (max-width: 990px) {
+  :root {
+    --base-font-size: 3vw;
+  }
+}
+
+@media only screen and (max-width: 650px) {
+  :root {
+    --base-font-size: 3.5vw;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  :root {
+    --base-font-size: 4.5vw;
+  }
+}
+
+@media only screen and (max-width: 360px) {
+  :root {
+    --base-font-size: 5vw;
+  }
 }
 
 body {
@@ -22,10 +46,6 @@ body {
   margin: 0 auto;
   max-width: 32rem;
   padding: 10vh var(--base-padding) 10rem;
-
-  .idea {
-    padding: 1px 0;
-  }
 
   #chunk1 {
     padding-top: 2rem;
