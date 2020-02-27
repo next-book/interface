@@ -36,12 +36,18 @@ function handleSwipeStart(e: TouchEvent) {
 function handleSwipeMove(e: TouchEvent) {
   if (preventClick) e.preventDefault();
 
+  const selection = window.getSelection();
+  if (selection !== null && !selection.isCollapsed) {
+    xDown = null;
+    yDown = null;
+  }
+
   if (!xDown || !yDown) {
     return;
   }
 
-  var xDiff = xDown - e.touches[0].clientX;
-  var yDiff = yDown - e.touches[0].clientY;
+  const xDiff = xDown - e.touches[0].clientX;
+  const yDiff = yDown - e.touches[0].clientY;
 
   if (Math.abs(xDiff) > 30) {
     if (callback != null && Math.abs(xDiff) > Math.abs(yDiff)) {
