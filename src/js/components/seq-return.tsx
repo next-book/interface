@@ -23,7 +23,7 @@ export class SeqReturn extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      collapsed: false,
+      collapsed: props.isChapter ? true : false,
     };
   }
 
@@ -82,17 +82,20 @@ export class SeqReturn extends React.Component<IProps, IState> {
           <div className="seq-buttons">
             {this.props.isChapter && (
               <a href="#" onClick={this.resetPosition}>
-                {this.props.t('continue')}
+                👇 {this.props.t('continue')}
               </a>
             )}
             <a
               href={link}
               onClick={() => {
+                this.setState({...this.state, collapsed: true };
                 this.props.thisChapter ? this.highlightPosition : null;
               }}
             >
               <b>
-                {this.props.isChapter ? this.props.t('return') : this.props.t('continueReading')}
+                {this.props.isChapter
+                  ? `🔙 ${this.props.t('return')}`
+                  : this.props.t('continueReading')}
               </b>
             </a>
           </div>
@@ -110,15 +113,19 @@ export class SeqReturn extends React.Component<IProps, IState> {
 
   render() {
     const content = this.props.targetIdea === null ? this.firstTime() : this.nthTime();
+    const classes = ['seq-return-wrapper'];
+    if (this.props.targetIdea === null) classes.push('seq-return-wrapper--high');
 
     return (
       content && (
-        <div className="seq-return-wrapper">
+        <div className={classes.join(' ')}>
           <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
             <div onClick={this.toggleCollapse} className="seq-return-toggle ui-target">
-              {this.state.collapsed ? '+' : '–'}
+              {this.state.collapsed
+                ? `🔙 ${this.props.targetChapter.order + 1}.${this.props.targetIdea}`
+                : '–'}
             </div>
-            {content}
+            {this.state.collapsed ? null : content}
           </div>
         </div>
       )

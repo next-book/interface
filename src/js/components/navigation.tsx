@@ -83,7 +83,8 @@ export class Navigation extends React.Component<IProps, IState> {
         this.props.sequentialPosition,
         { idea, chapterNum },
         this.props.sequential,
-        this.getScrollStep
+        this.getScrollStep,
+        this.props.readingOrder[chapterNum - 1] ? this.props.readingOrder[chapterNum - 1].ideas : 0
       );
 
     this.props.setPosition(chapterNum, idea, sequential);
@@ -411,7 +412,8 @@ function checkSequence(
   pos1: IPosition | null,
   pos2: IPosition | null,
   wasSequentialBefore: boolean,
-  getScrollStepCallback: { (): number | null }
+  getScrollStepCallback: { (): number | null },
+  prevChapterIdeas: number
 ) {
   // no info
   if (pos2 === null) return wasSequentialBefore;
@@ -420,12 +422,13 @@ function checkSequence(
   if (pos1 === null && pos2 !== null) return true;
 
   if (pos1 !== null && pos2 !== null) {
-    const scrollStep = getScrollStepCallback();
-    if (scrollStep === null) return wasSequentialBefore;
+    const scrollStep = getScrollStepCallback() || window.innerHeight * 0.9;
 
     if (wasSequentialBefore) {
       // new chapter
-      if (pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) return true;
+      if (pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) {
+        if (prevChapterIdeas - 10 <= pos1.idea) return true;
+      }
 
       // same chapter
       if (pos1.chapterNum === pos2.chapterNum) {
@@ -445,18 +448,16 @@ function checkSequence(
           return wasSequentialBefore;
         }
       }
-    } else {
-      if (pos1.chapterNum === pos2.chapterNum) {
-        // is back on screen
-        const idea1 = document.getElementById(`idea${pos1.idea}`);
+    } else if (pos1.chapterNum === pos2.chapterNum) {
+      // is back on screen
+      const idea1 = document.getElementById(`idea${pos1.idea}`);
 
-        if (idea1 !== null) {
-          const top1 = idea1.getBoundingClientRect().top;
+      if (idea1 !== null) {
+        const top1 = idea1.getBoundingClientRect().top;
 
-          if (top1 > 0 && top1 < scrollStep * 0.75) return true;
-        } else {
-          return wasSequentialBefore;
-        }
+        if (top1 > -5 && top1 < scrollStep * 0.75) return true;
+      } else {
+        return wasSequentialBefore;
       }
     }
   }
