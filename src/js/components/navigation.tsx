@@ -427,7 +427,7 @@ function checkSequence(
     if (wasSequentialBefore) {
       // new chapter
       if (pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) {
-        if (prevChapterIdeas - 10 <= pos1.idea) return true;
+        if (prevChapterIdeas * 0.9 <= pos1.idea) return true;
       }
 
       // same chapter
@@ -515,7 +515,6 @@ function calcCutoff(from: Position, readingZone: IPosDouble) {
       height += lineHeight;
     }
   } else if (from === Position.Bottom) {
-
     while (height > readingZone[from]) {
       height -= lineHeight;
     }

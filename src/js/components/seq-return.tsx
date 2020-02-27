@@ -88,7 +88,7 @@ export class SeqReturn extends React.Component<IProps, IState> {
             <a
               href={link}
               onClick={() => {
-                this.setState({...this.state, collapsed: true };
+                this.setState({ ...this.state, collapsed: true });
                 this.props.thisChapter ? this.highlightPosition : null;
               }}
             >
@@ -114,6 +114,13 @@ export class SeqReturn extends React.Component<IProps, IState> {
   render() {
     const content = this.props.targetIdea === null ? this.firstTime() : this.nthTime();
     const classes = ['seq-return-wrapper'];
+    const collapsedText =
+      this.props.targetChapter !== null &&
+      this.props.targetChapter.order !== null &&
+      this.props.targetIdea !== null
+        ? `🔙 ${this.props.targetChapter.order + 1}.${this.props.targetIdea}`
+        : '+';
+
     if (this.props.targetIdea === null) classes.push('seq-return-wrapper--high');
 
     return (
@@ -121,9 +128,7 @@ export class SeqReturn extends React.Component<IProps, IState> {
         <div className={classes.join(' ')}>
           <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
             <div onClick={this.toggleCollapse} className="seq-return-toggle ui-target">
-              {this.state.collapsed
-                ? `🔙 ${this.props.targetChapter.order + 1}.${this.props.targetIdea}`
-                : '–'}
+              {this.state.collapsed ? collapsedText : '–'}
             </div>
             {this.state.collapsed ? null : content}
           </div>
