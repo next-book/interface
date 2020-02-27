@@ -40,20 +40,19 @@ function handleSwipeMove(e: TouchEvent) {
     return;
   }
 
-  var xUp = e.touches[0].clientX;
-  var yUp = e.touches[0].clientY;
+  var xDiff = xDown - e.touches[0].clientX;
+  var yDiff = yDown - e.touches[0].clientY;
 
-  var xDiff = xDown - xUp;
-  var yDiff = yDown - yUp;
+  if (Math.abs(xDiff) > 30) {
+    if (callback != null && Math.abs(xDiff) > Math.abs(yDiff)) {
+      if (xDiff > 0) callback(e, Direction.Forward);
+      else callback(e, Direction.Back);
 
-  if (callback != null && Math.abs(xDiff) > Math.abs(yDiff)) {
-    if (xDiff > 8) callback(e, Direction.Forward);
-    else callback(e, Direction.Back);
+      preventClick = true;
+      e.preventDefault();
+    }
 
-    preventClick = true;
-    e.preventDefault();
+    xDown = null;
+    yDown = null;
   }
-
-  xDown = null;
-  yDown = null;
 }
