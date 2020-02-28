@@ -274,6 +274,7 @@ export class Navigation extends React.Component<IProps, IState> {
 
     this.props.setReadingOrder(this.props.manifest.documents);
 
+    this.props.setScrollRatio(getScrollRatio());
     this.setPosition();
 
     window.addEventListener('resize', this.setSizes);
