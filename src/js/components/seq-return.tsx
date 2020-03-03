@@ -119,7 +119,7 @@ export class SeqReturn extends React.Component<IProps, IState> {
       this.props.targetChapter.order !== null &&
       this.props.targetIdea !== null
         ? `🔙 ${this.props.targetChapter.order + 1}.${this.props.targetIdea}`
-        : '+';
+        : '➕';
 
     if (this.props.targetIdea === null) classes.push('seq-return-wrapper--high');
 
@@ -128,7 +128,7 @@ export class SeqReturn extends React.Component<IProps, IState> {
         <div className={classes.join(' ')}>
           <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
             <div onClick={this.toggleCollapse} className="seq-return-toggle ui-target">
-              {this.state.collapsed ? collapsedText : '–'}
+              {this.state.collapsed ? collapsedText : '➖'}
             </div>
             {this.state.collapsed ? null : content}
           </div>
