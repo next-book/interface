@@ -6,36 +6,36 @@ import { IToc } from './manifest-reducer';
 import { INavDocument } from './navigation-reducer';
 
 interface IProps {
+  idea: number;
+  chapterNum: number;
   readingOrder: INavDocument[];
 }
 
 class Toc extends React.Component<IProps> {
-  constructor(props: IProps) {
-    super(props);
-  }
-
-  componentDidMount() {}
-
-  componentWillUnmount() {}
-
   render() {
     return (
-      <ol>
-        {this.props.readingOrder.map(doc => {
-          return (
-            <li key={doc.order !== null ? doc.order : ''}>
-              <a href={doc.file}>{doc.title}</a>
-              <ul>
-                {doc.toc && doc.toc[0].children.length
-                  ? doc.toc[0].children.map((section, index) => {
-                      return <Section key={index} file={doc.file} section={section} />;
-                    })
-                  : null}
-              </ul>
-            </li>
-          );
-        })}
-      </ol>
+      <>
+        <ol>
+          {this.props.readingOrder.map(doc => {
+            const current = this.props.chapterNum === doc.order;
+
+            return (
+              <li key={doc.order !== null ? doc.order : ''}>
+                <a className={current ? 'current-chapter' : undefined} href={doc.file}>
+                  {doc.title}
+                </a>
+                <ul>
+                  {doc.toc && doc.toc[0].children.length
+                    ? doc.toc[0].children.map((section, index) => {
+                        return <Section key={index} file={doc.file} section={section} />;
+                      })
+                    : null}
+                </ul>
+              </li>
+            );
+          })}
+        </ol>
+      </>
     );
   }
 }
@@ -63,7 +63,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators({}, dispatch);
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Toc);
+export default connect(mapStateToProps, mapDispatchToProps)(Toc);

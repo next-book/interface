@@ -1,27 +1,27 @@
 p,
 blockquote,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
 dl,
 fieldset,
 figure,
 ul,
 ol,
 table,
-button,
-input,
 li,
 dd,
 dt,
 td,
 th,
 figcaption {
-  line-height: 1.4em;
+  font-family: var(--text-font);
+  line-height: 1.4;
   font-size: 1rem;
+}
+
+button,
+input,
+select {
+  font-family: var(--ui-font);
+  font-size: 0.8rem;
 }
 
 h1,
@@ -30,7 +30,9 @@ h3,
 h4,
 h5,
 h6 {
-  line-height: 1.25em;
+  font-family: var(--heading-font);
+  line-height: 1.25;
+  margin: 1.5rem 0 0.125rem;
 }
 
 h1 {
@@ -74,16 +76,14 @@ ol {
   padding-left: 1.125rem;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin: 1.5rem 0 0.125rem;
-}
-
 hr {
   margin: 3rem 0;
   border: 1px solid;
+}
+
+.button,
+button {
+  border: 1px solid #aaa;
+  background: #ddd;
+  border-radius: var(--border-radius);
 }

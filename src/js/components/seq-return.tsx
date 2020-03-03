@@ -1,7 +1,10 @@
 import React from 'react';
 import { IDocument } from './manifest-reducer';
 
-interface IProps {
+import { WithT } from 'i18next';
+import { Trans } from 'react-i18next';
+
+interface IProps extends WithT {
   targetIdea: number | null;
   targetChapter: IDocument | null;
   sequential: boolean;
@@ -11,9 +14,17 @@ interface IProps {
   startLink: string;
 }
 
-export class SeqReturn extends React.Component<IProps> {
+interface IState {
+  collapsed: boolean;
+}
+
+export class SeqReturn extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
+
+    this.state = {
+      collapsed: props.isChapter ? true : false,
+    };
   }
 
   resetPosition = (e: React.MouseEvent) => {
@@ -28,13 +39,10 @@ export class SeqReturn extends React.Component<IProps> {
   firstTime = () => {
     return (
       <>
-        <p>
-          This book remembers where you stopped reading. You can view Table of Contents anytime by
-          clicking the bottom bar where the next “page” is visible.
-        </p>
+        <p>{this.props.t('intro')}</p>
         <div className="seq-buttons">
           <a href={this.props.startLink}>
-            <b>Start reading</b>
+            <b>{this.props.t('start')}</b>
           </a>
         </div>
       </>
@@ -45,20 +53,25 @@ export class SeqReturn extends React.Component<IProps> {
     const link = this.props.targetChapter
       ? `./${this.props.targetChapter.file}#idea${this.props.targetIdea}`
       : '';
+    const idea = this.props.targetIdea;
+    const chapter = this.props.targetChapter && this.props.targetChapter.title;
 
     const readingPosition =
       !this.props.isChapter || !this.props.thisChapter ? (
         <p>
-          You read up to <a href={link}>sentence #{this.props.targetIdea}</a> in chapter{' '}
-          <b>{this.props.targetChapter && this.props.targetChapter.title}</b>.
+          <Trans i18nKey="navigation:seqReturnAnotherChapter">
+            You read up to <a href={link}>sentence #{{ idea }}</a> in chapter <b>{{ chapter }}</b>.
+          </Trans>
         </p>
       ) : (
         <p>
-          You read up to sentence{' '}
-          <a href={link} onClick={this.highlightPosition}>
-            #{this.props.targetIdea} in this chapter
-          </a>
-          .
+          <Trans i18nKey="navigation:seqReturnThisChapter">
+            You read up to{' '}
+            <a href={link} onClick={this.highlightPosition}>
+              sentence #{{ idea }}
+            </a>{' '}
+            in this chapter.
+          </Trans>
         </p>
       );
 
@@ -69,16 +82,21 @@ export class SeqReturn extends React.Component<IProps> {
           <div className="seq-buttons">
             {this.props.isChapter && (
               <a href="#" onClick={this.resetPosition}>
-                Continue from&nbsp;here
+                👇 {this.props.t('continue')}
               </a>
             )}
             <a
               href={link}
               onClick={() => {
+                this.setState({ ...this.state, collapsed: true });
                 this.props.thisChapter ? this.highlightPosition : null;
               }}
             >
-              <b>{this.props.isChapter ? 'Return back' : 'Continue reading'}</b>
+              <b>
+                {this.props.isChapter
+                  ? `🔙 ${this.props.t('return')}`
+                  : this.props.t('continueReading')}
+              </b>
             </a>
           </div>
         </>
@@ -86,13 +104,34 @@ export class SeqReturn extends React.Component<IProps> {
     );
   };
 
+  toggleCollapse = () => {
+    this.setState({
+      ...this.state,
+      collapsed: !this.state.collapsed,
+    });
+  };
+
   render() {
     const content = this.props.targetIdea === null ? this.firstTime() : this.nthTime();
+    const classes = ['seq-return-wrapper'];
+    const collapsedText =
+      this.props.targetChapter !== null &&
+      this.props.targetChapter.order !== null &&
+      this.props.targetIdea !== null
+        ? `🔙 ${this.props.targetChapter.order + 1}.${this.props.targetIdea}`
+        : '➕';
+
+    if (this.props.targetIdea === null) classes.push('seq-return-wrapper--high');
 
     return (
       content && (
-        <div className="seq-return-wrapper">
-          <div className="seq-return">{content}</div>
+        <div className={classes.join(' ')}>
+          <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
+            <div onClick={this.toggleCollapse} className="seq-return-toggle ui-target">
+              {this.state.collapsed ? collapsedText : '➖'}
+            </div>
+            {this.state.collapsed ? null : content}
+          </div>
         </div>
       )
     );

@@ -1,21 +1,27 @@
 :root {
-  font-size: 18px;
+  --text-font: serif;
+  --heading-font: sans-serif;
+  --ui-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --border-radius: 3px;
+
+  --background: white;
   --base-padding: 1rem;
   --highlight-color: rgba(255, 255, 0, 1);
+
+  --base-font-size: 18px;
+  font-size: var(--base-font-size);
 }
 
 body {
   margin: 0;
+  background: var(--background);
 }
 
 .content {
   margin: 0 auto;
   max-width: 32rem;
   padding: 10vh var(--base-padding) 10rem;
-
-  .idea {
-    padding: 1px 0;
-  }
 
   #chunk1 {
     padding-top: 2rem;
@@ -71,4 +77,9 @@ body {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+select {
+  font-size: 1rem;
+  -webkit-appearance: none;
 }

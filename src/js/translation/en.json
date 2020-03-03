@@ -1,0 +1,31 @@
+{
+  "common": {
+    "toggle-full-screen": "Toggle Full Screen View"
+  },
+  "annotations": {
+    "work-desk": "Work desk",
+    "no-annotations-in-chapter": "No annotations in this chapter. Add annotation by selecting text.",
+    "no-notes-in-chapter": "No notes in the text of this chapter.",
+    "annotations-in-text": "Annotations",
+    "notes": "Notes",
+    "add-note": "Add note",
+    "edit-note": "Edit note",
+    "update-note": "Save note"
+  },
+  "navigation": {
+    "intro": "This book remembers where you stopped reading. You can view Table of Contents anytime by clicking the bottom bar.",
+    "start": "Open first chapter",
+    "return": "Return back",
+    "continueReading": "Continue reading",
+    "continue": "Continue here",
+    "chapter": "Chapter",
+    "sentence": "Sentence",
+    "percent-sign": "%",
+    "prev-chapter": "Previous chapter",
+    "next-chapter": "Next chapter",
+    "seqReturnAnotherChapter": "You read up to <1>sentence #{{idea}}</1> in <3>{{chapter}}</3>.",
+    "seqReturnThisChapter": "You read up to <2>sentence #{{idea}}</2> in this chapter.",
+    "go": "Go",
+    "toc": "Table of Contents"
+  }
+}

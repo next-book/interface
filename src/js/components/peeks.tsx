@@ -46,7 +46,7 @@ export class Peeks extends React.Component<IProps> {
 
   render() {
     return (
-      <div id="peeks">
+      <div className="peeks ui-target">
         {this.props.peeks.map((peek, index) => (
           <Peek
             key={index}
@@ -78,7 +78,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Peeks);
+export default connect(mapStateToProps, mapDispatchToProps)(Peeks);

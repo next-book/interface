@@ -1,5 +1,7 @@
 .begin-nav,
 .end-nav {
+  padding: var(--base-padding);
+
   ul,
   li {
     display: block;
@@ -15,14 +17,25 @@
   a[rel='prev'],
   a[rel='next'] {
     display: block;
-    color: inherit;
-    opacity: 0.7;
-    text-decoration: none;
   }
 
   a[rel='next'] {
-    text-align: right;
-    padding: 2rem 0;
+    padding-top: 5vh;
+    padding-bottom: 5vh;
+  }
+}
+
+body.paginated {
+  .begin-nav,
+  .end-nav {
+    a[rel='prev'],
+    a[rel='next'] {
+      text-indent: -9999px;
+    }
+
+    a[rel='next'] {
+      padding-bottom: 80vh;
+    }
   }
 }
 
@@ -33,10 +46,29 @@
 
 .seq-return-wrapper {
   position: fixed;
-  bottom: 1.7rem;
-  right: 0.7rem;
-  max-width: 20rem;
+  bottom: calc(2 * var(--base-padding));
+  right: var(--base-padding);
+  max-width: calc(100vw - 2 * var(--base-padding));
   animation: slide-up 0.2s ease-out;
+  z-index: map-get($z-indexes, 'annotations') + 30;
+  min-height: 36px;
+
+  .seq-return-toggle {
+    font-family: var(--ui-font);
+    display: block;
+    min-width: 24px;
+    height: 24px;
+    line-height: 24px;
+    color: #aaa;
+    text-align: center;
+    float: right;
+    padding: 6px;
+    cursor: pointer;
+
+    &:hover {
+      color: #666;
+    }
+  }
 
   .seq-return {
     margin: 0 auto;
@@ -55,6 +87,7 @@
     font-size: 0.875rem;
     padding: 0.7rem;
     margin: 0;
+    line-height: 1.4;
   }
 
   .seq-buttons {
@@ -77,45 +110,109 @@
   }
 }
 
-@media screen and (max-width: 500px) {
-  .seq-return-wrapper {
-    left: 0.7rem;
-  }
+.content .wrapper {
+  will-change: transform;
 }
 
 body.paginated-back,
 body.paginated-forward {
-  &::after {
-    content: '>';
+  .content {
+    overflow: hidden;
 
-    display: block;
-    opacity: 0;
-    width: 20vw;
-
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-
-    color: rgba(255, 255, 255, 0.6);
-    background: rgba(0, 0, 0, 0.2);
-    line-height: 100vh;
-    font-size: 20vw;
-    text-align: center;
-    animation: pagination-bar-fade 0.2s ease-in;
+    .wrapper {
+      animation: forward 0.2s ease-out;
+    }
   }
 }
 
-body.paginated-back::after {
-  content: '<';
-  left: 0;
-  right: auto;
+body.paginated-button-back {
+  .content .wrapper {
+    animation: back 0.2s ease-out;
+  }
+}
+
+body.paginated-button-back,
+body.paginated-button-forward {
+  &::before,
+  &::after {
+    font-family: monospace;
+    content: '>';
+
+    display: block;
+    overflow: hidden;
+    opacity: 0;
+    width: calc(24px + 5vw);
+    padding: 0;
+    z-index: map-get($z-indexes, 'pagination');
+
+    position: fixed;
+    top: 25vh;
+    right: 0;
+    height: 50vh;
+
+    border: solid rgba(0, 0, 0, 0.2);
+    border-width: 2px;
+    color: rgba(0, 0, 0, 0.1);
+    line-height: 60vh;
+    font-size: 5vw;
+    text-align: center;
+    animation: pagination-bar-fade 0.2s ease-in-out;
+    border-radius: 10px 0 0 10px;
+  }
+
+  &::after {
+    content: '>';
+    left: 0;
+    right: auto;
+    border-radius: 0 10px 10px 0;
+  }
+}
+
+body.paginated-button-back {
+  &::before,
+  &::after {
+    top: 2vh;
+    height: 18vh;
+    line-height: 20vh;
+
+    content: '<';
+  }
+
+  &::after {
+    content: '<';
+    left: 0;
+    right: auto;
+    border-radius: 0 10px 10px 0;
+  }
+}
+
+@keyframes forward {
+  0% {
+    transform: translateX(3px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes back {
+  0% {
+    transform: translateX(-3px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 @keyframes pagination-bar-fade {
   0% {
     display: block;
-    opacity: 1;
+    opacity: 0;
+  }
+
+  20% {
+    display: block;
+    opacity: 0.5;
   }
 
   100% {
@@ -126,13 +223,26 @@ body.paginated-back::after {
 }
 
 .nb-navigation nav {
-  #catchword-bar {
+  #catchword-top,
+  #catchword-bottom {
     position: fixed;
-    bottom: 0;
     left: 0;
-    height: 4rem;
-    width: 100%;
+    width: 100vw;
+    background: var(--background);
+    box-sizing: border-box;
+  }
 
+  #catchword-top {
+    top: 0;
+    height: 0;
+  }
+
+  #catchword-bottom {
+    bottom: 0;
+    height: 4rem;
+  }
+
+  #catchword-bottom.catchword-bottom--collapsed {
     border-top: 1px solid rgba(100, 100, 100, 0.2);
     background: rgba(0, 0, 0, 0.03);
     background: linear-gradient(
@@ -142,6 +252,27 @@ body.paginated-back::after {
     );
     -webkit-backdrop-filter: blur(0.9px);
     backdrop-filter: blur(0.9px);
+  }
+
+  #catchword-bottom::before {
+    content: ' ';
+
+    display: block;
+    width: 100vw;
+    height: 40px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+
+    border-top: 1px solid rgba(100, 100, 100, 0.2);
+    background: rgba(0, 0, 0, 0.03);
+    background: linear-gradient(to bottom, rgba(200, 200, 200, 0.2) 0%, #eeeeee 100%);
+    -webkit-backdrop-filter: blur(0.9px);
+    backdrop-filter: blur(0.9px);
+  }
+
+  #catchword-bottom.catchword-bottom--collapsed::before {
+    display: none;
   }
 
   .toggleFullScreen {
@@ -172,9 +303,9 @@ body.paginated-back::after {
 
     display: block;
     position: fixed;
-    left: 1vw;
-    width: 98vw;
-    bottom: 1vw;
+    left: var(--base-padding);
+    width: calc(100vw - 2 * var(--base-padding));
+    bottom: -1px;
 
     height: var(--height);
     margin: 0;
@@ -214,9 +345,9 @@ body.paginated-back::after {
       position: absolute;
       height: calc(var(--height) + 2px);
       width: calc(var(--height) + 2px);
-      z-index: 1;
+      z-index: map-get($z-indexes, 'navigation') + 10;
 
-      margin: -2px 0 0 calc(var(--height) * -0.5);
+      margin: -2px 0 0 calc(-1px + var(--height) * -0.5);
       border-radius: var(--height);
       background: rgba(255, 255, 255, 0.5);
       border: 1px solid black;
@@ -276,4 +407,54 @@ body.paginated-back::after {
   .prev {
     display: none;
   }
+}
+
+.goto__current--position {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 12px var(--base-padding);
+  z-index: map-get($z-indexes, 'navigation') + 20;
+
+  border: none;
+  background: transparent;
+
+  display: block;
+  font-size: 12px;
+  font-family: var(--ui-font);
+  text-align: right;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.goto__current--position:hover {
+  opacity: 1;
+}
+
+.goto__navigator {
+  z-index: map-get($z-indexes, 'navigation') + 20;
+}
+
+.goto__navigator__content {
+  display: flex;
+  margin-bottom: 1rem;
+
+  select {
+    max-width: 100%;
+    padding: 0 0.25rem;
+  }
+}
+
+.goto__idea,
+.goto__chapter {
+  display: block;
+  font-family: var(--ui-font);
+  flex-grow: 0;
+  flex-shrink: 1;
+  padding-right: 0.5rem;
+}
+
+.goto__chapter {
+  max-width: 40vw;
 }

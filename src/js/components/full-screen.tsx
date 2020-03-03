@@ -3,18 +3,24 @@ import React from 'react';
 /// <reference path="../types/fscreen.d.ts"/>
 import fscreen from 'fscreen';
 
+import { withTranslation, WithTranslation } from 'react-i18next';
+
+interface IProps extends WithTranslation {}
+
 export interface IState {
   enabled: boolean;
   active: boolean;
 }
 
-const INITIAL_STATE: IState = {
-  enabled: false,
-  active: false,
-};
+class FullScreen extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
 
-export class FullScreen extends React.Component<any, IState> {
-  public state = INITIAL_STATE;
+    this.state = {
+      enabled: false,
+      active: false,
+    };
+  }
 
   componentDidMount() {
     if (fscreen.fullscreenEnabled) {
@@ -39,8 +45,10 @@ export class FullScreen extends React.Component<any, IState> {
         className={`toggleFullScreen ${this.state.active ? 'active' : ''}`}
         onClick={this.toggleFullScreen}
       >
-        Toggle Full Screen View
+        {this.props.t('toggle-full-screen')}
       </a>
     );
   }
 }
+
+export default withTranslation('common')(FullScreen);

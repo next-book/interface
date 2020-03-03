@@ -5,8 +5,13 @@ import { IState as ICombinedState } from '../reducer';
 import { throttle } from 'lodash';
 import keycode from 'keycode';
 
+import { withTranslation, WithTranslation } from 'react-i18next';
+
+import { getChapterNum } from '../shared';
+import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
+import GoTo from './go-to';
 import { CatchWord } from './catch-word';
 import { SeqReturn } from './seq-return';
 import { reducer, IPosition, INavDocument, IConfig } from './navigation-reducer';
@@ -15,7 +20,17 @@ import { reducer as peeksReducer, IPeek } from './peeks-reducer';
 
 import Toc from './toc';
 
-export interface IProps {
+export enum Direction {
+  Back = 'back',
+  Forward = 'forward',
+}
+
+enum Position {
+  Bottom = 'bottom',
+  Top = 'top',
+}
+
+export interface IProps extends WithTranslation {
   manifest: IManifest;
   config: IConfig;
   scrollRatio: number;
@@ -29,9 +44,30 @@ export interface IProps {
   addPeek(peek: IPeek): void;
 }
 
-export class Navigation extends React.Component<IProps> {
+export interface IState {
+  barHeight: IPosDouble | null;
+  windowHeight: number | null;
+  zonePadding: IPosDouble;
+  readingZone: IPosDouble;
+  lastScrollStart: number | null;
+}
+
+export type IPosDouble = {
+  [Position.Top]: number;
+  [Position.Bottom]: number;
+};
+
+export class Navigation extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
+
+    this.state = {
+      barHeight: null,
+      windowHeight: null,
+      zonePadding: { [Position.Top]: 12, [Position.Bottom]: 8 * 6 },
+      readingZone: { [Position.Top]: 0, [Position.Bottom]: 0 },
+      lastScrollStart: null,
+    };
   }
 
   private isChapter = getChapterNum() !== null;
@@ -43,7 +79,13 @@ export class Navigation extends React.Component<IProps> {
 
     const sequential =
       resetSequence ||
-      checkSequence(this.props.sequentialPosition, { idea, chapterNum }, this.props.sequential);
+      checkSequence(
+        this.props.sequentialPosition,
+        { idea, chapterNum },
+        this.props.sequential,
+        this.getScrollStep,
+        this.props.readingOrder[chapterNum - 1] ? this.props.readingOrder[chapterNum - 1].ideas : 0
+      );
 
     this.props.setPosition(chapterNum, idea, sequential);
 
@@ -54,28 +96,68 @@ export class Navigation extends React.Component<IProps> {
     this.props.setScrollRatio(getScrollRatio());
   };
 
+  collapseBars = () => {
+    if (this.state.barHeight === null) return;
+    const ms = new Date().getTime();
+
+    if (this.state.lastScrollStart === null) {
+      this.setState({ ...this.state, lastScrollStart: ms });
+      return;
+    }
+
+    if (ms - this.state.lastScrollStart < 150) return;
+
+    if (ms - this.state.lastScrollStart < 250) {
+      this.setState({ ...this.state, barHeight: null, lastScrollStart: null });
+      return;
+    }
+
+    this.setState({ ...this.state, lastScrollStart: null });
+  };
+
+  displayPaginated = () => {
+    this.collapseBars();
+
+    if (this.state.barHeight !== null) document.body.classList.add('paginated');
+    else document.body.classList.remove('paginated');
+  };
+
   getScrollHandler = () => {
     const t1 = throttle(this.setPosition, 500, { leading: false });
     const t2 = throttle(this.setScrollRatio, 100, { leading: true });
+    const t3 = throttle(this.displayPaginated, 100, { leading: true });
 
     return function throttled() {
       t1();
       t2();
+      t3();
     };
   };
 
   handleKeyboardNav = (event: KeyboardEvent) => {
     if (this.props.position === null) return;
+    if (document.activeElement !== document.body || document.activeElement === null) return;
 
     const chapter = this.props.readingOrder[this.props.position.chapterNum];
 
     switch (keycode(event)) {
       case 'left':
-        return moveBackward(event, chapter.prev);
+        return this.goBack(event, chapter.prev, false);
       case 'right':
-        return moveForward(event, chapter.next);
+        return this.goForward(event, chapter.next, false);
       default:
         return;
+    }
+  };
+
+  handleSwipeNav = (event: TouchEvent, dir: Direction) => {
+    if (this.props.position === null) return;
+    const chapter = this.props.readingOrder[this.props.position.chapterNum];
+
+    if (dir === Direction.Forward) {
+      this.goForward(event, chapter.next, false);
+    } else if (dir === Direction.Back) {
+      this.goBack(event, chapter.prev, false);
     }
   };
 
@@ -90,21 +172,96 @@ export class Navigation extends React.Component<IProps> {
       target.tagName != 'BUTTON' &&
       target.tagName != 'INPUT' &&
       target.tagName != 'LABEL' &&
+      !target.classList.contains('ui-target') &&
       target.closest('A') === null &&
-      target.closest('LABEL') === null
+      target.closest('LABEL') === null &&
+      target.closest('.ui-target') === null
     ) {
-      if (event.clientX < window.innerWidth / 5) {
-        return moveBackward(event, chapter.prev);
-      } else if (event.clientX > (window.innerWidth / 5) * 4) {
-        return moveForward(event, chapter.next);
+      if (isInPaginationRect(Direction.Back, event.clientX, event.clientY)) {
+        return this.goBack(event, chapter.prev);
+      } else if (isInPaginationRect(Direction.Forward, event.clientX, event.clientY)) {
+        return this.goForward(event, chapter.next);
       }
     }
   };
 
+  setSizes = () => {
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+
+    this.setState(
+      {
+        ...this.state,
+        windowHeight,
+        readingZone: {
+          [Position.Top]: this.state.zonePadding[Position.Top],
+          [Position.Bottom]: windowHeight - this.state.zonePadding[Position.Bottom],
+        },
+      },
+      this.setPaddings
+    );
+  };
+
+  goForward = (
+    event: MouseEvent | TouchEvent | KeyboardEvent,
+    nextChapter: string | null,
+    showButtons?: boolean
+  ) => {
+    event.preventDefault();
+
+    if (!isPageScrolledToBottom()) {
+      pageForward(nextChapter, this.getScrollStep(), showButtons);
+      this.setPaddings();
+    } else if (nextChapter) window.location.assign(`${nextChapter}#chunk1`);
+  };
+
+  goBack = (
+    event: MouseEvent | TouchEvent | KeyboardEvent,
+    prevChapter: string | null,
+    showButtons?: boolean
+  ) => {
+    event.preventDefault();
+
+    if (!isPageScrolledToTop()) {
+      pageBack(prevChapter, this.getScrollStep(), showButtons);
+      this.setPaddings();
+    } else if (prevChapter) window.location.assign(`${prevChapter}#chapter-end`);
+  };
+
+  setPaddings = () => {
+    if (this.state.windowHeight === null) return;
+
+    this.setState({
+      ...this.state,
+      barHeight: {
+        [Position.Top]: calcCutoff(Position.Top, this.state.readingZone),
+        [Position.Bottom]:
+          this.state.windowHeight - calcCutoff(Position.Bottom, this.state.readingZone),
+      },
+    });
+  };
+
+  getScrollStep = (): number | null => {
+    if (this.state.windowHeight === null) return null;
+    return (
+      this.state.windowHeight -
+      this.state.zonePadding[Position.Top] -
+      (this.state.barHeight === null ? 80 : this.state.barHeight[Position.Bottom]) -
+      5
+    );
+  };
+
   showToc = () => {
+    const pos: IPosition =
+      this.props.position !== null
+        ? this.props.position
+        : {
+            idea: 0,
+            chapterNum: 0,
+          };
+
     this.props.addPeek({
-      content: <Toc />,
-      title: 'Table of Contents',
+      content: <Toc idea={pos.idea} chapterNum={pos.chapterNum} />,
+      title: this.props.t('toc'),
       source: 'toc-table',
       showSource: false,
     });
@@ -116,12 +273,18 @@ export class Navigation extends React.Component<IProps> {
       window.document.body.addEventListener('keydown', this.handleKeyboardNav);
     }
     if (this.props.config.invisibleNav) {
-      window.document.addEventListener('click', this.handleInvisibleNav);
+      window.document.addEventListener('mousedown', this.handleInvisibleNav);
     }
+    initSwipeNav(this.handleSwipeNav);
 
     this.props.setReadingOrder(this.props.manifest.documents);
 
+    this.props.setScrollRatio(getScrollRatio());
     this.setPosition();
+
+    window.addEventListener('resize', this.setSizes);
+    this.setSizes();
+    this.setPaddings();
   }
 
   componentWillUnmount() {
@@ -130,7 +293,7 @@ export class Navigation extends React.Component<IProps> {
       window.document.body.removeEventListener('keydown', this.handleKeyboardNav);
     }
     if (this.props.config.invisibleNav) {
-      window.document.body.removeEventListener('click', this.handleInvisibleNav);
+      window.document.body.removeEventListener('mousedown', this.handleInvisibleNav);
     }
   }
 
@@ -146,9 +309,30 @@ export class Navigation extends React.Component<IProps> {
         : false;
     const { totalWords } = ro[ro.length - 1];
 
+    const barHeight = this.state.barHeight;
+
+    const { offset, fraction } =
+      chapter !== null ? getProgress(chapter, totalWords) : { offset: 0, fraction: 0 };
+
+    const progress = offset + fraction * this.props.scrollRatio;
+    const minutesLeftInChapter = chapter ? ((1 - this.props.scrollRatio) * chapter.words) / 240 : 0;
+
     return (
       <nav>
-        <CatchWord actions={{ showToc: this.showToc }} />
+        <CatchWord
+          topBarHeight={barHeight === null ? null : barHeight[Position.Top]}
+          bottomBarHeight={barHeight === null ? null : barHeight[Position.Bottom]}
+          actions={{ showToc: this.showToc }}
+        />
+        {this.props.position && (
+          <GoTo
+            currentChapterNum={this.props.position.chapterNum}
+            currentIdea={this.props.position.idea}
+            readingOrder={this.props.readingOrder}
+            progress={Math.floor(progress)}
+            minutesLeft={Math.floor(minutesLeftInChapter)}
+          />
+        )}
         <NavBar
           isChapter={this.isChapter}
           readingOrder={ro}
@@ -167,82 +351,54 @@ export class Navigation extends React.Component<IProps> {
           setPosition={this.setPosition}
           sequential={this.props.sequential}
           startLink={ro[0].file}
+          t={this.props.t}
         />
       </nav>
     );
   }
 }
 
-function moveForward(event: MouseEvent | TouchEvent | KeyboardEvent, nextChapter: string | null) {
-  event.preventDefault();
+function displayPagination(dir: Direction, showButtons?: boolean) {
+  document.body.classList.add(`paginated-${dir}`);
+  window.setTimeout(() => document.body.classList.remove(`paginated-${dir}`), 300);
 
-  if (!isPageScrolledToBottom()) {
-    displayPagination('forward');
-    window.scrollTo(window.scrollX, window.scrollY + getScrollStep());
-  } else if (nextChapter) window.location.assign(`${nextChapter}#chunk1`);
-}
-
-function displayPagination(dir: 'forward' | 'back') {
-  if (['forward', 'back'].includes(dir)) {
-    document.body.classList.add(`paginated-${dir}`);
-    window.setTimeout(() => document.body.classList.remove(`paginated-${dir}`), 300);
+  if (showButtons !== false) {
+    document.body.classList.add(`paginated-button-${dir}`);
+    window.setTimeout(() => document.body.classList.remove(`paginated-button-${dir}`), 300);
   }
-}
-
-function moveBackward(event: MouseEvent | TouchEvent | KeyboardEvent, prevChapter: string | null) {
-  event.preventDefault();
-
-  if (!isPageScrolledToTop()) {
-    displayPagination('back');
-    window.scrollTo(window.scrollX, window.scrollY - getScrollStep());
-  } else if (prevChapter) window.location.assign(`${prevChapter}#chapter-end`);
 }
 
 function isPageScrolledToBottom() {
   const nextLink = document.querySelector('.end-nav a[rel="next"]');
 
   if (nextLink) {
-    return nextLink.getBoundingClientRect().top - window.innerHeight < -150;
+    return nextLink.getBoundingClientRect().top - window.innerHeight < -50;
   }
 
   return window.innerHeight + Math.ceil(window.scrollY) >= document.body.scrollHeight;
 }
 
-function isPageScrolledToTop() {
+function isPageScrolledToTop(): boolean {
   const prevLink = document.querySelector('.begin-nav a[rel="prev"]');
 
   if (prevLink) {
-    return prevLink.getBoundingClientRect().bottom > -50;
+    return prevLink.getBoundingClientRect().bottom > -80;
   }
 
   return Math.floor(window.scrollY) < 20;
 }
 
-function getScrollStep() {
-  const peeksEl = document.getElementById('peeks');
-  const catchWordEl = document.getElementById('catchword-bar');
-
-  const bottomOffset = Math.max(
-    peeksEl !== null ? peeksEl.offsetHeight + 10 : 0,
-    catchWordEl ? catchWordEl.offsetHeight : 0
-  );
-
-  const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-  return window.innerHeight - bottomOffset - remSize;
-}
-
-function getScrollRatio() {
+function getScrollRatio(): number {
   return window.scrollY / (document.body.scrollHeight - window.innerHeight);
 }
 
-function getChapterNum() {
-  const el = document.querySelector('meta[name="order"]');
-  if (!el) return null;
+export function getProgress(chapter: INavDocument, totalWords: number) {
+  if (!chapter || !totalWords) return { offset: 0, fraction: 0 };
 
-  const content = el.getAttribute('content');
-  const number = content !== null ? parseInt(content, 10) : 0;
-  return number >= 0 ? number : null;
+  const offset = (chapter.offsetWords / totalWords) * 100;
+  const fraction = (chapter.words / totalWords) * 100;
+
+  return { offset, fraction };
 }
 
 function getFirstIdeaShown() {
@@ -261,7 +417,9 @@ function getFirstIdeaShown() {
 function checkSequence(
   pos1: IPosition | null,
   pos2: IPosition | null,
-  wasSequentialBefore: boolean
+  wasSequentialBefore: boolean,
+  getScrollStepCallback: { (): number | null },
+  prevChapterIdeas: number
 ) {
   // no info
   if (pos2 === null) return wasSequentialBefore;
@@ -270,10 +428,13 @@ function checkSequence(
   if (pos1 === null && pos2 !== null) return true;
 
   if (pos1 !== null && pos2 !== null) {
-    const scrollStep = getScrollStep();
+    const scrollStep = getScrollStepCallback() || window.innerHeight * 0.9;
+
     if (wasSequentialBefore) {
       // new chapter
-      if (pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) return true;
+      if (pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) {
+        if (prevChapterIdeas * 0.9 <= pos1.idea) return true;
+      }
 
       // same chapter
       if (pos1.chapterNum === pos2.chapterNum) {
@@ -293,18 +454,16 @@ function checkSequence(
           return wasSequentialBefore;
         }
       }
-    } else {
-      if (pos1.chapterNum === pos2.chapterNum) {
-        // is back on screen
-        const idea1 = document.getElementById(`idea${pos1.idea}`);
+    } else if (pos1.chapterNum === pos2.chapterNum) {
+      // is back on screen
+      const idea1 = document.getElementById(`idea${pos1.idea}`);
 
-        if (idea1 !== null) {
-          const top1 = idea1.getBoundingClientRect().top;
+      if (idea1 !== null) {
+        const top1 = idea1.getBoundingClientRect().top;
 
-          if (top1 > 0 && top1 < scrollStep * 0.75) return true;
-        } else {
-          return wasSequentialBefore;
-        }
+        if (top1 > -5 && top1 < scrollStep * 0.75) return true;
+      } else {
+        return wasSequentialBefore;
       }
     }
   }
@@ -314,6 +473,88 @@ function checkSequence(
 
 function setUriIdea(id: number) {
   window.history.replaceState(undefined, document.title, `#idea${id}`);
+}
+
+function isInPaginationRect(dir: Direction, x: number, y: number) {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+
+  const rectW = w * 0.05 + 24;
+  const margin = 2;
+
+  if ((x > margin && x < margin + rectW) || (x < w - margin && x > w - margin - rectW)) {
+    const backTop = h * 0.02;
+    const backH = h * 0.18;
+
+    const forwardTop = h * 0.25;
+    const forwardH = h * 0.5;
+
+    if (y > forwardTop && y < forwardTop + forwardH)
+      return dir === Direction.Forward ? true : false;
+    else if (y > backTop && y < backTop + backH) return dir === Direction.Back ? true : false;
+  }
+
+  return false;
+}
+
+function calcCutoff(from: Position, readingZone: IPosDouble) {
+  const els = [...document.querySelectorAll('.chunk')].filter(el =>
+    isElementOnTheEdge(el, readingZone[from])
+  );
+
+  if (!els.length) {
+    if (window.scrollY > 30) return readingZone[from];
+    else return from === Position.Top ? 0 : window.innerHeight;
+  }
+
+  const el = els[0];
+
+  const cStyle = window.getComputedStyle(el);
+  const lineHeight = parseInt(cStyle.lineHeight, 10);
+  const rect = el.getBoundingClientRect();
+  let height = rect[from];
+
+  if (from === Position.Top) {
+    height += parseInt(cStyle.paddingTop, 10);
+
+    while (height < readingZone[from]) {
+      height += lineHeight;
+    }
+  } else if (from === Position.Bottom) {
+    while (height > readingZone[from]) {
+      height -= lineHeight;
+    }
+
+    // cut off one-liners to prevent widows
+    //if (remainingHeight <= lineHeight) {
+    //  height -= remainingHeight;
+    //}
+
+    // cut two lines from n+1 long paragraph to prevent orphans
+    //if (remainingHeight + lineHeight >= rect.height) {
+    //  height -= lineHeight;
+    //}
+  }
+
+  return height;
+}
+
+function isElementOnTheEdge(el: Element, edge: number) {
+  var rect = el.getBoundingClientRect();
+
+  return rect.top < edge && rect.bottom > edge;
+}
+
+function pageForward(nextChapter: string | null, step: number | null, showButtons?: boolean) {
+  if (step === null) return;
+  window.scrollTo(window.scrollX, window.scrollY + step);
+  displayPagination(Direction.Forward, showButtons);
+}
+
+function pageBack(prevChapter: string | null, step: number | null, showButtons?: boolean) {
+  if (step === null) return;
+  window.scrollTo(window.scrollX, window.scrollY - step);
+  displayPagination(Direction.Back, showButtons);
 }
 
 const mapStateToProps = (state: ICombinedState) => {
@@ -340,7 +581,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Navigation);
+export default withTranslation('navigation')(
+  connect(mapStateToProps, mapDispatchToProps)(Navigation)
+);

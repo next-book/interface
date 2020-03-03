@@ -1,5 +1,6 @@
 import React from 'react';
 import { INavDocument } from './navigation-reducer';
+import { getProgress } from './navigation';
 
 interface IProps {
   scrollRatio: number;
@@ -36,8 +37,8 @@ interface PointerProps {
 }
 
 function Pointer(props: PointerProps) {
-  const { offset, width } = getChapterPixels(props.chapter, props.totalWords);
-  const left = offset + width * props.scrollRatio;
+  const { offset, fraction } = getProgress(props.chapter, props.totalWords);
+  const left = offset + fraction * props.scrollRatio;
 
   return <li className="pointer" style={{ left: left + '%' }} />;
 }
@@ -48,23 +49,14 @@ interface ChapterProps {
 }
 
 function Chapter(props: ChapterProps) {
-  const { offset, width } = getChapterPixels(props.chapter, props.totalWords);
+  const { offset, fraction } = getProgress(props.chapter, props.totalWords);
 
   return (
     <li
       className="chapter"
-      style={{ left: `${offset}%`, width: `${width}%` }}
+      style={{ left: `${offset}%`, width: `${fraction}%` }}
       data-order={props.chapter.order}
       title={props.chapter.title}
     ></li>
   );
-}
-
-function getChapterPixels(chapter: INavDocument, totalWords: number) {
-  if (!chapter || !totalWords) return { offset: 0, width: 0 };
-
-  const offset = (chapter.offsetWords / totalWords) * 100;
-  const width = (chapter.words / totalWords) * 100;
-
-  return { offset, width };
 }

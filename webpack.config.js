@@ -1,20 +1,21 @@
+const path = require('path');
+
 module.exports = {
   entry: './src/js/standalone.ts',
-  output: {
-    filename: './nb-base.js',
-  },
-  resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.json'],
-  },
   module: {
     rules: [
       {
-        test: /\.(js|tsx|ts)$/,
+        test: /\.tsx?$/,
+        use: 'ts-loader',
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
       },
     ],
+  },
+  resolve: {
+    extensions: [ '.tsx', '.ts', '.js' ],
+  },
+  output: {
+    filename: 'nb-base.js',
+    path: path.resolve(__dirname, 'dist'),
   },
 };
