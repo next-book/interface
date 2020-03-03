@@ -251,15 +251,20 @@ export class Navigation extends React.Component<IProps, IState> {
   };
 
   showToc = () => {
-    if (this.props.position !== null)
-      this.props.addPeek({
-        content: (
-          <Toc idea={this.props.position.idea} chapterNum={this.props.position.chapterNum} />
-        ),
-        title: this.props.t('toc'),
-        source: 'toc-table',
-        showSource: false,
-      });
+    const pos: IPosition =
+      this.props.position !== null
+        ? this.props.position
+        : {
+            idea: 0,
+            chapterNum: 0,
+          };
+
+    this.props.addPeek({
+      content: <Toc idea={pos.idea} chapterNum={pos.chapterNum} />,
+      title: this.props.t('toc'),
+      source: 'toc-table',
+      showSource: false,
+    });
   };
 
   componentDidMount() {
