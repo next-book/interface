@@ -9,32 +9,8 @@
   --base-padding: 1rem;
   --highlight-color: rgba(255, 255, 0, 1);
 
-  --base-font-size: 20px;
+  --base-font-size: 18px;
   font-size: var(--base-font-size);
-}
-
-@media only screen and (max-width: 990px) {
-  :root {
-    --base-font-size: 2.5vw;
-  }
-}
-
-@media only screen and (max-width: 650px) {
-  :root {
-    --base-font-size: 3.5vw;
-  }
-}
-
-@media only screen and (max-width: 500px) {
-  :root {
-    --base-font-size: 4.5vw;
-  }
-}
-
-@media only screen and (max-width: 360px) {
-  :root {
-    --base-font-size: 5.5vw;
-  }
 }
 
 body {
