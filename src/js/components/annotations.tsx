@@ -36,11 +36,19 @@ export class Annotations extends React.Component<IProps, ILocalState> {
     };
   }
 
-  private selectAnnotation = (id: number) => {
+  private selectAnnotation = (id: number, focus?: boolean) => {
     this.setState({
       ...this.state,
       selectedAnnotation: id,
     });
+
+    /* TODO: Find a better way */
+    if (focus) {
+      window.setTimeout(() => {
+        const el = document.querySelector('.annotation-detail__note');
+        if (el !== null) (el as any).focus();
+      }, 100);
+    }
   };
 
   private deselectAnnotation = () => {
