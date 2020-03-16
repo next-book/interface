@@ -21,6 +21,7 @@ export interface IConfig {
 export interface IPosition {
   chapterNum: number;
   idea: number;
+  chapterEnd: boolean;
 }
 
 export interface INavDocument extends IDocument {
@@ -57,9 +58,13 @@ export function reducer(state: IState = INITIAL_STATE, action: any) {
 
 function setPosition(
   state: IState,
-  payload: { chapterNum: number; idea: number; sequential: boolean }
+  payload: { chapterNum: number; idea: number; chapterEnd: boolean; sequential: boolean }
 ) {
-  const position = { chapterNum: payload.chapterNum, idea: payload.idea };
+  const position = {
+    chapterNum: payload.chapterNum,
+    idea: payload.idea,
+    chapterEnd: payload.chapterEnd,
+  };
 
   return {
     ...state,
@@ -106,10 +111,15 @@ reducer.setScrollRatio = function(scrollRatio: number) {
   };
 };
 
-reducer.setPosition = function(chapterNum: number, idea: number, sequential: boolean) {
+reducer.setPosition = function(
+  chapterNum: number,
+  idea: number,
+  chapterEnd: boolean,
+  sequential: boolean
+) {
   return {
     type: SET_POSITION,
-    payload: { chapterNum, idea, sequential },
+    payload: { chapterNum, idea, chapterEnd, sequential },
   };
 };
 

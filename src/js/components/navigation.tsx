@@ -38,7 +38,7 @@ export interface IProps extends WithTranslation {
   sequentialPosition: IPosition | null;
   readingOrder: INavDocument[];
   sequential: boolean;
-  setPosition(chapterNum: number, idea: number, sequential: boolean): void;
+  setPosition(chapterNum: number, idea: number, chapterEnd: boolean, sequential: boolean): void;
   setScrollRatio(scrollRatio: number): void;
   setReadingOrder(documents: IDocument[]): void;
   addPeek(peek: IPeek): void;
@@ -75,19 +75,21 @@ export class Navigation extends React.Component<IProps, IState> {
   setPosition = (resetSequence?: boolean) => {
     const idea = getFirstIdeaShown();
     const chapterNum = getChapterNum();
+    const chapterEnd = isPageScrolledToBottom();
     if (chapterNum === null || idea === null) return;
 
     const sequential =
       resetSequence ||
       checkSequence(
         this.props.sequentialPosition,
-        { idea, chapterNum },
+        { idea, chapterNum, chapterEnd },
         this.props.sequential,
         this.getScrollStep,
         this.props.readingOrder[chapterNum - 1] ? this.props.readingOrder[chapterNum - 1].ideas : 0
       );
 
-    this.props.setPosition(chapterNum, idea, sequential);
+    this.props.setPosition(chapterNum, idea, chapterEnd, sequential);
+    console.log(this.props.position);
 
     setUriIdea(idea);
   };
@@ -257,6 +259,7 @@ export class Navigation extends React.Component<IProps, IState> {
         : {
             idea: 0,
             chapterNum: 0,
+            chapterEnd: false,
           };
 
     this.props.addPeek({
@@ -432,9 +435,7 @@ function checkSequence(
 
     if (wasSequentialBefore) {
       // new chapter
-      if (pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) {
-        if (prevChapterIdeas * 0.9 <= pos1.idea) return true;
-      }
+      if (pos1.chapterEnd && pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) return true;
 
       // same chapter
       if (pos1.chapterNum === pos2.chapterNum) {
