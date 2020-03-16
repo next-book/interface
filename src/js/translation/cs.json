@@ -21,6 +21,7 @@
     "continue": "Pokračovat odtud",
     "chapter": "Kapitola",
     "sentence": "Věta",
+    "nthSentence": "{{number, ordinal}} věta",
     "percent-sign": " %",
     "prev-chapter": "Předchozí kapitola",
     "next-chapter": "Následující kapitola",

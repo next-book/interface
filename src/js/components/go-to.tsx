@@ -103,7 +103,7 @@ class GoTo extends React.Component<IProps, IState> {
                     >
                       {ideaIds.map(i => (
                         <option key={i} value={i}>
-                          {i}
+                          {this.props.t('nthSentence', { number: i })}
                         </option>
                       ))}
                     </select>
