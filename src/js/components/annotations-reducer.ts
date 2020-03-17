@@ -117,7 +117,6 @@ function destroyNote(state: IState, payload: INote) {
   const note = { ...payload };
 
   const newState = { ...state };
-  console.log(newState);
   delete newState[note.chapterNum].notes[note.id];
 
   return newState;
@@ -164,7 +163,6 @@ function destroyAnnotation(state: IState, payload: IAnnotationAndIdeas) {
 
   newState[annotation.chapterNum].ideas = ideas;
 
-  console.log(newState);
   return newState;
 }
 
