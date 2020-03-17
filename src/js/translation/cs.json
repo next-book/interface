@@ -23,6 +23,7 @@
     "sentence": "Věta",
     "nthSentence": "{{number, ordinal}} věta",
     "percent-sign": " %",
+    "minutes-left": "{{minutes}} min",
     "prev-chapter": "Předchozí kapitola",
     "next-chapter": "Následující kapitola",
     "seqReturnAnotherChapter": "Dočetli jste po <1>{{idea}}. větu</1> v kapitole <3>{{chapter}}</3>.",

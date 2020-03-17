@@ -23,6 +23,7 @@
     "sentence": "Sentence",
     "nthSentence": "{{number, ordinal}} sentence",
     "percent-sign": "%",
+    "minutes-left": "{{minutes}} min",
     "prev-chapter": "Previous chapter",
     "next-chapter": "Next chapter",
     "seqReturnAnotherChapter": "You read up to <1>sentence #{{idea}}</1> in <3>{{chapter}}</3>.",

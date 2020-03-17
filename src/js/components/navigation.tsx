@@ -89,7 +89,6 @@ export class Navigation extends React.Component<IProps, IState> {
       );
 
     this.props.setPosition(chapterNum, idea, chapterEnd, sequential);
-    console.log(this.props.position);
 
     setUriIdea(idea);
   };
@@ -318,7 +317,9 @@ export class Navigation extends React.Component<IProps, IState> {
       chapter !== null ? getProgress(chapter, totalWords) : { offset: 0, fraction: 0 };
 
     const progress = offset + fraction * this.props.scrollRatio;
-    const minutesLeftInChapter = chapter ? ((1 - this.props.scrollRatio) * chapter.words) / 240 : 0;
+    const minutesLeftInChapter = chapter
+      ? countMinutesLeft(this.props.scrollRatio, chapter.words)
+      : null;
 
     return (
       <nav>
@@ -333,7 +334,7 @@ export class Navigation extends React.Component<IProps, IState> {
             currentIdea={this.props.position.idea}
             readingOrder={this.props.readingOrder}
             progress={Math.floor(progress)}
-            minutesLeft={Math.floor(minutesLeftInChapter)}
+            minutesLeft={minutesLeftInChapter}
           />
         )}
         <NavBar
@@ -359,6 +360,12 @@ export class Navigation extends React.Component<IProps, IState> {
       </nav>
     );
   }
+}
+
+function countMinutesLeft(scrollRatio: number, wordsInChapter: number) {
+  const wordsPerMinute = 240;
+  const left = ((1 - scrollRatio) * wordsInChapter) / wordsPerMinute;
+  return left > 0 ? Math.floor(left) : 0;
 }
 
 function displayPagination(dir: Direction, showButtons?: boolean) {
