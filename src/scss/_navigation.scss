@@ -188,7 +188,7 @@ body.paginated-button-back {
 
 @keyframes forward {
   0% {
-    transform: translateX(3px);
+    transform: translateX(10px);
   }
   100% {
     transform: translateX(0);
@@ -197,7 +197,7 @@ body.paginated-button-back {
 
 @keyframes back {
   0% {
-    transform: translateX(-3px);
+    transform: translateX(-10px);
   }
   100% {
     transform: translateX(0);
