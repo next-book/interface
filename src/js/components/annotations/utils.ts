@@ -1,4 +1,4 @@
-import { IAnnotation, IAnnotations, IIdeas, IStyle, IIdeaRange } from './annotations-reducer';
+import { IAnnotation, IAnnotations, IIdeas, IStyle, IIdeaRange } from './reducer';
 
 type IHighlightFn = (selection: Selection, range: Range) => IAnnotation | null;
 type IRangeCheckFn = (range: Range) => boolean;

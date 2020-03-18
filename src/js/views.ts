@@ -1,5 +1,5 @@
 import React from 'react';
-import annotations from './components/annotations';
+import annotations from './components/annotations/index';
 import navigation from './components/navigation';
 import position from './components/position';
 import manifest from './components/manifest';

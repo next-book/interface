@@ -7,7 +7,7 @@ import {
   INote,
   INotes,
   IStyle,
-} from './annotations-reducer';
+} from './reducer';
 import {
   getAnnotatedIdeas,
   isRangeWithoutOverlap,
@@ -19,8 +19,8 @@ import {
   getRangeBounds,
   getIdeaRanges,
   highlightRange,
-} from './annotation-utils';
-import AnnotationDesk from './annotation-desk';
+} from './utils';
+import AnnotationDesk from './desk';
 enum Controls {
   Add,
   Edit,
@@ -111,7 +111,6 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
   };
 
   private showControlsIfRangeIsOkay = () => {
-
     if (isRangeWithoutOverlap()) {
       this.showControls(Controls.Add);
     } else if (doesRangeOverlap()) {

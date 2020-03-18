@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import {
   reducer as annotations,
   IState as IAnnotationsState,
-} from './components/annotations-reducer';
+} from './components/annotations/reducer';
 import { reducer as position, IState as IPositionState } from './components/position-reducer';
 import { reducer as manifest, IState as IManifestState } from './components/manifest-reducer';
 import { reducer as peeks, IState as IPeeksState } from './components/peeks-reducer';

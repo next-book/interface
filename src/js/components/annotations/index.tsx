@@ -1,13 +1,13 @@
 import React from 'react';
-import { reducer, IState, IAnnotation, IAnnotationAndIdeas, INote } from './annotations-reducer';
-import AnnotationControl from './annotation-control';
-import AnnotationDetail from './annotation-detail';
-import { IState as ICombinedState } from '../reducer';
+import { reducer, IState, IAnnotation, IAnnotationAndIdeas, INote } from './reducer';
+import AnnotationControl from './control';
+import AnnotationDetail from './detail';
+import { IState as ICombinedState } from '../../reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { getAnnotatedIdeas, removeAnnotation } from './annotation-utils';
+import { getAnnotatedIdeas, removeAnnotation } from './utils';
 
-import { getChapterNum } from '../shared';
+import { getChapterNum } from '../../shared';
 
 interface IProps {
   annotations: IState;

@@ -1,8 +1,8 @@
 import React from 'react';
 import ContentEditable from 'react-contenteditable';
 import { ContentEditableEvent } from 'react-contenteditable';
-import { IAnnotation, IAnnotations, IIdeas, INote, INotes } from './annotations-reducer';
-import AnnotationNote from './annotation-note';
+import { IAnnotation, IAnnotations, IIdeas, INote, INotes } from './reducer';
+import AnnotationNote from './note';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
 interface IProps extends WithTranslation {
