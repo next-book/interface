@@ -138,7 +138,7 @@
   white-space: nowrap;
 }
 
-#catchword-bottom::before {
+#pagination__bottom::before {
   content: ' ';
 
   display: block;
@@ -155,7 +155,7 @@
   backdrop-filter: blur(0.9px);
 }
 
-#catchword-bottom.catchword-bottom--collapsed::before {
+#pagination__bottom.pagination__bottom--collapsed::before {
   display: none;
 }
 

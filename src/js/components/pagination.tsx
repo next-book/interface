@@ -27,7 +27,7 @@ export interface IState {
   lastScrollStart: number | null;
 }
 
-export class CatchWord extends React.Component<IProps, IState> {
+export class Pagination extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
@@ -129,19 +129,19 @@ export class CatchWord extends React.Component<IProps, IState> {
     return this.state.barHeight ? (
       <>
         <div
-          id="catchword-bottom"
+          id="pagination__bottom"
           style={
             this.state.barHeight[Side.Bottom]
               ? { height: `${this.state.barHeight[Side.Bottom]}px` }
               : {}
           }
           className={
-            this.state.barHeight[Side.Bottom] === null ? 'catchword-bottom--collapsed' : ''
+            this.state.barHeight[Side.Bottom] === null ? 'pagination__bottom--collapsed' : ''
           }
           onClick={this.props.actions.showToc}
         />
         <div
-          id="catchword-top"
+          id="pagination__top"
           style={
             this.state.barHeight[Side.Top]
               ? { height: `${this.state.barHeight[Side.Top]}px` }

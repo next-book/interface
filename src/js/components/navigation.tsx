@@ -12,7 +12,7 @@ import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
 import GoTo from './go-to';
-import { CatchWord } from './catch-word';
+import { Pagination } from './pagination';
 import { Sequential } from './seq-return';
 import { reducer, IPosition, INavDocument, IConfig } from './position-reducer';
 import { IState as IManifest, IDocument } from './manifest-reducer';
@@ -141,15 +141,12 @@ export class Navigation extends React.Component<IProps> {
   };
 
   showToc = () => {
-    const pos: IPosition =
-      this.props.position !== null
-        ? this.props.position
-        : {
-            idea: 0,
-            chapterNum: 0,
-            chapterStart: true,
-            chapterEnd: false,
-          };
+    const pos: IPosition = this.props.position || {
+      idea: 0,
+      chapterNum: 0,
+      chapterStart: true,
+      chapterEnd: false,
+    };
 
     // TODO: Rewrite without peeks
     this.props.addPeek({
@@ -204,7 +201,7 @@ export class Navigation extends React.Component<IProps> {
 
     return (
       <nav>
-        <CatchWord
+        <Pagination
           setScrollStepGetter={this.setScrollStepGetter}
           setPaddingsSetter={this.setPaddingsSetter}
           actions={{ showToc: this.showToc }}
