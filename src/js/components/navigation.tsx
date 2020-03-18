@@ -38,21 +38,9 @@ export interface IProps extends WithTranslation {
   addPeek(peek: IPeek): void;
 }
 
-export interface IState {
-  getScrollStep(): number | null;
-  setPaddings(): void;
-}
-
-export class Navigation extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-
-    this.state = {
-      getScrollStep: () => null,
-      setPaddings: () => null,
-    };
-  }
-
+export class Navigation extends React.Component<IProps> {
+  private getScrollStep = (): number | null => null;
+  private setPaddings = (): null | void => null;
   private isChapter = getChapterNum() !== null;
 
   setScrollRatio = () => {
@@ -68,11 +56,11 @@ export class Navigation extends React.Component<IProps, IState> {
   };
 
   setScrollStepGetter = (fn: () => number | null) => {
-    this.setState({ ...this.state, getScrollStep: fn });
+    this.getScrollStep = fn;
   };
 
   setPaddingsSetter = (fn: () => void) => {
-    this.setState({ ...this.state, setPaddings: fn });
+    this.setPaddings = fn;
   };
 
   handleKeyboardNav = (event: KeyboardEvent) => {
@@ -134,8 +122,8 @@ export class Navigation extends React.Component<IProps, IState> {
     event.preventDefault();
 
     if (this.props.position === null || !this.props.position.chapterEnd) {
-      pageForward(this.state.getScrollStep(), showButtons);
-      this.state.setPaddings();
+      pageForward(this.getScrollStep(), showButtons);
+      this.setPaddings();
     } else if (nextChapter) window.location.assign(`${nextChapter}#chunk1`);
   };
 
@@ -147,8 +135,8 @@ export class Navigation extends React.Component<IProps, IState> {
     event.preventDefault();
 
     if (this.props.position === null || !this.props.position.chapterStart) {
-      pageBack(this.state.getScrollStep(), showButtons);
-      this.state.setPaddings();
+      pageBack(this.getScrollStep(), showButtons);
+      this.setPaddings();
     } else if (prevChapter) window.location.assign(`${prevChapter}#chapter-end`);
   };
 
