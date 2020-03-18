@@ -5,10 +5,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { debounce } from 'lodash';
 import { IState as ICombinedState } from '../reducer';
+import { Sequential } from './seq-return';
 
 export interface IProps {
   position: IPosition | null;
-  sequential?: boolean;
+  sequential?: Sequential;
   addMoment(moment: IMoment): void;
 }
 
@@ -67,7 +68,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Trace);
+export default connect(mapStateToProps, mapDispatchToProps)(Trace);

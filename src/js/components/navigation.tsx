@@ -13,8 +13,8 @@ import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
 import GoTo from './go-to';
 import { CatchWord } from './catch-word';
-import { SeqReturn } from './seq-return';
-import { reducer, IPosition, INavDocument, IConfig } from './navigation-reducer';
+import { SeqReturn, Sequential } from './seq-return';
+import { reducer, IPosition, INavDocument, IConfig } from './position-reducer';
 import { IState as IManifest, IDocument } from './manifest-reducer';
 import { reducer as peeksReducer, IPeek } from './peeks-reducer';
 
@@ -37,8 +37,8 @@ export interface IProps extends WithTranslation {
   position: IPosition | null;
   sequentialPosition: IPosition | null;
   readingOrder: INavDocument[];
-  sequential: boolean;
-  setPosition(chapterNum: number, idea: number, chapterEnd: boolean, sequential: boolean): void;
+  sequential: Sequential;
+  setPosition(chapterNum: number, idea: number, chapterEnd: boolean, sequential: Sequential): void;
   setScrollRatio(scrollRatio: number): void;
   setReadingOrder(documents: IDocument[]): void;
   addPeek(peek: IPeek): void;
@@ -78,15 +78,15 @@ export class Navigation extends React.Component<IProps, IState> {
     const chapterEnd = isPageScrolledToBottom();
     if (chapterNum === null || idea === null) return;
 
-    const sequential =
-      resetSequence ||
-      checkSequence(
-        this.props.sequentialPosition,
-        { idea, chapterNum, chapterEnd },
-        this.props.sequential,
-        this.getScrollStep,
-        this.props.readingOrder[chapterNum - 1] ? this.props.readingOrder[chapterNum - 1].ideas : 0
-      );
+    const sequential = resetSequence
+      ? Sequential.Yes
+      : checkSequence(
+          this.props.sequentialPosition,
+          { idea, chapterNum, chapterEnd },
+          this.props.sequential,
+          this.getScrollStep,
+          true
+        );
 
     this.props.setPosition(chapterNum, idea, chapterEnd, sequential);
 
@@ -424,30 +424,80 @@ function getFirstIdeaShown() {
   return attr !== null ? parseInt(attr, 10) : null;
 }
 
+const sequenceInitializer = (() => {
+  let counter = 0;
+  let lastPos: IPosition | null = null;
+
+  return {
+    same: (pos: IPosition | null, before: Sequential, callback: { (): number | null }) => {
+      console.log('same', before, counter);
+      if (before === Sequential.Initializing) {
+        counter = checkSequence(lastPos, pos, before, callback) ? counter + 1 : 0;
+        return counter > 10 ? Sequential.Yes : Sequential.Initializing;
+      }
+      lastPos = pos;
+      return before;
+    },
+    yes: (pos: IPosition | null, before: Sequential, callback: { (): number | null }) => {
+      console.log('yes', before, counter);
+      if (before === Sequential.Initializing) {
+        if (checkSequence(lastPos, pos, before, callback)) counter++;
+        return counter > 10 ? Sequential.Yes : Sequential.Initializing;
+      }
+      lastPos = pos;
+      return Sequential.Yes;
+    },
+    no: (pos: IPosition | null, before: Sequential, callback: { (): number | null }) => {
+      console.log('no', before, counter);
+
+      if (before === Sequential.Initializing) {
+        counter = checkSequence(lastPos, pos, before, callback) ? counter + 1 : 0;
+        return counter > 10 ? Sequential.Yes : Sequential.Initializing;
+      }
+      lastPos = pos;
+      return Sequential.No;
+    },
+  };
+})();
+
 function checkSequence(
   pos1: IPosition | null,
   pos2: IPosition | null,
-  wasSequentialBefore: boolean,
+  wasSequentialBefore: Sequential,
   getScrollStepCallback: { (): number | null },
-  prevChapterIdeas: number
-) {
+  initCheck?: boolean
+): Sequential {
+  const yes = () =>
+    initCheck
+      ? sequenceInitializer.yes(pos2, wasSequentialBefore, getScrollStepCallback)
+      : Sequential.Yes;
+  const no = () =>
+    initCheck
+      ? sequenceInitializer.no(pos2, wasSequentialBefore, getScrollStepCallback)
+      : Sequential.No;
+  const same = () =>
+    initCheck
+      ? sequenceInitializer.same(pos2, wasSequentialBefore, getScrollStepCallback)
+      : wasSequentialBefore;
+
   // no info
-  if (pos2 === null) return wasSequentialBefore;
+  if (pos2 === null) return same();
 
   // new book
-  if (pos1 === null && pos2 !== null) return true;
+  if (pos1 === null && pos2 !== null) return yes();
 
   if (pos1 !== null && pos2 !== null) {
     const scrollStep = getScrollStepCallback() || window.innerHeight * 0.9;
 
-    if (wasSequentialBefore) {
+    if (wasSequentialBefore === Sequential.Yes) {
       // new chapter
-      if (pos1.chapterEnd && pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) return true;
+      if (pos1.chapterEnd && pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3)
+        return yes();
 
       // same chapter
       if (pos1.chapterNum === pos2.chapterNum) {
         // ~consecutive numbers
-        if (Math.abs(pos2.idea - pos1.idea) < 3) return true;
+        if (Math.abs(pos2.idea - pos1.idea) < 3) return yes();
 
         // 1.5 scrollSteps down or up
         const idea1 = document.getElementById(`idea${pos1.idea}`);
@@ -457,9 +507,9 @@ function checkSequence(
           const top1 = idea1.getBoundingClientRect().top;
           const top2 = idea2.getBoundingClientRect().top;
 
-          if (Math.abs(top2 - top1) < 1.5 * scrollStep) return true;
+          if (Math.abs(top2 - top1) < 1.5 * scrollStep) return yes();
         } else {
-          return wasSequentialBefore;
+          return same();
         }
       }
     } else if (pos1.chapterNum === pos2.chapterNum) {
@@ -469,14 +519,14 @@ function checkSequence(
       if (idea1 !== null) {
         const top1 = idea1.getBoundingClientRect().top;
 
-        if (top1 > -5 && top1 < scrollStep * 0.75) return true;
+        if (top1 > -5 && top1 < scrollStep * 0.75) return yes();
       } else {
-        return wasSequentialBefore;
+        return same();
       }
     }
   }
 
-  return false;
+  return no();
 }
 
 function setUriIdea(id: number) {

@@ -4,10 +4,17 @@ import { IDocument } from './manifest-reducer';
 import { WithT } from 'i18next';
 import { Trans } from 'react-i18next';
 
+export enum Sequential {
+  No = 0,
+  Yes = 1,
+  Initializing = 2,
+  Disabled = 3,
+}
+
 interface IProps extends WithT {
   targetIdea: number | null;
   targetChapter: IDocument | null;
-  sequential: boolean;
+  sequential: Sequential;
   thisChapter: boolean;
   isChapter: boolean;
   setPosition(resetSequence: boolean): void;
@@ -76,7 +83,7 @@ export class SeqReturn extends React.Component<IProps, IState> {
       );
 
     return (
-      (!this.props.sequential || !this.props.isChapter) && (
+      (this.props.sequential === Sequential.No || !this.props.isChapter) && (
         <>
           {readingPosition}
           <div className="seq-buttons">
