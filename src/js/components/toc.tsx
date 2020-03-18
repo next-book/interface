@@ -59,7 +59,7 @@ function Section(props: ISectionProps) {
 
 const mapStateToProps = (state: ICombinedState) => {
   return {
-    readingOrder: state.navigation.readingOrder,
+    readingOrder: state.position.readingOrder,
   };
 };
 

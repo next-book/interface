@@ -1,6 +1,6 @@
 import React from 'react';
 import { reducer, IMoment } from './trace-reducer';
-import { IPosition } from './navigation-reducer';
+import { IPosition } from './position-reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { debounce } from 'lodash';
@@ -54,8 +54,8 @@ export class Trace extends React.Component<IProps> {
 const mapStateToProps = (state: ICombinedState) => {
   return {
     trace: state.trace,
-    position: state.navigation.position,
-    sequential: state.navigation.sequential,
+    position: state.position.position,
+    sequential: state.position.sequential,
   };
 };
 

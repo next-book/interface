@@ -1,7 +1,7 @@
 import React from 'react';
 import { IDocument } from './manifest-reducer';
 
-import { WithT } from 'i18next';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
 
 export enum Sequential {
@@ -11,7 +11,7 @@ export enum Sequential {
   Disabled = 3,
 }
 
-interface IProps extends WithT {
+interface IProps extends WithTranslation {
   targetIdea: number | null;
   targetChapter: IDocument | null;
   sequential: Sequential;
@@ -25,7 +25,7 @@ interface IState {
   collapsed: boolean;
 }
 
-export class SeqReturn extends React.Component<IProps, IState> {
+class SeqReturn extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
@@ -157,3 +157,5 @@ function highlightIdea(id: number) {
     el.classList.remove(className);
   }, 1000);
 }
+
+export default withTranslation('navigation')(SeqReturn);
