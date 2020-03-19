@@ -9,16 +9,6 @@ import SeqReturn from './seq-return';
 import { Sequential } from './seq-return';
 import { reducer, IPosition, INavDocument } from './position-reducer';
 
-export enum Direction {
-  Back = 'back',
-  Forward = 'forward',
-}
-
-enum Side {
-  Bottom = 'bottom',
-  Top = 'top',
-}
-
 export interface IProps {
   readingOrder: INavDocument[];
   position: IPosition | null;
@@ -30,11 +20,6 @@ export interface IProps {
 export interface IState {
   isChapter: boolean;
 }
-
-export type Sides = {
-  [Side.Top]: number;
-  [Side.Bottom]: number;
-};
 
 export class Position extends React.Component<IProps, IState> {
   constructor(props: IProps) {

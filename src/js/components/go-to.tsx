@@ -1,5 +1,5 @@
 import React from 'react';
-import { INavDocument } from './navigation-reducer';
+import { INavDocument } from './position-reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
 interface IProps extends WithTranslation {
