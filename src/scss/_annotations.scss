@@ -4,8 +4,8 @@
   --color: black;
   --highlight: #ffa;
 
-  --color--secondary: navy;
-  --highlight--secondary: #afa;
+  --color--secondary: inherit;
+  --highlight--secondary: #eee;
 
   --color--strong: red;
   --highlight--strong: #aff;
@@ -23,12 +23,18 @@
 .action-button,
 .style-button,
 .symbol-button {
+  display: block;
+  position: relative;
   cursor: pointer;
   tranform-origin: 50% 50%;
   transition: 0.2s ease-in;
   will-change: transform;
   text-align: center;
-  padding: 3px;
+  margin-top: 10px;
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+  font-size: 1.5rem;
   box-sizing: border-box;
   font-family: var(--ui-font);
 
@@ -40,15 +46,13 @@
 .action-button {
   margin-top: 0.6rem;
   border: none;
-  font-size: 1.5rem;
   background: transparent;
 }
 
 .style-button {
-  border: 1px solid;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
   border-radius: 3px;
   color: var(--color);
-  margin-top: 0.6rem;
   background: var(--highlight);
 }
 
@@ -58,6 +62,13 @@
   background: var(--highlight--secondary);
 }
 
+.style-button--secondary::after {
+  content: '📝';
+  position: absolute;
+  right: -1rem;
+  bottom: -1rem;
+}
+
 .annotation--strong,
 .style-button--strong {
   color: var(--color--strong);
@@ -65,17 +76,10 @@
 }
 
 .symbol-button {
-  display: block;
   border: none;
-  font-size: 1.15rem;
   background: white;
   border-radius: 100px;
-  line-height: 2rem;
-  width: 2rem;
-  height: 2rem;
-  padding: 0rem;
-  margin-top: 0.25rem;
-  border: 1px solid #ccc;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
   box-sizing: border-box;
 }
 
@@ -84,7 +88,8 @@
   bottom: 20px;
   left: 0px;
   z-index: map-get($z-indexes, 'annotations') + 1;
-  padding: 10px;
+  padding: var(--base-padding);
+  padding-left: calc(var(--base-padding) / 2);
 
   display: flex;
   flex-direction: column-reverse;
@@ -133,7 +138,7 @@
   white-space: nowrap;
 }
 
-#catchword-bottom::before {
+#pagination__bottom::before {
   content: ' ';
 
   display: block;
@@ -150,17 +155,17 @@
   backdrop-filter: blur(0.9px);
 }
 
-#catchword-bottom.catchword-bottom--collapsed::before {
+#pagination__bottom.pagination__bottom--collapsed::before {
   display: none;
 }
 
 .annotation-detail {
   position: fixed;
-  left: calc(20px + 2rem);
+  left: calc(var(--base-padding) + 2.5rem);
   bottom: 32px;
   z-index: map-get($z-indexes, 'annotations') + 1;
   width: 100vw;
-  max-width: calc(100vw - 35px - 2rem);
+  max-width: calc(100vw - (var(--base-padding) * 1.5) - 2.5rem);
   border-radius: 3px;
   overflow: hidden;
   box-shadow: 0 0.5rem 0.5rem #888;

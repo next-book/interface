@@ -12,9 +12,9 @@ import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
 import GoTo from './go-to';
-import { CatchWord } from './catch-word';
-import { SeqReturn } from './seq-return';
-import { reducer, IPosition, INavDocument, IConfig } from './navigation-reducer';
+import { Pagination } from './pagination';
+import { Sequential } from './seq-return';
+import { reducer, IPosition, INavDocument, IConfig } from './position-reducer';
 import { IState as IManifest, IDocument } from './manifest-reducer';
 import { reducer as peeksReducer, IPeek } from './peeks-reducer';
 
@@ -25,11 +25,6 @@ export enum Direction {
   Forward = 'forward',
 }
 
-enum Position {
-  Bottom = 'bottom',
-  Top = 'top',
-}
-
 export interface IProps extends WithTranslation {
   manifest: IManifest;
   config: IConfig;
@@ -37,134 +32,74 @@ export interface IProps extends WithTranslation {
   position: IPosition | null;
   sequentialPosition: IPosition | null;
   readingOrder: INavDocument[];
-  sequential: boolean;
-  setPosition(chapterNum: number, idea: number, sequential: boolean): void;
+  sequential: Sequential;
   setScrollRatio(scrollRatio: number): void;
   setReadingOrder(documents: IDocument[]): void;
   addPeek(peek: IPeek): void;
 }
 
-export interface IState {
-  barHeight: IPosDouble | null;
-  windowHeight: number | null;
-  zonePadding: IPosDouble;
-  readingZone: IPosDouble;
-  lastScrollStart: number | null;
-}
-
-export type IPosDouble = {
-  [Position.Top]: number;
-  [Position.Bottom]: number;
-};
-
-export class Navigation extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-
-    this.state = {
-      barHeight: null,
-      windowHeight: null,
-      zonePadding: { [Position.Top]: 12, [Position.Bottom]: 8 * 6 },
-      readingZone: { [Position.Top]: 0, [Position.Bottom]: 0 },
-      lastScrollStart: null,
-    };
-  }
-
+export class Navigation extends React.Component<IProps> {
+  private getScrollStep = (): number | null => null;
+  private setPaddings = (): null | void => null;
   private isChapter = getChapterNum() !== null;
-
-  setPosition = (resetSequence?: boolean) => {
-    const idea = getFirstIdeaShown();
-    const chapterNum = getChapterNum();
-    if (chapterNum === null || idea === null) return;
-
-    const sequential =
-      resetSequence ||
-      checkSequence(
-        this.props.sequentialPosition,
-        { idea, chapterNum },
-        this.props.sequential,
-        this.getScrollStep,
-        this.props.readingOrder[chapterNum - 1] ? this.props.readingOrder[chapterNum - 1].ideas : 0
-      );
-
-    this.props.setPosition(chapterNum, idea, sequential);
-
-    setUriIdea(idea);
-  };
 
   setScrollRatio = () => {
     this.props.setScrollRatio(getScrollRatio());
   };
 
-  collapseBars = () => {
-    if (this.state.barHeight === null) return;
-    const ms = new Date().getTime();
-
-    if (this.state.lastScrollStart === null) {
-      this.setState({ ...this.state, lastScrollStart: ms });
-      return;
-    }
-
-    if (ms - this.state.lastScrollStart < 150) return;
-
-    if (ms - this.state.lastScrollStart < 250) {
-      this.setState({ ...this.state, barHeight: null, lastScrollStart: null });
-      return;
-    }
-
-    this.setState({ ...this.state, lastScrollStart: null });
-  };
-
-  displayPaginated = () => {
-    this.collapseBars();
-
-    if (this.state.barHeight !== null) document.body.classList.add('paginated');
-    else document.body.classList.remove('paginated');
-  };
-
   getScrollHandler = () => {
-    const t1 = throttle(this.setPosition, 500, { leading: false });
     const t2 = throttle(this.setScrollRatio, 100, { leading: true });
-    const t3 = throttle(this.displayPaginated, 100, { leading: true });
 
     return function throttled() {
-      t1();
       t2();
-      t3();
     };
   };
 
-  handleKeyboardNav = (event: KeyboardEvent) => {
-    if (this.props.position === null) return;
-    if (document.activeElement !== document.body || document.activeElement === null) return;
+  setScrollStepGetter = (fn: () => number | null) => {
+    this.getScrollStep = fn;
+  };
 
-    const chapter = this.props.readingOrder[this.props.position.chapterNum];
+  setPaddingsSetter = (fn: () => void) => {
+    this.setPaddings = fn;
+  };
+
+  getPrevChapter = () => {
+    if (this.isChapter && this.props.position !== null) {
+      if (this.props.position.chapterNum === 0) {
+        return 'index.html';
+      }
+      return this.props.readingOrder[this.props.position.chapterNum].prev;
+    } else return null;
+  };
+
+  getNextChapter = () => {
+    if (this.isChapter && this.props.position !== null) {
+      return this.props.readingOrder[this.props.position.chapterNum].next;
+    } else return null;
+  };
+
+  handleKeyboardNav = (event: KeyboardEvent) => {
+    if (document.activeElement !== document.body || document.activeElement === null) return;
 
     switch (keycode(event)) {
       case 'left':
-        return this.goBack(event, chapter.prev, false);
+        return this.goBack(event, this.getPrevChapter(), false);
       case 'right':
-        return this.goForward(event, chapter.next, false);
+        return this.goForward(event, this.getNextChapter(), false);
       default:
         return;
     }
   };
 
   handleSwipeNav = (event: TouchEvent, dir: Direction) => {
-    if (this.props.position === null) return;
-    const chapter = this.props.readingOrder[this.props.position.chapterNum];
-
     if (dir === Direction.Forward) {
-      this.goForward(event, chapter.next, false);
+      this.goForward(event, this.getNextChapter(), false);
     } else if (dir === Direction.Back) {
-      this.goBack(event, chapter.prev, false);
+      this.goBack(event, this.getPrevChapter(), false);
     }
   };
 
   handleInvisibleNav = (event: MouseEvent) => {
-    if (this.props.position === null) return;
-
-    const chapter = this.props.readingOrder[this.props.position.chapterNum];
     const target = event.target as HTMLElement;
 
     if (
@@ -178,27 +113,11 @@ export class Navigation extends React.Component<IProps, IState> {
       target.closest('.ui-target') === null
     ) {
       if (isInPaginationRect(Direction.Back, event.clientX, event.clientY)) {
-        return this.goBack(event, chapter.prev);
+        return this.goBack(event, this.getPrevChapter());
       } else if (isInPaginationRect(Direction.Forward, event.clientX, event.clientY)) {
-        return this.goForward(event, chapter.next);
+        return this.goForward(event, this.getNextChapter());
       }
     }
-  };
-
-  setSizes = () => {
-    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-
-    this.setState(
-      {
-        ...this.state,
-        windowHeight,
-        readingZone: {
-          [Position.Top]: this.state.zonePadding[Position.Top],
-          [Position.Bottom]: windowHeight - this.state.zonePadding[Position.Bottom],
-        },
-      },
-      this.setPaddings
-    );
   };
 
   goForward = (
@@ -208,8 +127,8 @@ export class Navigation extends React.Component<IProps, IState> {
   ) => {
     event.preventDefault();
 
-    if (!isPageScrolledToBottom()) {
-      pageForward(nextChapter, this.getScrollStep(), showButtons);
+    if (this.props.position === null || !this.props.position.chapterEnd) {
+      pageForward(this.getScrollStep(), showButtons);
       this.setPaddings();
     } else if (nextChapter) window.location.assign(`${nextChapter}#chunk1`);
   };
@@ -221,44 +140,21 @@ export class Navigation extends React.Component<IProps, IState> {
   ) => {
     event.preventDefault();
 
-    if (!isPageScrolledToTop()) {
-      pageBack(prevChapter, this.getScrollStep(), showButtons);
+    if (this.props.position === null || !this.props.position.chapterStart) {
+      pageBack(this.getScrollStep(), showButtons);
       this.setPaddings();
     } else if (prevChapter) window.location.assign(`${prevChapter}#chapter-end`);
   };
 
-  setPaddings = () => {
-    if (this.state.windowHeight === null) return;
-
-    this.setState({
-      ...this.state,
-      barHeight: {
-        [Position.Top]: calcCutoff(Position.Top, this.state.readingZone),
-        [Position.Bottom]:
-          this.state.windowHeight - calcCutoff(Position.Bottom, this.state.readingZone),
-      },
-    });
-  };
-
-  getScrollStep = (): number | null => {
-    if (this.state.windowHeight === null) return null;
-    return (
-      this.state.windowHeight -
-      this.state.zonePadding[Position.Top] -
-      (this.state.barHeight === null ? 80 : this.state.barHeight[Position.Bottom]) -
-      5
-    );
-  };
-
   showToc = () => {
-    const pos: IPosition =
-      this.props.position !== null
-        ? this.props.position
-        : {
-            idea: 0,
-            chapterNum: 0,
-          };
+    const pos: IPosition = this.props.position || {
+      idea: 0,
+      chapterNum: 0,
+      chapterStart: true,
+      chapterEnd: false,
+    };
 
+    // TODO: Rewrite without peeks
     this.props.addPeek({
       content: <Toc idea={pos.idea} chapterNum={pos.chapterNum} />,
       title: this.props.t('toc'),
@@ -280,11 +176,6 @@ export class Navigation extends React.Component<IProps, IState> {
     this.props.setReadingOrder(this.props.manifest.documents);
 
     this.props.setScrollRatio(getScrollRatio());
-    this.setPosition();
-
-    window.addEventListener('resize', this.setSizes);
-    this.setSizes();
-    this.setPaddings();
   }
 
   componentWillUnmount() {
@@ -303,25 +194,22 @@ export class Navigation extends React.Component<IProps, IState> {
 
     const pos = this.props.position;
     const chapter = pos !== null ? ro[pos.chapterNum] : null;
-    const thisChapter =
-      pos !== null && this.props.sequentialPosition !== null
-        ? this.props.sequentialPosition.chapterNum === pos.chapterNum
-        : false;
-    const { totalWords } = ro[ro.length - 1];
 
-    const barHeight = this.state.barHeight;
+    const { totalWords } = ro[ro.length - 1];
 
     const { offset, fraction } =
       chapter !== null ? getProgress(chapter, totalWords) : { offset: 0, fraction: 0 };
 
     const progress = offset + fraction * this.props.scrollRatio;
-    const minutesLeftInChapter = chapter ? ((1 - this.props.scrollRatio) * chapter.words) / 240 : 0;
+    const minutesLeftInChapter = chapter
+      ? countMinutesLeft(this.props.scrollRatio, chapter.words)
+      : null;
 
     return (
       <nav>
-        <CatchWord
-          topBarHeight={barHeight === null ? null : barHeight[Position.Top]}
-          bottomBarHeight={barHeight === null ? null : barHeight[Position.Bottom]}
+        <Pagination
+          setScrollStepGetter={this.setScrollStepGetter}
+          setPaddingsSetter={this.setPaddingsSetter}
           actions={{ showToc: this.showToc }}
         />
         {this.props.position && (
@@ -330,7 +218,7 @@ export class Navigation extends React.Component<IProps, IState> {
             currentIdea={this.props.position.idea}
             readingOrder={this.props.readingOrder}
             progress={Math.floor(progress)}
-            minutesLeft={Math.floor(minutesLeftInChapter)}
+            minutesLeft={minutesLeftInChapter}
           />
         )}
         <NavBar
@@ -341,21 +229,15 @@ export class Navigation extends React.Component<IProps, IState> {
           totalWords={totalWords}
         />
         {chapter && <TopBar title={this.props.manifest.title} chapter={chapter} />}
-        <SeqReturn
-          isChapter={this.isChapter}
-          thisChapter={thisChapter}
-          targetChapter={
-            this.props.sequentialPosition ? ro[this.props.sequentialPosition.chapterNum] : null
-          }
-          targetIdea={this.props.sequentialPosition ? this.props.sequentialPosition.idea : null}
-          setPosition={this.setPosition}
-          sequential={this.props.sequential}
-          startLink={ro[0].file}
-          t={this.props.t}
-        />
       </nav>
     );
   }
+}
+
+function countMinutesLeft(scrollRatio: number, wordsInChapter: number) {
+  const wordsPerMinute = 240;
+  const left = ((1 - scrollRatio) * wordsInChapter) / wordsPerMinute;
+  return left > 0 ? Math.floor(left) : 0;
 }
 
 function displayPagination(dir: Direction, showButtons?: boolean) {
@@ -366,26 +248,6 @@ function displayPagination(dir: Direction, showButtons?: boolean) {
     document.body.classList.add(`paginated-button-${dir}`);
     window.setTimeout(() => document.body.classList.remove(`paginated-button-${dir}`), 300);
   }
-}
-
-function isPageScrolledToBottom() {
-  const nextLink = document.querySelector('.end-nav a[rel="next"]');
-
-  if (nextLink) {
-    return nextLink.getBoundingClientRect().top - window.innerHeight < -50;
-  }
-
-  return window.innerHeight + Math.ceil(window.scrollY) >= document.body.scrollHeight;
-}
-
-function isPageScrolledToTop(): boolean {
-  const prevLink = document.querySelector('.begin-nav a[rel="prev"]');
-
-  if (prevLink) {
-    return prevLink.getBoundingClientRect().bottom > -80;
-  }
-
-  return Math.floor(window.scrollY) < 20;
 }
 
 function getScrollRatio(): number {
@@ -399,80 +261,6 @@ export function getProgress(chapter: INavDocument, totalWords: number) {
   const fraction = (chapter.words / totalWords) * 100;
 
   return { offset, fraction };
-}
-
-function getFirstIdeaShown() {
-  const ideas = [...document.querySelectorAll('.idea')].map(el => ({
-    el,
-    top: el.getBoundingClientRect().top,
-    bottom: el.getBoundingClientRect().bottom,
-  }));
-  const shown = ideas.filter(el => el.top > 20).sort((el1, el2) => el1.bottom - el2.bottom);
-
-  const idea = shown.length > 0 ? shown[0] : ideas[ideas.length - 1];
-  const attr = idea.el.getAttribute('data-nb-ref-number');
-  return attr !== null ? parseInt(attr, 10) : null;
-}
-
-function checkSequence(
-  pos1: IPosition | null,
-  pos2: IPosition | null,
-  wasSequentialBefore: boolean,
-  getScrollStepCallback: { (): number | null },
-  prevChapterIdeas: number
-) {
-  // no info
-  if (pos2 === null) return wasSequentialBefore;
-
-  // new book
-  if (pos1 === null && pos2 !== null) return true;
-
-  if (pos1 !== null && pos2 !== null) {
-    const scrollStep = getScrollStepCallback() || window.innerHeight * 0.9;
-
-    if (wasSequentialBefore) {
-      // new chapter
-      if (pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3) {
-        if (prevChapterIdeas * 0.9 <= pos1.idea) return true;
-      }
-
-      // same chapter
-      if (pos1.chapterNum === pos2.chapterNum) {
-        // ~consecutive numbers
-        if (Math.abs(pos2.idea - pos1.idea) < 3) return true;
-
-        // 1.5 scrollSteps down or up
-        const idea1 = document.getElementById(`idea${pos1.idea}`);
-        const idea2 = document.getElementById(`idea${pos2.idea}`);
-
-        if (idea1 !== null && idea2 !== null) {
-          const top1 = idea1.getBoundingClientRect().top;
-          const top2 = idea2.getBoundingClientRect().top;
-
-          if (Math.abs(top2 - top1) < 1.5 * scrollStep) return true;
-        } else {
-          return wasSequentialBefore;
-        }
-      }
-    } else if (pos1.chapterNum === pos2.chapterNum) {
-      // is back on screen
-      const idea1 = document.getElementById(`idea${pos1.idea}`);
-
-      if (idea1 !== null) {
-        const top1 = idea1.getBoundingClientRect().top;
-
-        if (top1 > -5 && top1 < scrollStep * 0.75) return true;
-      } else {
-        return wasSequentialBefore;
-      }
-    }
-  }
-
-  return false;
-}
-
-function setUriIdea(id: number) {
-  window.history.replaceState(undefined, document.title, `#idea${id}`);
 }
 
 function isInPaginationRect(dir: Direction, x: number, y: number) {
@@ -497,61 +285,13 @@ function isInPaginationRect(dir: Direction, x: number, y: number) {
   return false;
 }
 
-function calcCutoff(from: Position, readingZone: IPosDouble) {
-  const els = [...document.querySelectorAll('.chunk')].filter(el =>
-    isElementOnTheEdge(el, readingZone[from])
-  );
-
-  if (!els.length) {
-    if (window.scrollY > 30) return readingZone[from];
-    else return from === Position.Top ? 0 : window.innerHeight;
-  }
-
-  const el = els[0];
-
-  const cStyle = window.getComputedStyle(el);
-  const lineHeight = parseInt(cStyle.lineHeight, 10);
-  const rect = el.getBoundingClientRect();
-  let height = rect[from];
-
-  if (from === Position.Top) {
-    height += parseInt(cStyle.paddingTop, 10);
-
-    while (height < readingZone[from]) {
-      height += lineHeight;
-    }
-  } else if (from === Position.Bottom) {
-    while (height > readingZone[from]) {
-      height -= lineHeight;
-    }
-
-    // cut off one-liners to prevent widows
-    //if (remainingHeight <= lineHeight) {
-    //  height -= remainingHeight;
-    //}
-
-    // cut two lines from n+1 long paragraph to prevent orphans
-    //if (remainingHeight + lineHeight >= rect.height) {
-    //  height -= lineHeight;
-    //}
-  }
-
-  return height;
-}
-
-function isElementOnTheEdge(el: Element, edge: number) {
-  var rect = el.getBoundingClientRect();
-
-  return rect.top < edge && rect.bottom > edge;
-}
-
-function pageForward(nextChapter: string | null, step: number | null, showButtons?: boolean) {
+function pageForward(step: number | null, showButtons?: boolean) {
   if (step === null) return;
   window.scrollTo(window.scrollX, window.scrollY + step);
   displayPagination(Direction.Forward, showButtons);
 }
 
-function pageBack(prevChapter: string | null, step: number | null, showButtons?: boolean) {
+function pageBack(step: number | null, showButtons?: boolean) {
   if (step === null) return;
   window.scrollTo(window.scrollX, window.scrollY - step);
   displayPagination(Direction.Back, showButtons);
@@ -559,12 +299,12 @@ function pageBack(prevChapter: string | null, step: number | null, showButtons?:
 
 const mapStateToProps = (state: ICombinedState) => {
   return {
-    config: state.navigation.config,
-    readingOrder: state.navigation.readingOrder,
-    position: state.navigation.position,
-    scrollRatio: state.navigation.scrollRatio,
-    sequential: state.navigation.sequential,
-    sequentialPosition: state.navigation.sequentialPosition,
+    config: state.position.config,
+    readingOrder: state.position.readingOrder,
+    position: state.position.position,
+    scrollRatio: state.position.scrollRatio,
+    sequential: state.position.sequential,
+    sequentialPosition: state.position.sequentialPosition,
     manifest: state.manifest,
   };
 };
@@ -573,7 +313,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       addPeek: peeksReducer.addPeek,
-      setPosition: reducer.setPosition,
       setScrollRatio: reducer.setScrollRatio,
       setReadingOrder: reducer.setReadingOrder,
     },

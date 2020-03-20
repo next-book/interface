@@ -13,6 +13,7 @@
     "update-note": "Uložit poznámku"
   },
   "navigation": {
+    "title-page": "Titulní stránka",
     "intro": "Tato kniha si pamatuje, kam jste ji dočetli. Pro zobrazení obsahu knihy můžete kliknout na spodní lištu.",
     "start": "Otevřít první kapitolu",
     "return": "Vrátit se",
@@ -20,7 +21,9 @@
     "continue": "Pokračovat odtud",
     "chapter": "Kapitola",
     "sentence": "Věta",
+    "nthSentence": "{{number, ordinal}} věta",
     "percent-sign": " %",
+    "minutes-left": "{{minutes}} min",
     "prev-chapter": "Předchozí kapitola",
     "next-chapter": "Následující kapitola",
     "seqReturnAnotherChapter": "Dočetli jste po <1>{{idea}}. větu</1> v kapitole <3>{{chapter}}</3>.",

@@ -1,4 +1,5 @@
 import { IDocument } from './manifest-reducer';
+import { Sequential, SeqReturnStatus } from './seq-return';
 
 const SET_POSITION = 'nb-base/navigation/SET_POSITION';
 const SET_SCROLL_RATIO = 'nb-base/navigation/SET_SCROLL_RATIO';
@@ -8,7 +9,8 @@ export interface IState {
   scrollRatio: number;
   position: IPosition | null;
   sequentialPosition: IPosition | null;
-  sequential: boolean;
+  sequential: Sequential;
+  seqReturnStatus: SeqReturnStatus;
   readingOrder: INavDocument[];
   config: IConfig;
 }
@@ -21,6 +23,8 @@ export interface IConfig {
 export interface IPosition {
   chapterNum: number;
   idea: number;
+  chapterStart: boolean;
+  chapterEnd: boolean;
 }
 
 export interface INavDocument extends IDocument {
@@ -34,7 +38,8 @@ const INITIAL_STATE: IState = {
   scrollRatio: 0,
   position: null,
   sequentialPosition: null,
-  sequential: true,
+  sequential: Sequential.Yes,
+  seqReturnStatus: SeqReturnStatus.Initializing,
   readingOrder: [],
   config: {
     keyboardNav: true,
@@ -57,15 +62,15 @@ export function reducer(state: IState = INITIAL_STATE, action: any) {
 
 function setPosition(
   state: IState,
-  payload: { chapterNum: number; idea: number; sequential: boolean }
+  payload: { position: IPosition; sequential: Sequential; seqReturnStatus: SeqReturnStatus }
 ) {
-  const position = { chapterNum: payload.chapterNum, idea: payload.idea };
-
   return {
     ...state,
     sequential: payload.sequential,
-    sequentialPosition: payload.sequential ? position : state.sequentialPosition,
-    position,
+    sequentialPosition:
+      payload.sequential !== Sequential.No ? payload.position : state.sequentialPosition,
+    position: payload.position,
+    seqReturnStatus: payload.seqReturnStatus,
   };
 }
 
@@ -106,10 +111,14 @@ reducer.setScrollRatio = function(scrollRatio: number) {
   };
 };
 
-reducer.setPosition = function(chapterNum: number, idea: number, sequential: boolean) {
+reducer.setPosition = function(
+  position: IPosition,
+  sequential: Sequential,
+  seqReturnStatus: SeqReturnStatus
+) {
   return {
     type: SET_POSITION,
-    payload: { chapterNum, idea, sequential },
+    payload: { position, sequential, seqReturnStatus },
   };
 };
 

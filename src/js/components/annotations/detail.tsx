@@ -1,8 +1,8 @@
 import React from 'react';
 import ContentEditable from 'react-contenteditable';
 import { ContentEditableEvent } from 'react-contenteditable';
-import { IAnnotation, IAnnotationAndIdeas, IStyle } from './annotations-reducer';
-import { getAnnotatedIdeas, updateHead } from './annotation-utils';
+import { IAnnotation, IAnnotationAndIdeas, IStyle } from './reducer';
+import { getAnnotatedIdeas, updateHead } from './utils';
 
 interface IProps {
   annotation: IAnnotation;

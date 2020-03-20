@@ -7,7 +7,7 @@ import {
   INote,
   INotes,
   IStyle,
-} from './annotations-reducer';
+} from './reducer';
 import {
   getAnnotatedIdeas,
   isRangeWithoutOverlap,
@@ -19,8 +19,8 @@ import {
   getRangeBounds,
   getIdeaRanges,
   highlightRange,
-} from './annotation-utils';
-import AnnotationDesk from './annotation-desk';
+} from './utils';
+import AnnotationDesk from './desk';
 enum Controls {
   Add,
   Edit,
@@ -41,7 +41,7 @@ interface IControlProps {
   addNote(data: INote): void;
   updateNote(data: INote): void;
   destroyNote(data: INote): void;
-  selectAnnotation(index: number): void;
+  selectAnnotation(index: number, focus?: boolean): void;
   deselectAnnotation(): void;
 }
 
@@ -82,9 +82,10 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     if (selection === null) return;
     if (selection.rangeCount === 0) return;
     const range = selection.getRangeAt(0);
+    const id = this.getNewAnnotationId();
 
     const annotation = {
-      id: this.getNewAnnotationId(),
+      id,
       chapterNum: this.props.chapterNum,
       symbol: params.symbol || '📒',
       style: params.style || IStyle.Default,
@@ -103,10 +104,13 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
 
     this.showControls(Controls.None);
     selection.removeAllRanges();
+
+    if (params.style && params.style == IStyle.Secondary) {
+      this.props.selectAnnotation(id, true);
+    }
   };
 
   private showControlsIfRangeIsOkay = () => {
-
     if (isRangeWithoutOverlap()) {
       this.showControls(Controls.Add);
     } else if (doesRangeOverlap()) {
@@ -121,13 +125,13 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
     }
   };
 
-  private selectAnnotation = (event: Event) => {
+  private selectAnnotation = (event: Event, focus?: boolean) => {
     const el = event.target as Element;
 
     if (el && el.classList.contains('annotation__head')) {
       const id = el.getAttribute('data-id');
 
-      if (id !== null) this.props.selectAnnotation(parseInt(id, 10));
+      if (id !== null) this.props.selectAnnotation(parseInt(id, 10), focus);
     }
   };
 
@@ -270,7 +274,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
       return null;
     }
 
-    const styles = [IStyle.Default, IStyle.Secondary, IStyle.Strong];
+    const styles = [IStyle.Secondary, IStyle.Default, IStyle.Strong];
     const symbols = ['📒', '😳', '👍', '❌', '✅'];
     const fn = this.props.selectedAnnotation
       ? this.updateAnnotation

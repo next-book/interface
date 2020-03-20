@@ -1,13 +1,13 @@
 import React from 'react';
-import { reducer, IState, IAnnotation, IAnnotationAndIdeas, INote } from './annotations-reducer';
-import AnnotationControl from './annotation-control';
-import AnnotationDetail from './annotation-detail';
-import { IState as ICombinedState } from '../reducer';
+import { reducer, IState, IAnnotation, IAnnotationAndIdeas, INote } from './reducer';
+import AnnotationControl from './control';
+import AnnotationDetail from './detail';
+import { IState as ICombinedState } from '../../reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { getAnnotatedIdeas, removeAnnotation } from './annotation-utils';
+import { getAnnotatedIdeas, removeAnnotation } from './utils';
 
-import { getChapterNum } from '../shared';
+import { getChapterNum } from '../../shared';
 
 interface IProps {
   annotations: IState;
@@ -36,11 +36,19 @@ export class Annotations extends React.Component<IProps, ILocalState> {
     };
   }
 
-  private selectAnnotation = (id: number) => {
+  private selectAnnotation = (id: number, focus?: boolean) => {
     this.setState({
       ...this.state,
       selectedAnnotation: id,
     });
+
+    /* TODO: Find a better way */
+    if (focus) {
+      window.setTimeout(() => {
+        const el = document.querySelector('.annotation-detail__note');
+        if (el !== null) (el as any).focus();
+      }, 100);
+    }
   };
 
   private deselectAnnotation = () => {

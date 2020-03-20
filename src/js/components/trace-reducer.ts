@@ -1,5 +1,6 @@
 /// <reference path="../types/to-ms.d.ts"/>
 import toMilliseconds from 'to-milliseconds';
+import { Sequential } from './seq-return';
 
 const ADD_MOMENT = 'nb-base/trace/ADD_MOMENT';
 
@@ -19,7 +20,7 @@ export interface IMoment {
   time: number;
   chapter: number;
   idea: number;
-  sequential: boolean;
+  sequential: Sequential;
 }
 
 interface IConfig {

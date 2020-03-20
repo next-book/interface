@@ -188,7 +188,7 @@ body.paginated-button-back {
 
 @keyframes forward {
   0% {
-    transform: translateX(3px);
+    transform: translateX(10px);
   }
   100% {
     transform: translateX(0);
@@ -197,7 +197,7 @@ body.paginated-button-back {
 
 @keyframes back {
   0% {
-    transform: translateX(-3px);
+    transform: translateX(-10px);
   }
   100% {
     transform: translateX(0);
@@ -223,8 +223,8 @@ body.paginated-button-back {
 }
 
 .nb-navigation nav {
-  #catchword-top,
-  #catchword-bottom {
+  #pagination__top,
+  #pagination__bottom {
     position: fixed;
     left: 0;
     width: 100vw;
@@ -232,17 +232,17 @@ body.paginated-button-back {
     box-sizing: border-box;
   }
 
-  #catchword-top {
+  #pagination__top {
     top: 0;
     height: 0;
   }
 
-  #catchword-bottom {
+  #pagination__bottom {
     bottom: 0;
     height: 4rem;
   }
 
-  #catchword-bottom.catchword-bottom--collapsed {
+  #pagination__bottom.pagination__bottom--collapsed {
     border-top: 1px solid rgba(100, 100, 100, 0.2);
     background: rgba(0, 0, 0, 0.03);
     background: linear-gradient(
@@ -254,7 +254,7 @@ body.paginated-button-back {
     backdrop-filter: blur(0.9px);
   }
 
-  #catchword-bottom::before {
+  #pagination__bottom::before {
     content: ' ';
 
     display: block;
@@ -271,7 +271,7 @@ body.paginated-button-back {
     backdrop-filter: blur(0.9px);
   }
 
-  #catchword-bottom.catchword-bottom--collapsed::before {
+  #pagination__bottom.pagination__bottom--collapsed::before {
     display: none;
   }
 

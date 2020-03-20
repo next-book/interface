@@ -1,5 +1,5 @@
 import React from 'react';
-import { INavDocument } from './navigation-reducer';
+import { INavDocument } from './position-reducer';
 import { getProgress } from './navigation';
 
 interface IProps {
