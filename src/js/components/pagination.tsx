@@ -127,30 +127,20 @@ export class Pagination extends React.Component<IProps, IState> {
   }
 
   render() {
-    return this.state.barHeight ? (
+    const bottom = this.state.barHeight ? this.state.barHeight[Side.Bottom] : null;
+    const top = this.state.barHeight ? this.state.barHeight[Side.Top] : null;
+
+    return (
       <>
         <div
           id="pagination__bottom"
-          style={
-            this.state.barHeight[Side.Bottom]
-              ? { height: `${this.state.barHeight[Side.Bottom]}px` }
-              : {}
-          }
-          className={
-            this.state.barHeight[Side.Bottom] === null ? 'pagination__bottom--collapsed' : ''
-          }
+          style={bottom ? { height: `${bottom}px` } : {}}
+          className={bottom === null ? 'pagination__bottom--collapsed' : ''}
           onClick={this.props.actions.showToc}
         />
-        <div
-          id="pagination__top"
-          style={
-            this.state.barHeight[Side.Top]
-              ? { height: `${this.state.barHeight[Side.Top]}px` }
-              : { height: 0 }
-          }
-        />
+        <div id="pagination__top" style={top ? { height: `${top}px` } : { height: 0 }} />
       </>
-    ) : null;
+    );
   }
 }
 
