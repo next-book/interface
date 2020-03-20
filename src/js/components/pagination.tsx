@@ -113,6 +113,7 @@ export class Pagination extends React.Component<IProps, IState> {
   };
 
   componentDidMount() {
+    window.addEventListener('scroll', this.getScrollHandler());
     this.props.setScrollStepGetter(this.getScrollStep);
     this.props.setPaddingsSetter(this.setPaddings);
 
