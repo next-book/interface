@@ -1,5 +1,5 @@
 import { IDocument } from './manifest-reducer';
-import { Sequential } from './seq-return';
+import { Sequential, SeqReturnStatus } from './seq-return';
 
 const SET_POSITION = 'nb-base/navigation/SET_POSITION';
 const SET_SCROLL_RATIO = 'nb-base/navigation/SET_SCROLL_RATIO';
@@ -10,6 +10,7 @@ export interface IState {
   position: IPosition | null;
   sequentialPosition: IPosition | null;
   sequential: Sequential;
+  seqReturnStatus: SeqReturnStatus;
   readingOrder: INavDocument[];
   config: IConfig;
 }
@@ -37,7 +38,8 @@ const INITIAL_STATE: IState = {
   scrollRatio: 0,
   position: null,
   sequentialPosition: null,
-  sequential: Sequential.Initializing,
+  sequential: Sequential.Yes,
+  seqReturnStatus: SeqReturnStatus.Initializing,
   readingOrder: [],
   config: {
     keyboardNav: true,
@@ -58,13 +60,17 @@ export function reducer(state: IState = INITIAL_STATE, action: any) {
   }
 }
 
-function setPosition(state: IState, payload: { position: IPosition; sequential: Sequential }) {
+function setPosition(
+  state: IState,
+  payload: { position: IPosition; sequential: Sequential; seqReturnStatus: SeqReturnStatus }
+) {
   return {
     ...state,
     sequential: payload.sequential,
     sequentialPosition:
       payload.sequential !== Sequential.No ? payload.position : state.sequentialPosition,
     position: payload.position,
+    seqReturnStatus: payload.seqReturnStatus,
   };
 }
 
@@ -105,10 +111,14 @@ reducer.setScrollRatio = function(scrollRatio: number) {
   };
 };
 
-reducer.setPosition = function(position: IPosition, sequential: Sequential) {
+reducer.setPosition = function(
+  position: IPosition,
+  sequential: Sequential,
+  seqReturnStatus: SeqReturnStatus
+) {
   return {
     type: SET_POSITION,
-    payload: { position, sequential },
+    payload: { position, sequential, seqReturnStatus },
   };
 };
 

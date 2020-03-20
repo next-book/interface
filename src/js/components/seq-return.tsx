@@ -7,14 +7,19 @@ import { Trans } from 'react-i18next';
 export enum Sequential {
   No = 0,
   Yes = 1,
-  Initializing = 2,
-  Disabled = 3,
+}
+
+export enum SeqReturnStatus {
+  Initializing = 0,
+  Enabled = 1,
+  Disabled = 2,
 }
 
 interface IProps extends WithTranslation {
   targetIdea: number | null;
   targetChapter: IDocument | null;
   sequential: Sequential;
+  status: SeqReturnStatus;
   thisChapter: boolean;
   isChapter: boolean;
   setPosition(resetSequence: boolean): void;
@@ -43,7 +48,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     if (this.props.targetIdea) highlightIdea(this.props.targetIdea);
   };
 
-  firstTime = () => {
+  getOpenFirstChapterContent = () => {
     return (
       <>
         <p>{this.props.t('intro')}</p>
@@ -56,7 +61,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     );
   };
 
-  nthTime = () => {
+  getReturnToChapterContent = () => {
     const link = this.props.targetChapter
       ? `./${this.props.targetChapter.file}#idea${this.props.targetIdea}`
       : '';
@@ -118,26 +123,36 @@ class SeqReturn extends React.Component<IProps, IState> {
     });
   };
 
-  render() {
-    const content = this.props.targetIdea === null ? this.firstTime() : this.nthTime();
-    const classes = ['seq-return-wrapper'];
-    const collapsedText =
-      this.props.targetChapter !== null &&
-      this.props.targetChapter.order !== null &&
-      this.props.targetIdea !== null
-        ? `🔙 ${this.props.targetChapter.order + 1}.${this.props.targetIdea}`
-        : '➕';
+  getCollapsedContent = () =>
+    this.props.status !== SeqReturnStatus.Initializing &&
+    this.props.targetChapter !== null &&
+    this.props.targetChapter.order !== null &&
+    this.props.targetIdea !== null
+      ? `🔙 ${this.props.targetChapter.order + 1}.${this.props.targetIdea}`
+      : '➕';
 
-    if (this.props.targetIdea === null) classes.push('seq-return-wrapper--high');
+  render() {
+    let getContent = null;
+    const classes = ['seq-return-wrapper'];
+
+    if (this.props.status === SeqReturnStatus.Disabled) return null;
+    if (this.props.status === SeqReturnStatus.Initializing) {
+      if (!this.props.isChapter) {
+        getContent = this.getOpenFirstChapterContent;
+        classes.push('seq-return-wrapper--high');
+      }
+    } else if (this.props.sequential === Sequential.No) {
+      getContent = this.getReturnToChapterContent;
+    }
 
     return (
-      content && (
+      getContent && (
         <div className={classes.join(' ')}>
           <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
             <div onClick={this.toggleCollapse} className="seq-return-toggle ui-target">
-              {this.state.collapsed ? collapsedText : '➖'}
+              {this.state.collapsed ? this.getCollapsedContent() : '➖'}
             </div>
-            {this.state.collapsed ? null : content}
+            {this.state.collapsed ? null : getContent()}
           </div>
         </div>
       )

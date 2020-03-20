@@ -6,7 +6,7 @@ import { throttle } from 'lodash';
 
 import { getChapterNum } from '../shared';
 import SeqReturn from './seq-return';
-import { Sequential } from './seq-return';
+import { Sequential, SeqReturnStatus } from './seq-return';
 import { reducer, IPosition, INavDocument } from './position-reducer';
 
 export interface IProps {
@@ -14,7 +14,8 @@ export interface IProps {
   position: IPosition | null;
   sequentialPosition: IPosition | null;
   sequential: Sequential;
-  setPosition(position: IPosition, sequential: Sequential): void;
+  seqReturnStatus: SeqReturnStatus;
+  setPosition(position: IPosition, sequential: Sequential, SeqReturn: SeqReturnStatus): void;
 }
 
 export interface IState {
@@ -37,19 +38,33 @@ export class Position extends React.Component<IProps, IState> {
     const chapterEnd = isPageScrolledToBottom();
     if (chapterNum === null || idea === null) return;
 
-    const sequential = resetSequence
-      ? Sequential.Yes
-      : checkSequence(
-          this.props.sequentialPosition,
-          { idea, chapterNum, chapterStart, chapterEnd },
-          this.props.sequential,
-          true
-        );
+    const sequential =
+      resetSequence ||
+      (this.props.seqReturnStatus === SeqReturnStatus.Initializing &&
+        this.props.sequential === Sequential.No)
+        ? Sequential.Yes
+        : checkSequence(
+            this.props.sequentialPosition,
+            { idea, chapterNum, chapterStart, chapterEnd },
+            this.props.sequential,
+            true
+          );
 
-    this.props.setPosition({ chapterNum, idea, chapterStart, chapterEnd }, sequential);
+    const seqReturnStatus = this.getSeqReturnStatus(
+      this.props.seqReturnStatus,
+      this.props.sequential
+    );
+
+    this.props.setPosition(
+      { chapterNum, idea, chapterStart, chapterEnd },
+      sequential,
+      seqReturnStatus
+    );
 
     setUriIdea(idea);
   };
+
+  getSeqReturnStatus = getSeqReturnStatus();
 
   getScrollHandler = () => {
     const t1 = throttle(this.setPosition, 500, { leading: false });
@@ -81,6 +96,7 @@ export class Position extends React.Component<IProps, IState> {
 
     return (
       <SeqReturn
+        status={this.props.seqReturnStatus}
         isChapter={this.state.isChapter}
         thisChapter={thisChapter}
         targetChapter={
@@ -193,6 +209,33 @@ function checkSequence(
   return Sequential.No;
 }
 
+const getSeqReturnStatus = () => {
+  let counter = 0;
+  let start = new Date().getTime() / 1000;
+
+  return (status: SeqReturnStatus, sequential: Sequential) => {
+    if (status === SeqReturnStatus.Initializing) {
+      const now = new Date().getTime() / 1000;
+
+      if (sequential === Sequential.Yes) {
+        const counterTopped = counter > 3;
+        const initTimeElapsed = now - start > 12;
+
+        if (counterTopped && initTimeElapsed) {
+          return SeqReturnStatus.Enabled;
+        } else {
+          counter++;
+          return SeqReturnStatus.Initializing;
+        }
+      } else {
+        counter = 0;
+        start = now;
+        return status;
+      }
+    } else return status;
+  };
+};
+
 function setUriIdea(id: number) {
   window.history.replaceState(undefined, document.title, `#idea${id}`);
 }
@@ -202,6 +245,7 @@ const mapStateToProps = (state: ICombinedState) => {
     position: state.position.position,
     readingOrder: state.position.readingOrder,
     sequential: state.position.sequential,
+    seqReturnStatus: state.position.seqReturnStatus,
     sequentialPosition: state.position.sequentialPosition,
   };
 };
