@@ -63,37 +63,43 @@ export class Navigation extends React.Component<IProps> {
     this.setPaddings = fn;
   };
 
-  handleKeyboardNav = (event: KeyboardEvent) => {
-    if (this.props.position === null) return;
-    if (document.activeElement !== document.body || document.activeElement === null) return;
+  getPrevChapter = () => {
+    if (this.isChapter && this.props.position !== null) {
+      if (this.props.position.chapterNum === 0) {
+        return 'index.html';
+      }
+      return this.props.readingOrder[this.props.position.chapterNum].prev;
+    } else return null;
+  };
 
-    const chapter = this.props.readingOrder[this.props.position.chapterNum];
+  getNextChapter = () => {
+    if (this.isChapter && this.props.position !== null) {
+      return this.props.readingOrder[this.props.position.chapterNum].next;
+    } else return null;
+  };
+
+  handleKeyboardNav = (event: KeyboardEvent) => {
+    if (document.activeElement !== document.body || document.activeElement === null) return;
 
     switch (keycode(event)) {
       case 'left':
-        return this.goBack(event, chapter.prev, false);
+        return this.goBack(event, this.getPrevChapter(), false);
       case 'right':
-        return this.goForward(event, chapter.next, false);
+        return this.goForward(event, this.getNextChapter(), false);
       default:
         return;
     }
   };
 
   handleSwipeNav = (event: TouchEvent, dir: Direction) => {
-    if (this.props.position === null) return;
-    const chapter = this.props.readingOrder[this.props.position.chapterNum];
-
     if (dir === Direction.Forward) {
-      this.goForward(event, chapter.next, false);
+      this.goForward(event, this.getNextChapter(), false);
     } else if (dir === Direction.Back) {
-      this.goBack(event, chapter.prev, false);
+      this.goBack(event, this.getPrevChapter(), false);
     }
   };
 
   handleInvisibleNav = (event: MouseEvent) => {
-    if (this.props.position === null) return;
-
-    const chapter = this.props.readingOrder[this.props.position.chapterNum];
     const target = event.target as HTMLElement;
 
     if (
@@ -107,9 +113,9 @@ export class Navigation extends React.Component<IProps> {
       target.closest('.ui-target') === null
     ) {
       if (isInPaginationRect(Direction.Back, event.clientX, event.clientY)) {
-        return this.goBack(event, chapter.prev);
+        return this.goBack(event, this.getPrevChapter());
       } else if (isInPaginationRect(Direction.Forward, event.clientX, event.clientY)) {
-        return this.goForward(event, chapter.next);
+        return this.goForward(event, this.getNextChapter());
       }
     }
   };
