@@ -169,31 +169,29 @@ function calcCutoff(from: Side, readingZone: Sides) {
   const cStyle = window.getComputedStyle(el);
   const lineHeight = parseInt(cStyle.lineHeight, 10);
   const rect = el.getBoundingClientRect();
-  let height = rect[from];
+  let y = rect[from];
 
   if (from === Side.Top) {
-    height += parseInt(cStyle.paddingTop, 10);
+    y += parseInt(cStyle.paddingTop, 10);
 
-    while (height < readingZone[from]) {
-      height += lineHeight;
+    while (y < readingZone[from]) {
+      y += lineHeight;
     }
   } else if (from === Side.Bottom) {
-    while (height > readingZone[from]) {
-      height -= lineHeight;
+    while (y > readingZone[from]) {
+      y -= lineHeight;
     }
 
-    // cut off one-liners to prevent widows
-    //if (remainingHeight <= lineHeight) {
-    //  height -= remainingHeight;
-    //}
-
-    // cut two lines from n+1 long paragraph to prevent orphans
-    //if (remainingHeight + lineHeight >= rect.height) {
-    //  height -= lineHeight;
-    //}
+    if (y - 1.5 * lineHeight < rect[Side.Top]) {
+      // cut off one-liners to prevent widows
+      y = rect[Side.Top];
+    } else if (y + 1.5 * lineHeight > rect[Side.Bottom]) {
+      // cut a line from n+1 long paragraph to prevent orphans
+      y -= lineHeight;
+    }
   }
 
-  return height;
+  return y;
 }
 
 function isElementOnTheEdge(el: Element, edge: number) {
