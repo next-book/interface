@@ -1,8 +1,9 @@
 import React from 'react';
-import { IDocument } from './manifest-reducer';
+import { IDocument, DocRole } from './manifest-reducer';
 
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
+import docInfo from '../doc-info';
 
 export enum Sequential {
   No = 0,
@@ -20,8 +21,7 @@ interface IProps extends WithTranslation {
   targetChapter: IDocument | null;
   sequential: Sequential;
   status: SeqReturnStatus;
-  thisChapter: boolean;
-  isChapter: boolean;
+  docRole: DocRole;
   setPosition(resetSequence: boolean): void;
   startLink: string;
 }
@@ -35,7 +35,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      collapsed: props.isChapter ? true : false,
+      collapsed: props.docRole === DocRole.Chapter,
     };
   }
 
@@ -62,17 +62,19 @@ class SeqReturn extends React.Component<IProps, IState> {
   };
 
   getReturnToChapterContent = () => {
-    const link = this.props.targetChapter
-      ? `./${this.props.targetChapter.file}#idea${this.props.targetIdea}`
-      : '';
+    if (this.props.targetChapter === null) return null;
+
+    const chapter = this.props.targetChapter;
     const idea = this.props.targetIdea;
-    const chapter = this.props.targetChapter && this.props.targetChapter.title;
+    const link = `./${chapter.file}#idea${idea}`;
+    const sameChapter = chapter.order !== docInfo.order;
+    const title = chapter.title;
 
     const readingPosition =
-      !this.props.isChapter || !this.props.thisChapter ? (
+      this.props.docRole !== DocRole.Chapter || !sameChapter ? (
         <p>
           <Trans i18nKey="navigation:seqReturnAnotherChapter">
-            You read up to <a href={link}>sentence #{{ idea }}</a> in chapter <b>{{ chapter }}</b>.
+            You read up to <a href={link}>sentence #{{ idea }}</a> in chapter <b>{{ title }}</b>.
           </Trans>
         </p>
       ) : (
@@ -88,11 +90,11 @@ class SeqReturn extends React.Component<IProps, IState> {
       );
 
     return (
-      (this.props.sequential === Sequential.No || !this.props.isChapter) && (
+      (this.props.sequential === Sequential.No || this.props.docRole !== DocRole.Chapter) && (
         <>
           {readingPosition}
           <div className="seq-buttons">
-            {this.props.isChapter && (
+            {this.props.docRole === DocRole.Chapter && (
               <a href="#" onClick={this.resetPosition}>
                 👇 {this.props.t('continue')}
               </a>
@@ -101,11 +103,11 @@ class SeqReturn extends React.Component<IProps, IState> {
               href={link}
               onClick={() => {
                 this.setState({ ...this.state, collapsed: true });
-                this.props.thisChapter ? this.highlightPosition : null;
+                sameChapter ? this.highlightPosition : null;
               }}
             >
               <b>
-                {this.props.isChapter
+                {this.props.docRole === DocRole.Chapter
                   ? `🔙 ${this.props.t('return')}`
                   : this.props.t('continueReading')}
               </b>
@@ -137,7 +139,7 @@ class SeqReturn extends React.Component<IProps, IState> {
 
     if (this.props.status === SeqReturnStatus.Disabled) return null;
     if (this.props.status === SeqReturnStatus.Initializing) {
-      if (!this.props.isChapter) {
+      if (this.props.docRole === DocRole.Index) {
         getContent = this.getOpenFirstChapterContent;
         classes.push('seq-return-wrapper--high');
       }

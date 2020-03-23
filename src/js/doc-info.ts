@@ -17,8 +17,7 @@ function getRole() {
 function getOrder() {
   const value = getValue('meta[name="order"]', 'content');
 
-  const number = value !== null ? parseInt(value, 10) : 0;
-  return number >= 0 ? number : null;
+  return value !== null ? parseInt(value, 10) : null;
 }
 
 const docInfo = {

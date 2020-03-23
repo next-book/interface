@@ -7,7 +7,6 @@ import { throttle } from 'lodash';
 import docInfo from '../doc-info';
 import SeqReturn, { Sequential, SeqReturnStatus } from './seq-return';
 import { reducer, IPosition, INavDocument } from './position-reducer';
-import { DocRole } from './manifest-reducer';
 
 export interface IProps {
   readingOrder: INavDocument[];
@@ -80,17 +79,10 @@ export class Position extends React.Component<IProps> {
     const ro = this.props.readingOrder;
     if (ro.length === 0) return null;
 
-    const pos = this.props.position;
-    const thisChapter =
-      pos !== null && this.props.sequentialPosition !== null
-        ? this.props.sequentialPosition.chapterNum === pos.chapterNum
-        : false;
-
     return (
       <SeqReturn
         status={this.props.seqReturnStatus}
-        isChapter={docInfo.role === DocRole.Chapter}
-        thisChapter={thisChapter}
+        docRole={docInfo.role}
         targetChapter={
           this.props.sequentialPosition ? ro[this.props.sequentialPosition.chapterNum] : null
         }

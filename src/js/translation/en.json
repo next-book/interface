@@ -13,7 +13,7 @@
     "update-note": "Save note"
   },
   "navigation": {
-    "title-page": "Title page",
+    "title-page": "Title",
     "intro": "This book remembers where you stopped reading. You can view Table of Contents anytime by clicking the bottom bar.",
     "start": "Open first chapter",
     "return": "Return back",
@@ -26,7 +26,7 @@
     "minutes-left": "{{minutes}} min",
     "prev-chapter": "Previous chapter",
     "next-chapter": "Next chapter",
-    "seqReturnAnotherChapter": "You read up to <1>sentence #{{idea}}</1> in <3>{{chapter}}</3>.",
+    "seqReturnAnotherChapter": "You read up to <1>sentence #{{idea}}</1> in chapter <3>{{title}}</3>.",
     "seqReturnThisChapter": "You read up to <2>sentence #{{idea}}</2> in this chapter.",
     "go": "Go",
     "toc": "Table of Contents"

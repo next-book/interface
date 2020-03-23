@@ -147,16 +147,11 @@ export class Navigation extends React.Component<IProps> {
   };
 
   showToc = () => {
-    const pos: IPosition = this.props.position || {
-      idea: 0,
-      chapterNum: 0,
-      chapterStart: true,
-      chapterEnd: false,
-    };
+    const idea = this.props.position !== null ? this.props.position.idea : null;
 
     // TODO: Rewrite without peeks
     this.props.addPeek({
-      content: <Toc idea={pos.idea} chapterNum={pos.chapterNum} />,
+      content: <Toc idea={idea} />,
       title: this.props.t('toc'),
       source: 'toc-table',
       showSource: false,
