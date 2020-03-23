@@ -11,7 +11,8 @@ export interface IState {
   sequentialPosition: IPosition | null;
   sequential: Sequential;
   seqReturnStatus: SeqReturnStatus;
-  readingOrder: INavDocument[];
+  readingOrder: string[];
+  documents: IDocMap;
   config: IConfig;
 }
 
@@ -21,7 +22,7 @@ export interface IConfig {
 }
 
 export interface IPosition {
-  chapterNum: number;
+  file: string;
   idea: number;
   chapterStart: boolean;
   chapterEnd: boolean;
@@ -34,6 +35,10 @@ export interface INavDocument extends IDocument {
   totalWords: number;
 }
 
+export interface IDocMap {
+  [key: string]: INavDocument;
+}
+
 const INITIAL_STATE: IState = {
   scrollRatio: 0,
   position: null,
@@ -41,6 +46,7 @@ const INITIAL_STATE: IState = {
   sequential: Sequential.Yes,
   seqReturnStatus: SeqReturnStatus.Initializing,
   readingOrder: [],
+  documents: {},
   config: {
     keyboardNav: true,
     invisibleNav: true,
@@ -54,7 +60,7 @@ export function reducer(state: IState = INITIAL_STATE, action: any) {
     case SET_POSITION:
       return setPosition(state, action.payload);
     case SET_READING_ORDER:
-      return { ...state, ...{ readingOrder: prepReadingOrder(action.payload) } };
+      return { ...state, ...prepReadingOrder(action.payload) };
     default:
       return state;
   }
@@ -78,7 +84,7 @@ function prepReadingOrder(documents: IDocument[]) {
   let totalChars = 0;
   let totalWords = 0;
 
-  return documents
+  const chapters = documents
     .filter(doc => doc.role === DocRole.Chapter)
     .sort((a, b) => {
       const oA = a.order !== null ? a.order : -1;
@@ -95,6 +101,22 @@ function prepReadingOrder(documents: IDocument[]) {
 
       return { ...doc, offsetChars, offsetWords, totalChars, totalWords };
     });
+
+  const other = documents
+    .filter(doc => doc.role !== DocRole.Chapter)
+    .map(doc => ({ ...doc, offsetChars: 0, offsetWords: 0, totalChars, totalWords }));
+
+  return {
+    readingOrder: chapters.map(doc => doc.file),
+    documents: arrayToDocMap(chapters.concat(other)),
+  };
+}
+
+function arrayToDocMap(arr: INavDocument[]) {
+  return arr.reduce((acc: { [key: string]: INavDocument }, doc: INavDocument) => {
+    acc[doc.file] = doc;
+    return acc;
+  }, {});
 }
 
 reducer.setReadingOrder = function(documents: IDocument[]) {

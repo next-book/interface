@@ -1,5 +1,5 @@
 import React from 'react';
-import { INavDocument } from './position-reducer';
+import { INavDocument, IDocMap } from './position-reducer';
 import { DocRole } from './manifest-reducer';
 import { getProgress } from './navigation';
 
@@ -8,7 +8,8 @@ interface IProps {
   docRole: DocRole;
   chapter: INavDocument | null;
   totalWords: number;
-  readingOrder: INavDocument[];
+  readingOrder: string[];
+  documents: IDocMap;
 }
 
 export function NavBar(props: IProps) {
@@ -21,12 +22,14 @@ export function NavBar(props: IProps) {
           totalWords={props.totalWords}
         />
       )}
-      {props.readingOrder.map(
-        (chapter, index) =>
+      {props.readingOrder.map((file, index) => {
+        const chapter = props.documents[file];
+        return (
           chapter.order !== null && (
             <Chapter key={chapter.order} chapter={chapter} totalWords={props.totalWords} />
           )
-      )}
+        );
+      })}
     </ul>
   );
 }

@@ -1,9 +1,11 @@
 import React from 'react';
-import { INavDocument } from './position-reducer';
+import { IDocMap } from './position-reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
 interface IProps extends WithTranslation {
-  readingOrder: INavDocument[];
+  readingOrder: string[];
+  documents: IDocMap;
+  currentFile: string | null;
   currentChapterNum: number;
   currentIdea: number;
   progress: number;
@@ -11,7 +13,7 @@ interface IProps extends WithTranslation {
 }
 
 interface IState {
-  chapterNum: number;
+  file: string;
   idea: number;
   showNavigator: boolean;
 }
@@ -21,14 +23,14 @@ class GoTo extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      chapterNum: props.currentChapterNum,
+      file: props.currentFile || props.readingOrder[0],
       idea: props.currentIdea,
       showNavigator: false,
     };
   }
 
-  setChapterNum = (event: React.SyntheticEvent) => {
-    this.setState({ ...this.state, chapterNum: (event.target as HTMLFormElement).value });
+  setFile = (event: React.SyntheticEvent) => {
+    this.setState({ ...this.state, file: (event.target as HTMLFormElement).value });
   };
 
   setIdea = (event: React.SyntheticEvent) => {
@@ -38,9 +40,8 @@ class GoTo extends React.Component<IProps, IState> {
   navigate = (event: React.SyntheticEvent) => {
     const url = window.location.href;
     const baseUrl = url.substr(0, url.lastIndexOf('/'));
-    const file = this.props.readingOrder[this.state.chapterNum].file;
 
-    window.location.href = `${baseUrl}/${file}#idea${this.state.idea}`;
+    window.location.href = `${baseUrl}/${this.state.file}#idea${this.state.idea}`;
   };
 
   toggleNavigator = () => {
@@ -48,9 +49,8 @@ class GoTo extends React.Component<IProps, IState> {
   };
 
   render() {
-    const ideaIds = [...Array(this.props.readingOrder[this.state.chapterNum].ideas).keys()].map(
-      i => ++i
-    );
+    const targetDoc = this.props.documents[this.state.file];
+    const ideaIds = !targetDoc ? [1] : [...Array(targetDoc.ideas).keys()].map(i => ++i);
 
     return (
       <>
@@ -79,14 +79,15 @@ class GoTo extends React.Component<IProps, IState> {
                     {this.props.t('chapter')}
                     <br />
                     <select
-                      onChange={this.setChapterNum}
-                      value={this.state.chapterNum}
+                      onChange={this.setFile}
+                      value={this.state.file}
                       className="goto__chapter__select"
                     >
-                      {this.props.readingOrder.map(doc => {
+                      {this.props.readingOrder.map(file => {
+                        const doc = this.props.documents[file];
                         if (doc.order === null) return null;
 
-                        const value = doc.order.toString();
+                        const value = doc.file;
                         return (
                           <option key={value} value={value}>
                             {doc.order + 1} {doc.title}
@@ -111,7 +112,7 @@ class GoTo extends React.Component<IProps, IState> {
                     </select>
                   </label>
 
-                  {this.state.chapterNum !== this.props.currentChapterNum ||
+                  {this.state.file !== this.props.currentFile ||
                   this.state.idea !== this.props.currentIdea ? (
                     <button onClick={this.navigate}>{this.props.t('navigation:go')} &rarr;</button>
                   ) : null}

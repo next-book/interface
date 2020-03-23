@@ -3,31 +3,35 @@ import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../reducer';
 import { IToc, DocRole } from './manifest-reducer';
-import { INavDocument } from './position-reducer';
+import { IDocMap } from './position-reducer';
 import docInfo from '../doc-info';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
 interface IProps extends WithTranslation {
   idea: number | null;
-  readingOrder: INavDocument[];
+  readingOrder: string[];
+  documents: IDocMap;
 }
 
 class Toc extends React.Component<IProps> {
   render() {
     return (
       <>
-        <ul>
-          <li>
-            <a
-              className={docInfo.role === DocRole.Index ? 'current-chapter' : undefined}
-              href={docInfo.links.index}
-            >
-              {this.props.t('title-page')}
-            </a>
-          </li>
-        </ul>
+        {docInfo.links.index && (
+          <ul>
+            <li>
+              <a
+                className={docInfo.role === DocRole.Index ? 'current-chapter' : undefined}
+                href={docInfo.links.index}
+              >
+                {this.props.t('title-page')}
+              </a>
+            </li>
+          </ul>
+        )}
         <ol>
-          {this.props.readingOrder.map(doc => {
+          {this.props.readingOrder.map(file => {
+            const doc = this.props.documents[file];
             const current = doc.order === docInfo.order;
 
             return (
@@ -81,6 +85,7 @@ function Section(props: ISectionProps) {
 const mapStateToProps = (state: ICombinedState) => {
   return {
     readingOrder: state.position.readingOrder,
+    documents: state.position.documents,
   };
 };
 
