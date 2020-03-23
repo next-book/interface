@@ -35,7 +35,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      collapsed: props.docRole === DocRole.Chapter,
+      collapsed: props.docRole !== DocRole.Index,
     };
   }
 
