@@ -14,6 +14,7 @@
   },
   "navigation": {
     "title-page": "Title",
+    "colophon": "Colophon",
     "intro": "This book remembers where you stopped reading. You can view Table of Contents anytime by clicking the bottom bar.",
     "start": "Open first chapter",
     "return": "Return back",

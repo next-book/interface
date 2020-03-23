@@ -26,11 +26,12 @@ const docInfo = {
   order: getOrder(),
   links: {
     index: getValue('link[rel="index"]', 'href'),
-    license: getValue('link[rel="license"]', 'href'),
-    publication: getValue('link[rel="publication"]', 'href'),
+    self: getValue('link[rel="self"]', 'href'),
     manifest: getValue('link[rel="publication"]', 'href'),
     prev: getValue('link[rel="prev"]', 'href'),
     next: getValue('link[rel="next"]', 'href'),
+    colophon: getValue('link[rel="colophon"]', 'href'),
+    license: getValue('link[rel="license"]', 'href'),
   },
 };
 

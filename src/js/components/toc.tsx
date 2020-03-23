@@ -15,36 +15,52 @@ interface IProps extends WithTranslation {
 class Toc extends React.Component<IProps> {
   render() {
     return (
-      <ol start={0}>
-        <li key={-1}>
-          <a
-            className={docInfo.role === DocRole.Index ? 'current-chapter' : undefined}
-            href="index.html"
-          >
-            {this.props.t('title-page')}
-          </a>
-        </li>
-        {this.props.readingOrder.map(doc => {
-          const current = doc.order === docInfo.order;
+      <>
+        <ul>
+          <li>
+            <a
+              className={docInfo.role === DocRole.Index ? 'current-chapter' : undefined}
+              href={docInfo.links.index}
+            >
+              {this.props.t('title-page')}
+            </a>
+          </li>
+        </ul>
+        <ol>
+          {this.props.readingOrder.map(doc => {
+            const current = doc.order === docInfo.order;
 
-          return (
-            <li key={doc.order !== null ? doc.order : ''}>
-              <a className={current ? 'current-chapter' : undefined} href={doc.file}>
-                {doc.title}
+            return (
+              <li key={doc.order !== null ? doc.order : ''}>
+                <a className={current ? 'current-chapter' : undefined} href={doc.file}>
+                  {doc.title}
+                </a>
+
+                {doc.toc && doc.toc[0].children.length ? (
+                  <ol>
+                    {' '}
+                    {doc.toc[0].children.map((section, index) => {
+                      return <Section key={index} file={doc.file} section={section} />;
+                    })}{' '}
+                  </ol>
+                ) : null}
+              </li>
+            );
+          })}
+        </ol>
+        {docInfo.links.colophon && (
+          <ul>
+            <li>
+              <a
+                className={docInfo.role === DocRole.Colophon ? 'current-chapter' : undefined}
+                href={docInfo.links.colophon}
+              >
+                {this.props.t('colophon')}
               </a>
-
-              {doc.toc && doc.toc[0].children.length ? (
-                <ol>
-                  {' '}
-                  {doc.toc[0].children.map((section, index) => {
-                    return <Section key={index} file={doc.file} section={section} />;
-                  })}{' '}
-                </ol>
-              ) : null}
             </li>
-          );
-        })}
-      </ol>
+          </ul>
+        )}
+      </>
     );
   }
 }
