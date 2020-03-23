@@ -33,7 +33,7 @@ interface IControlProps {
   annotations: IAnnotations;
   ideas: IIdeas;
   notes: INotes;
-  chapterNum: string;
+  file: string;
   selectedAnnotation: number | null;
   addAnnotation(annotation: IAnnotationAndIdeas): void;
   updateAnnotation(data: IAnnotationAndIdeas): void;
@@ -86,7 +86,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
 
     const annotation = {
       id,
-      chapterNum: this.props.chapterNum,
+      file: this.props.file,
       symbol: params.symbol || '📒',
       style: params.style || IStyle.Default,
       note: '',
@@ -176,7 +176,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
       dateModified: 0,
       id: this.getNewNoteId(),
       text: note,
-      chapterNum: this.props.chapterNum,
+      file: this.props.file,
     });
   };
 
@@ -214,7 +214,6 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
             annotations={this.props.annotations}
             ideas={this.props.ideas}
             notes={this.props.notes}
-            chapterNum={this.props.chapterNum}
             addNote={this.addNote}
             updateNote={this.props.updateNote}
             destroyNote={this.props.destroyNote}

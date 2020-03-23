@@ -9,7 +9,6 @@ interface IProps extends WithTranslation {
   annotations: IAnnotations;
   ideas: IIdeas;
   notes: INotes;
-  chapterNum: string;
   destroyAnnotation(data: IAnnotation): void;
   addNote(note: string): void;
   updateNote(note: INote): void;

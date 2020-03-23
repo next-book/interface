@@ -21,7 +21,7 @@ export interface IAnnotation {
   dateModified: number;
   id: number;
   range: IIdeaRange;
-  chapterNum: string;
+  file: string;
   symbol: string;
   style: IStyle;
   note: string;
@@ -46,7 +46,7 @@ export interface INote {
   dateModified: number;
   id: number;
   text: string;
-  chapterNum: string;
+  file: string;
 }
 
 export interface INotes {
@@ -90,10 +90,10 @@ function addNote(state: IState, payload: INote) {
   note.dateModified = new Date().getTime();
 
   const newState = { ...state };
-  const notes = state[note.chapterNum] ? state[note.chapterNum].notes : {};
+  const notes = state[note.file] ? state[note.file].notes : {};
 
-  newState[note.chapterNum] = {
-    ...newState[note.chapterNum],
+  newState[note.file] = {
+    ...newState[note.file],
     notes: {
       ...notes,
       [note.id]: note,
@@ -108,7 +108,7 @@ function updateNote(state: IState, payload: INote) {
   note.dateModified = new Date().getTime();
 
   const newState = { ...state };
-  newState[payload.chapterNum].notes[note.id] = note;
+  newState[payload.file].notes[note.id] = note;
 
   return newState;
 }
@@ -117,7 +117,7 @@ function destroyNote(state: IState, payload: INote) {
   const note = { ...payload };
 
   const newState = { ...state };
-  delete newState[note.chapterNum].notes[note.id];
+  delete newState[note.file].notes[note.id];
 
   return newState;
 }
@@ -128,10 +128,10 @@ function addAnnotation(state: IState, payload: IAnnotationAndIdeas) {
   annotation.dateModified = new Date().getTime();
 
   const newState = { ...state };
-  const annotations = state[annotation.chapterNum] ? state[annotation.chapterNum].annotations : {};
+  const annotations = state[annotation.file] ? state[annotation.file].annotations : {};
 
-  newState[annotation.chapterNum] = {
-    ...newState[annotation.chapterNum],
+  newState[annotation.file] = {
+    ...newState[annotation.file],
     annotations: {
       ...annotations,
       [annotation.id]: annotation,
@@ -147,11 +147,11 @@ function updateAnnotation(state: IState, payload: IAnnotationAndIdeas) {
 
   const newState = { ...state };
 
-  newState[annotation.chapterNum].annotations[annotation.id] = {
+  newState[annotation.file].annotations[annotation.id] = {
     ...annotation,
     dateModified: new Date().getTime(),
   };
-  newState[annotation.chapterNum].ideas = ideas;
+  newState[annotation.file].ideas = ideas;
   return newState;
 }
 
@@ -159,9 +159,9 @@ function destroyAnnotation(state: IState, payload: IAnnotationAndIdeas) {
   const { annotation, ideas } = payload;
 
   const newState = { ...state };
-  delete newState[annotation.chapterNum].annotations[annotation.id];
+  delete newState[annotation.file].annotations[annotation.id];
 
-  newState[annotation.chapterNum].ideas = ideas;
+  newState[annotation.file].ideas = ideas;
 
   return newState;
 }

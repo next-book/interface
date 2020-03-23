@@ -64,11 +64,11 @@ export class Annotations extends React.Component<IProps, ILocalState> {
   };
 
   render() {
-    const chapterNum = docInfo.order;
+    const file = docInfo.links.self;
 
-    if (chapterNum === null) return null;
+    if (file === null) return null;
 
-    const chapterAnnotations = this.props.annotations[chapterNum.toString()];
+    const chapterAnnotations = this.props.annotations[file.toString()];
     const annotations =
       chapterAnnotations && chapterAnnotations.annotations ? chapterAnnotations.annotations : [];
     const ideas = chapterAnnotations && chapterAnnotations.ideas ? chapterAnnotations.ideas : {};
@@ -89,9 +89,9 @@ export class Annotations extends React.Component<IProps, ILocalState> {
           updateNote={this.props.updateNote}
           destroyNote={this.props.destroyNote}
           selectedAnnotation={this.state.selectedAnnotation}
-          chapterNum={chapterNum.toString()}
+          file={file.toString()}
         />
-        {chapterNum === null || this.state.selectedAnnotation === null ? null : (
+        {file === null || this.state.selectedAnnotation === null ? null : (
           <AnnotationDetail
             annotation={annotations[this.state.selectedAnnotation]}
             close={this.deselectAnnotation}
