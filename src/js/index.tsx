@@ -8,7 +8,7 @@ import { debounce } from 'lodash';
 import i18n from './i18n';
 import { I18nextProvider } from 'react-i18next';
 
-import { loadManifest, assignManifest, plantRoot } from './shared';
+import { loadManifest, assignManifest, plantRoot, addReadyBodyClass } from './shared';
 import docInfo from './doc-info';
 import reducer from './reducer';
 import views from './views';
@@ -39,6 +39,7 @@ export function initBook() {
       }, 500)
     );
 
+    addReadyBodyClass();
     (window as any).book = store;
   });
 }

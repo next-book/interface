@@ -31,6 +31,10 @@ export function loadManifest(link: string | null): Promise<object> {
     .then(json);
 }
 
+export function addReadyBodyClass() {
+  document.body.classList.add('nb-ready');
+}
+
 export function assignManifest(data: any): IManifest {
   return Object.assign(
     {
