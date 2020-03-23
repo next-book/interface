@@ -7,7 +7,8 @@ import keycode from 'keycode';
 
 import { withTranslation, WithTranslation } from 'react-i18next';
 
-import { getChapterNum } from '../shared';
+import docInfo from '../doc-info';
+import { DocRole } from './manifest-reducer';
 import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
@@ -41,7 +42,6 @@ export interface IProps extends WithTranslation {
 export class Navigation extends React.Component<IProps> {
   private getScrollStep = (): number | null => null;
   private setPaddings = (): null | void => null;
-  private isChapter = getChapterNum() !== null;
 
   setScrollRatio = () => {
     this.props.setScrollRatio(getScrollRatio());
@@ -64,7 +64,7 @@ export class Navigation extends React.Component<IProps> {
   };
 
   getPrevChapter = () => {
-    if (this.isChapter && this.props.position !== null) {
+    if (docInfo.role === DocRole.Chapter && this.props.position !== null) {
       if (this.props.position.chapterNum === 0) {
         return 'index.html';
       }
@@ -73,7 +73,7 @@ export class Navigation extends React.Component<IProps> {
   };
 
   getNextChapter = () => {
-    if (this.isChapter && this.props.position !== null) {
+    if (docInfo.role === DocRole.Chapter && this.props.position !== null) {
       return this.props.readingOrder[this.props.position.chapterNum].next;
     } else return null;
   };
@@ -222,7 +222,7 @@ export class Navigation extends React.Component<IProps> {
           />
         )}
         <NavBar
-          isChapter={this.isChapter}
+          docRole={docInfo.role}
           readingOrder={ro}
           chapter={chapter}
           scrollRatio={this.props.scrollRatio}

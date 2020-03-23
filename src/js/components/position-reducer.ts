@@ -1,4 +1,4 @@
-import { IDocument } from './manifest-reducer';
+import { IDocument, DocRole } from './manifest-reducer';
 import { Sequential, SeqReturnStatus } from './seq-return';
 
 const SET_POSITION = 'nb-base/navigation/SET_POSITION';
@@ -79,7 +79,7 @@ function prepReadingOrder(documents: IDocument[]) {
   let totalWords = 0;
 
   return documents
-    .filter(doc => doc.isChapter)
+    .filter(doc => doc.role === DocRole.Chapter)
     .sort((a, b) => {
       const oA = a.order !== null ? a.order : -1;
       const oB = b.order !== null ? b.order : -1;

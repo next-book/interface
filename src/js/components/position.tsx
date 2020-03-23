@@ -4,10 +4,10 @@ import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../reducer';
 import { throttle } from 'lodash';
 
-import { getChapterNum } from '../shared';
-import SeqReturn from './seq-return';
-import { Sequential, SeqReturnStatus } from './seq-return';
+import docInfo from '../doc-info';
+import SeqReturn, { Sequential, SeqReturnStatus } from './seq-return';
 import { reducer, IPosition, INavDocument } from './position-reducer';
+import { DocRole } from './manifest-reducer';
 
 export interface IProps {
   readingOrder: INavDocument[];
@@ -18,22 +18,14 @@ export interface IProps {
   setPosition(position: IPosition, sequential: Sequential, SeqReturn: SeqReturnStatus): void;
 }
 
-export interface IState {
-  isChapter: boolean;
-}
-
-export class Position extends React.Component<IProps, IState> {
+export class Position extends React.Component<IProps> {
   constructor(props: IProps) {
     super(props);
-
-    this.state = {
-      isChapter: getChapterNum() !== null,
-    };
   }
 
   setPosition = (resetSequence?: boolean) => {
     const idea = getFirstIdeaShown();
-    const chapterNum = getChapterNum();
+    const chapterNum = docInfo.order;
     const chapterStart = isPageScrolledToTop();
     const chapterEnd = isPageScrolledToBottom();
     if (chapterNum === null || idea === null) return;
@@ -97,7 +89,7 @@ export class Position extends React.Component<IProps, IState> {
     return (
       <SeqReturn
         status={this.props.seqReturnStatus}
-        isChapter={this.state.isChapter}
+        isChapter={docInfo.role === DocRole.Chapter}
         thisChapter={thisChapter}
         targetChapter={
           this.props.sequentialPosition ? ro[this.props.sequentialPosition.chapterNum] : null

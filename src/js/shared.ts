@@ -23,15 +23,12 @@ function json(response: Response): object {
   return response.json();
 }
 
-export function loadManifest(): Promise<object> {
-  const el = document.querySelector('link[rel="publication"]');
+export function loadManifest(link: string | null): Promise<object> {
+  if (link === null) return Promise.reject(new Error('Manifest not available.'));
 
-  if (el !== null) {
-    const uri = el.getAttribute('href') as string;
-    return fetch(uri)
-      .then(status)
-      .then(json);
-  } else return Promise.reject(new Error('Manifest not available.'));
+  return fetch(link)
+    .then(status)
+    .then(json);
 }
 
 export function assignManifest(data: any): IManifest {
@@ -63,11 +60,3 @@ export function assignManifest(data: any): IManifest {
   );
 }
 
-export function getChapterNum() {
-  const el = document.querySelector('meta[name="order"]');
-  if (!el) return null;
-
-  const content = el.getAttribute('content');
-  const number = content !== null ? parseInt(content, 10) : 0;
-  return number >= 0 ? number : null;
-}

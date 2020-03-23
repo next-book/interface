@@ -1,10 +1,11 @@
 import React from 'react';
 import { INavDocument } from './position-reducer';
+import { DocRole } from './manifest-reducer';
 import { getProgress } from './navigation';
 
 interface IProps {
   scrollRatio: number;
-  isChapter: boolean;
+  docRole: DocRole;
   chapter: INavDocument | null;
   totalWords: number;
   readingOrder: INavDocument[];
@@ -13,7 +14,7 @@ interface IProps {
 export function NavBar(props: IProps) {
   return (
     <ul className="nav-bar">
-      {props.chapter && props.isChapter && (
+      {props.chapter && props.docRole === DocRole.Chapter && (
         <Pointer
           scrollRatio={props.scrollRatio}
           chapter={props.chapter}

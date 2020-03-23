@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { getAnnotatedIdeas, removeAnnotation } from './utils';
 
-import { getChapterNum } from '../../shared';
+import docInfo from '../../doc-info';
 
 interface IProps {
   annotations: IState;
@@ -20,7 +20,6 @@ interface IProps {
 }
 
 interface ILocalState {
-  chapterNum: string | null;
   selectedAnnotation: number | null;
 }
 
@@ -28,10 +27,7 @@ export class Annotations extends React.Component<IProps, ILocalState> {
   constructor(props: IProps) {
     super(props);
 
-    const chapterNum = getChapterNum();
-
     this.state = {
-      chapterNum: chapterNum === null ? null : chapterNum.toString(),
       selectedAnnotation: null,
     };
   }
@@ -68,9 +64,11 @@ export class Annotations extends React.Component<IProps, ILocalState> {
   };
 
   render() {
-    if (this.state.chapterNum === null) return null;
+    const chapterNum = docInfo.order;
 
-    const chapterAnnotations = this.props.annotations[this.state.chapterNum.toString()];
+    if (chapterNum === null) return null;
+
+    const chapterAnnotations = this.props.annotations[chapterNum.toString()];
     const annotations =
       chapterAnnotations && chapterAnnotations.annotations ? chapterAnnotations.annotations : [];
     const ideas = chapterAnnotations && chapterAnnotations.ideas ? chapterAnnotations.ideas : {};
@@ -91,9 +89,9 @@ export class Annotations extends React.Component<IProps, ILocalState> {
           updateNote={this.props.updateNote}
           destroyNote={this.props.destroyNote}
           selectedAnnotation={this.state.selectedAnnotation}
-          chapterNum={this.state.chapterNum}
+          chapterNum={chapterNum.toString()}
         />
-        {this.state.chapterNum === null || this.state.selectedAnnotation === null ? null : (
+        {chapterNum === null || this.state.selectedAnnotation === null ? null : (
           <AnnotationDetail
             annotation={annotations[this.state.selectedAnnotation]}
             close={this.deselectAnnotation}
