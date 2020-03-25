@@ -42,9 +42,9 @@ interface PointerProps {
 
 function Pointer(props: PointerProps) {
   const { offset, fraction } = getProgress(props.chapter, props.totalWords);
-  const left = offset + fraction * props.scrollRatio;
+  const width = offset + fraction * props.scrollRatio;
 
-  return <li className="pointer" style={{ left: left + '%' }} />;
+  return <li className="pointer" style={{ width: width + '%' }} />;
 }
 
 interface ChapterProps {

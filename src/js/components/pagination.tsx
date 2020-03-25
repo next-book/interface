@@ -34,7 +34,7 @@ export class Pagination extends React.Component<IProps, IState> {
     this.state = {
       barHeight: null,
       windowHeight: null,
-      zonePadding: { [Side.Top]: 12, [Side.Bottom]: 8 * 6 },
+      zonePadding: { [Side.Top]: 18, [Side.Bottom]: 8 * 4 },
       readingZone: { [Side.Top]: 0, [Side.Bottom]: 0 },
       lastScrollStart: null,
     };
