@@ -4,8 +4,9 @@ import { IState as ICombinedState } from '../reducer';
 import Peek from './peek';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
+import { withTranslation, WithTranslation } from 'react-i18next';
 
-export interface IProps {
+export interface IProps extends WithTranslation {
   peeks: IPeek[];
   addPeek(peek: IPeek): void;
   destroyPeek(index: number): void;
@@ -28,7 +29,7 @@ export class Peeks extends React.Component<IProps> {
         if (footnoteEl !== null)
           this.props.addPeek({
             content: footnoteEl.innerHTML,
-            title: 'Footnote',
+            title: this.props.t('note'),
             source: target.href,
             showSource: false,
           });
@@ -78,4 +79,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Peeks);
+export default withTranslation('common')(connect(mapStateToProps, mapDispatchToProps)(Peeks));

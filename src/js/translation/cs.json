@@ -1,6 +1,7 @@
 {
   "common": {
-    "toggle-full-screen": "Přepnout na celou obrazovku"
+    "toggle-full-screen": "Přepnout na celou obrazovku",
+    "note": "Poznámka"
   },
   "annotations": {
     "work-desk": "Pracovní plocha",

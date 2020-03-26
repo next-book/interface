@@ -1,6 +1,7 @@
 {
   "common": {
-    "toggle-full-screen": "Toggle Full Screen View"
+    "toggle-full-screen": "Toggle Full Screen View",
+    "note": "Note"
   },
   "annotations": {
     "work-desk": "Work desk",
