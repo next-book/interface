@@ -218,7 +218,7 @@ export class Navigation extends React.Component<IProps> {
             currentIdea={this.props.position.idea}
             readingOrder={this.props.readingOrder}
             documents={this.props.documents}
-            progress={Math.floor(progress)}
+            progress={cropProgress(progress)}
             minutesLeft={minutesLeftInChapter}
           />
         )}
@@ -230,10 +230,16 @@ export class Navigation extends React.Component<IProps> {
           scrollRatio={this.props.scrollRatio}
           totalWords={totalWords}
         />
-        {chapter && <TopBar title={this.props.manifest.title} chapter={chapter} />}
+        {docInfo.role !== DocRole.Index && chapter && (
+          <TopBar title={this.props.manifest.title} chapter={chapter} />
+        )}
       </nav>
     );
   }
+}
+
+function cropProgress(progress: number) {
+  return progress > 100 ? 100 : progress < 0 ? 0 : Math.floor(progress);
 }
 
 function countMinutesLeft(scrollRatio: number, wordsInChapter: number) {

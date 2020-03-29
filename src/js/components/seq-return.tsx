@@ -95,8 +95,8 @@ class SeqReturn extends React.Component<IProps, IState> {
     const chapter = this.props.targetChapter;
     const idea = this.props.targetIdea;
     if (chapter === null || idea === null) return null;
-    if (this.state.collapsed && chapter.order !== null)
-      return this.renderWrapper(`🔙 ${chapter.order + 1}.${idea}`);
+    if (this.state.collapsed)
+      return chapter.order !== null ? this.renderWrapper(`🔙 ${chapter.order + 1}.${idea}`) : null;
 
     const link = `./${chapter.file}#idea${idea}`;
 
@@ -114,8 +114,8 @@ class SeqReturn extends React.Component<IProps, IState> {
     const chapter = this.props.targetChapter;
     const idea = this.props.targetIdea;
     if (chapter === null || idea === null) return null;
-    if (this.state.collapsed && chapter.order !== null)
-      return this.renderWrapper(`🔙 ${chapter.order + 1}.${idea}`);
+    if (this.state.collapsed)
+      return chapter.order !== null ? this.renderWrapper(`🔙 ${chapter.order + 1}.${idea}`) : null;
 
     const link = `./${chapter.file}#idea${idea}`;
 
@@ -203,7 +203,7 @@ class SeqReturn extends React.Component<IProps, IState> {
       case SeqReturnStatus.Initializing:
         switch (this.props.docRole) {
           case DocRole.Index:
-            if (this.props.targetChapter !== null) return this.renderFirstOpen();
+            if (this.props.targetChapter === null) return this.renderFirstOpen();
             else return this.renderReturnFromTitle();
           default:
             return null;

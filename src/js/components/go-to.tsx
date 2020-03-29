@@ -56,11 +56,10 @@ class GoTo extends React.Component<IProps, IState> {
       <>
         <button className="goto__current--position" onClick={this.toggleNavigator}>
           {this.props.minutesLeft !== null ? (
-            <>{this.props.t('minutes-left', { minutes: this.props.minutesLeft })} | </>
+            <>{this.props.t('minutes-left', { minutes: this.props.minutesLeft })} &middot; </>
           ) : null}{' '}
-          {this.props.progress}
-          {this.props.t('percent-sign')} | {this.props.currentChapterNum + 1}.
-          {this.props.currentIdea}
+          {this.props.t('progress', { percent: this.props.progress })} &middot;{' '}
+          {this.props.currentChapterNum + 1}.{this.props.currentIdea}
         </button>
         {this.state.showNavigator && (
           <div className="peeks">

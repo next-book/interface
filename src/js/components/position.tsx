@@ -6,6 +6,7 @@ import { throttle } from 'lodash';
 
 import docInfo from '../doc-info';
 import SeqReturn, { Sequential, SeqReturnStatus } from './seq-return';
+import { DocRole } from './manifest-reducer';
 import { reducer, IPosition, IDocMap, INavDocument } from './position-reducer';
 
 export interface IProps {
@@ -32,9 +33,10 @@ export class Position extends React.Component<IProps> {
     if (file === null || idea === null) return;
 
     const sequential =
-      resetSequence ||
-      (this.props.seqReturnStatus === SeqReturnStatus.Initializing &&
-        this.props.sequential === Sequential.No)
+      resetSequence || docInfo.role !== DocRole.Chapter
+        ? Sequential.No
+        : this.props.seqReturnStatus === SeqReturnStatus.Initializing &&
+          this.props.sequential === Sequential.No
         ? Sequential.Yes
         : checkSequence(
             this.props.sequentialPosition,
@@ -210,7 +212,7 @@ const getSeqReturnStatus = () => {
 
       if (sequential === Sequential.Yes) {
         const counterTopped = counter > 3;
-        const initTimeElapsed = now - start > 12;
+        const initTimeElapsed = now - start > 30;
 
         if (counterTopped && initTimeElapsed) {
           return SeqReturnStatus.Enabled;
