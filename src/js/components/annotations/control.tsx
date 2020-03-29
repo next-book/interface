@@ -227,6 +227,8 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
   }
 
   renderButtons() {
+    const classes = ['annotation-control', 'ui-target'];
+
     if (this.state.visible === Controls.ExtendCrop) {
       const actions = [
         {
@@ -240,7 +242,7 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
       ];
 
       return (
-        <div className="annotation-control ui-target">
+        <div className={classes.join(' ')}>
           {actions.map((action, index) => (
             <ActionButton key={index} action={action.symbol} fn={action.fn} title="" />
           ))}
@@ -280,7 +282,12 @@ export default class AnnotationControl extends React.Component<IControlProps, IC
       : this.createAnnotationFromRange;
 
     return (
-      <div className="annotation-control ui-target">
+      <div
+        className={(this.props.selectedAnnotation
+          ? classes
+          : classes.concat(['annotation-control--new'])
+        ).join(' ')}
+      >
         {styles.map((style, index) => (
           <StyleButton key={index} style={style} fn={() => fn({ style: style })} />
         ))}
