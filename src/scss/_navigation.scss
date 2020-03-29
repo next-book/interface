@@ -298,14 +298,14 @@ body.paginated-button-back {
 
   /* nav bar */
   .nav-bar {
-    --height: 7px;
+    --height: 8px;
 
     display: block;
     position: fixed;
     left: var(--base-padding);
+    bottom: 0;
     width: calc(100vw - 2 * var(--base-padding));
-    bottom: -1px;
-    border-right: 1px solid rgba(0, 0, 0, 0.3);
+    border-right: 1px solid rgba(0, 0, 0, 0.6);
 
     height: var(--height);
     margin: 0;
@@ -314,7 +314,7 @@ body.paginated-button-back {
 
     .chapter {
       display: block;
-      border-left: 1px solid rgba(0, 0, 0, 0.3);
+      border-left: 1px solid rgba(0, 0, 0, 0.6);
       list-style-type: none;
       position: absolute;
       top: 0;
