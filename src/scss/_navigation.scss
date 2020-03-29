@@ -354,7 +354,7 @@ body.paginated-button-back {
     overflow: hidden;
 
     box-sizing: border-box;
-    padding: 0 0.5rem;
+    padding: 0 var(--base-padding);
 
     display: flex;
 
