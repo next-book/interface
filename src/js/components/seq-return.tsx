@@ -31,6 +31,7 @@ interface IProps extends WithTranslation {
   docRole: DocRole;
   setPosition(resetSequence: boolean): void;
   startLink: string;
+  colophonLink: string | null;
 }
 
 interface IState {
@@ -65,13 +66,22 @@ class SeqReturn extends React.Component<IProps, IState> {
   };
 
   renderFirstOpen = () => {
-    return this.renderWrapper(null, [
-      {
-        link: this.props.startLink,
-        primary: false,
-        text: `${this.props.t('start')} ➡️`,
-      },
-    ]);
+    const buttons = [];
+
+    if (this.props.colophonLink !== null) {
+      buttons.push({
+        link: this.props.colophonLink,
+        text: `ℹ️`,
+      });
+    }
+
+    buttons.push({
+      link: this.props.startLink,
+      primary: false,
+      text: `${this.props.t('start')} ➡️`,
+    });
+
+    return this.renderWrapper(null, buttons);
   };
 
   renderReturnFromTitle = () => {
