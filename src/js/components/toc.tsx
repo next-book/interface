@@ -15,20 +15,31 @@ interface IProps extends WithTranslation {
 
 class Toc extends React.Component<IProps> {
   render() {
+    const otherLinks = [];
+
+    if (docInfo.links.index !== null) {
+      otherLinks.push(
+        <a
+          className={docInfo.role === DocRole.Index ? 'current-chapter' : undefined}
+          href={docInfo.links.index}
+        >
+          {this.props.t('title-page')}
+        </a>
+      );
+    }
+
+    if (docInfo.links.colophon !== null) {
+      otherLinks.push(
+        <a
+          className={docInfo.role === DocRole.Colophon ? 'current-chapter' : undefined}
+          href={`${docInfo.links.colophon}#idea1`}
+        >
+          {this.props.t('colophon')}
+        </a>
+      );
+    }
+
     return (
-      <>
-        {docInfo.links.index && (
-          <ul>
-            <li>
-              <a
-                className={docInfo.role === DocRole.Index ? 'current-chapter' : undefined}
-                href={docInfo.links.index}
-              >
-                {this.props.t('title-page')}
-              </a>
-            </li>
-          </ul>
-        )}
         <ol>
           {this.props.readingOrder.map(file => {
             const doc = this.props.documents[file];
@@ -52,19 +63,17 @@ class Toc extends React.Component<IProps> {
             );
           })}
         </ol>
-        {docInfo.links.colophon && (
-          <ul>
-            <li>
-              <a
-                className={docInfo.role === DocRole.Colophon ? 'current-chapter' : undefined}
-                href={`${docInfo.links.colophon}#idea1`}
-              >
-                {this.props.t('colophon')}
-              </a>
-            </li>
-          </ul>
-        )}
-      </>
+        <p>
+          {otherLinks.map((link, index) => {
+            return (
+              <>
+                {link}
+                {index !== otherLinks.length - 1 ? <> &middot; </> : null}
+              </>
+            );
+          })}
+        </p>
+      </div>
     );
   }
 }
