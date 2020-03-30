@@ -338,13 +338,23 @@ body.paginated-button-back {
   font-size: 12px;
   font-family: var(--ui-font);
   text-align: right;
-  opacity: 0.5;
+}
 
+.current-position--display {
+  opacity: 0.5;
   pointer-events: none;
 }
 
-.current-position:hover {
-  opacity: 1;
+.current-position--config {
+  padding: 3px;
+
+  label {
+    display: inline-block;
+    padding: 3px 4px;
+    margin: 0 2px;
+    border: 1px solid #aaa;
+    border-radius: var(--border-radius);
+  }
 }
 
 .progress {

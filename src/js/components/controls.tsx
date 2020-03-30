@@ -1,7 +1,7 @@
 import React from 'react';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
-import Progress from './progress';
+import Progress, { ProgressForm } from './progress';
 import Toc from './toc';
 import Notes from './annotations/desk';
 
@@ -64,7 +64,7 @@ function Launchbar(props: ILaunchbarProps) {
           <div key={index} title={props.t(`show-${control}`)} onClick={() => props.open(control)} />
         ))}
       </div>
-      <Progress showNavigator={false} />
+      <Progress form={ProgressForm.Display} />
     </>
   );
 }

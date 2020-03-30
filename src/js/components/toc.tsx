@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../reducer';
 import { IToc, DocRole } from './manifest-reducer';
 import { IDocMap } from './position-reducer';
 import docInfo from '../doc-info';
 import { withTranslation, WithTranslation } from 'react-i18next';
+import Progress, { ProgressForm } from './progress';
 
 interface IProps extends WithTranslation {
   readingOrder: string[];
@@ -34,6 +34,7 @@ class Toc extends React.Component<IProps> {
 
     return (
       <div className="toc">
+        <Progress form={ProgressForm.Config} />x
         <ol>
           {this.props.readingOrder.map(file => {
             const doc = this.props.documents[file];
@@ -69,6 +70,7 @@ class Toc extends React.Component<IProps> {
             );
           })}
         </p>
+        <Progress form={ProgressForm.Goto} />
       </div>
     );
   }
@@ -94,8 +96,4 @@ const mapStateToProps = (state: ICombinedState) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({}, dispatch);
-};
-
-export default withTranslation('navigation')(connect(mapStateToProps, mapDispatchToProps)(Toc));
+export default withTranslation('navigation')(connect(mapStateToProps)(Toc));
