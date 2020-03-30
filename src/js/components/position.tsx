@@ -32,19 +32,20 @@ export class Position extends React.Component<IProps> {
 
     if (file === null || idea === null) return;
 
-    const sequential =
-      resetSequence || docInfo.role !== DocRole.Chapter
-        ? Sequential.No
-        : this.props.seqReturnStatus === SeqReturnStatus.Initializing &&
-          this.props.sequential === Sequential.No
-        ? Sequential.Yes
-        : checkSequence(
-            this.props.sequentialPosition,
-            { idea, file, chapterStart, chapterEnd },
-            this.props.documents,
-            this.props.sequential,
-            true
-          );
+    const sequential = resetSequence
+      ? Sequential.Yes
+      : docInfo.role !== DocRole.Chapter
+      ? Sequential.No
+      : this.props.seqReturnStatus === SeqReturnStatus.Initializing &&
+        this.props.sequential === Sequential.No
+      ? Sequential.Yes
+      : checkSequence(
+          this.props.sequentialPosition,
+          { idea, file, chapterStart, chapterEnd },
+          this.props.documents,
+          this.props.sequential,
+          true
+        );
 
     const seqReturnStatus = this.getSeqReturnStatus(
       this.props.seqReturnStatus,
