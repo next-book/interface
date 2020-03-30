@@ -17,7 +17,7 @@ interface IState {
   idea: number;
 }
 
-class GoTo extends React.Component<IProps, IState> {
+class Progress extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
@@ -57,11 +57,15 @@ class GoTo extends React.Component<IProps, IState> {
     const minutesLeft = chapter ? countMinutesLeft(this.props.scrollRatio, chapter.words) : null;
 
     return this.props.showNavigator ? (
-      <div className="goto">
-        <label className="goto__chapter">
+      <div className="progress">
+        <label className="progress__chapter">
           {this.props.t('chapter')}
           <br />
-          <select onChange={this.setFile} value={this.state.file} className="goto__chapter__select">
+          <select
+            onChange={this.setFile}
+            value={this.state.file}
+            className="progress__chapter__select"
+          >
             {ro.map(file => {
               const doc = this.props.documents[file];
               if (doc.order === null) return null;
@@ -75,10 +79,14 @@ class GoTo extends React.Component<IProps, IState> {
             })}
           </select>
         </label>
-        <label className="goto__idea">
+        <label className="progress__idea">
           {this.props.t('sentence')}
           <br />
-          <select className="goto__idea__select" onChange={this.setIdea} value={this.state.idea}>
+          <select
+            className="progress__idea__select"
+            onChange={this.setIdea}
+            value={this.state.idea}
+          >
             {ideaIds.map(i => (
               <option key={i} value={i}>
                 {this.props.t('nthSentence', { number: i })}
@@ -132,4 +140,4 @@ const mapStateToProps = (state: ICombinedState) => {
   };
 };
 
-export default withTranslation('navigation')(connect(mapStateToProps)(GoTo));
+export default withTranslation('navigation')(connect(mapStateToProps)(Progress));
