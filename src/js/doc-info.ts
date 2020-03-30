@@ -5,6 +5,12 @@ function getValue(selector: string, attrName: string) {
   return el !== null ? el.getAttribute(attrName) : null;
 }
 
+function getNumericValue(selector: string, attrName: string) {
+  const value = getValue(selector, attrName);
+
+  return value !== null ? parseInt(value, 10) : null;
+}
+
 function getRole() {
   const value = getValue('meta[name="role"]', 'content');
 
@@ -24,9 +30,13 @@ const docInfo = {
   languageCode: getValue('html', 'lang'),
   role: getRole(),
   order: getOrder(),
+  totals: {
+    words: getNumericValue('body', 'data-nb-words'),
+    chars: getNumericValue('body', 'data-nb-chars'),
+  },
   links: {
     index: getValue('link[rel="index"]', 'href'),
-    self: getValue('link[rel="self"]', 'href'),
+    self: getValue('link[rel="self"]', 'href') || 'null.html',
     manifest: getValue('link[rel="publication"]', 'href'),
     prev: getValue('link[rel="prev"]', 'href'),
     next: getValue('link[rel="next"]', 'href'),

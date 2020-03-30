@@ -12,14 +12,11 @@ import { DocRole } from './manifest-reducer';
 import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
-import GoTo from './go-to';
 import { Pagination } from './pagination';
 import { Sequential } from './seq-return';
-import { reducer, IPosition, INavDocument, IDocMap, IConfig } from './position-reducer';
+import { reducer, IPosition, IDocMap, IConfig } from './position-reducer';
 import { IState as IManifest, IDocument } from './manifest-reducer';
 import { reducer as peeksReducer, IPeek } from './peeks-reducer';
-
-import Toc from './toc';
 
 export enum Direction {
   Back = 'back',
@@ -150,18 +147,6 @@ export class Navigation extends React.Component<IProps> {
     } else if (prevChapter) window.location.assign(`${prevChapter}#chapter-end`);
   };
 
-  showToc = () => {
-    const idea = this.props.position !== null ? this.props.position.idea : null;
-
-    // TODO: Rewrite without peeks
-    this.props.addPeek({
-      content: <Toc idea={idea} />,
-      title: this.props.t('toc'),
-      source: 'toc-table',
-      showSource: false,
-    });
-  };
-
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
     if (this.props.config.keyboardNav) {
@@ -196,32 +181,12 @@ export class Navigation extends React.Component<IProps> {
 
     const { totalWords } = this.props.documents[ro[ro.length - 1]];
 
-    const { offset, fraction } =
-      chapter !== null ? getProgress(chapter, totalWords) : { offset: 0, fraction: 0 };
-
-    const progress = offset + fraction * this.props.scrollRatio;
-    const minutesLeftInChapter = chapter
-      ? countMinutesLeft(this.props.scrollRatio, chapter.words)
-      : null;
-
     return (
       <nav>
         <Pagination
           setScrollStepGetter={this.setScrollStepGetter}
           setPaddingsSetter={this.setPaddingsSetter}
-          actions={{ showToc: this.showToc }}
         />
-        {this.props.position && (
-          <GoTo
-            currentFile={docInfo.links.self}
-            currentChapterNum={ro.indexOf(this.props.position.file)}
-            currentIdea={this.props.position.idea}
-            readingOrder={this.props.readingOrder}
-            documents={this.props.documents}
-            progress={cropProgress(progress)}
-            minutesLeft={minutesLeftInChapter}
-          />
-        )}
         <NavBar
           docRole={docInfo.role}
           readingOrder={ro}
@@ -238,16 +203,6 @@ export class Navigation extends React.Component<IProps> {
   }
 }
 
-function cropProgress(progress: number) {
-  return progress > 100 ? 100 : progress < 0 ? 0 : Math.floor(progress);
-}
-
-function countMinutesLeft(scrollRatio: number, wordsInChapter: number) {
-  const wordsPerMinute = 240;
-  const left = ((1 - scrollRatio) * wordsInChapter) / wordsPerMinute;
-  return left > 0 ? Math.floor(left) : 0;
-}
-
 function displayPagination(dir: Direction, showButtons?: boolean) {
   document.body.classList.add(`paginated-${dir}`);
   window.setTimeout(() => document.body.classList.remove(`paginated-${dir}`), 300);
@@ -260,15 +215,6 @@ function displayPagination(dir: Direction, showButtons?: boolean) {
 
 function getScrollRatio(): number {
   return window.scrollY / (document.body.scrollHeight - window.innerHeight);
-}
-
-export function getProgress(chapter: INavDocument, totalWords: number) {
-  if (!chapter || !totalWords) return { offset: 0, fraction: 0 };
-
-  const offset = (chapter.offsetWords / totalWords) * 100;
-  const fraction = (chapter.words / totalWords) * 100;
-
-  return { offset, fraction };
 }
 
 function isInPaginationRect(dir: Direction, x: number, y: number) {

@@ -8,7 +8,6 @@ import docInfo from '../doc-info';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
 interface IProps extends WithTranslation {
-  idea: number | null;
   readingOrder: string[];
   documents: IDocMap;
 }
@@ -18,28 +17,23 @@ class Toc extends React.Component<IProps> {
     const otherLinks = [];
 
     if (docInfo.links.index !== null) {
-      otherLinks.push(
-        <a
-          className={docInfo.role === DocRole.Index ? 'current-chapter' : undefined}
-          href={docInfo.links.index}
-        >
-          {this.props.t('title-page')}
-        </a>
-      );
+      otherLinks.push({
+        classes: docInfo.role === DocRole.Index ? 'current-chapter' : undefined,
+        href: docInfo.links.index,
+        text: this.props.t('title-page'),
+      });
     }
 
     if (docInfo.links.colophon !== null) {
-      otherLinks.push(
-        <a
-          className={docInfo.role === DocRole.Colophon ? 'current-chapter' : undefined}
-          href={`${docInfo.links.colophon}#idea1`}
-        >
-          {this.props.t('colophon')}
-        </a>
-      );
+      otherLinks.push({
+        classes: docInfo.role === DocRole.Colophon ? 'current-chapter' : undefined,
+        href: `${docInfo.links.colophon}#idea1`,
+        text: this.props.t('colophon'),
+      });
     }
 
     return (
+      <div className="toc">
         <ol>
           {this.props.readingOrder.map(file => {
             const doc = this.props.documents[file];
@@ -66,10 +60,12 @@ class Toc extends React.Component<IProps> {
         <p>
           {otherLinks.map((link, index) => {
             return (
-              <>
-                {link}
+              <span key={index}>
+                <a className={link.classes} href={link.href}>
+                  {link.text}
+                </a>
                 {index !== otherLinks.length - 1 ? <> &middot; </> : null}
-              </>
+              </span>
             );
           })}
         </p>

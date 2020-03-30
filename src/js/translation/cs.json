@@ -3,6 +3,14 @@
     "toggle-full-screen": "Přepnout na celou obrazovku",
     "note": "Poznámka"
   },
+  "controls": {
+    "show-toc": "Zobrazit obsah",
+    "show-notes": "Zobrazit poznámky",
+    "show-options": "Zobrazit nastavení",
+    "toc": "Obsah",
+    "notes": "Poznámky",
+    "options": "Nastavení"
+  },
   "annotations": {
     "work-desk": "Pracovní plocha",
     "no-annotations-in-chapter": "V textu kapitoly nemáte žádné anotace.",

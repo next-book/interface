@@ -1,25 +1,42 @@
 import React from 'react';
 import ContentEditable from 'react-contenteditable';
+import { IState as ICombinedState } from '../../reducer';
+import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
 import { ContentEditableEvent } from 'react-contenteditable';
-import { IAnnotation, IAnnotations, IIdeas, INote, INotes } from './reducer';
+import {
+  reducer,
+  IState as IAllAnnotations,
+  IAnnotation,
+  IAnnotationAndIdeas,
+  IAnnotations,
+  IIdeas,
+  INote,
+  INotes,
+} from './reducer';
+import { getChapterAnnotations } from './index';
 import AnnotationNote from './note';
 import { withTranslation, WithTranslation } from 'react-i18next';
+import docInfo from '../../doc-info';
+import { getAnnotatedIdeas } from './utils';
 
 interface IProps extends WithTranslation {
-  annotations: IAnnotations;
-  ideas: IIdeas;
-  notes: INotes;
-  destroyAnnotation(data: IAnnotation): void;
-  addNote(note: string): void;
+  annotations: IAllAnnotations;
+  destroyAnnotation(data: IAnnotationAndIdeas): void;
+  addNote(data: INote): void;
   updateNote(note: INote): void;
   destroyNote(note: INote): void;
-  close(): void;
 }
 
 interface IState {
+  chapter: {
+    annotations: IAnnotations;
+    ideas: IIdeas;
+    notes: INotes;
+    sortedIdeas: string[];
+    groupedIdeas: string[][];
+  };
   showAllChapters: boolean;
-  sortedIdeas: string[];
-  groupedIdeas: string[][];
   newNote: string;
 }
 
@@ -28,28 +45,59 @@ enum Position {
   End = 'end',
 }
 
-class AnnotationDetail extends React.Component<IProps, IState> {
+class AnnotationDesk extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    const sortedIdeas = Object.entries(props.ideas).reduce(
-      (acc: string[], entry: [string, string]) => {
-        const [key, value] = entry;
-        acc[this.parseIdeaNumber(key)] = value;
-        return acc;
-      },
-      []
+    const { annotations, ideas, notes } = getChapterAnnotations(
+      docInfo.links.self,
+      this.props.annotations
     );
+
+    const sortedIdeas =
+      docInfo.links.self !== null
+        ? Object.entries(ideas).reduce((acc: string[], entry: [string, string]) => {
+            const [key, value] = entry;
+            acc[this.parseIdeaNumber(key)] = value;
+            return acc;
+          }, [])
+        : [];
 
     const groupedIdeas = this.groupIdeas(sortedIdeas);
 
     this.state = {
       showAllChapters: false,
-      sortedIdeas,
-      groupedIdeas,
       newNote: '',
+      chapter: {
+        annotations,
+        ideas,
+        notes,
+        sortedIdeas,
+        groupedIdeas,
+      },
     };
   }
+
+  private addNote = () => {
+    this.props.addNote({
+      dateCreated: 0,
+      dateModified: 0,
+      id: this.getNewNoteId(),
+      text: this.state.newNote,
+      file: docInfo.links.self,
+    });
+
+    this.setState({ ...this.state, newNote: '' });
+  };
+
+  private getNewNoteId = () => {
+    const keys = Object.keys(this.state.chapter.notes).map(key => parseInt(key, 10));
+    return keys.length > 0 ? Math.max(...keys) + 1 : 1;
+  };
+
+  private updateNewNoteState = (event: ContentEditableEvent) => {
+    this.setState({ ...this.state, newNote: event.target.value });
+  };
 
   toggleAllChapters = () => {
     this.setState({ ...this.state, showAllChapters: !this.state.showAllChapters });
@@ -65,11 +113,11 @@ class AnnotationDetail extends React.Component<IProps, IState> {
   parseIdeaNumber = (id: string) => parseInt(id.replace('idea', ''), 10);
 
   renderAnnotations = () => {
-    Object.values(this.props.annotations)
+    Object.values(this.state.chapter.annotations)
       .sort(this.sortAnnotationsByIdea)
       .map((annotation, index) => (
-        <div className="annotations__list__detail" key={index}>
-          {this.state.sortedIdeas
+        <div className="desk__list__detail" key={index}>
+          {this.state.chapter.sortedIdeas
             .filter(
               (val, index) =>
                 index >= this.ideaNumber(annotation, Position.Start) &&
@@ -107,99 +155,106 @@ class AnnotationDetail extends React.Component<IProps, IState> {
     );
   };
 
-  private updateNewNoteState = (event: ContentEditableEvent) => {
-    this.setState({ ...this.state, newNote: event.target.value });
-  };
-
-  private addNote = (event: React.SyntheticEvent) => {
-    this.props.addNote(this.state.newNote);
-    this.setState({ ...this.state, newNote: '' });
+  private destroyAnnotation = (annotation: IAnnotation) => {
+    this.props.destroyAnnotation({
+      annotation: annotation,
+      ideas: getAnnotatedIdeas(),
+    });
   };
 
   render() {
     return (
-      <div className="annotation__desk ui-target">
-        <div className="annotation__desk__head">
-          <div className="annotation__desk__info">
-            <p>{this.props.t('work-desk')}</p>
-          </div>
-          <button className="annotation__desk__close" onClick={this.props.close}>
-            ╳
-          </button>
-        </div>
-
-        <div className="annotation__desc_cols">
-          <div className="annotation__notes">
-            <h2>{this.props.t('notes')}</h2>
-            <div className="desk--annotation">
-              <div className="note-editor">
-                <ContentEditable
-                  className="note-editor__input"
-                  html={this.state.newNote}
-                  tagName="article"
-                  onChange={this.updateNewNoteState}
-                />
-                <button onClick={this.addNote}>{this.props.t('add-note')}</button>
-              </div>
+      <div className="desk">
+        <div className="desk__notes">
+          <h2>{this.props.t('notes')}</h2>
+          <div className="desk__annotation">
+            <div className="desk__note-editor">
+              <ContentEditable
+                className="desk__note-editor__input"
+                html={this.state.newNote}
+                tagName="article"
+                onChange={this.updateNewNoteState}
+              />
+              <button onClick={this.addNote}>{this.props.t('add-note')}</button>
             </div>
-
-            {Object.values(this.props.notes).length ? (
-              Object.values(this.props.notes)
-                .reverse()
-                .map((note, index) => (
-                  <AnnotationNote
-                    key={index}
-                    note={note}
-                    update={this.props.updateNote}
-                    destroy={this.props.destroyNote}
-                  />
-                ))
-            ) : (
-              <i>{this.props.t('no-notes-in-chapter')}</i>
-            )}
           </div>
-          <div className="annotation__list">
-            <h2>{this.props.t('annotations-in-text')}</h2>
 
-            {Object.keys(this.props.annotations).length ? (
-              Object.values(this.props.annotations).map((annotation, key) => (
-                <div key={key} className="desk--annotation">
-                  <span
-                    className="desk--annotation__destroy"
-                    onClick={() => this.props.destroyAnnotation(annotation)}
-                  >
-                    ╳
-                  </span>
-
-                  {annotation.note ? (
-                    <div
-                      className="desk-annotation__note"
-                      dangerouslySetInnerHTML={{ __html: annotation.note }}
-                    ></div>
-                  ) : null}
-                  <small>
-                    {this.state.sortedIdeas
-                      .filter(
-                        (val, index) =>
-                          index >= this.ideaNumber(annotation, Position.Start) &&
-                          index <= this.ideaNumber(annotation, Position.End)
-                      )
-                      .map((idea, index2) => (
-                        <span key={index2}>
-                          <span dangerouslySetInnerHTML={{ __html: idea }}></span>{' '}
-                        </span>
-                      ))}
-                  </small>
-                </div>
+          {Object.values(this.state.chapter.notes).length ? (
+            Object.values(this.state.chapter.notes)
+              .reverse()
+              .map((note, index) => (
+                <AnnotationNote
+                  key={index}
+                  note={note}
+                  update={this.props.updateNote}
+                  destroy={this.props.destroyNote}
+                />
               ))
-            ) : (
-              <i>{this.props.t('no-annotations-in-chapter')}</i>
-            )}
-          </div>
+          ) : (
+            <i>{this.props.t('no-notes-in-chapter')}</i>
+          )}
+        </div>
+        <div className="desk__list">
+          <h2>{this.props.t('annotations-in-text')}</h2>
+
+          {Object.keys(this.state.chapter.annotations).length ? (
+            Object.values(this.state.chapter.annotations).map((annotation, key) => (
+              <div key={key} className="desk__annotation">
+                <span
+                  className="desk__annotation__destroy"
+                  onClick={() => this.destroyAnnotation(annotation)}
+                >
+                  ╳
+                </span>
+
+                {annotation.note ? (
+                  <div
+                    className="desk__annotation__note"
+                    dangerouslySetInnerHTML={{ __html: annotation.note }}
+                  ></div>
+                ) : null}
+                <small>
+                  {this.state.chapter.sortedIdeas
+                    .filter(
+                      (val, index) =>
+                        index >= this.ideaNumber(annotation, Position.Start) &&
+                        index <= this.ideaNumber(annotation, Position.End)
+                    )
+                    .map((idea, index2) => (
+                      <span key={index2}>
+                        <span dangerouslySetInnerHTML={{ __html: idea }}></span>{' '}
+                      </span>
+                    ))}
+                </small>
+              </div>
+            ))
+          ) : (
+            <i>{this.props.t('no-annotations-in-chapter')}</i>
+          )}
         </div>
       </div>
     );
   }
 }
 
-export default withTranslation('annotations')(AnnotationDetail);
+const mapStateToProps = (state: ICombinedState) => {
+  return {
+    annotations: state.annotations,
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators(
+    {
+      addNote: reducer.addNote,
+      updateNote: reducer.updateNote,
+      destroyNote: reducer.destroyNote,
+      destroyAnnotation: reducer.destroyAnnotation,
+    },
+    dispatch
+  );
+};
+
+export default withTranslation('annotations')(
+  connect(mapStateToProps, mapDispatchToProps)(AnnotationDesk)
+);

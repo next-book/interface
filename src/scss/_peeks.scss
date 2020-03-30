@@ -9,9 +9,8 @@
   .peek {
     position: relative;
     box-sizing: border-box;
-    background: #ddd;
     border: 1px solid #aaa;
-    border-radius: 8px 8px 0 0;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
     box-shadow: 0 0 7px #aaa;
     overflow: hidden;
 
@@ -37,7 +36,7 @@
       height: 3rem;
       line-height: 3rem;
       text-align: left;
-      background: #ddd;
+      border-bottom: 0.5px solid #aaa;
       z-index: map-get($z-indexes, 'peeks') + 10;
 
       .peek-info {

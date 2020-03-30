@@ -16,9 +16,6 @@ export type Sides = {
 interface IProps {
   setScrollStepGetter(fn: () => number | null): void;
   setPaddingsSetter(fn: () => void): void;
-  actions: {
-    showToc(): void;
-  };
 }
 
 export interface IState {
@@ -139,7 +136,6 @@ export class Pagination extends React.Component<IProps, IState> {
             id="pagination__bottom"
             style={bottom ? { height: `${bottom}px` } : {}}
             className={bottom === null ? 'pagination__bottom--collapsed' : ''}
-            onClick={this.props.actions.showToc}
           />
           <div id="pagination__top" style={top ? { height: `${top}px` } : { height: 0 }} />
         </>

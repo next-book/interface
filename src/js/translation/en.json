@@ -3,6 +3,14 @@
     "toggle-full-screen": "Toggle Full Screen View",
     "note": "Note"
   },
+  "controls": {
+    "show-toc": "Show table of contents",
+    "show-notes": "Show notes",
+    "show-options": "Show options",
+    "toc": "Table of contents",
+    "notes": "Notes",
+    "options": "Options"
+  },
   "annotations": {
     "work-desk": "Work desk",
     "no-annotations-in-chapter": "No annotations in this chapter. Add annotation by selecting text.",

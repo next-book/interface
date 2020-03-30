@@ -1,0 +1,135 @@
+.controls-launcher {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  cursor: pointer;
+
+  div {
+    min-height: 48px;
+    background: rgba(255, 0, 0, 0.5);
+  }
+
+  div:nth-child(2) {
+    background: rgba(255, 255, 0, 0.5);
+  }
+}
+
+.control {
+  max-height: 90vh;
+  position: fixed;
+  z-index: map-get($z-indexes, 'card') + 5;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--ui-background);
+
+  border: 1px solid #aaa;
+  border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
+  box-shadow: 0 0 7px #aaa;
+  transition: bottom 0.2s ease-out;
+  animation: slide-up 0.2s ease-out;
+
+  .control-bar {
+    display: flex;
+
+    .tab {
+      display: block;
+      flex-grow: 1;
+      padding: calc(var(--base-padding) / 2) var(--base-padding);
+      border: solid #aaa;
+      border-width: 1px 1px 1px 0;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      margin-top: calc(-1 * var(--border-radius));
+      background: #eee;
+
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .tab--selected {
+      border-bottom: none;
+      background: var(--ui-background);
+    }
+
+    .close {
+      display: block;
+      flex-grow: 2;
+      cursor: pointer;
+    }
+  }
+
+  .control-content {
+    position: relative;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .peek-content {
+      padding: 4rem 1rem 2rem;
+      max-height: calc(60vh - 6rem);
+      background: white;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .peek-head {
+      position: absolute;
+      display: flex;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3rem;
+      line-height: 3rem;
+      text-align: left;
+      background: #ddd;
+      z-index: map-get($z-indexes, 'peeks') + 10;
+
+      .peek-info {
+        flex-grow: 1;
+        padding: 0 1rem;
+
+        p {
+          margin: 0;
+          line-height: 3rem;
+        }
+      }
+
+      .peek-close {
+        display: block;
+        width: 3rem;
+        height: 3rem;
+        font-size: 1rem;
+
+        border: none;
+        color: black;
+        background: none;
+        cursor: pointer;
+        text-align: center;
+      }
+    }
+  }
+
+  .peek:nth-last-child(3),
+  .peek:nth-last-child(2) {
+    display: block;
+    height: 2vh;
+    margin-bottom: -1vh;
+
+    .peek-head,
+    .peek-content {
+      display: none;
+    }
+  }
+
+  .peek:last-child {
+    display: block;
+    height: auto;
+    margin-bottom: 0;
+  }
+}
