@@ -22,7 +22,7 @@
 .control {
   max-height: 90vh;
   position: fixed;
-  z-index: map-get($z-indexes, 'card') + 5;
+  z-index: map-get($z-indexes, 'controls');
   left: 0;
   right: 0;
   bottom: 0;
@@ -60,6 +60,9 @@
     .close {
       display: block;
       flex-grow: 2;
+      padding: calc(var(--base-padding) / 2) var(--base-padding);
+      text-align: right;
+      margin-left: 1rem;
       cursor: pointer;
     }
   }

@@ -32,7 +32,7 @@ class Controls extends React.Component<IProps, IState> {
   };
 
   renderWrapper = (control: JSX.Element) => (
-    <div className="control">
+    <div className="control ui-target">
       <Tabs opened={this.state.opened} open={this.open} t={this.props.t} />
       <div className={['control__opened', `control__opened-${this.state.opened}`].join(' ')}>
         {control}

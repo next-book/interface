@@ -223,7 +223,7 @@ body.paginated-button-back {
 
   /* nav bar */
   .nav-bar {
-    --height: 8px;
+    --height: 6px;
 
     display: block;
     position: fixed;
@@ -328,7 +328,7 @@ body.paginated-button-back {
   right: 0;
   bottom: 0;
   margin: 0;
-  padding: 2px calc(6px + var(--base-padding));
+  padding: 3px calc(6px + var(--base-padding));
   z-index: map-get($z-indexes, 'navigation') + 20;
 
   border: none;
@@ -347,7 +347,7 @@ body.paginated-button-back {
   opacity: 1;
 }
 
-.goto {
+.progress {
   display: flex;
   margin-bottom: 1rem;
 
@@ -357,8 +357,8 @@ body.paginated-button-back {
   }
 }
 
-.goto__idea,
-.goto__chapter {
+.progress__idea,
+.progress__chapter {
   display: block;
   font-family: var(--ui-font);
   flex-grow: 0;
@@ -366,6 +366,6 @@ body.paginated-button-back {
   padding-right: 0.5rem;
 }
 
-.goto__chapter {
+.progress__chapter {
   max-width: 40vw;
 }
