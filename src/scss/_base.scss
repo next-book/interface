@@ -3,17 +3,19 @@
   --heading-font: sans-serif;
   --ui-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --ui-font-size: 18px;
   --ui-background: white;
   --border-radius: 3px;
   --border-radius-xl: 6px;
 
   --background: white;
-  --base-padding: 1rem;
+  --base-padding: 18px;
   --accent-color: #0033f8;
   --highlight-color: rgba(255, 255, 0, 1);
 
   --base-font-size: 18px;
-  font-size: var(--base-font-size);
+  --font-size-ratio: 1;
+  font-size: calc(var(--font-size-ratio) * var(--base-font-size));
 }
 
 body {

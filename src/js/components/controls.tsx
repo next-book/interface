@@ -3,6 +3,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 
 import Progress, { ProgressForm } from './progress';
 import Toc from './toc';
+import Options from './options';
 import Notes from './annotations/desk';
 
 export enum Control {
@@ -45,6 +46,8 @@ class Controls extends React.Component<IProps, IState> {
       this.renderWrapper(<Toc />)
     ) : this.state.opened === Control.Notes ? (
       this.renderWrapper(<Notes />)
+    ) : this.state.opened === Control.Options ? (
+      this.renderWrapper(<Options />)
     ) : (
       <Launchbar open={this.open} t={this.props.t} />
     );

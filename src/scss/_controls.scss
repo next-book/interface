@@ -25,26 +25,32 @@
 
   border: 1px solid #aaa;
   border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
+  overflow: hidden;
   box-shadow: 0 0 7px #aaa;
   transition: bottom 0.2s ease-out;
   animation: slide-up 0.2s ease-out;
+
+  font-size: var(--ui-font-size);
 
   .control-bar {
     display: flex;
 
     .tab {
       display: block;
+      height: calc(1.4 * var(--ui-font-size));
       flex-grow: 1;
-      padding: calc(var(--base-padding) / 2) var(--base-padding);
+      padding: calc(var(--base-padding) / 4) calc(var(--base-padding) / 2);
       border: solid #aaa;
-      border-width: 1px 1px 1px 0;
-      border-radius: var(--border-radius) var(--border-radius) 0 0;
-      margin-top: calc(-1 * var(--border-radius));
+      border-width: 0 1px 1px 0;
       background: #eee;
 
       cursor: pointer;
       white-space: nowrap;
       overflow: hidden;
+    }
+
+    .tab:first-child {
+      padding-left: var(--base-padding);
     }
 
     .tab--selected {
@@ -57,7 +63,7 @@
       flex-grow: 2;
       padding: calc(var(--base-padding) / 2) var(--base-padding);
       text-align: right;
-      margin-left: 1rem;
+      margin-left: --ui-font-size;
       cursor: pointer;
     }
   }
@@ -67,67 +73,5 @@
     box-sizing: border-box;
     overflow-x: hidden;
     overflow-y: auto;
-
-    .peek-content {
-      padding: 4rem 1rem 2rem;
-      max-height: calc(60vh - 6rem);
-      background: white;
-      overflow-y: scroll;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .peek-head {
-      position: absolute;
-      display: flex;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3rem;
-      line-height: 3rem;
-      text-align: left;
-      background: #ddd;
-      z-index: map-get($z-indexes, 'peeks') + 10;
-
-      .peek-info {
-        flex-grow: 1;
-        padding: 0 1rem;
-
-        p {
-          margin: 0;
-          line-height: 3rem;
-        }
-      }
-
-      .peek-close {
-        display: block;
-        width: 3rem;
-        height: 3rem;
-        font-size: 1rem;
-
-        border: none;
-        color: black;
-        background: none;
-        cursor: pointer;
-        text-align: center;
-      }
-    }
-  }
-
-  .peek:nth-last-child(3),
-  .peek:nth-last-child(2) {
-    display: block;
-    height: 2vh;
-    margin-bottom: -1vh;
-
-    .peek-head,
-    .peek-content {
-      display: none;
-    }
-  }
-
-  .peek:last-child {
-    display: block;
-    height: auto;
-    margin-bottom: 0;
   }
 }
