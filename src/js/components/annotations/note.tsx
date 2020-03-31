@@ -45,8 +45,8 @@ class AnnotationNote extends React.Component<IProps, IState> {
 
   render() {
     return (
-      <div className="desk--annotation">
-        <span className="desk--annotation__destroy" onClick={this.destroy}>
+      <div className="desk__annotation">
+        <span className="desk__annotation__destroy" onClick={this.destroy}>
           ╳
         </span>
         {this.state.editMode ? (
