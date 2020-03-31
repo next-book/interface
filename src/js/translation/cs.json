@@ -37,7 +37,7 @@
     "progress-long": "{{percent}}% přečteno",
     "minutes-left": "{{minutes}} min",
     "minutes-left-long": "v kapitole zbývá {{minutes}} minut",
-    "nthSentenceNthChapter": "{{idea, ordinal}} věta, {{chapter, ordinal}} kapitola",
+    "nthChapterNthSentence": "{{chapter, ordinal}} kapitola, {{idea, ordinal}} věta",
     "prev-chapter": "Předchozí kapitola",
     "next-chapter": "Následující kapitola",
     "seqReturnAnotherChapter": "Dočetli jste po <1>{{idea}}. větu</1> v kapitole <3>{{title}}</3>.",

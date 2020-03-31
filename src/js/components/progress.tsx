@@ -76,55 +76,53 @@ class Progress extends React.Component<IProps, IState> {
 
     switch (this.props.form) {
       case ProgressForm.Goto:
-        return (
+        return this.state.collapsed ? (
+          <button className="progress--collapsed" onClick={this.toggleCollapsed}>
+            {this.props.t('turn-to')}
+          </button>
+        ) : (
           <div className="progress">
-            {this.state.collapsed ? (
-              <button onClick={this.toggleCollapsed}>{this.props.t('turn-to')}</button>
-            ) : (
-              <>
-                <label className="progress__chapter">
-                  {this.props.t('chapter')}
-                  <br />
-                  <select
-                    onChange={this.setFile}
-                    value={this.state.file}
-                    className="progress__chapter__select"
-                  >
-                    {ro.map(file => {
-                      const doc = this.props.documents[file];
-                      if (doc.order === null) return null;
+            <label className="progress__chapter">
+              {this.props.t('chapter')}
+              <br />
+              <select
+                onChange={this.setFile}
+                value={this.state.file}
+                className="progress__chapter__select"
+              >
+                {ro.map(file => {
+                  const doc = this.props.documents[file];
+                  if (doc.order === null) return null;
 
-                      const value = doc.file;
-                      return (
-                        <option key={value} value={value}>
-                          {doc.order + 1} {doc.title}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </label>
-                <label className="progress__idea">
-                  {this.props.t('sentence')}
-                  <br />
-                  <select
-                    className="progress__idea__select"
-                    onChange={this.setIdea}
-                    value={this.state.idea}
-                  >
-                    {ideaIds.map(i => (
-                      <option key={i} value={i}>
-                        {this.props.t('nthSentence', { number: i })}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                  const value = doc.file;
+                  return (
+                    <option key={value} value={value}>
+                      {doc.order + 1} {doc.title}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
+            <label className="progress__idea">
+              {this.props.t('sentence')}
+              <br />
+              <select
+                className="progress__idea__select"
+                onChange={this.setIdea}
+                value={this.state.idea}
+              >
+                {ideaIds.map(i => (
+                  <option key={i} value={i}>
+                    {this.props.t('nthSentence', { number: i })}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-                {this.state.file !== this.props.position.file ||
-                this.state.idea !== this.props.position.idea ? (
-                  <button onClick={this.navigate}>{this.props.t('navigation:go')} &rarr;</button>
-                ) : null}
-              </>
-            )}
+            {this.state.file !== this.props.position.file ||
+            this.state.idea !== this.props.position.idea ? (
+              <button onClick={this.navigate}>{this.props.t('navigation:go')} &rarr;</button>
+            ) : null}
           </div>
         );
       case ProgressForm.Display:

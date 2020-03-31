@@ -34,7 +34,8 @@ class Toc extends React.Component<IProps> {
 
     return (
       <div className="toc">
-        <Progress form={ProgressForm.Config} />x
+        <Progress form={ProgressForm.Goto} />
+        <Progress form={ProgressForm.Config} />
         <ol>
           {this.props.readingOrder.map(file => {
             const doc = this.props.documents[file];
@@ -70,7 +71,6 @@ class Toc extends React.Component<IProps> {
             );
           })}
         </p>
-        <Progress form={ProgressForm.Goto} />
       </div>
     );
   }

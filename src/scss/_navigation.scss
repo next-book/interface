@@ -351,15 +351,25 @@ body.paginated-button-back {
   label {
     display: inline-block;
     padding: 3px 4px;
-    margin: 0 2px;
+    margin: 2px;
     border: 1px solid #aaa;
+    background: var(--ui-background);
     border-radius: var(--border-radius);
   }
+}
+
+.progress--collapsed {
+  float: right;
 }
 
 .progress {
   display: flex;
   margin-bottom: 1rem;
+
+  @media (min-width: 990px) {
+    margin: 0 0 1rem 1rem;
+    float: right;
+  }
 
   select {
     max-width: 100%;
