@@ -18,7 +18,7 @@ interface ISession {
 
 export interface IMoment {
   time: number;
-  chapter: number;
+  file: string;
   idea: number;
   sequential: Sequential;
 }

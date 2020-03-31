@@ -4,13 +4,14 @@ import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../reducer';
 import { throttle } from 'lodash';
 
-import { getChapterNum } from '../shared';
-import SeqReturn from './seq-return';
-import { Sequential, SeqReturnStatus } from './seq-return';
-import { reducer, IPosition, INavDocument } from './position-reducer';
+import docInfo from '../doc-info';
+import SeqReturn, { Sequential, SeqReturnStatus } from './seq-return';
+import { DocRole } from './manifest-reducer';
+import { reducer, IPosition, IDocMap, INavDocument } from './position-reducer';
 
 export interface IProps {
-  readingOrder: INavDocument[];
+  readingOrder: string[];
+  documents: IDocMap;
   position: IPosition | null;
   sequentialPosition: IPosition | null;
   sequential: Sequential;
@@ -18,48 +19,40 @@ export interface IProps {
   setPosition(position: IPosition, sequential: Sequential, SeqReturn: SeqReturnStatus): void;
 }
 
-export interface IState {
-  isChapter: boolean;
-}
-
-export class Position extends React.Component<IProps, IState> {
+export class Position extends React.Component<IProps> {
   constructor(props: IProps) {
     super(props);
-
-    this.state = {
-      isChapter: getChapterNum() !== null,
-    };
   }
 
   setPosition = (resetSequence?: boolean) => {
     const idea = getFirstIdeaShown();
-    const chapterNum = getChapterNum();
+    const file = docInfo.links.self;
     const chapterStart = isPageScrolledToTop();
     const chapterEnd = isPageScrolledToBottom();
-    if (chapterNum === null || idea === null) return;
 
-    const sequential =
-      resetSequence ||
-      (this.props.seqReturnStatus === SeqReturnStatus.Initializing &&
-        this.props.sequential === Sequential.No)
-        ? Sequential.Yes
-        : checkSequence(
-            this.props.sequentialPosition,
-            { idea, chapterNum, chapterStart, chapterEnd },
-            this.props.sequential,
-            true
-          );
+    if (file === null || idea === null) return;
+
+    const sequential = resetSequence
+      ? Sequential.Yes
+      : docInfo.role !== DocRole.Chapter
+      ? Sequential.No
+      : this.props.seqReturnStatus === SeqReturnStatus.Initializing &&
+        this.props.sequential === Sequential.No
+      ? Sequential.Yes
+      : checkSequence(
+          this.props.sequentialPosition,
+          { idea, file, chapterStart, chapterEnd },
+          this.props.documents,
+          this.props.sequential,
+          true
+        );
 
     const seqReturnStatus = this.getSeqReturnStatus(
       this.props.seqReturnStatus,
       this.props.sequential
     );
 
-    this.props.setPosition(
-      { chapterNum, idea, chapterStart, chapterEnd },
-      sequential,
-      seqReturnStatus
-    );
+    this.props.setPosition({ file, idea, chapterStart, chapterEnd }, sequential, seqReturnStatus);
 
     setUriIdea(idea);
   };
@@ -88,24 +81,22 @@ export class Position extends React.Component<IProps, IState> {
     const ro = this.props.readingOrder;
     if (ro.length === 0) return null;
 
-    const pos = this.props.position;
-    const thisChapter =
-      pos !== null && this.props.sequentialPosition !== null
-        ? this.props.sequentialPosition.chapterNum === pos.chapterNum
-        : false;
+    const colophon = Object.values(this.props.documents).find(doc => doc.role === DocRole.Colophon);
 
     return (
       <SeqReturn
         status={this.props.seqReturnStatus}
-        isChapter={this.state.isChapter}
-        thisChapter={thisChapter}
+        docRole={docInfo.role}
         targetChapter={
-          this.props.sequentialPosition ? ro[this.props.sequentialPosition.chapterNum] : null
+          this.props.sequentialPosition
+            ? this.props.documents[this.props.sequentialPosition.file]
+            : null
         }
         targetIdea={this.props.sequentialPosition ? this.props.sequentialPosition.idea : null}
         setPosition={this.setPosition}
         sequential={this.props.sequential}
-        startLink={ro[0].file}
+        startLink={this.props.documents[ro[0]].file}
+        colophonLink={colophon ? colophon.file : null}
       />
     );
   }
@@ -114,21 +105,17 @@ export class Position extends React.Component<IProps, IState> {
 function isPageScrolledToBottom() {
   const nextLink = document.querySelector('.end-nav a[rel="next"]');
 
-  if (nextLink) {
-    return nextLink.getBoundingClientRect().top - window.innerHeight < -50;
-  }
+  if (nextLink) return nextLink.getBoundingClientRect().top - window.innerHeight < -50;
 
-  return window.innerHeight + Math.ceil(window.scrollY) >= document.body.scrollHeight;
+  return window.innerHeight + window.scrollY >= document.body.scrollHeight;
 }
 
 function isPageScrolledToTop(): boolean {
   const prevLink = document.querySelector('.begin-nav a[rel="prev"]');
 
-  if (prevLink) {
-    return prevLink.getBoundingClientRect().bottom > -80;
-  }
+  if (prevLink) prevLink.getBoundingClientRect().bottom > -80;
 
-  return Math.floor(window.scrollY) < 20;
+  return window.scrollY < 20;
 }
 
 export function getProgress(chapter: INavDocument, totalWords: number) {
@@ -153,9 +140,15 @@ function getFirstIdeaShown() {
   return attr !== null ? parseInt(attr, 10) : null;
 }
 
+function areSubsequentChapters(doc1: INavDocument, doc2: INavDocument) {
+  if (doc1.order === null || doc2.order === null) return false;
+  else return doc2.order - doc1.order === 1;
+}
+
 function checkSequence(
   pos1: IPosition | null,
   pos2: IPosition | null,
+  documents: IDocMap,
   wasSequentialBefore: Sequential,
   initCheck?: boolean
 ): Sequential {
@@ -170,12 +163,16 @@ function checkSequence(
     const step = window.innerHeight * 0.9;
 
     if (wasSequentialBefore === Sequential.Yes) {
-      // new chapter
-      if (pos1.chapterEnd && pos2.chapterNum - pos1.chapterNum === 1 && pos2.idea <= 3)
+      // following chapter
+      if (
+        pos1.chapterEnd &&
+        areSubsequentChapters(documents[pos1.file], documents[pos2.file]) &&
+        pos2.idea <= 3
+      )
         return Sequential.Yes;
 
       // same chapter
-      if (pos1.chapterNum === pos2.chapterNum) {
+      if (pos1.file === pos2.file) {
         // ~consecutive numbers
         if (Math.abs(pos2.idea - pos1.idea) < 3) return Sequential.Yes;
 
@@ -192,7 +189,7 @@ function checkSequence(
           return wasSequentialBefore;
         }
       }
-    } else if (pos1.chapterNum === pos2.chapterNum) {
+    } else if (pos1.file === pos2.file) {
       // is back on screen
       const idea1 = document.getElementById(`idea${pos1.idea}`);
 
@@ -219,7 +216,7 @@ const getSeqReturnStatus = () => {
 
       if (sequential === Sequential.Yes) {
         const counterTopped = counter > 3;
-        const initTimeElapsed = now - start > 12;
+        const initTimeElapsed = now - start > 30;
 
         if (counterTopped && initTimeElapsed) {
           return SeqReturnStatus.Enabled;
@@ -244,6 +241,7 @@ const mapStateToProps = (state: ICombinedState) => {
   return {
     position: state.position.position,
     readingOrder: state.position.readingOrder,
+    documents: state.position.documents,
     sequential: state.position.sequential,
     seqReturnStatus: state.position.seqReturnStatus,
     sequentialPosition: state.position.sequentialPosition,

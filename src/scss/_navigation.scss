@@ -1,6 +1,6 @@
 .begin-nav,
 .end-nav {
-  padding: var(--base-padding);
+  padding: var(--base-padding) 0;
 
   ul,
   li {
@@ -42,72 +42,6 @@ body.paginated {
 #chapter-end {
   position: relative;
   top: -70vh;
-}
-
-.seq-return-wrapper {
-  position: fixed;
-  bottom: calc(2 * var(--base-padding));
-  right: var(--base-padding);
-  max-width: calc(100vw - 2 * var(--base-padding));
-  animation: slide-up 0.2s ease-out;
-  z-index: map-get($z-indexes, 'annotations') + 30;
-  min-height: 36px;
-
-  .seq-return-toggle {
-    font-family: var(--ui-font);
-    display: block;
-    min-width: 24px;
-    height: 24px;
-    line-height: 24px;
-    color: #aaa;
-    text-align: center;
-    float: right;
-    padding: 6px;
-    cursor: pointer;
-
-    &:hover {
-      color: #666;
-    }
-  }
-
-  .seq-return {
-    margin: 0 auto;
-    background: #eee;
-
-    border-radius: 6px;
-    overflow: hidden;
-
-    border: 1px solid #aaa;
-    border-radius: 8px;
-    box-shadow: 0 0 7px #aaa;
-  }
-
-  p,
-  .seq-buttons a {
-    font-size: 0.875rem;
-    padding: 0.7rem;
-    margin: 0;
-    line-height: 1.4;
-  }
-
-  .seq-buttons {
-    display: flex;
-
-    a {
-      background: white;
-      white-space: nowrap;
-      border: 1px solid;
-      border-width: 1px 1px 0 0;
-      flex: 1 1;
-      text-align: center;
-      text-decoration: none;
-      color: #777;
-
-      &:last-child {
-        border-width: 1px 0 0;
-      }
-    }
-  }
 }
 
 .content .wrapper {
@@ -243,15 +177,8 @@ body.paginated-button-back {
   }
 
   #pagination__bottom.pagination__bottom--collapsed {
-    border-top: 1px solid rgba(100, 100, 100, 0.2);
-    background: rgba(0, 0, 0, 0.03);
-    background: linear-gradient(
-      to bottom,
-      rgba(200, 200, 200, 0.2) 0%,
-      rgba(238, 238, 238, 1) 100%
-    );
-    -webkit-backdrop-filter: blur(0.9px);
-    backdrop-filter: blur(0.9px);
+    background: rgba(0, 0, 0, 0.1);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
   }
 
   #pagination__bottom::before {
@@ -264,11 +191,8 @@ body.paginated-button-back {
     left: 0;
     bottom: 0;
 
-    border-top: 1px solid rgba(100, 100, 100, 0.2);
-    background: rgba(0, 0, 0, 0.03);
-    background: linear-gradient(to bottom, rgba(200, 200, 200, 0.2) 0%, #eeeeee 100%);
-    -webkit-backdrop-filter: blur(0.9px);
-    backdrop-filter: blur(0.9px);
+    background: rgba(0, 0, 0, 0.1);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
   }
 
   #pagination__bottom.pagination__bottom--collapsed::before {
@@ -299,40 +223,34 @@ body.paginated-button-back {
 
   /* nav bar */
   .nav-bar {
-    --height: 7px;
+    --height: 6px;
 
     display: block;
     position: fixed;
     left: var(--base-padding);
+    bottom: 0;
     width: calc(100vw - 2 * var(--base-padding));
-    bottom: -1px;
+    border-right: 1px solid rgba(0, 0, 0, 0.6);
 
     height: var(--height);
     margin: 0;
     list-style-type: none;
     box-sizing: border-box;
 
-    opacity: 0.5;
-
     .chapter {
       display: block;
-      border: 0.5px solid #000;
+      border-left: 1px solid rgba(0, 0, 0, 0.6);
       list-style-type: none;
       position: absolute;
       top: 0;
+      z-index: map-get($z-indexes, 'navigation') + 11;
       height: var(--height);
       margin: 0;
-      background: black;
-      color: white;
 
       box-sizing: border-box;
       font-size: 14px;
       white-space: nowrap;
       overflow: hidden;
-    }
-
-    .chapter:nth-child(even) {
-      background: #888;
     }
 
     .info {
@@ -343,14 +261,12 @@ body.paginated-button-back {
       display: block;
       list-style-type: none;
       position: absolute;
-      height: calc(var(--height) + 2px);
-      width: calc(var(--height) + 2px);
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      width: 0;
       z-index: map-get($z-indexes, 'navigation') + 10;
-
-      margin: -2px 0 0 calc(-1px + var(--height) * -0.5);
-      border-radius: var(--height);
-      background: rgba(255, 255, 255, 0.5);
-      border: 1px solid black;
+      background: var(--accent-color);
     }
   }
 
@@ -363,9 +279,7 @@ body.paginated-button-back {
     overflow: hidden;
 
     box-sizing: border-box;
-    padding: 0 0.5rem;
-
-    background: rgba(230, 230, 230, 100);
+    padding: 0 var(--base-padding);
 
     display: flex;
 
@@ -409,12 +323,12 @@ body.paginated-button-back {
   }
 }
 
-.goto__current--position {
+.current-position {
   position: fixed;
   right: 0;
   bottom: 0;
   margin: 0;
-  padding: 12px var(--base-padding);
+  padding: 3px calc(6px + var(--base-padding));
   z-index: map-get($z-indexes, 'navigation') + 20;
 
   border: none;
@@ -424,21 +338,38 @@ body.paginated-button-back {
   font-size: 12px;
   font-family: var(--ui-font);
   text-align: right;
-  cursor: pointer;
+}
+
+.current-position--display {
   opacity: 0.5;
+  pointer-events: none;
 }
 
-.goto__current--position:hover {
-  opacity: 1;
+.current-position--config {
+  padding: 3px;
+
+  label {
+    display: inline-block;
+    padding: 3px 4px;
+    margin: 2px;
+    border: 1px solid #aaa;
+    background: var(--ui-background);
+    border-radius: var(--border-radius);
+  }
 }
 
-.goto__navigator {
-  z-index: map-get($z-indexes, 'navigation') + 20;
+.progress--collapsed {
+  float: right;
 }
 
-.goto__navigator__content {
+.progress {
   display: flex;
   margin-bottom: 1rem;
+
+  @media (min-width: 990px) {
+    margin: 0 0 1rem 1rem;
+    float: right;
+  }
 
   select {
     max-width: 100%;
@@ -446,8 +377,8 @@ body.paginated-button-back {
   }
 }
 
-.goto__idea,
-.goto__chapter {
+.progress__idea,
+.progress__chapter {
   display: block;
   font-family: var(--ui-font);
   flex-grow: 0;
@@ -455,6 +386,6 @@ body.paginated-button-back {
   padding-right: 0.5rem;
 }
 
-.goto__chapter {
+.progress__chapter {
   max-width: 40vw;
 }

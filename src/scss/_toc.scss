@@ -1,11 +1,9 @@
-.current-position {
-  font-weight: bold;
-  float: right;
-  margin: 0 0 1rem 1rem;
+.toc {
+  padding: var(--base-padding);
+  max-height: 50vh;
+  overflow-y: auto;
+
+  .current-chapter {
+    font-weight: bold;
+  }
 }
-
-.current-chapter {
-  font-weight: bold;
-}
-
-

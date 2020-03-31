@@ -1,13 +1,13 @@
 import React from 'react';
 import { reducer, IState, IAnnotation, IAnnotationAndIdeas, INote } from './reducer';
-import AnnotationControl from './control';
+import AnnotationButtons from './buttons';
 import AnnotationDetail from './detail';
 import { IState as ICombinedState } from '../../reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { getAnnotatedIdeas, removeAnnotation } from './utils';
 
-import { getChapterNum } from '../../shared';
+import docInfo from '../../doc-info';
 
 interface IProps {
   annotations: IState;
@@ -20,7 +20,6 @@ interface IProps {
 }
 
 interface ILocalState {
-  chapterNum: string | null;
   selectedAnnotation: number | null;
 }
 
@@ -28,10 +27,7 @@ export class Annotations extends React.Component<IProps, ILocalState> {
   constructor(props: IProps) {
     super(props);
 
-    const chapterNum = getChapterNum();
-
     this.state = {
-      chapterNum: chapterNum === null ? null : chapterNum.toString(),
       selectedAnnotation: null,
     };
   }
@@ -51,14 +47,14 @@ export class Annotations extends React.Component<IProps, ILocalState> {
     }
   };
 
-  private deselectAnnotation = () => {
+  deselectAnnotation = () => {
     this.setState({
       ...this.state,
       selectedAnnotation: null,
     });
   };
 
-  private destroyAnnotation = (annotation: IAnnotation) => {
+  destroyAnnotation = (annotation: IAnnotation) => {
     this.deselectAnnotation();
     removeAnnotation(annotation.id);
     this.props.destroyAnnotation({
@@ -68,32 +64,22 @@ export class Annotations extends React.Component<IProps, ILocalState> {
   };
 
   render() {
-    if (this.state.chapterNum === null) return null;
-
-    const chapterAnnotations = this.props.annotations[this.state.chapterNum.toString()];
-    const annotations =
-      chapterAnnotations && chapterAnnotations.annotations ? chapterAnnotations.annotations : [];
-    const ideas = chapterAnnotations && chapterAnnotations.ideas ? chapterAnnotations.ideas : {};
-    const notes = chapterAnnotations && chapterAnnotations.notes ? chapterAnnotations.notes : {};
+    const file = docInfo.links.self;
+    const { annotations, ideas, notes } = getChapterAnnotations(file, this.props.annotations);
 
     return (
       <>
-        <AnnotationControl
+        <AnnotationButtons
           annotations={annotations}
           ideas={ideas}
           notes={notes}
           addAnnotation={this.props.addAnnotation}
-          destroyAnnotation={this.destroyAnnotation}
           selectAnnotation={this.selectAnnotation}
-          deselectAnnotation={this.deselectAnnotation}
           updateAnnotation={this.props.updateAnnotation}
-          addNote={this.props.addNote}
-          updateNote={this.props.updateNote}
-          destroyNote={this.props.destroyNote}
           selectedAnnotation={this.state.selectedAnnotation}
-          chapterNum={this.state.chapterNum}
+          file={docInfo.links.self}
         />
-        {this.state.chapterNum === null || this.state.selectedAnnotation === null ? null : (
+        {file === null || this.state.selectedAnnotation === null ? null : (
           <AnnotationDetail
             annotation={annotations[this.state.selectedAnnotation]}
             close={this.deselectAnnotation}
@@ -104,6 +90,20 @@ export class Annotations extends React.Component<IProps, ILocalState> {
       </>
     );
   }
+}
+
+export function getChapterAnnotations(file: string | null, annotations: IState) {
+  return file === null || !annotations[file]
+    ? {
+        annotations: [],
+        ideas: {},
+        notes: {},
+      }
+    : {
+        annotations: annotations[file].annotations || [],
+        ideas: annotations[file].ideas || {},
+        notes: annotations[file].notes || {},
+      };
 }
 
 const mapStateToProps = (state: ICombinedState) => {

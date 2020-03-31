@@ -40,11 +40,18 @@ export interface IDocument {
   words: number;
   chars: number;
   ideas: number;
-  isChapter: boolean;
+  role: DocRole;
   order: number | null;
   prev: string | null;
   next: string | null;
   toc: IToc[];
+}
+
+export enum DocRole {
+  Chapter = 'chapter',
+  Index = 'index',
+  Colophon = 'colophon',
+  Other = 'other',
 }
 
 export function reducer(state: IState | null = null, action: Action) {

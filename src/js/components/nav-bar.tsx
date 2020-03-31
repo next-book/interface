@@ -1,31 +1,35 @@
 import React from 'react';
-import { INavDocument } from './position-reducer';
-import { getProgress } from './navigation';
+import { INavDocument, IDocMap } from './position-reducer';
+import { DocRole } from './manifest-reducer';
+import { getProgress } from './progress';
 
 interface IProps {
   scrollRatio: number;
-  isChapter: boolean;
+  docRole: DocRole;
   chapter: INavDocument | null;
   totalWords: number;
-  readingOrder: INavDocument[];
+  readingOrder: string[];
+  documents: IDocMap;
 }
 
 export function NavBar(props: IProps) {
   return (
     <ul className="nav-bar">
-      {props.chapter && props.isChapter && (
+      {props.chapter && props.docRole === DocRole.Chapter && (
         <Pointer
           scrollRatio={props.scrollRatio}
           chapter={props.chapter}
           totalWords={props.totalWords}
         />
       )}
-      {props.readingOrder.map(
-        (chapter, index) =>
+      {props.readingOrder.map((file, index) => {
+        const chapter = props.documents[file];
+        return (
           chapter.order !== null && (
             <Chapter key={chapter.order} chapter={chapter} totalWords={props.totalWords} />
           )
-      )}
+        );
+      })}
     </ul>
   );
 }
@@ -38,9 +42,9 @@ interface PointerProps {
 
 function Pointer(props: PointerProps) {
   const { offset, fraction } = getProgress(props.chapter, props.totalWords);
-  const left = offset + fraction * props.scrollRatio;
+  const width = offset + fraction * props.scrollRatio;
 
-  return <li className="pointer" style={{ left: left + '%' }} />;
+  return <li className="pointer" style={{ width: width + '%' }} />;
 }
 
 interface ChapterProps {

@@ -1,6 +1,15 @@
 {
   "common": {
-    "toggle-full-screen": "Toggle Full Screen View"
+    "toggle-full-screen": "Toggle Full Screen View",
+    "note": "Note"
+  },
+  "controls": {
+    "show-toc": "Show table of contents",
+    "show-notes": "Show notes",
+    "show-options": "Show options",
+    "toc": "Table of contents",
+    "notes": "Notes",
+    "options": "Options"
   },
   "annotations": {
     "work-desk": "Work desk",
@@ -13,7 +22,8 @@
     "update-note": "Save note"
   },
   "navigation": {
-    "title-page": "Title page",
+    "title-page": "Title",
+    "colophon": "Colophon",
     "intro": "This book remembers where you stopped reading. You can view Table of Contents anytime by clicking the bottom bar.",
     "start": "Open first chapter",
     "return": "Return back",
@@ -22,11 +32,15 @@
     "chapter": "Chapter",
     "sentence": "Sentence",
     "nthSentence": "{{number, ordinal}} sentence",
-    "percent-sign": "%",
-    "minutes-left": "{{minutes}} min",
+    "turn-to": "Turn to…",
+    "progress": "{{percent}}%",
+    "progress-long": "{{percent}}% read",
+    "minutes-left": "{{minutes}} min",
+    "minutes-left-long": "{{minutes}} mins left in chapter",
+    "nthChapterNthSentence": "{{chapter, ordinal}} chapter, {{idea, ordinal}} sentence",
     "prev-chapter": "Previous chapter",
     "next-chapter": "Next chapter",
-    "seqReturnAnotherChapter": "You read up to <1>sentence #{{idea}}</1> in <3>{{chapter}}</3>.",
+    "seqReturnAnotherChapter": "You read up to <1>sentence #{{idea}}</1> in chapter <3>{{title}}</3>.",
     "seqReturnThisChapter": "You read up to <2>sentence #{{idea}}</2> in this chapter.",
     "go": "Go",
     "toc": "Table of Contents"

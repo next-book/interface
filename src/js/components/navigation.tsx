@@ -7,18 +7,16 @@ import keycode from 'keycode';
 
 import { withTranslation, WithTranslation } from 'react-i18next';
 
-import { getChapterNum } from '../shared';
+import docInfo from '../doc-info';
+import { DocRole } from './manifest-reducer';
 import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
-import GoTo from './go-to';
 import { Pagination } from './pagination';
 import { Sequential } from './seq-return';
-import { reducer, IPosition, INavDocument, IConfig } from './position-reducer';
+import { reducer, IPosition, IDocMap, IConfig } from './position-reducer';
 import { IState as IManifest, IDocument } from './manifest-reducer';
 import { reducer as peeksReducer, IPeek } from './peeks-reducer';
-
-import Toc from './toc';
 
 export enum Direction {
   Back = 'back',
@@ -31,7 +29,8 @@ export interface IProps extends WithTranslation {
   scrollRatio: number;
   position: IPosition | null;
   sequentialPosition: IPosition | null;
-  readingOrder: INavDocument[];
+  readingOrder: string[];
+  documents: IDocMap;
   sequential: Sequential;
   setScrollRatio(scrollRatio: number): void;
   setReadingOrder(documents: IDocument[]): void;
@@ -41,7 +40,6 @@ export interface IProps extends WithTranslation {
 export class Navigation extends React.Component<IProps> {
   private getScrollStep = (): number | null => null;
   private setPaddings = (): null | void => null;
-  private isChapter = getChapterNum() !== null;
 
   setScrollRatio = () => {
     this.props.setScrollRatio(getScrollRatio());
@@ -64,18 +62,21 @@ export class Navigation extends React.Component<IProps> {
   };
 
   getPrevChapter = () => {
-    if (this.isChapter && this.props.position !== null) {
-      if (this.props.position.chapterNum === 0) {
-        return 'index.html';
+    if (docInfo.role === DocRole.Chapter && this.props.position !== null) {
+      if (this.props.readingOrder.indexOf(this.props.position.file) === 0) {
+        return docInfo.links.colophon ? docInfo.links.colophon : docInfo.links.index;
       }
-      return this.props.readingOrder[this.props.position.chapterNum].prev;
-    } else return null;
+      return this.props.documents[this.props.position.file].prev;
+    } else if (docInfo.role === DocRole.Colophon) return docInfo.links.index;
+    else return null;
   };
 
   getNextChapter = () => {
-    if (this.isChapter && this.props.position !== null) {
-      return this.props.readingOrder[this.props.position.chapterNum].next;
-    } else return null;
+    if (docInfo.role === DocRole.Chapter && this.props.position !== null) {
+      return this.props.documents[this.props.position.file].next;
+    } else if (docInfo.role === DocRole.Colophon || docInfo.role === DocRole.Index)
+      return this.props.readingOrder[0];
+    else return null;
   };
 
   handleKeyboardNav = (event: KeyboardEvent) => {
@@ -146,23 +147,6 @@ export class Navigation extends React.Component<IProps> {
     } else if (prevChapter) window.location.assign(`${prevChapter}#chapter-end`);
   };
 
-  showToc = () => {
-    const pos: IPosition = this.props.position || {
-      idea: 0,
-      chapterNum: 0,
-      chapterStart: true,
-      chapterEnd: false,
-    };
-
-    // TODO: Rewrite without peeks
-    this.props.addPeek({
-      content: <Toc idea={pos.idea} chapterNum={pos.chapterNum} />,
-      title: this.props.t('toc'),
-      source: 'toc-table',
-      showSource: false,
-    });
-  };
-
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
     if (this.props.config.keyboardNav) {
@@ -193,51 +177,30 @@ export class Navigation extends React.Component<IProps> {
     if (ro.length === 0) return null;
 
     const pos = this.props.position;
-    const chapter = pos !== null ? ro[pos.chapterNum] : null;
+    const chapter = pos !== null ? this.props.documents[pos.file] : null;
 
-    const { totalWords } = ro[ro.length - 1];
-
-    const { offset, fraction } =
-      chapter !== null ? getProgress(chapter, totalWords) : { offset: 0, fraction: 0 };
-
-    const progress = offset + fraction * this.props.scrollRatio;
-    const minutesLeftInChapter = chapter
-      ? countMinutesLeft(this.props.scrollRatio, chapter.words)
-      : null;
+    const { totalWords } = this.props.documents[ro[ro.length - 1]];
 
     return (
       <nav>
         <Pagination
           setScrollStepGetter={this.setScrollStepGetter}
           setPaddingsSetter={this.setPaddingsSetter}
-          actions={{ showToc: this.showToc }}
         />
-        {this.props.position && (
-          <GoTo
-            currentChapterNum={this.props.position.chapterNum}
-            currentIdea={this.props.position.idea}
-            readingOrder={this.props.readingOrder}
-            progress={Math.floor(progress)}
-            minutesLeft={minutesLeftInChapter}
-          />
-        )}
         <NavBar
-          isChapter={this.isChapter}
+          docRole={docInfo.role}
           readingOrder={ro}
+          documents={this.props.documents}
           chapter={chapter}
           scrollRatio={this.props.scrollRatio}
           totalWords={totalWords}
         />
-        {chapter && <TopBar title={this.props.manifest.title} chapter={chapter} />}
+        {docInfo.role !== DocRole.Index && chapter && (
+          <TopBar title={this.props.manifest.title} chapter={chapter} />
+        )}
       </nav>
     );
   }
-}
-
-function countMinutesLeft(scrollRatio: number, wordsInChapter: number) {
-  const wordsPerMinute = 240;
-  const left = ((1 - scrollRatio) * wordsInChapter) / wordsPerMinute;
-  return left > 0 ? Math.floor(left) : 0;
 }
 
 function displayPagination(dir: Direction, showButtons?: boolean) {
@@ -252,15 +215,6 @@ function displayPagination(dir: Direction, showButtons?: boolean) {
 
 function getScrollRatio(): number {
   return window.scrollY / (document.body.scrollHeight - window.innerHeight);
-}
-
-export function getProgress(chapter: INavDocument, totalWords: number) {
-  if (!chapter || !totalWords) return { offset: 0, fraction: 0 };
-
-  const offset = (chapter.offsetWords / totalWords) * 100;
-  const fraction = (chapter.words / totalWords) * 100;
-
-  return { offset, fraction };
 }
 
 function isInPaginationRect(dir: Direction, x: number, y: number) {
@@ -301,6 +255,7 @@ const mapStateToProps = (state: ICombinedState) => {
   return {
     config: state.position.config,
     readingOrder: state.position.readingOrder,
+    documents: state.position.documents,
     position: state.position.position,
     scrollRatio: state.position.scrollRatio,
     sequential: state.position.sequential,

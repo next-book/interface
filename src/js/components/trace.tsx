@@ -30,7 +30,7 @@ export class Trace extends React.Component<IProps> {
     )
       this.props.addMoment({
         time: new Date().getTime(),
-        chapter: this.props.position.chapterNum,
+        file: this.props.position.file,
         idea: this.props.position.idea,
         sequential: this.props.sequential,
       });

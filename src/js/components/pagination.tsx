@@ -1,5 +1,7 @@
 import React from 'react';
 import { throttle } from 'lodash';
+import docInfo from '../doc-info';
+import { DocRole } from './manifest-reducer';
 
 enum Side {
   Bottom = 'bottom',
@@ -14,9 +16,6 @@ export type Sides = {
 interface IProps {
   setScrollStepGetter(fn: () => number | null): void;
   setPaddingsSetter(fn: () => void): void;
-  actions: {
-    showToc(): void;
-  };
 }
 
 export interface IState {
@@ -34,7 +33,7 @@ export class Pagination extends React.Component<IProps, IState> {
     this.state = {
       barHeight: null,
       windowHeight: null,
-      zonePadding: { [Side.Top]: 12, [Side.Bottom]: 8 * 6 },
+      zonePadding: { [Side.Top]: 18, [Side.Bottom]: 8 * 4 },
       readingZone: { [Side.Top]: 0, [Side.Bottom]: 0 },
       lastScrollStart: null,
     };
@@ -131,15 +130,16 @@ export class Pagination extends React.Component<IProps, IState> {
     const top = this.state.barHeight ? this.state.barHeight[Side.Top] : null;
 
     return (
-      <>
-        <div
-          id="pagination__bottom"
-          style={bottom ? { height: `${bottom}px` } : {}}
-          className={bottom === null ? 'pagination__bottom--collapsed' : ''}
-          onClick={this.props.actions.showToc}
-        />
-        <div id="pagination__top" style={top ? { height: `${top}px` } : { height: 0 }} />
-      </>
+      docInfo.role === DocRole.Chapter && (
+        <>
+          <div
+            id="pagination__bottom"
+            style={bottom ? { height: `${bottom}px` } : {}}
+            className={bottom === null ? 'pagination__bottom--collapsed' : ''}
+          />
+          <div id="pagination__top" style={top ? { height: `${top}px` } : { height: 0 }} />
+        </>
+      )
     );
   }
 }
