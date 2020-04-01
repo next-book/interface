@@ -4,14 +4,15 @@ import { connect } from 'react-redux';
 import { IState as ICombinedState } from '../reducer';
 import { reducer } from './config-reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
+import { setFontSize } from './config';
 
 interface IProps extends WithTranslation {
-  fontSize: number;
-  setFontSize(size: number): void;
+  fontSize: string;
+  setFontSize(size: string): void;
 }
 
 interface IState {
-  fontSize: number;
+  fontSize: string;
 }
 
 class Options extends React.Component<IProps, IState> {
@@ -24,8 +25,9 @@ class Options extends React.Component<IProps, IState> {
   }
 
   setFontSize = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    this.props.setFontSize(parseFloat(event.currentTarget.value));
-    document.documentElement.style.setProperty('--font-size-ratio', event.currentTarget.value);
+    const value = event.currentTarget.value;
+    this.props.setFontSize(value);
+    setFontSize(value);
   };
 
   render() {

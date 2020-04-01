@@ -11,14 +11,14 @@ export interface IState {
   displayMinutesInChapter: boolean;
   displayPercentRead: boolean;
   displayPosition: boolean;
-  fontSize: number;
+  fontSize: string;
 }
 
 const INITIAL_STATE: IState = {
   displayMinutesInChapter: true,
   displayPercentRead: true,
   displayPosition: true,
-  fontSize: 1,
+  fontSize: '1',
 };
 
 export function reducer(state: IState = INITIAL_STATE, action: any) {
@@ -57,7 +57,7 @@ reducer.toggleDisplay = function(kind: ProgressKind) {
   };
 };
 
-reducer.setFontSize = function(size: number) {
+reducer.setFontSize = function(size: string) {
   return {
     type: SET_FONT_SIZE,
     payload: { size },

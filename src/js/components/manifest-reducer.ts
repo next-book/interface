@@ -6,7 +6,7 @@ export interface IState {
   subtitle?: string;
   published?: string | number;
   keywords?: string[];
-  slug: string;
+  identifier: string;
   revision: string;
   generatedAt: IDate;
   documents: IDocument[];

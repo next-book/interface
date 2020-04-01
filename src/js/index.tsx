@@ -10,36 +10,49 @@ import { I18nextProvider } from 'react-i18next';
 
 import { loadManifest, assignManifest, plantRoot, addReadyBodyClass } from './shared';
 import docInfo from './doc-info';
-import reducer from './reducer';
+import reducer, { IState } from './reducer';
 import views from './views';
 
+import { setDocumentValues } from './components/config';
+
 export function initBook() {
-  loadManifest(docInfo.links.manifest).then(manifestData => {
-    const manifest = assignManifest(manifestData);
+  if (docInfo.identifier === null) {
+    console.error('Book identifier not found.');
+    return;
+  }
 
-    const persistedState = localStorage.getItem(manifest.slug);
+  const persistedState = localStorage.getItem(docInfo.identifier);
 
-    const store = createStore(reducer, persistedState ? JSON.parse(persistedState) : { manifest });
-
-    Object.keys(views).forEach(key => {
-      const wrapper = plantRoot(key);
-      if (!wrapper) return;
-
-      ReactDOM.render(
-        <I18nextProvider i18n={i18n}>
-          <Provider store={store}>{React.createElement(views[key], null)}</Provider>
-        </I18nextProvider>,
-        wrapper
-      );
+  if (persistedState) init(docInfo.identifier, JSON.parse(persistedState));
+  else {
+    loadManifest(docInfo.links.manifest).then(manifestData => {
+      init(docInfo.identifier, { manifest: assignManifest(manifestData) });
     });
+  }
+}
 
-    store.subscribe(
-      debounce(() => {
-        localStorage.setItem(manifest.slug, JSON.stringify(store.getState()));
-      }, 500)
+function init(identifier: string, state: IState) {
+  const store = createStore(reducer, state);
+  setDocumentValues(store.getState().config);
+
+  Object.keys(views).forEach(key => {
+    const wrapper = plantRoot(key);
+    if (!wrapper) return;
+
+    ReactDOM.render(
+      <I18nextProvider i18n={i18n}>
+        <Provider store={store}>{React.createElement(views[key], null)}</Provider>
+      </I18nextProvider>,
+      wrapper
     );
-
-    addReadyBodyClass();
-    (window as any).book = store;
   });
+
+  store.subscribe(
+    debounce(() => {
+      localStorage.setItem(identifier, JSON.stringify(store.getState()));
+    }, 500)
+  );
+
+  addReadyBodyClass();
+  (window as any).book = store;
 }
