@@ -177,7 +177,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     classes: string[] = [],
     forceCollapsed?: boolean
   ) {
-    const className = ['seq-return-wrapper'].concat(classes).join(' ');
+    const className = ['nb-seq-return'].concat(classes).join(' ');
 
     return (
       <div className={className}>

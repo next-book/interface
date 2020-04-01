@@ -1,0 +1,96 @@
+.nb-controls {
+  font-family: var(--ui-font);
+
+  .controls-launcher {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    cursor: pointer;
+
+    div {
+      min-height: 48px;
+    }
+  }
+
+  .control {
+    max-height: 90vh;
+    position: fixed;
+    z-index: map-get($z-indexes, 'controls');
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--ui-background);
+
+    border: 1px solid #aaa;
+    border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
+    overflow: hidden;
+    box-shadow: 0 0 7px #aaa;
+    transition: bottom 0.2s ease-out;
+    animation: slide-up 0.2s ease-out;
+
+    font-size: var(--ui-font-size);
+
+    .control-bar {
+      display: flex;
+
+      .tab {
+        display: block;
+        height: calc(1.4 * var(--ui-font-size));
+        flex-grow: 1;
+        padding: calc(var(--base-padding) / 2) calc(var(--base-padding) / 2)
+          calc(var(--base-padding) / 4);
+        border: solid #aaa;
+        border-width: 0 1px 1px 0;
+        background: #eee;
+
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+
+        &:nth-child(1)::before {
+          content: '📖 ';
+        }
+
+        &:nth-child(2)::before {
+          content: '✏️ ';
+        }
+
+        &:nth-child(3)::before {
+          content: '🔣 ';
+        }
+      }
+
+      .tab:first-child {
+        padding-left: var(--base-padding);
+      }
+
+      .tab--selected {
+        border-bottom: none;
+        background: var(--ui-background);
+      }
+
+      .close {
+        display: block;
+        height: calc(1.4 * var(--ui-font-size));
+        flex-grow: 2;
+        padding: calc(var(--base-padding) / 2) var(--base-padding) calc(var(--base-padding) / 4);
+        text-align: right;
+        margin-left: --ui-font-size;
+        cursor: pointer;
+        border-bottom: 1px solid #aaa;
+      }
+    }
+
+    .control-content {
+      position: relative;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+  }
+}

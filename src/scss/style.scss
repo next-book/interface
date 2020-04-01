@@ -8,14 +8,25 @@ $z-indexes: (
   'controls': 1400
 );
 
+@import '_defaults';
+@import '_animations';
 @import '_base';
-@import '_typo';
 
-@import '_annotations';
-@import '_desk';
-@import '_navigation';
-@import '_seq-return';
-@import '_footnotes';
-@import '_peeks';
-@import '_toc';
-@import '_controls';
+// always scoped to .content
+@import 'content/_layout';
+@import 'content/_typo';
+@import 'content/_footnote';
+@import 'content/_navigation';
+@import 'content/_annotation';
+
+// always scoped to .nb-* class
+// root custom props prefixed with name
+// TODO: prefix bodyclasses
+@import 'ui/_annotations';
+@import 'ui/_desk';
+@import 'ui/_navigation';
+@import 'ui/_progress';
+@import 'ui/_seq-return';
+@import 'ui/_peeks';
+@import 'ui/_toc';
+@import 'ui/_controls';

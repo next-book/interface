@@ -1,4 +1,5 @@
-.seq-return-wrapper {
+.nb-seq-return {
+  font-family: var(--ui-font);
   position: fixed;
   bottom: calc(1.5 * var(--base-padding));
   right: var(--base-padding);
@@ -8,7 +9,7 @@
   min-height: 36px;
 
   .seq-text {
-    padding: calc(var(--base-padding) / 2) var(--base-padding);
+    padding: calc(var(--base-padding) / 2);
   }
 
   .seq-return-toggle {
@@ -42,8 +43,8 @@
 
   p,
   .seq-buttons a {
-    font-size: 0.875rem;
-    padding: 0.7rem;
+    font-size: calc(var(--ui-font-size) * 0.8);
+    padding: calc(var(--base-padding) / 2);
     margin: 0;
     line-height: 1.4;
   }
