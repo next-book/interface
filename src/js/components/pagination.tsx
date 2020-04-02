@@ -117,8 +117,8 @@ export class Pagination extends React.Component<IProps, IState> {
     this.props.setPaddingsSetter(this.setPaddings);
 
     window.addEventListener('resize', this.setSizes);
-    this.setSizes();
-    this.setPaddings();
+
+    window.requestAnimationFrame(this.setSizes);
   }
 
   componentWillUnmount() {
