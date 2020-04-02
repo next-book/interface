@@ -83,7 +83,7 @@ class AnnotationDesk extends React.Component<IProps, IState> {
     );
 
     return (
-      <div className="desk">
+      <div className="nb-desk">
         <Notes
           notes={notes}
           newNote={this.state.newNote}
@@ -93,7 +93,7 @@ class AnnotationDesk extends React.Component<IProps, IState> {
           destroyNote={this.props.destroyNote}
           t={this.props.t}
         />
-        <Annotations
+        <Highlights
           annotations={annotations}
           ideas={ideas}
           destroyAnnotation={this.destroyAnnotation}
@@ -111,12 +111,13 @@ interface IAnnotationProps {
   t: (s: string) => string;
 }
 
-function Annotations(props: IAnnotationProps) {
+function Highlights(props: IAnnotationProps) {
   const sortedIdeas = docInfo.links.self !== null ? sortIdeas(props.ideas) : [];
+  //const groupedIdeas = groupIdeas(sortedIdeas);
 
   return (
     <div className="desk__list">
-      <h2>{props.t('annotations-in-text')}</h2>
+      <h2>{props.t('highlights')}</h2>
 
       {Object.keys(props.annotations).length ? (
         Object.values(props.annotations).map((annotation, key) => (

@@ -2,7 +2,10 @@
   font-family: var(--ui-font);
   padding: 0 var(--base-padding) 2rem;
   overflow-y: auto;
-  max-height: 65vh;
+
+  .annotation {
+    background: var(--annotation-highlight);
+  }
 
   .desk__list {
     max-width: 35rem;

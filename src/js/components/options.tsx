@@ -41,6 +41,7 @@ class Options extends React.Component<IProps, IState> {
           onChange={this.setFontSize}
           step="0.1"
         />
+        {Math.floor(parseFloat(this.props.fontSize) * 100)}%
       </div>
     );
   }

@@ -18,22 +18,25 @@
   }
 
   .control {
-    max-height: 90vh;
     position: fixed;
     z-index: map-get($z-indexes, 'controls');
-    left: 0;
+    top: 0;
     right: 0;
     bottom: 0;
     background: var(--ui-background);
+    width: calc(100vw - var(--content-max-width) - (2 * var(--base-padding)));
 
-    border: 1px solid var(--ui-c-medium);
-    border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
     overflow: hidden;
     box-shadow: 0 0 7px var(--ui-c-medium);
     transition: bottom 0.2s ease-out;
     animation: slide-up 0.2s ease-out;
 
     font-size: var(--ui-font-size);
+
+    @media (max-width: 50rem) {
+      left: 0;
+      width: auto;
+    }
 
     .control-bar {
       display: flex;

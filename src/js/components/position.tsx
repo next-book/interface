@@ -27,7 +27,7 @@ export class Position extends React.Component<IProps> {
   setPosition = (resetSequence?: boolean) => {
     const idea = getFirstIdeaShown();
     const file = docInfo.links.self;
-    const chapterStart = isPageScrolledToTop();
+    const chapterStart = idea === 1 || isPageScrolledToTop();
     const chapterEnd = isPageScrolledToBottom();
 
     if (file === null || idea === null) return;
@@ -70,7 +70,8 @@ export class Position extends React.Component<IProps> {
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
 
-    this.setPosition();
+    if (window.scrollY === 0 && !['', '#idea1'].includes(window.location.hash)) return;
+    else this.setPosition();
   }
 
   componentWillUnmount() {
@@ -103,17 +104,17 @@ export class Position extends React.Component<IProps> {
 }
 
 function isPageScrolledToBottom() {
-  const nextLink = document.querySelector('.end-nav a[rel="next"]');
+  const endNav = document.querySelector('.end-nav');
 
-  if (nextLink) return nextLink.getBoundingClientRect().top - window.innerHeight < -50;
+  if (endNav) return endNav.getBoundingClientRect().top - window.innerHeight < -50;
 
   return window.innerHeight + window.scrollY >= document.body.scrollHeight;
 }
 
 function isPageScrolledToTop(): boolean {
-  const prevLink = document.querySelector('.begin-nav a[rel="prev"]');
+  const beginNav = document.querySelector('.begin-nav');
 
-  if (prevLink) prevLink.getBoundingClientRect().bottom > -80;
+  if (beginNav) beginNav.getBoundingClientRect().bottom > 0;
 
   return window.scrollY < 20;
 }
@@ -133,7 +134,7 @@ function getFirstIdeaShown() {
     top: el.getBoundingClientRect().top,
     bottom: el.getBoundingClientRect().bottom,
   }));
-  const shown = ideas.filter(el => el.top > 20).sort((el1, el2) => el1.bottom - el2.bottom);
+  const shown = ideas.filter(el => el.top > 0).sort((el1, el2) => el1.bottom - el2.bottom);
 
   const idea = shown.length > 0 ? shown[0] : ideas[ideas.length - 1];
   const attr = idea.el.getAttribute('data-nb-ref-number');

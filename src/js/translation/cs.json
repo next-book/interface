@@ -8,14 +8,14 @@
     "show-notes": "Zobrazit poznámky",
     "show-options": "Zobrazit nastavení",
     "toc": "Obsah",
-    "notes": "Poznámky",
+    "annotations": "Anotace",
     "options": "Nastavení"
   },
   "annotations": {
     "work-desk": "Pracovní plocha",
-    "no-annotations-in-chapter": "V textu kapitoly nemáte žádné anotace.",
+    "no-annotations-in-chapter": "V textu kapitoly nemáte žádná zvýraznění.",
     "no-notes-in-chapter": "V textu kapitoly nemáte žádné poznámky.",
-    "annotations-in-text": "Anotace v textu",
+    "highlights": "Zvýraznění",
     "notes": "Poznámky",
     "add-note": "Přidat poznámku",
     "edit-note": "Upravit poznámku",
