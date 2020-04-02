@@ -1,0 +1,31 @@
+.nb-options {
+  font-size: var(--ui-font-size);
+
+  .cell {
+    border: 1px solid var(--ui-c-medium);
+    padding: var(--base-padding);
+    border-radius: var(--border-radius);
+    margin: var(--base-padding);
+  }
+
+  .font-size {
+    p,
+    small,
+    input,
+    big,
+    .val {
+      margin: 0 calc(0.5 * var(--ui-font-size)) 0 0;
+      line-height: calc(2 * var(--ui-font-size));
+    }
+
+    big,
+    small {
+      display: inline-block;
+      line-height: calc(2 * var(--ui-font-size));
+    }
+
+    .val {
+      color: var(--ui-c-medium);
+    }
+  }
+}

@@ -32,16 +32,22 @@ class Options extends React.Component<IProps, IState> {
 
   render() {
     return (
-      <div className="options">
-        <input
-          type="range"
-          min="0.8"
-          max="2"
-          defaultValue={this.props.fontSize}
-          onChange={this.setFontSize}
-          step="0.1"
-        />
-        {Math.floor(parseFloat(this.props.fontSize) * 100)}%
+      <div className="nb-options">
+        <div className="cell font-size">
+          <p>
+            <small>A</small>
+            <input
+              type="range"
+              min="0.8"
+              max="2"
+              defaultValue={this.props.fontSize}
+              onChange={this.setFontSize}
+              step="0.1"
+            />
+            <big>A</big>
+            <span className="val">({Math.floor(parseFloat(this.props.fontSize) * 100)}%)</span>
+          </p>
+        </div>
       </div>
     );
   }
