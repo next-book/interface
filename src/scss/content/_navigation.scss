@@ -1,0 +1,123 @@
+.content {
+  main {
+    will-change: transform;
+  }
+
+  #chapter-end {
+    position: relative;
+    top: -70vh;
+  }
+
+  .begin-nav,
+  .end-nav {
+    padding: var(--base-padding) 0;
+
+    ul,
+    li {
+      display: block;
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+    }
+
+    a[rel='index'] {
+      display: none;
+    }
+
+    a[rel='prev'],
+    a[rel='next'] {
+      display: block;
+    }
+
+    a[rel='next'] {
+      padding-top: 5vh;
+      padding-bottom: 5vh;
+    }
+  }
+}
+
+body.paginated .content {
+  .begin-nav,
+  .end-nav {
+    a[rel='prev'],
+    a[rel='next'] {
+      text-indent: -9999px;
+    }
+
+    a[rel='next'] {
+      padding-bottom: 80vh;
+    }
+  }
+}
+
+body.paginated-back,
+body.paginated-forward {
+  .content {
+    overflow: hidden;
+
+    main {
+      animation: forward 0.2s ease-out;
+    }
+  }
+}
+
+body.paginated-button-back {
+  .content main {
+    animation: back 0.2s ease-out;
+  }
+}
+
+body.paginated-button-back,
+body.paginated-button-forward {
+  &::before,
+  &::after {
+    font-family: monospace;
+    content: '>';
+
+    display: block;
+    overflow: hidden;
+    opacity: 0;
+    width: calc(24px + 5vw);
+    padding: 0;
+    z-index: map-get($z-indexes, 'pagination');
+
+    position: fixed;
+    top: 25vh;
+    right: 0;
+    height: 50vh;
+
+    border: solid rgba(0, 0, 0, 0.2);
+    border-width: 2px;
+    color: rgba(0, 0, 0, 0.1);
+    line-height: 60vh;
+    font-size: 5vw;
+    text-align: center;
+    animation: pagination-bar-fade 0.2s ease-in-out;
+    border-radius: 10px 0 0 10px;
+  }
+
+  &::after {
+    content: '>';
+    left: 0;
+    right: auto;
+    border-radius: 0 10px 10px 0;
+  }
+}
+
+body.paginated-button-back {
+  &::before,
+  &::after {
+    top: 2vh;
+    height: 18vh;
+    line-height: 20vh;
+
+    content: '<';
+  }
+
+  &::after {
+    content: '<';
+    left: 0;
+    right: auto;
+    border-radius: 0 10px 10px 0;
+  }
+}

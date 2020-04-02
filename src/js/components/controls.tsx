@@ -30,6 +30,9 @@ class Controls extends React.Component<IProps, IState> {
 
   open = (control: Control) => {
     this.setState({ ...this.state, opened: control });
+
+    if (control === Control.None) document.body.classList.remove('nb-controls-open');
+    else document.body.classList.add('nb-controls-open');
   };
 
   renderWrapper = (control: JSX.Element) => (
@@ -40,6 +43,16 @@ class Controls extends React.Component<IProps, IState> {
       </div>
     </div>
   );
+
+  componentDidMount() {
+    window.document.body.addEventListener('click', this.closeControls);
+  }
+
+  componentWillUnmount() {
+    window.document.body.removeEventListener('click', this.closeControls);
+  }
+
+  closeControls = (event: MouseEvent) => {};
 
   render() {
     return this.state.opened === Control.Toc ? (
@@ -86,7 +99,7 @@ function Tabs(props: ITabsProps) {
     },
     {
       target: Control.Notes,
-      title: props.t('notes'),
+      title: props.t('annotations'),
     },
     {
       target: Control.Options,

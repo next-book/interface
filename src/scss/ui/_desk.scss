@@ -1,0 +1,82 @@
+.nb-desk {
+  font-family: var(--ui-font);
+  padding: 0 var(--base-padding) 2rem;
+  overflow-y: auto;
+
+  .annotation {
+    background: var(--annotation-highlight);
+  }
+
+  .desk__list {
+    max-width: 35rem;
+  }
+
+  .desk__list__detail {
+    margin: 0 0 2rem;
+  }
+
+  @media screen and (min-width: 700px) {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-gap: 1rem;
+
+    .desk__list {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .desk__notes {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+
+  .desk__annotation {
+    margin-bottom: 1rem;
+    border: 1px solid var(--ui-c-medium);
+    border-radius: 3px;
+    padding: 0.5rem;
+    position: relative;
+
+    .desk__annotation__destroy {
+      display: block;
+      float: right;
+      width: 1.5rem;
+      height: 1.5rem;
+      margin: 0 0 var(--base-padding) var(--base-padding);
+      text-indent: 3rem;
+      border: none;
+      background-color: transparent;
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-size: contain;
+
+      white-space: nowrap;
+
+      box-sizing: border-box;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.2s ease-in;
+      will-change: transform;
+      transform-origin: 50% 50%;
+
+      color: red;
+      background-image: url("data:image/svg+xml;utf8,<svg viewBox='4 0 16 24' width='24' height='24' xmlns='http://www.w3.org/2000/svg'><path d='M19,4L15.5,4L14.5,3L9.5,3L8.5,4L5,4L5,6L19,6L19,4ZM5.979,7.967L6,19C6,20.1 6.9,21 8,21L16,21C17.1,21 18,20.1 18,19L17.979,7.967L5.979,7.967Z' fill='red'/></svg>");
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .desk__note-editor {
+    .desk__note-editor__input {
+      border: 1px solid var(--ui-c-bg-shade);
+      border-radius: 3px;
+      background: white;
+      min-height: 4rem;
+      padding: 0.5rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+}

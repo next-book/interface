@@ -1,4 +1,6 @@
-.toc {
+.nb-toc {
+  font-family: var(--ui-font);
+  font-size: var(--ui-font-size);
   padding: var(--base-padding);
   max-height: 50vh;
   overflow-y: auto;

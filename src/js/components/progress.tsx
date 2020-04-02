@@ -77,52 +77,56 @@ class Progress extends React.Component<IProps, IState> {
     switch (this.props.form) {
       case ProgressForm.Goto:
         return this.state.collapsed ? (
-          <button className="progress--collapsed" onClick={this.toggleCollapsed}>
-            {this.props.t('turn-to')}
-          </button>
+          <div className="nb-progress">
+            <button className="progress--collapsed" onClick={this.toggleCollapsed}>
+              {this.props.t('turn-to')}
+            </button>
+          </div>
         ) : (
-          <div className="progress">
-            <label className="progress__chapter">
-              {this.props.t('chapter')}
-              <br />
-              <select
-                onChange={this.setFile}
-                value={this.state.file}
-                className="progress__chapter__select"
-              >
-                {ro.map(file => {
-                  const doc = this.props.documents[file];
-                  if (doc.order === null) return null;
+          <div className="nb-progress">
+            <div className="progress">
+              <label className="progress__chapter">
+                {this.props.t('chapter')}
+                <br />
+                <select
+                  onChange={this.setFile}
+                  value={this.state.file}
+                  className="progress__chapter__select"
+                >
+                  {ro.map(file => {
+                    const doc = this.props.documents[file];
+                    if (doc.order === null) return null;
 
-                  const value = doc.file;
-                  return (
-                    <option key={value} value={value}>
-                      {doc.order + 1} {doc.title}
+                    const value = doc.file;
+                    return (
+                      <option key={value} value={value}>
+                        {doc.order + 1} {doc.title}
+                      </option>
+                    );
+                  })}
+                </select>
+              </label>
+              <label className="progress__idea">
+                {this.props.t('sentence')}
+                <br />
+                <select
+                  className="progress__idea__select"
+                  onChange={this.setIdea}
+                  value={this.state.idea}
+                >
+                  {ideaIds.map(i => (
+                    <option key={i} value={i}>
+                      {this.props.t('nthSentence', { number: i })}
                     </option>
-                  );
-                })}
-              </select>
-            </label>
-            <label className="progress__idea">
-              {this.props.t('sentence')}
-              <br />
-              <select
-                className="progress__idea__select"
-                onChange={this.setIdea}
-                value={this.state.idea}
-              >
-                {ideaIds.map(i => (
-                  <option key={i} value={i}>
-                    {this.props.t('nthSentence', { number: i })}
-                  </option>
-                ))}
-              </select>
-            </label>
+                  ))}
+                </select>
+              </label>
 
-            {this.state.file !== this.props.position.file ||
-            this.state.idea !== this.props.position.idea ? (
-              <button onClick={this.navigate}>{this.props.t('navigation:go')} &rarr;</button>
-            ) : null}
+              {this.state.file !== this.props.position.file ||
+              this.state.idea !== this.props.position.idea ? (
+                <button onClick={this.navigate}>{this.props.t('navigation:go')} &rarr;</button>
+              ) : null}
+            </div>
           </div>
         );
       case ProgressForm.Display:
@@ -138,38 +142,42 @@ class Progress extends React.Component<IProps, IState> {
           displays.push(`${ro.indexOf(this.props.position.file) + 1}.${this.props.position.idea}`);
 
         return (
-          <span className="current-position current-position--display">
-            {displays.map((display, index) => (
-              <span key={index}>
-                {display}
-                {index !== displays.length - 1 && <> &middot; </>}
-              </span>
-            ))}
-          </span>
+          <div className="nb-progress">
+            <span className="current-position current-position--display">
+              {displays.map((display, index) => (
+                <span key={index}>
+                  {display}
+                  {index !== displays.length - 1 && <> &middot; </>}
+                </span>
+              ))}
+            </span>
+          </div>
         );
       case ProgressForm.Config:
         return (
-          <span className="current-position current-position--config">
-            <label onClick={() => this.props.toggleDisplay(ProgressKind.MinutesInChapter)}>
-              {this.props.displayMinutesInChapter && '👁️ '}
-              {minutesLeft !== null
-                ? this.props.t('minutes-left-long', { minutes: minutesLeft })
-                : null}
-            </label>
+          <div className="nb-progress">
+            <span className="current-position current-position--config">
+              <label onClick={() => this.props.toggleDisplay(ProgressKind.MinutesInChapter)}>
+                {this.props.displayMinutesInChapter && '👁️ '}
+                {minutesLeft !== null
+                  ? this.props.t('minutes-left-long', { minutes: minutesLeft })
+                  : null}
+              </label>
 
-            <label onClick={() => this.props.toggleDisplay(ProgressKind.PercentRead)}>
-              {this.props.displayPercentRead && '👁️ '}
-              {this.props.t('progress-long', { percent: cropProgress(progress) })}
-            </label>
+              <label onClick={() => this.props.toggleDisplay(ProgressKind.PercentRead)}>
+                {this.props.displayPercentRead && '👁️ '}
+                {this.props.t('progress-long', { percent: cropProgress(progress) })}
+              </label>
 
-            <label onClick={() => this.props.toggleDisplay(ProgressKind.Position)}>
-              {this.props.displayPosition && '👁️ '}
-              {this.props.t('nthChapterNthSentence', {
-                chapter: ro.indexOf(this.props.position.file) + 1,
-                idea: this.props.position.idea,
-              })}
-            </label>
-          </span>
+              <label onClick={() => this.props.toggleDisplay(ProgressKind.Position)}>
+                {this.props.displayPosition && '👁️ '}
+                {this.props.t('nthChapterNthSentence', {
+                  chapter: ro.indexOf(this.props.position.file) + 1,
+                  idea: this.props.position.idea,
+                })}
+              </label>
+            </span>
+          </div>
         );
     }
   }

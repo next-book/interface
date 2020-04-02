@@ -33,7 +33,7 @@ class Toc extends React.Component<IProps> {
     }
 
     return (
-      <div className="toc">
+      <div className="nb-toc">
         <Progress form={ProgressForm.Goto} />
         <Progress form={ProgressForm.Config} />
         <ol>

@@ -7,6 +7,7 @@ import peeks from './components/peeks';
 import trace from './components/trace';
 import offline from './components/offline';
 import controls from './components/controls';
+import config from './components/config';
 
 type IViews = { [key: string]: React.ComponentType };
 
@@ -19,6 +20,7 @@ const views: IViews = {
   trace,
   offline,
   controls,
+  config,
 };
 
 export default views;

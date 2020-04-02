@@ -8,14 +8,14 @@
     "show-notes": "Show notes",
     "show-options": "Show options",
     "toc": "Table of contents",
-    "notes": "Notes",
+    "annotations": "Annotations",
     "options": "Options"
   },
   "annotations": {
     "work-desk": "Work desk",
-    "no-annotations-in-chapter": "No annotations in this chapter. Add annotation by selecting text.",
+    "no-annotations-in-chapter": "No highlights in this chapter. Add a highlight by selecting text.",
     "no-notes-in-chapter": "No notes in the text of this chapter.",
-    "annotations-in-text": "Annotations",
+    "highlights": "Highlights",
     "notes": "Notes",
     "add-note": "Add note",
     "edit-note": "Edit note",

@@ -1,0 +1,47 @@
+.content {
+  margin: 0 var(--content-margin-right) 0 var(--content-margin-left);
+  max-width: var(--content-max-width);
+  padding: 10vh var(--base-padding) 10rem;
+
+  #chunk1 {
+    padding-top: 2rem;
+  }
+
+  :target {
+    animation: highlight 0.8s ease-in-out;
+
+    &:before {
+      display: block;
+      position: absolute;
+      content: ' ';
+      margin-top: -150px;
+      height: 150px;
+      visibility: hidden;
+    }
+
+    & + dd {
+      animation: highlight 0.8s ease-in-out;
+    }
+  }
+
+  .highlighted {
+    animation: highlight 0.8s ease-in-out;
+    will-change: background-color;
+  }
+
+  #chunk1:target,
+  #chunk1.highlighted,
+  #idea1:target,
+  #idea1.highlighted {
+    animation: none;
+  }
+
+  select {
+    font-size: 1rem;
+    -webkit-appearance: none;
+  }
+}
+
+body.nb-controls-open .content {
+  margin-left: 0;
+}

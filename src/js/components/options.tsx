@@ -4,14 +4,15 @@ import { connect } from 'react-redux';
 import { IState as ICombinedState } from '../reducer';
 import { reducer } from './config-reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
+import { setFontSize } from './config';
 
 interface IProps extends WithTranslation {
-  fontSize: number;
-  setFontSize(size: number): void;
+  fontSize: string;
+  setFontSize(size: string): void;
 }
 
 interface IState {
-  fontSize: number;
+  fontSize: string;
 }
 
 class Options extends React.Component<IProps, IState> {
@@ -24,21 +25,29 @@ class Options extends React.Component<IProps, IState> {
   }
 
   setFontSize = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    this.props.setFontSize(parseFloat(event.currentTarget.value));
-    document.documentElement.style.setProperty('--font-size-ratio', event.currentTarget.value);
+    const value = event.currentTarget.value;
+    this.props.setFontSize(value);
+    setFontSize(value);
   };
 
   render() {
     return (
-      <div className="options">
-        <input
-          type="range"
-          min="0.8"
-          max="2"
-          defaultValue={this.props.fontSize}
-          onChange={this.setFontSize}
-          step="0.1"
-        />
+      <div className="nb-options">
+        <div className="cell font-size">
+          <p>
+            <small>A</small>
+            <input
+              type="range"
+              min="0.8"
+              max="2"
+              defaultValue={this.props.fontSize}
+              onChange={this.setFontSize}
+              step="0.1"
+            />
+            <big>A</big>
+            <span className="val">({Math.floor(parseFloat(this.props.fontSize) * 100)}%)</span>
+          </p>
+        </div>
       </div>
     );
   }

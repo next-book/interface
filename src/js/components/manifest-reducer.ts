@@ -1,4 +1,4 @@
-const SET_SPINE_DATA = 'nb-base/manifest/SET_SPINE_DATA';
+const SET_MANIFEST_DATA = 'nb-base/manifest/SET_MANIFEST_DATA';
 
 export interface IState {
   title: string;
@@ -6,7 +6,7 @@ export interface IState {
   subtitle?: string;
   published?: string | number;
   keywords?: string[];
-  slug: string;
+  identifier: string;
   revision: string;
   generatedAt: IDate;
   documents: IDocument[];
@@ -56,8 +56,8 @@ export enum DocRole {
 
 export function reducer(state: IState | null = null, action: Action) {
   switch (action.type) {
-    case SET_SPINE_DATA:
-      return action.payload;
+    case SET_MANIFEST_DATA:
+      return { ...state, ...action.payload };
     default:
       return state;
   }
@@ -65,7 +65,7 @@ export function reducer(state: IState | null = null, action: Action) {
 
 reducer.setManifestData = function(data: IState) {
   return {
-    type: SET_SPINE_DATA,
+    type: SET_MANIFEST_DATA,
     payload: data,
   };
 };

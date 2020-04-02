@@ -61,21 +61,27 @@ export class Navigation extends React.Component<IProps> {
     this.setPaddings = fn;
   };
 
-  getPrevChapter = () => {
-    if (docInfo.role === DocRole.Chapter && this.props.position !== null) {
-      if (this.props.readingOrder.indexOf(this.props.position.file) === 0) {
-        return docInfo.links.colophon ? docInfo.links.colophon : docInfo.links.index;
+  getPrevChapterLink = () => {
+    const links = docInfo.links;
+    const position = this.props.position;
+
+    if (docInfo.role === DocRole.Chapter && position !== null) {
+      if (this.props.readingOrder.indexOf(position.file) === 0) {
+        return links.colophon ? links.colophon : links.index;
       }
-      return this.props.documents[this.props.position.file].prev;
-    } else if (docInfo.role === DocRole.Colophon) return docInfo.links.index;
+      return `${this.props.documents[position.file].prev}#chapter-end`;
+    } else if (docInfo.role === DocRole.Colophon) return links.index;
     else return null;
   };
 
-  getNextChapter = () => {
-    if (docInfo.role === DocRole.Chapter && this.props.position !== null) {
-      return this.props.documents[this.props.position.file].next;
-    } else if (docInfo.role === DocRole.Colophon || docInfo.role === DocRole.Index)
-      return this.props.readingOrder[0];
+  getNextChapterLink = () => {
+    const role = docInfo.role;
+    const position = this.props.position;
+
+    if (role === DocRole.Chapter && position !== null) {
+      return `${this.props.documents[position.file].next}#idea1`;
+    } else if (role === DocRole.Colophon || role === DocRole.Index)
+      return `${this.props.readingOrder[0]}#idea1`;
     else return null;
   };
 
@@ -84,9 +90,9 @@ export class Navigation extends React.Component<IProps> {
 
     switch (keycode(event)) {
       case 'left':
-        return this.goBack(event, this.getPrevChapter(), false);
+        return this.goBack(event, false);
       case 'right':
-        return this.goForward(event, this.getNextChapter(), false);
+        return this.goForward(event, false);
       default:
         return;
     }
@@ -94,9 +100,9 @@ export class Navigation extends React.Component<IProps> {
 
   handleSwipeNav = (event: TouchEvent, dir: Direction) => {
     if (dir === Direction.Forward) {
-      this.goForward(event, this.getNextChapter(), false);
+      this.goForward(event, false);
     } else if (dir === Direction.Back) {
-      this.goBack(event, this.getPrevChapter(), false);
+      this.goBack(event, false);
     }
   };
 
@@ -114,37 +120,35 @@ export class Navigation extends React.Component<IProps> {
       target.closest('.ui-target') === null
     ) {
       if (isInPaginationRect(Direction.Back, event.clientX, event.clientY)) {
-        return this.goBack(event, this.getPrevChapter());
+        return this.goBack(event);
       } else if (isInPaginationRect(Direction.Forward, event.clientX, event.clientY)) {
-        return this.goForward(event, this.getNextChapter());
+        return this.goForward(event);
       }
     }
   };
 
-  goForward = (
-    event: MouseEvent | TouchEvent | KeyboardEvent,
-    nextChapter: string | null,
-    showButtons?: boolean
-  ) => {
+  goForward = (event: MouseEvent | TouchEvent | KeyboardEvent, showButtons?: boolean) => {
     event.preventDefault();
 
     if (this.props.position === null || !this.props.position.chapterEnd) {
       pageForward(this.getScrollStep(), showButtons);
       this.setPaddings();
-    } else if (nextChapter) window.location.assign(`${nextChapter}#chunk1`);
+    } else {
+      const next = this.getNextChapterLink();
+      if (next) window.location.assign(next);
+    }
   };
 
-  goBack = (
-    event: MouseEvent | TouchEvent | KeyboardEvent,
-    prevChapter: string | null,
-    showButtons?: boolean
-  ) => {
+  goBack = (event: MouseEvent | TouchEvent | KeyboardEvent, showButtons?: boolean) => {
     event.preventDefault();
 
     if (this.props.position === null || !this.props.position.chapterStart) {
       pageBack(this.getScrollStep(), showButtons);
       this.setPaddings();
-    } else if (prevChapter) window.location.assign(`${prevChapter}#chapter-end`);
+    } else {
+      const prev = this.getPrevChapterLink();
+      if (prev) window.location.assign(prev);
+    }
   };
 
   componentDidMount() {

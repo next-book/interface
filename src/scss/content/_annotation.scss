@@ -1,0 +1,64 @@
+:root {
+  --annotation-margin-top: -0.8em;
+
+  --annotation-color: black;
+  --annotation-highlight: #ffa;
+
+  --annotation-color--secondary: inherit;
+  --annotation-highlight--secondary: #eee;
+
+  --annotation-color--strong: red;
+  --annotation-highlight--strong: #aff;
+}
+
+.content {
+  .annotation {
+    display: inline;
+    padding: 0.1rem 0.125rem;
+    margin: 0 -0.125rem;
+    color: var(--annotation-color);
+    background: var(--annotation-highlight);
+    border-radius: 3px;
+  }
+
+  .annotation--secondary {
+    color: var(--annotation-color--secondary);
+    background: var(--annotation-highlight--secondary);
+  }
+
+  .annotation--strong {
+    color: var(--annotation-color--strong);
+    background: var(--annotation-highlight--strong);
+  }
+
+  .annotation__head {
+    color: inherit;
+    content: '‼️';
+    background: transparent;
+    font-size: 0.8em;
+
+    position: absolute;
+    opacity: 0.7;
+    line-height: 1;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    margin: var(--annotation-margin-top) 0 0 -0.7rem;
+    padding: 0.5rem;
+    text-indent: 0;
+
+    transition: transform 0.2s ease-out;
+    will-change: transform;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+
+  .annotation__head::after {
+    content: attr(data-note);
+    font-size: 0.8em;
+    margin: -0.1rem 0 0 0.1rem;
+    position: absolute;
+    white-space: nowrap;
+  }
+}

@@ -29,6 +29,7 @@ function getOrder() {
 const docInfo = {
   languageCode: getValue('html', 'lang'),
   role: getRole(),
+  identifier: getValue('meta[name="identifier"]', 'content'),
   order: getOrder(),
   totals: {
     words: getNumericValue('body', 'data-nb-words'),

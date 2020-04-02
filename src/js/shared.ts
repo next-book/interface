@@ -39,7 +39,7 @@ export function assignManifest(data: any): IManifest {
   return Object.assign(
     {
       title: data.title,
-      slug: data.slug,
+      identifier: data.identifier,
       revision: data.revision,
       generatedAt: {
         date: data.generatedAt.date,

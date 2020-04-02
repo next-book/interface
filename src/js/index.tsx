@@ -1,7 +1,7 @@
 /* global window */
 
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, Store } from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { debounce } from 'lodash';
@@ -13,33 +13,51 @@ import docInfo from './doc-info';
 import reducer from './reducer';
 import views from './views';
 
+import { reducer as manifestReducer } from './components/manifest-reducer';
+import { setDocumentValues } from './components/config';
+
 export function initBook() {
-  loadManifest(docInfo.links.manifest).then(manifestData => {
-    const manifest = assignManifest(manifestData);
+  const id = docInfo.identifier;
 
-    const persistedState = localStorage.getItem(manifest.slug);
+  if (id !== null) {
+    const persistedState = localStorage.getItem(id);
 
-    const store = createStore(reducer, persistedState ? JSON.parse(persistedState) : { manifest });
+    if (persistedState) {
+      init(id, createStore(reducer, JSON.parse(persistedState)));
+    } else {
+      loadManifest(docInfo.links.manifest).then(manifestData => {
+        const store = createStore(reducer);
+        store.dispatch(manifestReducer.setManifestData(assignManifest(manifestData)));
+        init(id, store);
+      });
+    }
+  } else {
+    console.error('Book identifier not found.');
+    return;
+  }
+}
 
-    Object.keys(views).forEach(key => {
-      const wrapper = plantRoot(key);
-      if (!wrapper) return;
+function init(identifier: string, store: Store) {
+  setDocumentValues(store.getState().config);
 
-      ReactDOM.render(
-        <I18nextProvider i18n={i18n}>
-          <Provider store={store}>{React.createElement(views[key], null)}</Provider>
-        </I18nextProvider>,
-        wrapper
-      );
-    });
+  Object.keys(views).forEach(key => {
+    const wrapper = plantRoot(key);
+    if (!wrapper) return;
 
-    store.subscribe(
-      debounce(() => {
-        localStorage.setItem(manifest.slug, JSON.stringify(store.getState()));
-      }, 500)
+    ReactDOM.render(
+      <I18nextProvider i18n={i18n}>
+        <Provider store={store}>{React.createElement(views[key], null)}</Provider>
+      </I18nextProvider>,
+      wrapper
     );
-
-    addReadyBodyClass();
-    (window as any).book = store;
   });
+
+  store.subscribe(
+    debounce(() => {
+      localStorage.setItem(identifier, JSON.stringify(store.getState()));
+    }, 500)
+  );
+
+  addReadyBodyClass();
+  (window as any).book = store;
 }
