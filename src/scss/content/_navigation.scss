@@ -1,5 +1,5 @@
 .content {
-  .wrapper {
+  main {
     will-change: transform;
   }
 
@@ -55,14 +55,14 @@ body.paginated-forward {
   .content {
     overflow: hidden;
 
-    .wrapper {
+    main {
       animation: forward 0.2s ease-out;
     }
   }
 }
 
 body.paginated-button-back {
-  .content .wrapper {
+  .content main {
     animation: back 0.2s ease-out;
   }
 }

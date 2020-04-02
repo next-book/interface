@@ -91,44 +91,28 @@
     }
   }
 
-  /* top menu */
   .top-bar {
+    font-family: var(--content-font);
+    font-size: var(--base-font-size);
+
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    right: 0;
     overflow: hidden;
 
-    box-sizing: border-box;
-    padding: 0 var(--base-padding);
-
-    display: flex;
-
-    a {
-      display: inline-block;
-      padding: 0.5rem 0;
-    }
-
-    p {
-      margin: 0;
-    }
-
     p.info {
-      flex-grow: 1;
-      margin-right: 2rem;
+      max-width: var(--content-max-width);
+      padding: calc(var(--base-padding) / 4) var(--base-padding);
+      margin: 0 var(--content-margin-right) 0 var(--content-margin-left);
+
+      a {
+        text-decoration: none;
+      }
 
       .chapter {
         display: none;
       }
-    }
-
-    p.tools {
-      text-align: right;
-      flex-grow: 0;
-    }
-
-    .book {
-      margin-right: 1rem;
     }
   }
 
@@ -143,5 +127,3 @@
     display: none;
   }
 }
-
-

@@ -134,10 +134,10 @@ export class Pagination extends React.Component<IProps, IState> {
         <>
           <div
             id="pagination__bottom"
-            style={bottom ? { height: `${bottom}px` } : {}}
+            style={bottom !== null ? { height: `${bottom}px` } : {}}
             className={bottom === null ? 'pagination__bottom--collapsed' : ''}
           />
-          <div id="pagination__top" style={top ? { height: `${top}px` } : { height: 0 }} />
+          <div id="pagination__top" style={top !== null ? { height: `${top}px` } : { height: 0 }} />
         </>
       )
     );
@@ -150,8 +150,7 @@ function calcCutoff(from: Side, readingZone: Sides) {
   );
 
   if (!els.length) {
-    if (window.scrollY > 30) return readingZone[from];
-    else return from === Side.Top ? 0 : window.innerHeight;
+    return from === Side.Top ? 0 : window.innerHeight;
   }
 
   const el = els[0];
