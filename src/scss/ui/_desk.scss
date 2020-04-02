@@ -29,7 +29,7 @@
 
   .desk__annotation {
     margin-bottom: 1rem;
-    border: 1px solid #aaa;
+    border: 1px solid var(--ui-c-medium);
     border-radius: 3px;
     padding: 0.5rem;
     position: relative;
@@ -67,7 +67,7 @@
 
   .desk__note-editor {
     .desk__note-editor__input {
-      border: 1px solid #ddd;
+      border: 1px solid var(--ui-c-bg-shade);
       border-radius: 3px;
       background: white;
       min-height: 4rem;

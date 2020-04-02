@@ -1,6 +1,6 @@
 .content {
-  margin: 0 auto 0 calc(0.33 * (100vw - 32rem));
-  max-width: 32rem;
+  margin: 0 var(--content-margin-left) 0 var(--content-margin-right);
+  max-width: var(--content-max-width);
   padding: 10vh var(--base-padding) 10rem;
 
   #chunk1 {

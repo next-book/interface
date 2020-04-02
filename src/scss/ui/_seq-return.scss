@@ -18,27 +18,27 @@
     min-width: 24px;
     height: 24px;
     line-height: 24px;
-    color: #aaa;
+    color: var(--ui-c-medium);
     text-align: center;
     float: right;
     padding: 6px;
     cursor: pointer;
 
     &:hover {
-      color: #666;
+      color: var(--ui-c-text-shade);
     }
   }
 
   .seq-return {
     margin: 0 auto;
-    background: #eee;
+    background: var(--ui-c-bg-shade);
 
     border-radius: 6px;
     overflow: hidden;
 
-    border: 1px solid #aaa;
+    border: 1px solid var(--ui-c-medium);
     border-radius: 8px;
-    box-shadow: 0 0 7px #aaa;
+    box-shadow: 0 0 7px var(--ui-c-medium);
   }
 
   p,
@@ -51,7 +51,7 @@
 
   .seq-buttons {
     display: flex;
-    border-top: 1px solid #aaa;
+    border-top: 1px solid var(--ui-c-medium);
 
     &:first-child {
       border: none;
@@ -60,12 +60,12 @@
     a {
       background: white;
       white-space: nowrap;
-      border: solid #aaa;
+      border: solid var(--ui-c-medium);
       border-width: 0 1px 0 0;
       flex: 1 1;
       text-align: center;
       text-decoration: none;
-      color: #777;
+      color: var(--ui-c-text-shade);
 
       &:last-child {
         border-right: 0;

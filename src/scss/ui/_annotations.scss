@@ -86,7 +86,7 @@
     max-width: calc(100vw - (var(--base-padding) * 1.5) - 2.5rem);
     border-radius: 3px;
     overflow: hidden;
-    box-shadow: 0 0.5rem 0.5rem #888;
+    box-shadow: 0 0.5rem 0.5rem var(--ui-c-text-shade);
     box-sizing: border-box;
   }
 
@@ -98,9 +98,9 @@
 
   .annotation-detail__note {
     min-height: 4rem;
-    border: 1px solid #aaa;
+    border: 1px solid var(--ui-c-medium);
     padding: 0.5rem;
-    background: #fff;
+    background: var(--ui-c-bg);
     border-radius: 0 0 3px 3px;
     border-width: 1px 0;
 
@@ -112,7 +112,7 @@
     display: flex;
     flex-direction: row-reverse;
     padding: 0.5rem;
-    background: #eee;
+    background: var(--ui-c-bg-shade);
   }
 
   .annotation-detail__close,

@@ -7,16 +7,18 @@
     vertical-align: baseline;
 
     a.footnote-ref {
+      font-family: var(--ui-font);
+
       font-weight: 700;
-      color: #555;
+      color: var(--ui-c-text-shade);
       vertical-align: baseline;
-      background: #ddd;
-      padding: 0.1rem 0.6rem;
+      background: var(--ui-c-bg-shade);
+      padding: 0.3rem 0.5rem 0.2rem;
       border-radius: 0.5rem;
       display: inline-block;
       line-height: 1;
       text-decoration: none;
-      font-size: 80%;
+      font-size: 0.6rem;
       position: relative;
       top: -0.3rem;
     }
