@@ -1,7 +1,7 @@
 /* global window */
 
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, Store } from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { debounce } from 'lodash';
@@ -10,29 +10,34 @@ import { I18nextProvider } from 'react-i18next';
 
 import { loadManifest, assignManifest, plantRoot, addReadyBodyClass } from './shared';
 import docInfo from './doc-info';
-import reducer, { IState } from './reducer';
+import reducer from './reducer';
 import views from './views';
 
+import { reducer as manifestReducer } from './components/manifest-reducer';
 import { setDocumentValues } from './components/config';
 
 export function initBook() {
-  if (docInfo.identifier === null) {
+  const id = docInfo.identifier;
+
+  if (id !== null) {
+    const persistedState = localStorage.getItem(id);
+
+    if (persistedState) {
+      init(id, createStore(reducer, JSON.parse(persistedState)));
+    } else {
+      loadManifest(docInfo.links.manifest).then(manifestData => {
+        const store = createStore(reducer);
+        store.dispatch(manifestReducer.setManifestData(assignManifest(manifestData)));
+        init(id, store);
+      });
+    }
+  } else {
     console.error('Book identifier not found.');
     return;
   }
-
-  const persistedState = localStorage.getItem(docInfo.identifier);
-
-  if (persistedState) init(docInfo.identifier, JSON.parse(persistedState));
-  else {
-    loadManifest(docInfo.links.manifest).then(manifestData => {
-      init(docInfo.identifier, { manifest: assignManifest(manifestData) });
-    });
-  }
 }
 
-function init(identifier: string, state: IState) {
-  const store = createStore(reducer, state);
+function init(identifier: string, store: Store) {
   setDocumentValues(store.getState().config);
 
   Object.keys(views).forEach(key => {
