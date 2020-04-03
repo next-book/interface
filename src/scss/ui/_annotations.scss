@@ -2,98 +2,105 @@
   font-family: var(--ui-font);
   font-size: var(--ui-font-size);
 
-  .action-button {
-    margin-top: 0.6rem;
-    border: none;
-    background: transparent;
-  }
-
-  .style-button {
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-    border-radius: 3px;
-    color: var(--annotation-color);
-    background: var(--annotation-highlight);
-  }
-
-  .action-button,
-  .style-button,
-  .symbol-button {
-    display: block;
-    position: relative;
-    cursor: pointer;
-    tranform-origin: 50% 50%;
-    transition: 0.2s ease-in;
-    will-change: transform;
-    text-align: center;
-    margin-top: 10px;
-    width: 2.5rem;
-    height: 2.5rem;
-    line-height: 2.5rem;
-    font-size: 1.5rem;
-    box-sizing: border-box;
-    font-family: var(--ui-font);
-
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-
-  .symbol-button {
-    border: none;
-    background: white;
-    border-radius: 100px;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-    box-sizing: border-box;
-  }
-
-  .style-button--secondary {
-    color: var(--annotation-color--secondary);
-    background: var(--annotation-highlight--secondary);
-  }
-
-  .annotation-buttons--new .style-button--secondary::after {
-    content: '📝';
-    position: absolute;
-    right: -1rem;
-    bottom: -1rem;
-  }
-
-  .style-button--strong {
-    color: var(--annotation-color--strong);
-    background: var(--annotation-highlight--strong);
-  }
-
   .annotation-buttons {
     position: fixed;
-    bottom: 20px;
-    left: 0px;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: map-get($z-indexes, 'annotations') + 1;
-    padding: var(--base-padding);
-    padding-left: calc(var(--base-padding) / 2);
-
-    display: flex;
-    flex-direction: column-reverse;
 
     will-change: transform;
-    animation: slide-from-left 0.2s ease-out;
+    animation: slide-from-top 0.2s ease-out;
+
+    .button-wrapper {
+      padding: calc(var(--base-padding) / 2);
+      text-align: center;
+    }
+
+    .action-button,
+    .style-button {
+      display: inline-block;
+      margin-right: calc(var(--base-padding) / 2);
+      margin-bottom: calc(var(--base-padding) / 2);
+      position: relative;
+      cursor: pointer;
+      transform-origin: 50% 50%;
+      transition: 0.2s ease-in;
+      will-change: transform;
+      text-align: center;
+
+      width: 2.5rem;
+      height: 2.5rem;
+      line-height: 2.5rem;
+      font-size: 1.5rem;
+      box-sizing: border-box;
+      font-family: var(--content-font);
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    .action-button {
+      margin-top: 0.6rem;
+      border: none;
+      background: transparent;
+    }
+
+    .style-button {
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+      border-radius: var(--border-radius);
+      color: var(--annotation-color);
+      background: var(--annotation-highlight);
+    }
+
+    .style-button--secondary {
+      color: var(--annotation-color--secondary);
+      background: var(--annotation-highlight--secondary);
+    }
+
+    .style-button--strong {
+      color: var(--annotation-color--strong);
+      background: var(--annotation-highlight--strong);
+    }
+
+    &.annotation-buttons--new .quick-note::after {
+      content: '…';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      font-size: 80%;
+      line-height: 1.4rem;
+      opacity: 0.3;
+      text-align: center;
+    }
   }
 
   .annotation-detail {
     position: fixed;
-    left: calc(var(--base-padding) + 2.5rem);
-    bottom: 32px;
+    left: calc(var(--base-padding) / 2);
+    bottom: calc(var(--base-padding) / 2);
+    right: calc(var(--base-padding) / 2);
     z-index: map-get($z-indexes, 'annotations') + 1;
-    width: 100vw;
-    max-width: calc(100vw - (var(--base-padding) * 1.5) - 2.5rem);
-    border-radius: 3px;
+    border-radius: var(--border-radius);
     overflow: hidden;
     box-shadow: 0 0.5rem 0.5rem var(--ui-c-text-shade);
     box-sizing: border-box;
   }
 
-  @media screen and (min-width: 600px) {
+  @media screen and (min-width: map-get($breakpoints, 'min-side-annotation-ui')) {
+    .annotation-buttons .button-wrapper {
+      text-align: left;
+    }
+
     .annotation-detail {
-      max-width: 25rem;
+      right: auto;
+      min-width: 24rem;
     }
   }
 
@@ -102,7 +109,7 @@
     border: 1px solid var(--ui-c-medium);
     padding: 0.5rem;
     background: var(--ui-c-bg);
-    border-radius: 0 0 3px 3px;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
     border-width: 1px 0;
 
     max-height: 6rem;
@@ -120,17 +127,16 @@
   .annotation-detail__destroy {
     font-size: 1.5rem;
     width: 2rem;
-    text-indent: 3rem;
+    text-indent: 9999px;
     border: none;
     background-color: transparent;
-    background-position: 50% 50%;
+    background-position: 100% 50%;
     background-repeat: no-repeat;
     background-size: contain;
 
     white-space: nowrap;
 
     box-sizing: border-box;
-    margin-left: 1rem;
     overflow: hidden;
     cursor: pointer;
     transition: 0.2s ease-in;
@@ -143,11 +149,13 @@
   }
 
   .annotation-detail__close {
+    margin-left: auto;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path fill='none' d='M0 0h24v24H0V0z'/><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z' fill='green' /></svg>");
   }
 
   .annotation-detail__destroy {
     color: red;
+    background-position: 0% 50%;
     background-image: url("data:image/svg+xml;utf8,<svg viewBox='4 0 16 24' width='24' height='24' xmlns='http://www.w3.org/2000/svg'><path d='M19,4L15.5,4L14.5,3L9.5,3L8.5,4L5,4L5,6L19,6L19,4ZM5.979,7.967L6,19C6,20.1 6.9,21 8,21L16,21C17.1,21 18,20.1 18,19L17.979,7.967L5.979,7.967Z' fill='red'/></svg>");
   }
 }

@@ -5,10 +5,20 @@ const ADD_NOTE = 'nb-base/annotations/ADD_NOTE';
 const UPDATE_NOTE = 'nb-base/annotations/UPDATE_NOTE';
 const DESTROY_NOTE = 'nb-base/annotations/DESTROY_NOTE';
 
-export enum IStyle {
+export enum IAnnotationFormat {
   Default = 'default',
   Secondary = 'secondary',
   Strong = 'strong',
+}
+
+export interface IAnnotationStyle {
+  format: IAnnotationFormat;
+  symbol: string;
+}
+
+export interface IAnnotationStyles {
+  quickNote: IAnnotationStyle;
+  styles: IAnnotationStyle[];
 }
 
 export interface IIdeaRange {
@@ -22,8 +32,7 @@ export interface IAnnotation {
   id: number;
   range: IIdeaRange;
   file: string;
-  symbol: string;
-  style: IStyle;
+  style: IAnnotationStyle;
   note: string;
   links: string[];
 }

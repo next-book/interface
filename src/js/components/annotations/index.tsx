@@ -1,5 +1,12 @@
 import React from 'react';
-import { reducer, IState, IAnnotation, IAnnotationAndIdeas, INote } from './reducer';
+import {
+  reducer,
+  IState,
+  IAnnotation,
+  IAnnotationAndIdeas,
+  INote,
+  IAnnotationStyles,
+} from './reducer';
 import AnnotationButtons from './buttons';
 import AnnotationDetail from './detail';
 import { IState as ICombinedState } from '../../reducer';
@@ -11,6 +18,7 @@ import docInfo from '../../doc-info';
 
 interface IProps {
   annotations: IState;
+  annotationStyles: IAnnotationStyles;
   addAnnotation(data: IAnnotationAndIdeas): void;
   updateAnnotation(data: IAnnotationAndIdeas): void;
   destroyAnnotation(data: IAnnotationAndIdeas): void;
@@ -77,6 +85,7 @@ export class Annotations extends React.Component<IProps, ILocalState> {
           selectAnnotation={this.selectAnnotation}
           updateAnnotation={this.props.updateAnnotation}
           selectedAnnotation={this.state.selectedAnnotation}
+          styles={this.props.annotationStyles}
           file={docInfo.links.self}
         />
         {file === null || this.state.selectedAnnotation === null ? null : (
@@ -109,6 +118,7 @@ export function getChapterAnnotations(file: string | null, annotations: IState) 
 const mapStateToProps = (state: ICombinedState) => {
   return {
     annotations: state.annotations,
+    annotationStyles: state.config.annotationStyles,
   };
 };
 

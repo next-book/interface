@@ -1,5 +1,13 @@
 import React from 'react';
-import { IIdeas, IAnnotation, IAnnotations, IAnnotationAndIdeas, INotes, IStyle } from './reducer';
+import {
+  IIdeas,
+  IAnnotation,
+  IAnnotations,
+  IAnnotationAndIdeas,
+  INotes,
+  IAnnotationStyle,
+  IAnnotationStyles,
+} from './reducer';
 import {
   getAnnotatedIdeas,
   isRangeWithoutOverlap,
@@ -26,6 +34,7 @@ interface IProps {
   notes: INotes;
   file: string;
   selectedAnnotation: number | null;
+  styles: IAnnotationStyles;
   addAnnotation(annotation: IAnnotationAndIdeas): void;
   updateAnnotation(data: IAnnotationAndIdeas): void;
   selectAnnotation(index: number, focus?: boolean): void;
@@ -63,7 +72,7 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
     return keys.length > 0 ? Math.max(...keys) + 1 : 1;
   };
 
-  private createAnnotationFromRange = (params: { style?: IStyle; symbol?: string }) => {
+  private createAnnotationFromRange = (style: IAnnotationStyle, quickNote?: boolean) => {
     const selection = window.getSelection();
     if (selection === null) return;
     if (selection.rangeCount === 0) return;
@@ -73,8 +82,7 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
     const annotation = {
       id,
       file: this.props.file,
-      symbol: params.symbol || '📒',
-      style: params.style || IStyle.Default,
+      style,
       note: '',
       links: [],
       range: getRangeBounds(range),
@@ -91,9 +99,7 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
     this.show(Sets.None);
     selection.removeAllRanges();
 
-    if (params.style && params.style == IStyle.Secondary) {
-      this.props.selectAnnotation(id, true);
-    }
+    if (quickNote) this.props.selectAnnotation(id, true);
   };
 
   private showIfRangeIsOkay = () => {
@@ -121,17 +127,15 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
     }
   };
 
-  private updateAnnotation = (params: { style?: IStyle; symbol?: string }) => {
+  private updateAnnotation = (style: IAnnotationStyle) => {
     if (!this.props.selectedAnnotation) return;
+    const selected = this.props.annotations[this.props.selectedAnnotation];
+    const updated = { ...selected, style };
 
-    this.setState({ ...this.state, ...params });
-    const annotation = { ...this.props.annotations[this.props.selectedAnnotation], ...params };
-
-    if (params.style) updateRanges(annotation);
-    if (params.symbol) updateHead(annotation);
-
+    if (style.format !== selected.style.format) updateRanges(updated);
+    if (style.symbol !== selected.style.symbol) updateHead(updated);
     this.props.updateAnnotation({
-      annotation: annotation,
+      annotation: updated,
       ideas: getAnnotatedIdeas(),
     });
   };
@@ -177,54 +181,71 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
     }
   }
 
+  renderExtend = (classes: string[]) => {
+    const actions = [
+      {
+        symbol: '➖',
+        fn: this.cropHighlight,
+      },
+      {
+        symbol: '➕',
+        fn: this.extendHighlight,
+      },
+    ];
+
+    return (
+      <div className={classes.join(' ')}>
+        <div className="button-wrapper">
+          {actions.map((action, index) => (
+            <ActionButton key={index} action={action.symbol} fn={action.fn} title="" />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  renderCreate = (classes: string[]) => {
+    const { styles, quickNote } = this.props.styles;
+    const fn = this.createAnnotationFromRange;
+
+    return (
+      <div className={classes.concat(['annotation-buttons--new']).join(' ')}>
+        <div className="button-wrapper">
+          {styles.map((style, index) => (
+            <StyleButton key={index} style={style} fn={() => fn(style)} />
+          ))}
+
+          <StyleButton style={quickNote} className="quick-note" fn={() => fn(quickNote, true)} />
+        </div>
+      </div>
+    );
+  };
+
+  renderUpdate = (classes: string[]) => {
+    const { styles, quickNote } = this.props.styles;
+    const fn = this.updateAnnotation;
+
+    return (
+      <div className={classes.join(' ')}>
+        <div className="button-wrapper">
+          {styles.map((style, index) => (
+            <StyleButton key={index} style={style} fn={() => fn(style)} />
+          ))}
+
+          <StyleButton style={quickNote} className="quick-note" fn={() => fn(quickNote)} />
+        </div>
+      </div>
+    );
+  };
+
   render() {
     if (this.state.visible === Sets.None && !this.props.selectedAnnotation) return null;
 
     const classes = ['annotation-buttons', 'ui-target'];
 
-    if (this.state.visible === Sets.ExtendCrop) {
-      const actions = [
-        {
-          symbol: '➖',
-          fn: this.cropHighlight,
-        },
-        {
-          symbol: '➕',
-          fn: this.extendHighlight,
-        },
-      ];
-
-      return (
-        <div className={classes.join(' ')}>
-          {actions.map((action, index) => (
-            <ActionButton key={index} action={action.symbol} fn={action.fn} title="" />
-          ))}
-        </div>
-      );
-    }
-
-    const styles = [IStyle.Secondary, IStyle.Default, IStyle.Strong];
-    const symbols = ['📒', '😳', '👍', '❌', '✅'];
-    const fn = this.props.selectedAnnotation
-      ? this.updateAnnotation
-      : this.createAnnotationFromRange;
-
-    return (
-      <div
-        className={(this.props.selectedAnnotation
-          ? classes
-          : classes.concat(['annotation-buttons--new'])
-        ).join(' ')}
-      >
-        {styles.map((style, index) => (
-          <StyleButton key={index} style={style} fn={() => fn({ style: style })} />
-        ))}
-
-        {symbols.map((symbol, index) => (
-          <SymbolButton key={index} symbol={symbol} fn={() => fn({ symbol: symbol })} />
-        ))}
-      </div>
-    );
+    if (this.state.visible === Sets.ExtendCrop) return this.renderExtend(classes);
+    if (this.props.selectedAnnotation) return this.renderUpdate(classes);
+    return this.renderCreate(classes);
   }
 }
 
@@ -248,35 +269,21 @@ export function ActionButton(props: IActionButtonProps) {
 }
 
 interface IStyleButtonProps {
-  style: IStyle;
+  style: IAnnotationStyle;
+  className?: string;
   fn(): void;
 }
 
 export function StyleButton(props: IStyleButtonProps) {
   return (
     <span
-      className={`style-button style-button--${props.style}`}
+      className={`style-button style-button--${props.style.format} ${
+        props.className ? props.className : ''
+      }`}
       onMouseDown={buttonFn(props.fn)}
-      title={`Create annotation with ${props.style} style.`}
+      title={`Create annotation with ${props.style.format} style and ${props.style.symbol} icon.`}
     >
-      ab
-    </span>
-  );
-}
-
-interface ISymbolButtonProps {
-  symbol: string;
-  fn(): void;
-}
-
-export function SymbolButton(props: ISymbolButtonProps) {
-  return (
-    <span
-      className="symbol-button"
-      onMouseDown={buttonFn(props.fn)}
-      title={`Create annotation with symbol ${props.symbol}.`}
-    >
-      {props.symbol}
+      {props.style.symbol}
     </span>
   );
 }

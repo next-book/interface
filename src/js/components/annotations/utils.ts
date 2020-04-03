@@ -1,4 +1,4 @@
-import { IAnnotation, IAnnotations, IIdeas, IStyle, IIdeaRange } from './reducer';
+import { IAnnotation, IAnnotations, IIdeas, IAnnotationFormat, IIdeaRange } from './reducer';
 
 type IHighlightFn = (selection: Selection, range: Range) => IAnnotation | null;
 type IRangeCheckFn = (range: Range) => boolean;
@@ -191,8 +191,8 @@ export const updateHead = (annotation: IAnnotation) => {
       : annotation.note.replace(/&nbsp;|<[^>]+>/g, ' ');
   head.setAttribute('data-note', note);
 
-  head.setAttribute('data-style', annotation.style);
-  head.innerHTML = annotation.symbol;
+  head.setAttribute('data-format', annotation.style.format);
+  head.innerHTML = annotation.style.symbol;
 };
 
 export const removeAnnotation = (id: number, doNotNormalize?: boolean) => {
@@ -335,7 +335,8 @@ export const getSafeRanges = (dangerous: Range) => {
 export const highlightRange = (range: Range, annotation: IAnnotation, isFirst: boolean) => {
   const span = document.createElement('SPAN');
   span.classList.add('annotation');
-  if (annotation.style !== IStyle.Default) span.classList.add(`annotation--${annotation.style}`);
+  if (annotation.style.format !== IAnnotationFormat.Default)
+    span.classList.add(`annotation--${annotation.style.format}`);
   span.setAttribute('data-id', annotation.id.toString());
   range.surroundContents(span);
 
@@ -360,7 +361,8 @@ export const highlightTempRanges = (annotation: IAnnotation) => {
   spans.forEach((span, index) => {
     span.setAttribute('class', 'annotation');
     span.setAttribute('data-id', annotation.id.toString());
-    if (annotation.style !== IStyle.Default) span.classList.add(`annotation--${annotation.style}`);
+    if (annotation.style.format !== IAnnotationFormat.Default)
+      span.classList.add(`annotation--${annotation.style.format}`);
     if (index === 0) addHead(annotation.id.toString(), span);
   });
 };
@@ -369,6 +371,7 @@ export const updateRanges = (annotation: IAnnotation) => {
   const spans = document.querySelectorAll(`.annotation[data-id="${annotation.id}"]`);
   spans.forEach(span => {
     span.setAttribute('class', 'annotation');
-    if (annotation.style !== IStyle.Default) span.classList.add(`annotation--${annotation.style}`);
+    if (annotation.style.format !== IAnnotationFormat.Default)
+      span.classList.add(`annotation--${annotation.style.format}`);
   });
 };

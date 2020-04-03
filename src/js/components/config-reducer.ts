@@ -1,3 +1,5 @@
+import { IAnnotationStyles, IAnnotationFormat } from './annotations/reducer';
+
 const TOGGLE_PROGRESS_DISPLAY = 'nb-base/offline/TOGGLE_PROGRESS_DISPLAY';
 const SET_FONT_SIZE = 'nb-base/offline/SET_FONT_SIZE';
 
@@ -12,6 +14,7 @@ export interface IState {
   displayPercentRead: boolean;
   displayPosition: boolean;
   fontSize: string;
+  annotationStyles: IAnnotationStyles;
 }
 
 const INITIAL_STATE: IState = {
@@ -19,6 +22,30 @@ const INITIAL_STATE: IState = {
   displayPercentRead: true,
   displayPosition: true,
   fontSize: '1',
+  annotationStyles: {
+    quickNote: {
+      format: IAnnotationFormat.Secondary,
+      symbol: '◽',
+    },
+    styles: [
+      {
+        format: IAnnotationFormat.Default,
+        symbol: '✅',
+      },
+      {
+        format: IAnnotationFormat.Default,
+        symbol: '❌',
+      },
+      {
+        format: IAnnotationFormat.Default,
+        symbol: '👍',
+      },
+      {
+        format: IAnnotationFormat.Default,
+        symbol: '😳',
+      },
+    ],
+  },
 };
 
 export function reducer(state: IState = INITIAL_STATE, action: any) {

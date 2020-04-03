@@ -1,7 +1,7 @@
 import React from 'react';
 import ContentEditable from 'react-contenteditable';
 import { ContentEditableEvent } from 'react-contenteditable';
-import { IAnnotation, IAnnotationAndIdeas, IStyle } from './reducer';
+import { IAnnotation, IAnnotationAndIdeas } from './reducer';
 import { getAnnotatedIdeas, updateHead } from './utils';
 
 interface IProps {
@@ -12,9 +12,7 @@ interface IProps {
 }
 
 interface IState {
-  symbol: string;
   note: string;
-  style: IStyle;
 }
 
 export default class AnnotationDetail extends React.Component<IProps, IState> {
@@ -23,8 +21,6 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
 
     this.state = {
       note: props.annotation.note,
-      symbol: props.annotation.symbol,
-      style: IStyle.Default,
     };
   }
 
