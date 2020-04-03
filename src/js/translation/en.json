@@ -11,6 +11,9 @@
     "annotations": "Annotations",
     "options": "Options"
   },
+  "options": {
+    "font-size": "Font size"
+  },
   "annotations": {
     "work-desk": "Work desk",
     "no-annotations-in-chapter": "No highlights in this chapter. Add a highlight by selecting text.",

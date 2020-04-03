@@ -11,6 +11,9 @@
     "annotations": "Anotace",
     "options": "Nastavení"
   },
+  "options": {
+    "font-size": "Velikost písma"
+  },
   "annotations": {
     "work-desk": "Pracovní plocha",
     "no-annotations-in-chapter": "V textu kapitoly nemáte žádná zvýraznění.",
