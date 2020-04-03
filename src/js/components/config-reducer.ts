@@ -13,8 +13,13 @@ export interface IState {
   displayMinutesInChapter: boolean;
   displayPercentRead: boolean;
   displayPosition: boolean;
+
   fontSize: string;
+
   annotationStyles: IAnnotationStyles;
+
+  keyboardNav: boolean;
+  invisibleNav: boolean;
 }
 
 const INITIAL_STATE: IState = {
@@ -46,6 +51,8 @@ const INITIAL_STATE: IState = {
       },
     ],
   },
+  keyboardNav: true,
+  invisibleNav: true,
 };
 
 export function reducer(state: IState = INITIAL_STATE, action: any) {

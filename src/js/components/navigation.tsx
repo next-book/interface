@@ -15,9 +15,8 @@ import { TopBar } from './top-bar';
 import { Pagination } from './pagination';
 import { Sequential } from './seq-return';
 import { getScrollRatio } from './position';
-import { reducer, IPosition, IDocMap, IConfig } from './position-reducer';
+import { reducer, IPosition, IDocMap } from './position-reducer';
 import { IState as IManifest, IDocument } from './manifest-reducer';
-import { reducer as peeksReducer, IPeek } from './peeks-reducer';
 
 export enum Direction {
   Back = 'back',
@@ -26,7 +25,8 @@ export enum Direction {
 
 export interface IProps extends WithTranslation {
   manifest: IManifest;
-  config: IConfig;
+  keyboardNav: boolean;
+  invisibleNav: boolean;
   scrollRatio: number;
   position: IPosition | null;
   sequentialPosition: IPosition | null;
@@ -35,7 +35,6 @@ export interface IProps extends WithTranslation {
   sequential: Sequential;
   setScrollRatio(scrollRatio: number): void;
   setReadingOrder(documents: IDocument[]): void;
-  addPeek(peek: IPeek): void;
 }
 
 export class Navigation extends React.Component<IProps> {
@@ -157,10 +156,10 @@ export class Navigation extends React.Component<IProps> {
 
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
-    if (this.props.config.keyboardNav) {
+    if (this.props.keyboardNav) {
       window.document.body.addEventListener('keydown', this.handleKeyboardNav);
     }
-    if (this.props.config.invisibleNav) {
+    if (this.props.invisibleNav) {
       window.document.addEventListener('mousedown', this.handleInvisibleNav);
     }
     initSwipeNav(this.handleSwipeNav);
@@ -172,10 +171,10 @@ export class Navigation extends React.Component<IProps> {
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.getScrollHandler());
-    if (this.props.config.keyboardNav) {
+    if (this.props.keyboardNav) {
       window.document.body.removeEventListener('keydown', this.handleKeyboardNav);
     }
-    if (this.props.config.invisibleNav) {
+    if (this.props.invisibleNav) {
       window.document.body.removeEventListener('mousedown', this.handleInvisibleNav);
     }
   }
@@ -257,7 +256,8 @@ function pageBack(step: number | null, showButtons?: boolean) {
 
 const mapStateToProps = (state: ICombinedState) => {
   return {
-    config: state.position.config,
+    keyboardNav: state.config.keyboardNav,
+    invisibleNav: state.config.invisibleNav,
     readingOrder: state.position.readingOrder,
     documents: state.position.documents,
     position: state.position.position,
@@ -271,7 +271,6 @@ const mapStateToProps = (state: ICombinedState) => {
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
-      addPeek: peeksReducer.addPeek,
       setScrollRatio: reducer.setScrollRatio,
       setReadingOrder: reducer.setReadingOrder,
     },

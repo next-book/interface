@@ -13,12 +13,6 @@ export interface IState {
   seqReturnStatus: SeqReturnStatus;
   readingOrder: string[];
   documents: IDocMap;
-  config: IConfig;
-}
-
-export interface IConfig {
-  keyboardNav: boolean;
-  invisibleNav: boolean;
 }
 
 export interface IPosition {
@@ -47,10 +41,6 @@ const INITIAL_STATE: IState = {
   seqReturnStatus: SeqReturnStatus.Initializing,
   readingOrder: [],
   documents: {},
-  config: {
-    keyboardNav: true,
-    invisibleNav: true,
-  },
 };
 
 export function reducer(state: IState = INITIAL_STATE, action: any) {
