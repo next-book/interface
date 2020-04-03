@@ -70,7 +70,8 @@ export class Navigation extends React.Component<IProps> {
       if (this.props.readingOrder.indexOf(position.file) === 0) {
         return links.colophon ? links.colophon : links.index;
       }
-      return `${this.props.documents[position.file].prev}#chapter-end`;
+      const prev = this.props.documents[position.file].prev;
+      return prev ? `${prev}#chapter-end` : null;
     } else if (docInfo.role === DocRole.Colophon) return links.index;
     else return null;
   };
@@ -80,10 +81,12 @@ export class Navigation extends React.Component<IProps> {
     const position = this.props.position;
 
     if (role === DocRole.Chapter && position !== null) {
-      return `${this.props.documents[position.file].next}#idea1`;
-    } else if (role === DocRole.Colophon || role === DocRole.Index)
-      return `${this.props.readingOrder[0]}#idea1`;
-    else return null;
+      const next = this.props.documents[position.file].next;
+      return next ? `${next}#idea1` : null;
+    } else if (role === DocRole.Colophon || role === DocRole.Index) {
+      const next = this.props.readingOrder[0];
+      return next ? `${next}#idea1` : null;
+    } else return null;
   };
 
   handleKeyboardNav = (event: KeyboardEvent) => {
