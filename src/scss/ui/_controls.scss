@@ -34,7 +34,7 @@
 
     font-size: var(--ui-font-size);
 
-    @media (max-width: 50rem) {
+    @media (max-width: map-get($breakpoints, 'max-full-screen-controls')) {
       left: 0;
       width: auto;
     }

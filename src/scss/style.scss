@@ -8,6 +8,12 @@ $z-indexes: (
   'controls': 1400
 );
 
+$breakpoints: (
+  'min-side-annotation-ui': 24rem,
+  'max-full-screen-controls': 50rem,
+  'min-double-col-notes': 700px
+);
+
 @import '_defaults';
 @import '_animations';
 @import '_base';

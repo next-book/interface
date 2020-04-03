@@ -15,7 +15,7 @@
     margin: 0 0 2rem;
   }
 
-  @media screen and (min-width: 700px) {
+  @media screen and (min-width: map-get($breakpoints, 'min-double-col-notes')) {
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-gap: 1rem;
