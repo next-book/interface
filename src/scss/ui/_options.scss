@@ -9,22 +9,35 @@
   }
 
   .font-size {
-    p,
+    float: right;
+    width: calc(12 * var(--ui-font-size));
+
+    p {
+      margin: 0;
+    }
+
+    .title {
+      font-size: var(--ui-font-size);
+      font-weight: bold;
+      text-transform: uppercase;
+      margin: 0 0 calc(var(--ui-font-size) / 2);
+    }
+
     small,
     input,
-    big,
-    .val {
+    big {
       margin: 0 calc(0.5 * var(--ui-font-size)) 0 0;
-      line-height: calc(2 * var(--ui-font-size));
+      line-height: var(--ui-font-size);
     }
 
     big,
     small {
       display: inline-block;
-      line-height: calc(2 * var(--ui-font-size));
+      line-height: var(--ui-font-size);
     }
 
     .val {
+      font-weight: normal;
       color: var(--ui-c-medium);
     }
   }

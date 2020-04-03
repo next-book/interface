@@ -1,9 +1,10 @@
 .nb-toc {
-  font-family: var(--ui-font);
-  font-size: var(--ui-font-size);
   padding: var(--base-padding);
-  max-height: 50vh;
-  overflow-y: auto;
+
+  ol {
+    margin-top: 0;
+    padding-left: calc(1.5 * var(--ui-font-size));
+  }
 
   .current-chapter {
     font-weight: bold;

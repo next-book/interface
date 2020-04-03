@@ -83,7 +83,7 @@ class AnnotationDesk extends React.Component<IProps, IState> {
     );
 
     return (
-      <div className="nb-desk">
+      <div className="scrollable-wrapper nb-desk">
         <Notes
           notes={notes}
           newNote={this.state.newNote}
@@ -116,7 +116,7 @@ function Highlights(props: IAnnotationProps) {
   //const groupedIdeas = groupIdeas(sortedIdeas);
 
   return (
-    <div className="desk__list">
+    <div className="scrollable desk__list">
       <h2>{props.t('highlights')}</h2>
 
       {Object.keys(props.annotations).length ? (
@@ -169,7 +169,7 @@ interface INotesProps {
 
 function Notes(props: INotesProps) {
   return (
-    <div className="desk__notes">
+    <div className="scrollable desk__notes">
       <h2>{props.t('notes')}</h2>
       <div className="desk__annotation">
         <div className="desk__note-editor">

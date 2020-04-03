@@ -7,6 +7,10 @@
     background: var(--annotation-highlight);
   }
 
+  .annotation__head {
+    font-family: var(--content-font);
+  }
+
   .desk__list {
     max-width: 35rem;
   }

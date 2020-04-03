@@ -41,16 +41,18 @@
 
     .control-bar {
       display: flex;
+      height: calc(2.2 * var(--ui-font-size));
 
       .tab {
         display: block;
-        height: calc(1.4 * var(--ui-font-size));
+        height: 100%;
         flex-grow: 1;
         padding: calc(var(--base-padding) / 2) calc(var(--base-padding) / 2)
           calc(var(--base-padding) / 4);
         border: solid var(--ui-c-medium);
         border-width: 0 1px 1px 0;
         background: var(--ui-c-bg-shade);
+        box-sizing: border-box;
 
         cursor: pointer;
         white-space: nowrap;
@@ -80,7 +82,8 @@
 
       .close {
         display: block;
-        height: calc(1.4 * var(--ui-font-size));
+        height: 100%;
+        box-sizing: border-box;
         flex-grow: 2;
         padding: calc(var(--base-padding) / 2) var(--base-padding) calc(var(--base-padding) / 4);
         text-align: right;
@@ -90,11 +93,11 @@
       }
     }
 
-    .control-content {
+    .control__opened {
       position: relative;
       box-sizing: border-box;
-      overflow-x: hidden;
-      overflow-y: auto;
+      height: calc(100% - 2.2 * var(--ui-font-size));
+      overflow: hidden;
     }
   }
 }

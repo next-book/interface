@@ -43,12 +43,9 @@
 
   .progress {
     display: flex;
-    margin-bottom: 1rem;
-
-    @media (min-width: 990px) {
-      margin: 0 0 1rem 1rem;
-      float: right;
-    }
+    margin-bottom: var(--ui-font-size);
+    padding-bottom: var(--ui-font-size);
+    border-bottom: 1px solid var(--ui-c-medium);
 
     select {
       max-width: 100%;

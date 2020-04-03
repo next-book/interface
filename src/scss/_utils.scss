@@ -1,0 +1,11 @@
+.scrollable-wrapper {
+  height: 100%;
+  overflow: hidden;
+}
+
+.scrollable {
+  height: 100%;
+  padding-bottom: 2rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}

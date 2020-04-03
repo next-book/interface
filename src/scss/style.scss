@@ -17,6 +17,7 @@ $breakpoints: (
 @import '_defaults';
 @import '_animations';
 @import '_base';
+@import '_utils';
 
 // always scoped to .content
 @import 'content/_layout';
@@ -37,4 +38,3 @@ $breakpoints: (
 @import 'ui/_toc';
 @import 'ui/_controls';
 @import 'ui/_options';
-
