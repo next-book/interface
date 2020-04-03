@@ -14,6 +14,7 @@ import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
 import { Pagination } from './pagination';
 import { Sequential } from './seq-return';
+import { getScrollRatio } from './position';
 import { reducer, IPosition, IDocMap, IConfig } from './position-reducer';
 import { IState as IManifest, IDocument } from './manifest-reducer';
 import { reducer as peeksReducer, IPeek } from './peeks-reducer';
@@ -215,10 +216,6 @@ function displayPagination(dir: Direction, showButtons?: boolean) {
     document.body.classList.add(`paginated-button-${dir}`);
     window.setTimeout(() => document.body.classList.remove(`paginated-button-${dir}`), 300);
   }
-}
-
-function getScrollRatio(): number {
-  return window.scrollY / (document.body.scrollHeight - window.innerHeight);
 }
 
 function isInPaginationRect(dir: Direction, x: number, y: number) {

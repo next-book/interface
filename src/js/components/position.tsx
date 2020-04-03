@@ -103,20 +103,35 @@ export class Position extends React.Component<IProps> {
   }
 }
 
-function isPageScrolledToBottom() {
-  const endNav = document.querySelector('.end-nav');
-
-  if (endNav) return endNav.getBoundingClientRect().top - window.innerHeight < -50;
-
-  return window.innerHeight + window.scrollY >= document.body.scrollHeight;
+function getTopBound(): number {
+  const beginNav = document.querySelector('.begin-nav');
+  return beginNav ? beginNav.getBoundingClientRect().bottom : -window.scrollY;
 }
 
 function isPageScrolledToTop(): boolean {
-  const beginNav = document.querySelector('.begin-nav');
+  return getTopBound() > 16;
+}
 
-  if (beginNav) beginNav.getBoundingClientRect().bottom > 0;
+function getBottomBound(): number {
+  const endNav = document.querySelector('.end-nav');
+  return endNav
+    ? endNav.getBoundingClientRect().top - window.innerHeight + 70
+    : document.body.scrollHeight - window.innerHeight - window.scrollY;
+}
 
-  return window.scrollY < 20;
+function isPageScrolledToBottom() {
+  return getBottomBound() < 16;
+}
+
+export function getScrollRatio(): number {
+  const top = -getTopBound();
+  const bottom = getBottomBound();
+  const ratio = top / (top + bottom);
+
+  if (top < 0 || ratio < 0) return 0;
+  if (bottom < 0 || ratio > 1) return 1;
+
+  return top / (top + bottom);
 }
 
 export function getProgress(chapter: INavDocument, totalWords: number) {
