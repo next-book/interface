@@ -26,7 +26,7 @@
       .peek-content {
         padding: 4rem 1rem 2rem;
         max-height: calc(60vh - 6rem);
-        background: white;
+        background: var(--ui-c-bg);
         overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
       }
@@ -73,6 +73,7 @@
       display: block;
       height: 2vh;
       margin-bottom: -1vh;
+      background: var(--ui-c-bg-shade);
 
       .peek-head,
       .peek-content {

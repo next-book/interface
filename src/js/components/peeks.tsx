@@ -32,6 +32,7 @@ export class Peeks extends React.Component<IProps> {
             title: this.props.t('note'),
             source: target.href,
             showSource: false,
+            hash: 0,
           });
       }
     }
@@ -48,15 +49,14 @@ export class Peeks extends React.Component<IProps> {
   render() {
     return (
       <div className="peeks ui-target">
-        {this.props.peeks.map((peek, index) => (
+        {this.props.peeks.map(peek => (
           <Peek
-            key={index}
-            index={index}
+            key={peek.hash}
+            hash={peek.hash}
             source={peek.source}
             showSource={peek.showSource}
             title={peek.title}
-            content={typeof peek.content !== 'string' ? peek.content : null}
-            rawContent={typeof peek.content === 'string' ? peek.content : null}
+            content={peek.content}
             destroy={this.props.destroyPeek}
           />
         ))}
