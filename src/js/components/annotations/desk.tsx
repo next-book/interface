@@ -18,10 +18,13 @@ import { getChapterAnnotations } from './index';
 import AnnotationNote from './note';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import docInfo from '../../doc-info';
+import { IDocMap } from '../position-reducer';
 import { getAnnotatedIdeas } from './utils';
 
 interface IProps extends WithTranslation {
   allAnnotations: IAllAnnotations;
+  readingOrder: string[];
+  documents: IDocMap;
   destroyAnnotation(data: IAnnotationAndIdeas): void;
   addNote(data: INote): void;
   updateNote(note: INote): void;
@@ -70,17 +73,34 @@ class AnnotationDesk extends React.Component<IProps, IState> {
   render() {
     return (
       <div className="scrollable-wrapper nb-desk">
-        <button onClick={this.toggleAllChapters}>toggle</button>
-        <ChapterAnnotations
-          collapsible={false}
-          file={docInfo.links.self}
-          allAnnotations={this.props.allAnnotations}
-          addNote={this.addNote}
-          updateNote={this.props.updateNote}
-          destroyNote={this.props.destroyNote}
-          destroyAnnotation={this.destroyAnnotation}
-          t={this.props.t}
-        />
+        <div>
+          <button onClick={this.toggleAllChapters}>toggle</button>
+        </div>
+        {this.state.showAllChapters ? (
+          this.props.readingOrder.map(file => (
+            <ChapterAnnotations
+              collapsible={true}
+              file={file}
+              allAnnotations={this.props.allAnnotations}
+              addNote={this.addNote}
+              updateNote={this.props.updateNote}
+              destroyNote={this.props.destroyNote}
+              destroyAnnotation={this.destroyAnnotation}
+              t={this.props.t}
+            />
+          ))
+        ) : (
+          <ChapterAnnotations
+            collapsible={false}
+            file={docInfo.links.self}
+            allAnnotations={this.props.allAnnotations}
+            addNote={this.addNote}
+            updateNote={this.props.updateNote}
+            destroyNote={this.props.destroyNote}
+            destroyAnnotation={this.destroyAnnotation}
+            t={this.props.t}
+          />
+        )}
       </div>
     );
   }
@@ -113,14 +133,21 @@ class ChapterAnnotations extends React.Component<
     };
   }
 
+  toggleCollapsed = () => {
+    this.setState({ ...this.state, collapsed: !this.state.collapsed });
+  };
+
   render() {
     const { annotations, ideas, notes } = getChapterAnnotations(
       this.props.file,
       this.props.allAnnotations
     );
 
-    return (
+    return this.state.collapsed ? (
+      <div onClick={this.toggleCollapsed}>{this.props.file}</div>
+    ) : (
       <>
+        {this.props.collapsible && <div onClick={this.toggleCollapsed}>xyz</div>}
         <Notes
           file={docInfo.links.self}
           notes={notes}
@@ -282,6 +309,8 @@ const sortIdeas = (ideas: IIdeas) =>
 const mapStateToProps = (state: ICombinedState) => {
   return {
     allAnnotations: state.annotations,
+    readingOrder: state.position.readingOrder,
+    documents: state.position.documents,
   };
 };
 
