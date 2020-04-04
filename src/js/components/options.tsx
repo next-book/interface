@@ -2,12 +2,14 @@ import React from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { IState as ICombinedState } from '../reducer';
+import { IState as IManifestState } from './manifest-reducer';
 import { reducer } from './config-reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { applyFontSize } from './config';
 
 interface IProps extends WithTranslation {
   fontSize: string;
+  manifest: IManifestState;
   setFontSize(size: string): void;
   toggleOnboarding(): void;
 }
@@ -22,14 +24,26 @@ class Options extends React.Component<IProps> {
   render() {
     return (
       <div className="nb-options">
-        <div className="cell">
-          <button onClick={this.props.toggleOnboarding}>{this.props.t('show-tips')}</button>
+        <div className="cols">
+          <div className="cell show-tips">
+            <h3 className="title">{this.props.t('show-tips-title')}</h3>
+            <button onClick={this.props.toggleOnboarding}>{this.props.t('show-tips')}</button>
+          </div>
+          <FontSize
+            title={this.props.t('font-size')}
+            setFontSize={this.setFontSize}
+            fontSize={this.props.fontSize}
+          />
+          <div className="cell">
+            <h3 className="title">{this.props.t('about-this-book')}</h3>
+            <p>
+              <strong>{this.props.t('revision')}</strong>: {this.props.manifest.revision}
+              <br />
+              <strong>{this.props.t('generated-at')}</strong>:{' '}
+              {this.props.manifest.generatedAt.date}
+            </p>
+          </div>
         </div>
-        <FontSize
-          title={this.props.t('font-size')}
-          setFontSize={this.setFontSize}
-          fontSize={this.props.fontSize}
-        />
       </div>
     );
   }
@@ -66,6 +80,7 @@ function FontSize(props: IFontSizeProps) {
 const mapStateToProps = (state: ICombinedState) => {
   return {
     fontSize: state.config.fontSize,
+    manifest: state.manifest,
   };
 };
 

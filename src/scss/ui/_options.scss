@@ -1,26 +1,38 @@
 .nb-options {
   font-size: var(--ui-font-size);
 
-  .cell {
-    border: 1px solid var(--ui-c-medium);
-    padding: var(--base-padding);
-    border-radius: var(--border-radius);
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr calc(13 * var(--ui-font-size));
+    grid-gap: var(--base-padding);
     margin: var(--base-padding);
   }
 
-  .font-size {
-    float: right;
-    width: calc(12 * var(--ui-font-size));
-
-    p {
-      margin: 0;
-    }
+  .cell {
+    grid-columns: 1 / -1;
+    border: 1px solid var(--ui-c-medium);
+    padding: var(--base-padding);
+    border-radius: var(--border-radius);
 
     .title {
       font-size: var(--ui-font-size);
       font-weight: bold;
       text-transform: uppercase;
-      margin: 0 0 calc(var(--ui-font-size) / 2);
+      margin: calc(-1 * var(--base-padding));
+      padding: calc(var(--base-padding) / 2) var(--base-padding);
+      margin-bottom: calc(var(--ui-font-size) / 2);
+      border-bottom: 1px solid var(--ui-c-medium);
+    }
+  }
+
+  .show-tips {
+    grid-column: 1;
+  }
+  .font-size {
+    grid-column: 2;
+
+    p {
+      margin: 0;
     }
 
     small,
