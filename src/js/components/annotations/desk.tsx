@@ -21,7 +21,7 @@ import docInfo from '../../doc-info';
 import { getAnnotatedIdeas } from './utils';
 
 interface IProps extends WithTranslation {
-  annotations: IAllAnnotations;
+  allAnnotations: IAllAnnotations;
   destroyAnnotation(data: IAnnotationAndIdeas): void;
   addNote(data: INote): void;
   updateNote(note: INote): void;
@@ -30,7 +30,6 @@ interface IProps extends WithTranslation {
 
 interface IState {
   showAllChapters: boolean;
-  newNote: string;
 }
 
 enum Position {
@@ -44,30 +43,22 @@ class AnnotationDesk extends React.Component<IProps, IState> {
 
     this.state = {
       showAllChapters: false,
-      newNote: '',
     };
   }
 
-  private addNote = (id: number) => {
+  private addNote = (id: number, text: string, file: string) => {
     this.props.addNote({
       dateCreated: 0,
       dateModified: 0,
       id,
-      text: this.state.newNote,
-      file: docInfo.links.self,
+      text,
+      file,
     });
-
-    this.setState({ ...this.state, newNote: '' });
-  };
-
-  private updateNewNoteState = (event: ContentEditableEvent) => {
-    this.setState({ ...this.state, newNote: event.target.value });
   };
 
   toggleAllChapters = () => {
     this.setState({ ...this.state, showAllChapters: !this.state.showAllChapters });
   };
-
 
   private destroyAnnotation = (annotation: IAnnotation) => {
     this.props.destroyAnnotation({
@@ -77,25 +68,16 @@ class AnnotationDesk extends React.Component<IProps, IState> {
   };
 
   render() {
-    const { annotations, ideas, notes } = getChapterAnnotations(
-      docInfo.links.self,
-      this.props.annotations
-    );
-
     return (
       <div className="scrollable-wrapper nb-desk">
-        <Notes
-          notes={notes}
-          newNote={this.state.newNote}
-          updateNewNoteState={this.updateNewNoteState}
+        <button onClick={this.toggleAllChapters}>toggle</button>
+        <ChapterAnnotations
+          collapsible={false}
+          file={docInfo.links.self}
+          allAnnotations={this.props.allAnnotations}
           addNote={this.addNote}
           updateNote={this.props.updateNote}
           destroyNote={this.props.destroyNote}
-          t={this.props.t}
-        />
-        <Highlights
-          annotations={annotations}
-          ideas={ideas}
           destroyAnnotation={this.destroyAnnotation}
           t={this.props.t}
         />
@@ -104,14 +86,68 @@ class AnnotationDesk extends React.Component<IProps, IState> {
   }
 }
 
-interface IAnnotationProps {
+interface IChapterAnnotationsProps {
+  collapsible: boolean;
+  file: string;
+  allAnnotations: IAllAnnotations;
+  destroyAnnotation(annotation: IAnnotation): void;
+  addNote(id: number, text: string, file: string): void;
+  updateNote(note: INote): void;
+  destroyNote(note: INote): void;
+  t: (s: string) => string;
+}
+
+interface IChapterAnnotationsState {
+  collapsed: boolean;
+}
+
+class ChapterAnnotations extends React.Component<
+  IChapterAnnotationsProps,
+  IChapterAnnotationsState
+> {
+  constructor(props: IChapterAnnotationsProps) {
+    super(props);
+
+    this.state = {
+      collapsed: props.collapsible,
+    };
+  }
+
+  render() {
+    const { annotations, ideas, notes } = getChapterAnnotations(
+      this.props.file,
+      this.props.allAnnotations
+    );
+
+    return (
+      <>
+        <Notes
+          file={docInfo.links.self}
+          notes={notes}
+          addNote={this.props.addNote}
+          updateNote={this.props.updateNote}
+          destroyNote={this.props.destroyNote}
+          t={this.props.t}
+        />
+        <Highlights
+          annotations={annotations}
+          ideas={ideas}
+          destroyAnnotation={this.props.destroyAnnotation}
+          t={this.props.t}
+        />
+      </>
+    );
+  }
+}
+
+interface IHighglightsProps {
   annotations: IAnnotations;
   ideas: IIdeas;
   destroyAnnotation(annotation: IAnnotation): void;
   t: (s: string) => string;
 }
 
-function Highlights(props: IAnnotationProps) {
+function Highlights(props: IHighglightsProps) {
   const sortedIdeas = docInfo.links.self !== null ? sortIdeas(props.ideas) : [];
   //const groupedIdeas = groupIdeas(sortedIdeas);
 
@@ -158,54 +194,74 @@ function Highlights(props: IAnnotationProps) {
 }
 
 interface INotesProps {
+  file: string;
   notes: INotes;
-  newNote: string;
-  updateNewNoteState(event: ContentEditableEvent): void;
-  addNote(id: number): void;
+  addNote(id: number, text: string, file: string): void;
   updateNote(note: INote): void;
   destroyNote(note: INote): void;
   t: (s: string) => string;
 }
 
-function Notes(props: INotesProps) {
-  return (
-    <div className="scrollable desk__notes">
-      <h2>{props.t('notes')}</h2>
-      <div className="desk__annotation">
-        <div className="desk__note-editor">
-          <ContentEditable
-            className="desk__note-editor__input"
-            html={props.newNote}
-            tagName="article"
-            onChange={props.updateNewNoteState}
-          />
-          <button onClick={() => props.addNote(getNewNoteId(props.notes))}>
-            {props.t('add-note')}
-          </button>
-        </div>
-      </div>
-
-      {Object.values(props.notes).length ? (
-        Object.entries(props.notes)
-          .reverse()
-          .map(entry => {
-            const [key, note] = entry;
-            return (
-              <AnnotationNote
-                key={key}
-                note={note}
-                update={props.updateNote}
-                destroy={props.destroyNote}
-              />
-            );
-          })
-      ) : (
-        <i>{props.t('no-notes-in-chapter')}</i>
-      )}
-    </div>
-  );
+interface INotesState {
+  newNote: string;
 }
 
+class Notes extends React.Component<INotesProps, INotesState> {
+  constructor(props: INotesProps) {
+    super(props);
+
+    this.state = {
+      newNote: '',
+    };
+  }
+
+  private updateNewNote = (event: ContentEditableEvent) => {
+    this.setState({ ...this.state, newNote: event.target.value });
+  };
+
+  private addNote = () => {
+    this.props.addNote(getNewNoteId(this.props.notes), this.state.newNote, this.props.file);
+
+    this.setState({ ...this.state, newNote: '' });
+  };
+
+  render() {
+    return (
+      <div className="scrollable desk__notes">
+        <h2>{this.props.t('notes')}</h2>
+        <div className="desk__annotation">
+          <div className="desk__note-editor">
+            <ContentEditable
+              className="desk__note-editor__input"
+              html={this.state.newNote}
+              tagName="article"
+              onChange={this.updateNewNote}
+            />
+            <button onClick={this.addNote}>{this.props.t('add-note')}</button>
+          </div>
+        </div>
+
+        {Object.values(this.props.notes).length ? (
+          Object.entries(this.props.notes)
+            .reverse()
+            .map(entry => {
+              const [key, note] = entry;
+              return (
+                <AnnotationNote
+                  key={key}
+                  note={note}
+                  update={this.props.updateNote}
+                  destroy={this.props.destroyNote}
+                />
+              );
+            })
+        ) : (
+          <i>{this.props.t('no-notes-in-chapter')}</i>
+        )}
+      </div>
+    );
+  }
+}
 const getNewNoteId = (notes: INotes) => {
   const keys = Object.keys(notes).map(key => parseInt(key, 10));
   return keys.length > 0 ? Math.max(...keys) + 1 : 1;
@@ -225,7 +281,7 @@ const sortIdeas = (ideas: IIdeas) =>
 
 const mapStateToProps = (state: ICombinedState) => {
   return {
-    annotations: state.annotations,
+    allAnnotations: state.annotations,
   };
 };
 
