@@ -1,0 +1,148 @@
+$nb-yellow: #fff6de;
+$nb-red: #9a4663;
+
+.nb-onboarding {
+  .onboarding-overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--ui-overlay);
+    z-index: map-get($z-indexes, 'onboarding');
+  }
+  .onboarding {
+    font-family: var(--ui-font);
+    font-size: var(--ui-font-size);
+    z-index: map-get($z-indexes, 'onboarding');
+
+    position: fixed;
+    top: var(--base-padding);
+    bottom: var(--base-padding);
+    left: var(--base-padding);
+    right: var(--base-padding);
+    border-radius: var(--border-radius-xl);
+    background: var(--ui-c-bg);
+
+    padding: var(--base-padding);
+    overflow: auto;
+  }
+
+  h2 {
+    margin: 0;
+    align-self: end;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+  }
+
+  .onboarding__card {
+    display: grid;
+    height: 100%;
+    grid-template-rows: repeat(3, 1fr);
+    align-items: center;
+    grid-gap: var(--base-padding);
+    max-width: calc(16 * var(--ui-font-size));
+    margin: 0 auto;
+  }
+
+  .onboarding__content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    align-items: start;
+    grid-gap: var(--base-padding);
+  }
+
+  @media only screen and (min-aspect-ratio: 3/2) and (max-width: 700px) {
+    .onboarding__card {
+      max-width: none;
+    }
+
+    .onboarding__content {
+      display: block;
+      height: calc(4 * var(--ui-font-size));
+    }
+
+    svg {
+      float: left;
+      width: 10vw;
+      margin-right: var(--base-padding);
+    }
+  }
+
+  .onboarding__controls {
+    align-self: end;
+  }
+
+  .tip p:first-child {
+    margin-top: 0;
+  }
+
+  .close {
+    display: block;
+    float: right;
+    font-size: var(--ui-font-size);
+    padding: var(--base-padding);
+    margin: calc(-1.5 * var(--base-padding)) calc(-1.5 * var(--base-padding)) 0 -2rem;
+
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-align: right;
+    color: $nb-red;
+  }
+
+  .onboarding__controls__button,
+  .onboarding__controls__back-button {
+    line-height: calc(3.5 * var(--ui-font-size));
+    height: calc(3.5 * var(--ui-font-size));
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .onboarding__controls__back-button {
+    float: left;
+    color: $nb-red;
+    font-size: calc(2 * var(--ui-font-size));
+  }
+
+  .onboarding__controls__button {
+    width: calc(9.5 * var(--ui-font-size));
+    margin: 0 auto;
+    border-radius: var(--border-radius);
+    background: $nb-red;
+    color: $nb-yellow;
+    text-align: center;
+  }
+
+  .dots {
+    user-select: none;
+    margin: var(--base-padding) auto 0;
+    text-align: center;
+
+    span {
+      color: $nb-red;
+      line-height: 10px;
+      display: inline-block;
+      height: 10px;
+      opacity: 0.5;
+      transform: scale(0.5);
+      transition: transform 0.3s ease-out;
+      will-change: transform;
+      margin-right: 12px;
+      cursor: pointer;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &.current {
+        line-height: 10px;
+        opacity: 1;
+        transform: scale(0.8);
+      }
+    }
+  }
+}

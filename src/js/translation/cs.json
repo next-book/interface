@@ -12,7 +12,25 @@
     "options": "Nastavení"
   },
   "options": {
-    "font-size": "Velikost písma"
+    "font-size": "Velikost písma",
+    "show-tips-title": "Jak číst webovou knížku?",
+    "show-tips": "Zobrazit tipy",
+    "about-this-book": "Produkční informace o next-booku",
+    "revision": "Identifikátor revize",
+    "generated-at": "Vygenerováno"
+  },
+  "onboarding": {
+    "intro-heading": "4 tipy, pokud čtete webovou knížku poprvé",
+    "intro": "Menu s obsahem, nastavením apod. otevřete ťuknutím na pravý dolní roh, kde vidíte svou pozici v knize.",
+    "pagination-heading": "Soustředěné čtení",
+    "pagination": "Pokud vás posouvání textu rozptyluje, použijte svajpnutí, skrytá tlačítka na okrajích, nebo šipky na klávesnici.",
+    "remember-heading": "Kniha si pamatuje, kde jste přestali číst",
+    "remember": "Na titulní straně se objeví odkaz na místo, kde jste skončili. A v adresním řádku máte vždy odkaz na aktuální větu.",
+    "annotations-heading": "Dělejte si poznámky",
+    "annotations": "Pokud označíte text, můžete si jej zvýraznit nebo si k němu napsat poznámku.",
+    "next": "Další tip",
+    "close": "Šup do knížky",
+    "read-offline": "(A čtěte offline, knížka se vám stáhla celá.)"
   },
   "annotations": {
     "work-desk": "Pracovní plocha",

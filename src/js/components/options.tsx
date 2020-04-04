@@ -9,6 +9,7 @@ import { applyFontSize } from './config';
 interface IProps extends WithTranslation {
   fontSize: string;
   setFontSize(size: string): void;
+  toggleOnboarding(): void;
 }
 
 class Options extends React.Component<IProps> {
@@ -21,6 +22,9 @@ class Options extends React.Component<IProps> {
   render() {
     return (
       <div className="nb-options">
+        <div className="cell">
+          <button onClick={this.props.toggleOnboarding}>{this.props.t('show-tips')}</button>
+        </div>
         <FontSize
           title={this.props.t('font-size')}
           setFontSize={this.setFontSize}
@@ -68,6 +72,7 @@ const mapStateToProps = (state: ICombinedState) => {
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
+      toggleOnboarding: reducer.toggleOnboarding,
       setFontSize: reducer.setFontSize,
     },
     dispatch

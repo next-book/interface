@@ -1,11 +1,12 @@
 $z-indexes: (
+  'onboarding': 4000,
   'pagination': 2000,
   'annotations': 1300,
   'navigation': 1000,
   'footnotes': 1200,
   'peeks': 1000,
   'toc': 1100,
-  'controls': 1400
+  'controls': 3000
 );
 
 $breakpoints: (
@@ -38,3 +39,4 @@ $breakpoints: (
 @import 'ui/_toc';
 @import 'ui/_controls';
 @import 'ui/_options';
+@import 'ui/_onboarding';
