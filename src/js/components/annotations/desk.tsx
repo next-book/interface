@@ -218,8 +218,11 @@ function Highlights(props: IHighglightsProps) {
       <h2 className="nb-ui-title">{props.t('highlights')}</h2>
 
       {Object.keys(props.annotations).length ? (
-        Object.values(props.annotations).map((annotation, key) => (
-          <div key={key} className="desk__annotation">
+        Object.values(props.annotations).map((annotation: IAnnotation, key) => (
+          <div
+            key={key}
+            className={`desk__annotation desk__annotation--${annotation.style.format}`}
+          >
             {false && (
               <span
                 className="desk__annotation__destroy"
@@ -228,25 +231,31 @@ function Highlights(props: IHighglightsProps) {
                 ╳
               </span>
             )}
-
+            <div className="annotation__symbol">{annotation.style.symbol}</div>
             {annotation.note ? (
               <div
                 className="desk__annotation__note"
                 dangerouslySetInnerHTML={{ __html: annotation.note }}
               ></div>
             ) : null}
-            <small>
+            <small className="desk-annotation-wrapper">
               {sortedIdeas
                 .filter(
                   (val, index) =>
                     index >= getIdeaNumber(annotation, Position.Start) &&
                     index <= getIdeaNumber(annotation, Position.End)
                 )
-                .map((idea, index2) => (
-                  <span key={index2}>
-                    <span dangerouslySetInnerHTML={{ __html: idea }}></span>{' '}
-                  </span>
-                ))}
+                .map((idea, index2) => {
+                  const text = idea.replace(
+                    new RegExp(`data-id="${annotation.id}"`, 'g'),
+                    'data-hl="this"'
+                  );
+                  return (
+                    <span key={index2}>
+                      <span dangerouslySetInnerHTML={{ __html: text }}></span>{' '}
+                    </span>
+                  );
+                })}
             </small>
           </div>
         ))

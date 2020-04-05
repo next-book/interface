@@ -53,11 +53,14 @@
       }
     }
 
-    //@media screen and (min-width: map-get($breakpoints, 'min-double-col-notes')) {
-    @include doubleCol;
-    //}
+    $min1: map-get($breakpoints, 'min-double-col-notes');
+    $max1: map-get($breakpoints, 'max-full-screen-controls');
+    @media only screen and (min-width: $min1) and (max-width: $max1) {
+      @include doubleCol;
+    }
 
-    @media screen and (min-width: map-get($breakpoints, 'min-double-col-notes')) {
+    $min2: map-get($breakpoints, 'min-double-col-notes') * 2;
+    @media screen and (min-width: $min2) {
       @include doubleCol;
     }
   }
@@ -69,14 +72,6 @@
     padding: 3px 5px;
     margin-left: calc(var(--base-padding) / 2);
     border-radius: var(--ui-font-size);
-  }
-
-  .annotation {
-    background: var(--annotation-highlight);
-  }
-
-  .annotation__head {
-    font-family: var(--content-font);
   }
 
   .desk__annotation {
@@ -113,6 +108,45 @@
       &:hover {
         transform: scale(1.1);
       }
+    }
+  }
+
+  .desk-annotation-wrapper {
+    color: var(--ui-c-text-shade);
+  }
+
+  .annotation__head {
+    display: none;
+  }
+
+  .annotation__symbol {
+    font-family: var(--content-font);
+  }
+
+  .annotation {
+    display: inline;
+    padding: 0.1rem 0.125rem;
+    margin: 0 -0.125rem;
+    border-radius: 3px;
+    background-color: #eee;
+  }
+
+  .annotation[data-hl='this'] {
+    color: var(--annotation-color);
+    background: var(--annotation-highlight);
+  }
+
+  .desk__annotation--secondary {
+    .annotation[data-hl='this'] {
+      color: var(--annotation-color--secondary);
+      background: var(--annotation-highlight--secondary);
+    }
+  }
+
+  .desk__annotation--strong {
+    .annotation[data-hl='this'] {
+      color: var(--annotation-color--strong);
+      background: var(--annotation-highlight--strong);
     }
   }
 

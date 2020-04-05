@@ -6,6 +6,10 @@
     padding-left: calc(1.5 * var(--ui-font-size));
   }
 
+  li {
+    margin-bottom: calc(var(--ui-font-size) / 2);
+  }
+
   .current-chapter {
     font-weight: bold;
   }
