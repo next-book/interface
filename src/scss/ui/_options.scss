@@ -10,19 +10,16 @@
 
   .cell {
     grid-columns: 1 / -1;
-    border: 1px solid var(--ui-c-medium);
-    padding: var(--base-padding);
+    border: 1px solid var(--ui-c-soft);
+    padding: calc(var(--base-padding) / 2);
     border-radius: var(--border-radius);
+  }
 
-    .title {
-      font-size: var(--ui-font-size);
-      font-weight: bold;
-      text-transform: uppercase;
-      margin: calc(-1 * var(--base-padding));
-      padding: calc(var(--base-padding) / 2) var(--base-padding);
-      margin-bottom: calc(var(--ui-font-size) / 2);
-      border-bottom: 1px solid var(--ui-c-medium);
-    }
+  .cell__title {
+    margin: calc(-0.5 * var(--base-padding));
+    padding: calc(var(--base-padding) / 2);
+    margin-bottom: calc(var(--ui-font-size) / 2);
+    border-bottom: 1px solid var(--ui-c-soft);
   }
 
   .show-tips {

@@ -26,7 +26,7 @@ class Options extends React.Component<IProps> {
       <div className="nb-options">
         <div className="cols">
           <div className="cell show-tips">
-            <h3 className="title">{this.props.t('show-tips-title')}</h3>
+            <h3 className="nb-ui-title cell__title">{this.props.t('show-tips-title')}</h3>
             <button onClick={this.props.toggleOnboarding}>{this.props.t('show-tips')}</button>
           </div>
           <FontSize
@@ -35,7 +35,7 @@ class Options extends React.Component<IProps> {
             fontSize={this.props.fontSize}
           />
           <div className="cell">
-            <h3 className="title">{this.props.t('about-this-book')}</h3>
+            <h3 className="nb-ui-title cell__title">{this.props.t('about-this-book')}</h3>
             <p>
               <strong>{this.props.t('revision')}</strong>: {this.props.manifest.revision}
               <br />
@@ -58,7 +58,7 @@ interface IFontSizeProps {
 function FontSize(props: IFontSizeProps) {
   return (
     <div className="cell font-size">
-      <h3 className="title">
+      <h3 className="nb-ui-title cell__title">
         {props.title} <span className="val">({Math.floor(parseFloat(props.fontSize) * 100)}%)</span>
       </h3>
       <p>

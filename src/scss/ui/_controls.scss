@@ -49,7 +49,7 @@
         flex-grow: 1;
         padding: calc(var(--base-padding) / 2) calc(var(--base-padding) / 2)
           calc(var(--base-padding) / 4);
-        border: solid var(--ui-c-medium);
+        border: solid var(--ui-c-soft);
         border-width: 0 1px 1px 0;
         background: var(--ui-c-bg-shade);
         box-sizing: border-box;
@@ -89,7 +89,7 @@
         text-align: right;
         margin-left: --ui-font-size;
         cursor: pointer;
-        border-bottom: 1px solid var(--ui-c-medium);
+        border-bottom: 1px solid var(--ui-c-soft);
       }
     }
 

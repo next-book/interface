@@ -40,7 +40,8 @@
     "notes": "Notes",
     "add-note": "Add note",
     "edit-note": "Edit note",
-    "update-note": "Save note"
+    "update-note": "Save note",
+    "show-all": "Show all chapters"
   },
   "navigation": {
     "title-page": "Title",

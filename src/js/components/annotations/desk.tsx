@@ -18,7 +18,7 @@ import { getChapterAnnotations } from './index';
 import AnnotationNote from './note';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import docInfo from '../../doc-info';
-import { IDocMap } from '../position-reducer';
+import { IDocMap, INavDocument } from '../position-reducer';
 import { getAnnotatedIdeas } from './utils';
 
 interface IProps extends WithTranslation {
@@ -70,17 +70,44 @@ class AnnotationDesk extends React.Component<IProps, IState> {
     });
   };
 
+  nonChapters = Object.values(this.props.documents)
+    .map(doc => doc.file)
+    .filter(file => !this.props.readingOrder.includes(file));
+
   render() {
     return (
       <div className="scrollable-wrapper nb-desk">
-        <div>
-          <button onClick={this.toggleAllChapters}>toggle</button>
-        </div>
-        {this.state.showAllChapters ? (
-          this.props.readingOrder.map(file => (
+        <div className="scrollable">
+          <div>
+            <label className="nb-desk__show-all-toggle">
+              <input
+                type="checkbox"
+                defaultChecked={this.state.showAllChapters}
+                onChange={this.toggleAllChapters}
+              />{' '}
+              {this.props.t('show-all')}
+            </label>
+          </div>
+          {this.state.showAllChapters ? (
+            this.props.readingOrder
+              .concat(this.nonChapters)
+              .map(file => (
+                <ChapterAnnotations
+                  key={file}
+                  collapsible={true}
+                  document={this.props.documents[file]}
+                  allAnnotations={this.props.allAnnotations}
+                  addNote={this.addNote}
+                  updateNote={this.props.updateNote}
+                  destroyNote={this.props.destroyNote}
+                  destroyAnnotation={this.destroyAnnotation}
+                  t={this.props.t}
+                />
+              ))
+          ) : (
             <ChapterAnnotations
-              collapsible={true}
-              file={file}
+              collapsible={false}
+              document={this.props.documents[docInfo.links.self]}
               allAnnotations={this.props.allAnnotations}
               addNote={this.addNote}
               updateNote={this.props.updateNote}
@@ -88,19 +115,8 @@ class AnnotationDesk extends React.Component<IProps, IState> {
               destroyAnnotation={this.destroyAnnotation}
               t={this.props.t}
             />
-          ))
-        ) : (
-          <ChapterAnnotations
-            collapsible={false}
-            file={docInfo.links.self}
-            allAnnotations={this.props.allAnnotations}
-            addNote={this.addNote}
-            updateNote={this.props.updateNote}
-            destroyNote={this.props.destroyNote}
-            destroyAnnotation={this.destroyAnnotation}
-            t={this.props.t}
-          />
-        )}
+          )}
+        </div>
       </div>
     );
   }
@@ -108,7 +124,7 @@ class AnnotationDesk extends React.Component<IProps, IState> {
 
 interface IChapterAnnotationsProps {
   collapsible: boolean;
-  file: string;
+  document: INavDocument;
   allAnnotations: IAllAnnotations;
   destroyAnnotation(annotation: IAnnotation): void;
   addNote(id: number, text: string, file: string): void;
@@ -139,30 +155,49 @@ class ChapterAnnotations extends React.Component<
 
   render() {
     const { annotations, ideas, notes } = getChapterAnnotations(
-      this.props.file,
+      this.props.document.file,
       this.props.allAnnotations
     );
 
-    return this.state.collapsed ? (
-      <div onClick={this.toggleCollapsed}>{this.props.file}</div>
-    ) : (
-      <>
-        {this.props.collapsible && <div onClick={this.toggleCollapsed}>xyz</div>}
-        <Notes
-          file={docInfo.links.self}
-          notes={notes}
-          addNote={this.props.addNote}
-          updateNote={this.props.updateNote}
-          destroyNote={this.props.destroyNote}
-          t={this.props.t}
-        />
-        <Highlights
-          annotations={annotations}
-          ideas={ideas}
-          destroyAnnotation={this.props.destroyAnnotation}
-          t={this.props.t}
-        />
-      </>
+    const counts = {
+      annotations: Object.keys(annotations).length,
+      notes: Object.keys(notes).length,
+    };
+
+    return (
+      <div className="nb-desk__chapter">
+        {this.props.collapsible && (
+          <div
+            className={'title-bar' + (this.state.collapsed ? ' title-bar--collapsed' : '')}
+            onClick={this.toggleCollapsed}
+          >
+            {this.props.document.order !== null && <>{this.props.document.order + 1} </>}
+            {this.props.document.title}
+            {counts.annotations > 0 && (
+              <span className="nb-desk__count">✏️{counts.annotations}</span>
+            )}
+            {counts.notes > 0 && <span className="nb-desk__count">📝{counts.notes}</span>}
+          </div>
+        )}
+        {!this.state.collapsed && (
+          <>
+            <Notes
+              file={this.props.document.file}
+              notes={notes}
+              addNote={this.props.addNote}
+              updateNote={this.props.updateNote}
+              destroyNote={this.props.destroyNote}
+              t={this.props.t}
+            />
+            <Highlights
+              annotations={annotations}
+              ideas={ideas}
+              destroyAnnotation={this.props.destroyAnnotation}
+              t={this.props.t}
+            />
+          </>
+        )}
+      </div>
     );
   }
 }
@@ -175,22 +210,24 @@ interface IHighglightsProps {
 }
 
 function Highlights(props: IHighglightsProps) {
-  const sortedIdeas = docInfo.links.self !== null ? sortIdeas(props.ideas) : [];
+  const sortedIdeas = sortIdeas(props.ideas);
   //const groupedIdeas = groupIdeas(sortedIdeas);
 
   return (
-    <div className="scrollable desk__list">
-      <h2>{props.t('highlights')}</h2>
+    <div className="desk__list">
+      <h2 className="nb-ui-title">{props.t('highlights')}</h2>
 
       {Object.keys(props.annotations).length ? (
         Object.values(props.annotations).map((annotation, key) => (
           <div key={key} className="desk__annotation">
-            <span
-              className="desk__annotation__destroy"
-              onClick={() => props.destroyAnnotation(annotation)}
-            >
-              ╳
-            </span>
+            {false && (
+              <span
+                className="desk__annotation__destroy"
+                onClick={() => props.destroyAnnotation(annotation)}
+              >
+                ╳
+              </span>
+            )}
 
             {annotation.note ? (
               <div
@@ -214,7 +251,7 @@ function Highlights(props: IHighglightsProps) {
           </div>
         ))
       ) : (
-        <i>{props.t('no-annotations-in-chapter')}</i>
+        <p className="nb-ui-blank">{props.t('no-annotations-in-chapter')}</p>
       )}
     </div>
   );
@@ -254,18 +291,17 @@ class Notes extends React.Component<INotesProps, INotesState> {
 
   render() {
     return (
-      <div className="scrollable desk__notes">
-        <h2>{this.props.t('notes')}</h2>
-        <div className="desk__annotation">
-          <div className="desk__note-editor">
-            <ContentEditable
-              className="desk__note-editor__input"
-              html={this.state.newNote}
-              tagName="article"
-              onChange={this.updateNewNote}
-            />
-            <button onClick={this.addNote}>{this.props.t('add-note')}</button>
-          </div>
+      <div className="desk__notes">
+        <h2 className="nb-ui-title">{this.props.t('notes')}</h2>
+
+        <div className="desk__note-editor">
+          <ContentEditable
+            className="desk__note-editor__input"
+            html={this.state.newNote}
+            tagName="article"
+            onChange={this.updateNewNote}
+          />
+          <button onClick={this.addNote}>{this.props.t('add-note')}</button>
         </div>
 
         {Object.values(this.props.notes).length ? (
@@ -283,7 +319,7 @@ class Notes extends React.Component<INotesProps, INotesState> {
               );
             })
         ) : (
-          <i>{this.props.t('no-notes-in-chapter')}</i>
+          <p className="nb-ui-blank">{this.props.t('no-notes-in-chapter')}</p>
         )}
       </div>
     );

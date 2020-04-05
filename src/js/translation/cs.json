@@ -40,7 +40,8 @@
     "notes": "Poznámky",
     "add-note": "Přidat poznámku",
     "edit-note": "Upravit poznámku",
-    "update-note": "Uložit poznámku"
+    "update-note": "Uložit poznámku",
+    "show-all": "Zobrazit všechny kapitoly"
   },
   "navigation": {
     "title-page": "Titulní strana",
