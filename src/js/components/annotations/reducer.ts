@@ -74,7 +74,7 @@ export interface IState {
 
 const INITIAL_STATE: IState = {};
 
-export function reducer(state: IState = INITIAL_STATE, action: any) {
+export function reducer(state: IState = INITIAL_STATE, action: Actions) {
   switch (action.type) {
     case ADD_ANNOTATION:
       return addAnnotation(state, action.payload);
@@ -176,48 +176,48 @@ function destroyAnnotation(state: IState, payload: IAnnotationAndIdeas) {
 }
 
 reducer.addNote = function(data: INote) {
-  return {
+  return <const>{
     type: ADD_NOTE,
     payload: data,
   };
 };
 
 reducer.updateNote = function(data: INote) {
-  return {
+  return <const>{
     type: UPDATE_NOTE,
     payload: data,
   };
 };
 
 reducer.destroyNote = function(data: INote) {
-  return {
+  return <const>{
     type: DESTROY_NOTE,
     payload: data,
   };
 };
 
 reducer.addAnnotation = function(data: IAnnotationAndIdeas) {
-  return {
+  return <const>{
     type: ADD_ANNOTATION,
     payload: data,
   };
 };
 
 reducer.updateAnnotation = function(data: IAnnotationAndIdeas) {
-  return {
+  return <const>{
     type: UPDATE_ANNOTATION,
     payload: data,
   };
 };
 
 reducer.destroyAnnotation = function(data: IAnnotationAndIdeas) {
-  return {
+  return <const>{
     type: DESTROY_ANNOTATION,
     payload: data,
   };
 };
 
-export type Action = ReturnType<
+export type Actions = ReturnType<
   | typeof reducer.addNote
   | typeof reducer.updateNote
   | typeof reducer.destroyNote

@@ -11,7 +11,7 @@ const INITIAL_STATE: IState = {
   cacheIsAvailable: false,
 };
 
-export function reducer(state = INITIAL_STATE, action: Action) {
+export function reducer(state = INITIAL_STATE, action: Actions) {
   switch (action.type) {
     case SET_OFFLINE_AVAILABILITY:
       return { ...state, ...{ offlineIsAvailable: action.payload } };
@@ -23,19 +23,19 @@ export function reducer(state = INITIAL_STATE, action: Action) {
 }
 
 reducer.setOfflineAvailability = function(status: boolean) {
-  return {
     type: SET_OFFLINE_AVAILABILITY,
+  return <const>{
     payload: status,
   };
 };
 
 reducer.setCacheAvailability = function(status: boolean) {
-  return {
+  return <const>{
     type: SET_CACHE_AVAILABILITY,
     payload: status,
   };
 };
 
-export type Action = ReturnType<
   typeof reducer.setOfflineAvailability | typeof reducer.setCacheAvailability
+export type Actions = ReturnType<
 >;

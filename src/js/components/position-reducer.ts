@@ -43,7 +43,7 @@ const INITIAL_STATE: IState = {
   documents: {},
 };
 
-export function reducer(state: IState = INITIAL_STATE, action: any) {
+export function reducer(state: IState = INITIAL_STATE, action: Actions) {
   switch (action.type) {
     case SET_SCROLL_RATIO:
       return { ...state, ...{ scrollRatio: action.payload } };
@@ -110,14 +110,14 @@ function arrayToDocMap(arr: INavDocument[]) {
 }
 
 reducer.setReadingOrder = function(documents: IDocument[]) {
-  return {
+  return <const>{
     type: SET_READING_ORDER,
     payload: documents,
   };
 };
 
 reducer.setScrollRatio = function(scrollRatio: number) {
-  return {
+  return <const>{
     type: SET_SCROLL_RATIO,
     payload: scrollRatio,
   };
@@ -128,12 +128,12 @@ reducer.setPosition = function(
   sequential: Sequential,
   seqReturnStatus: SeqReturnStatus
 ) {
-  return {
+  return <const>{
     type: SET_POSITION,
     payload: { position, sequential, seqReturnStatus },
   };
 };
 
-export type Action = ReturnType<
+export type Actions = ReturnType<
   typeof reducer.setReadingOrder | typeof reducer.setScrollRatio | typeof reducer.setPosition
 >;

@@ -13,7 +13,7 @@ export type IState = IPeek[];
 
 const INITIAL_STATE: IState = [];
 
-export function reducer(state: IState = INITIAL_STATE, action: any) {
+export function reducer(state: IState = INITIAL_STATE, action: Actions) {
   switch (action.type) {
     case ADD_PEEK:
       return addPeek(state, action.payload);
@@ -56,17 +56,17 @@ function destroyPeek(state: IState, payload: number) {
 }
 
 reducer.addPeek = function(data: IPeek) {
-  return {
+  return <const>{
     type: ADD_PEEK,
     payload: data,
   };
 };
 
 reducer.destroyPeek = function(data: number) {
-  return {
+  return <const>{
     type: DESTROY_PEEK,
     payload: data,
   };
 };
 
-export type Action = ReturnType<typeof reducer.addPeek | typeof reducer.destroyPeek>;
+export type Actions = ReturnType<typeof reducer.addPeek | typeof reducer.destroyPeek>;

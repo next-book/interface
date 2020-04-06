@@ -54,7 +54,7 @@ export enum DocRole {
   Other = 'other',
 }
 
-export function reducer(state: IState | null = null, action: Action) {
+export function reducer(state: IState | null = null, action: Actions) {
   switch (action.type) {
     case SET_MANIFEST_DATA:
       return { ...state, ...action.payload };
@@ -64,10 +64,10 @@ export function reducer(state: IState | null = null, action: Action) {
 }
 
 reducer.setManifestData = function(data: IState) {
-  return {
+  return <const>{
     type: SET_MANIFEST_DATA,
     payload: data,
   };
 };
 
-export type Action = ReturnType<typeof reducer.setManifestData>;
+export type Actions = ReturnType<typeof reducer.setManifestData>;
