@@ -35,6 +35,7 @@ class Toc extends React.Component<IProps> {
     return (
       <div className="scrollable-wrapper">
         <div className="nb-toc scrollable">
+          <h1 className="nb-ui-big-title">{this.props.t('controls:toc')}</h1>
           <Progress form={ProgressForm.Goto} />
           <Progress form={ProgressForm.Config} />
           <ol>

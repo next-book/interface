@@ -15,7 +15,7 @@
 
 .nb-desk {
   font-family: var(--ui-font);
-  padding: 0 var(--base-padding) 2rem;
+  padding: var(--base-padding);
   overflow-y: auto;
 
   .nb-desk__show-all-toggle {

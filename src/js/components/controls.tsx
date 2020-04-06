@@ -94,16 +94,16 @@ interface ITabsProps {
 function Tabs(props: ITabsProps) {
   const buttons = [
     {
-      target: Control.Toc,
-      title: props.t('toc'),
-    },
-    {
       target: Control.Annotations,
       title: props.t('annotations'),
     },
     {
       target: Control.Options,
       title: props.t('options'),
+    },
+    {
+      target: Control.Toc,
+      title: props.t('toc'),
     },
   ];
 

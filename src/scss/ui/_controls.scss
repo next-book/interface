@@ -19,6 +19,9 @@
   }
 
   .control {
+    display: grid;
+    grid-template-rows: 1fr calc(2.2 * var(--ui-font-size));
+    height: 100%;
     position: fixed;
     z-index: map-get($z-indexes, 'controls');
     top: 0;
@@ -41,7 +44,7 @@
 
     .control-bar {
       display: flex;
-      height: calc(2.2 * var(--ui-font-size));
+      grid-row: 2;
 
       .tab {
         display: block;
@@ -50,7 +53,7 @@
         padding: calc(var(--base-padding) / 2) calc(var(--base-padding) / 2)
           calc(var(--base-padding) / 4);
         border: solid var(--ui-c-soft);
-        border-width: 0 1px 1px 0;
+        border-width: 1px 1px 0 0;
         background: var(--ui-c-bg-shade);
         box-sizing: border-box;
 
@@ -76,7 +79,7 @@
       }
 
       .tab--selected {
-        border-bottom: none;
+        border-top: none;
         background: var(--ui-background);
       }
 
@@ -84,19 +87,19 @@
         display: block;
         height: 100%;
         box-sizing: border-box;
-        flex-grow: 2;
+        flex-grow: 0;
         padding: calc(var(--base-padding) / 2) var(--base-padding) calc(var(--base-padding) / 4);
         text-align: right;
         margin-left: --ui-font-size;
         cursor: pointer;
-        border-bottom: 1px solid var(--ui-c-soft);
+        border-top: 1px solid var(--ui-c-soft);
       }
     }
 
     .control__opened {
+      grid-row: 1;
       position: relative;
       box-sizing: border-box;
-      height: calc(100% - 2.2 * var(--ui-font-size));
       overflow: hidden;
     }
   }

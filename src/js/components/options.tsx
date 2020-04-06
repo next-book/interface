@@ -23,25 +23,19 @@ class Options extends React.Component<IProps> {
 
   render() {
     return (
-      <div className="nb-options">
-        <div className="cols">
-          <div className="cell show-tips">
-            <h3 className="nb-ui-title cell__title">{this.props.t('show-tips-title')}</h3>
-            <button onClick={this.props.toggleOnboarding}>{this.props.t('show-tips')}</button>
-          </div>
-          <FontSize
-            title={this.props.t('font-size')}
-            setFontSize={this.setFontSize}
-            fontSize={this.props.fontSize}
-          />
-          <div className="cell">
-            <h3 className="nb-ui-title cell__title">{this.props.t('about-this-book')}</h3>
-            <p>
-              <strong>{this.props.t('revision')}</strong>: {this.props.manifest.revision}
-              <br />
-              <strong>{this.props.t('generated-at')}</strong>:{' '}
-              {this.props.manifest.generatedAt.date}
-            </p>
+      <div className="scrollable-wrapper">
+        <div className="scrollable nb-options">
+          <div className="cols">
+            <h1 className="nb-ui-big-title">{this.props.t('controls:options')}</h1>
+            <div className="cell show-tips">
+              <h3 className="nb-ui-title cell__title">{this.props.t('show-tips-title')}</h3>
+              <button onClick={this.props.toggleOnboarding}>{this.props.t('show-tips')}</button>
+            </div>
+            <FontSize
+              title={this.props.t('font-size')}
+              setFontSize={this.setFontSize}
+              fontSize={this.props.fontSize}
+            />
           </div>
         </div>
       </div>

@@ -76,9 +76,10 @@ class AnnotationDesk extends React.Component<IProps, IState> {
 
   render() {
     return (
-      <div className="scrollable-wrapper nb-desk">
-        <div className="scrollable">
-          <div>
+      <div className="scrollable-wrapper">
+        <div className="scrollable nb-desk">
+          <div className="auto-cols">
+            <h1 className="nb-ui-big-title">{this.props.t('controls:annotations')}</h1>
             <label className="nb-desk__show-all-toggle">
               <input
                 type="checkbox"
