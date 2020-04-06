@@ -20,7 +20,7 @@
 
   .control {
     display: grid;
-    grid-template-rows: 1fr calc(2.2 * var(--ui-font-size));
+    grid-template-rows: 1fr calc(2.5 * var(--ui-font-size));
     height: 100%;
     position: fixed;
     z-index: map-get($z-indexes, 'controls');
@@ -34,7 +34,6 @@
     box-shadow: 0 0 7px var(--ui-c-medium);
     transition: bottom 0.2s ease-out;
     animation: slide-up 0.2s ease-out;
-
     font-size: var(--ui-font-size);
 
     @media (max-width: map-get($breakpoints, 'max-full-screen-controls')) {
@@ -45,32 +44,40 @@
     .control-bar {
       display: flex;
       grid-row: 2;
+      width: 100%;
+      width: calc(100vw - var(--content-max-width) - (2 * var(--base-padding)));
+
+      @media (max-width: map-get($breakpoints, 'max-full-screen-controls')) {
+        width: 100vw;
+      }
 
       .tab {
         display: block;
         height: 100%;
-        flex-grow: 1;
-        padding: calc(var(--base-padding) / 2) calc(var(--base-padding) / 2)
-          calc(var(--base-padding) / 4);
+        flex: 2;
+        min-width: 0;
+        padding: calc(var(--base-padding) / 2);
         border: solid var(--ui-c-soft);
         border-width: 1px 1px 0 0;
         background: var(--ui-c-bg-shade);
         box-sizing: border-box;
+        font-size: var(--ui-font-size);
 
         cursor: pointer;
+        text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
 
         &:nth-child(1)::before {
-          content: '📖 ';
-        }
-
-        &:nth-child(2)::before {
           content: '✏️ ';
         }
 
-        &:nth-child(3)::before {
+        &:nth-child(2)::before {
           content: '🔣 ';
+        }
+
+        &:nth-child(3)::before {
+          content: '📖 ';
         }
       }
 
@@ -85,12 +92,8 @@
 
       .close {
         display: block;
-        height: 100%;
-        box-sizing: border-box;
-        flex-grow: 0;
+        flex: 0;
         padding: calc(var(--base-padding) / 2) var(--base-padding) calc(var(--base-padding) / 4);
-        text-align: right;
-        margin-left: --ui-font-size;
         cursor: pointer;
         border-top: 1px solid var(--ui-c-soft);
       }
