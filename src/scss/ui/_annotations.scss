@@ -34,7 +34,12 @@
       line-height: 2.5rem;
       font-size: 1.5rem;
       box-sizing: border-box;
+      border: 1px solid var(--ui-c-soft);
       font-family: var(--content-font);
+
+      background: var(--ui-c-bg);
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+      border-radius: var(--border-radius);
 
       &:hover {
         transform: scale(1.1);
@@ -45,15 +50,7 @@
       }
     }
 
-    .action-button {
-      margin-top: 0.6rem;
-      border: none;
-      background: transparent;
-    }
-
     .style-button {
-      box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-      border-radius: var(--border-radius);
       color: var(--annotation-color);
       background: var(--annotation-highlight);
     }

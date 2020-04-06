@@ -75,9 +75,7 @@
   }
 
   .desk__annotation {
-    margin-bottom: 1rem;
-    border-bottom: 1px solid var(--ui-c-soft);
-    padding-bottom: var(--base-padding);
+    margin-bottom: var(--base-padding);
     position: relative;
 
     .desk__annotation__destroy {
@@ -128,7 +126,7 @@
     padding: 0.1rem 0.125rem;
     margin: 0 -0.125rem;
     border-radius: 3px;
-    background-color: #eee;
+    background-color: #fafafa;
   }
 
   .annotation[data-hl='this'] {
