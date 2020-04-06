@@ -17,7 +17,14 @@
     "show-tips": "Show tips",
     "about-this-book": "Next-book production info",
     "revision": "Book revision identifier",
-    "generated-at": "Book generated at"
+    "generated-at": "Book generated at",
+    "offline": "Offline"
+  },
+  "offline": {
+    "cache-available": "Offline mode is available. You can read this book in airplane mode.",
+    "problem": "Offline mode should be available in your browser, but for some reason it did not work out.",
+    "nosw": "Offline mode is not available. The required standard is not supported by your browser.",
+    "unsecure": "Offline mode is not available. This book is served over unsecured protocol."
   },
   "onboarding": {
     "intro-heading": "4 tipy, pokud čtete webovou knížku poprvé",
@@ -64,7 +71,6 @@
     "next-chapter": "Next chapter",
     "seqReturnAnotherChapter": "You read up to <1>sentence #{{idea}}</1> in chapter <3>{{title}}</3>.",
     "seqReturnThisChapter": "You read up to <2>sentence #{{idea}}</2> in this chapter.",
-    "go": "Go",
-    "toc": "Table of Contents"
+    "go": "Go"
   }
 }

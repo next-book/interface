@@ -3,12 +3,14 @@ import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { IState as ICombinedState } from '../reducer';
 import { IState as IManifestState } from './manifest-reducer';
+import { IState as IOfflineState, SwAvailability } from './offline-reducer';
 import { reducer } from './config-reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { applyFontSize } from './config';
 
 interface IProps extends WithTranslation {
   fontSize: string;
+  offline: IOfflineState;
   manifest: IManifestState;
   setFontSize(size: string): void;
   toggleOnboarding(): void;
@@ -36,6 +38,27 @@ class Options extends React.Component<IProps> {
               setFontSize={this.setFontSize}
               fontSize={this.props.fontSize}
             />
+            <div className="cell">
+              <h3 className="nb-ui-title cell__title">{this.props.t('about-this-book')}</h3>
+              <p>
+                <strong>{this.props.t('revision')}</strong>: {this.props.manifest.revision}
+                <br />
+                <strong>{this.props.t('generated-at')}</strong>:{' '}
+                {this.props.manifest.generatedAt.date}
+              </p>
+            </div>
+            <div className="cell">
+              <h3 className="nb-ui-title cell__title">{this.props.t('offline-mode')}</h3>
+              <p>
+                {this.props.offline.cacheIsAvailable
+                  ? this.props.t('offline:cache-available')
+                  : this.props.offline.swIsAvailable === SwAvailability.NoSw
+                  ? this.props.t('offline:nosw')
+                  : this.props.offline.swIsAvailable === SwAvailability.Unsecure
+                  ? this.props.t('offline:unsecure')
+                  : this.props.t('offline:problem')}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -74,6 +97,7 @@ function FontSize(props: IFontSizeProps) {
 const mapStateToProps = (state: ICombinedState) => {
   return {
     fontSize: state.config.fontSize,
+    offline: state.offline,
     manifest: state.manifest,
   };
 };

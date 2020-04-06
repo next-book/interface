@@ -17,7 +17,14 @@
     "show-tips": "Zobrazit tipy",
     "about-this-book": "Produkční informace o next-booku",
     "revision": "Identifikátor revize",
-    "generated-at": "Vygenerováno"
+    "generated-at": "Vygenerováno",
+    "offline": "Offline"
+  },
+  "offline": {
+    "cache-available": "Offline mód je dostupný, knížku můžete číst bez signálu (i v režimu Letadlo).",
+    "problem": "Offline mód by měl být dostupný, ale z nějakého důvodu stahování selhalo.",
+    "nosw": "Offline mód není dostupný, protože váš prohlížeč nepodporuje potřebný standard.",
+    "unsecure": "Offline mód není dostupný, protože je kniha stažená přes nezabezpečený protokol."
   },
   "onboarding": {
     "intro-heading": "4 tipy, pokud čtete webovou knížku poprvé",
@@ -64,7 +71,6 @@
     "next-chapter": "Následující kapitola",
     "seqReturnAnotherChapter": "Dočetli jste po <1>{{idea}}. větu</1> v kapitole <3>{{title}}</3>.",
     "seqReturnThisChapter": "Dočetli jste po <2>{{idea}}. větu</2> v této kapitole.",
-    "go": "Přejít",
-    "toc": "Obsah"
+    "go": "Přejít"
   }
 }
