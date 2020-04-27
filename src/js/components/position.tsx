@@ -41,7 +41,7 @@ export class Position extends React.Component<IProps> {
       ? Sequential.Yes
       : checkSequence(
           this.props.sequentialPosition,
-          { idea, file, chapterStart, chapterEnd },
+          { idea: idea === 1 ? 1 : idea - 1, file, chapterStart, chapterEnd },
           this.props.documents,
           this.props.sequential,
           true
@@ -161,6 +161,8 @@ function areSubsequentChapters(doc1: INavDocument, doc2: INavDocument) {
   else return doc2.order - doc1.order === 1;
 }
 
+// use <id of the first shown idea> - 1 to prevent false negatives
+// after long non-idea content (images, tables, etc.)
 function checkSequence(
   pos1: IPosition | null,
   pos2: IPosition | null,
