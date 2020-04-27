@@ -27,17 +27,17 @@
     "unsecure": "Offline mode is not available. This book is served over unsecured protocol."
   },
   "onboarding": {
-    "intro-heading": "4 tipy, pokud čtete webovou knížku poprvé",
-    "intro": "Menu s obsahem, nastavením apod. otevřete ťuknutím na pravý dolní roh, kde vidíte svou pozici v knize.",
-    "pagination-heading": "Soustředěné čtení",
-    "pagination": "Pokud vás posouvání textu rozptyluje, použijte svajpnutí, skrytá tlačítka na okrajích, nebo šipky na klávesnici.",
-    "remember-heading": "Kniha si pamatuje, kde jste přestali číst",
-    "remember": "Na titulní straně se objeví odkaz na místo, kde jste skončili. A v adresním řádku máte vždy odkaz na aktuální větu.",
-    "annotations-heading": "Dělejte si poznámky",
-    "annotations": "A poslední tip: | Pokud označíte text, můžete si jej zvýraznit nebo si k němu napsat poznámku.",
-    "next": "Další tip",
-    "close": "Šup do knížky",
-    "read-offline": "(A čtěte offline, knížka se vám stáhla celá.)"
+    "intro-heading": "4 tips in case this is your first web book",
+    "intro": "You can access Table of contents, Options etc. by tapping lower right corner of the screen where position in the book is shown.",
+    "pagination-heading": "Focused reading",
+    "pagination": "If you are distracted by scrolling, navigate by swiping left/right, tapping hidden buttons or pressing arrow keys.",
+    "remember-heading": "This book remembers, where you stopped reading",
+    "remember": "When opening the book again, it will point you to the last position read. (And there’s always a link to the current sentence in the address bar.)",
+    "annotations-heading": "Makes notes!",
+    "annotations": "When you select text, you can highlight it or add some comments.",
+    "next": "Next tip",
+    "close": "Into the book!",
+    "read-offline": "(And read offline! The book is already stored in your browser.)"
   },
   "annotations": {
     "work-desk": "Work desk",
