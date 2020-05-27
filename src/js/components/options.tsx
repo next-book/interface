@@ -27,7 +27,7 @@ class Options extends React.Component<IProps> {
     return (
       <div className="scrollable-wrapper">
         <div className="scrollable nb-options">
-          <div className="cols">
+          <div className="options-wrapper">
             <h1 className="nb-ui-big-title">{this.props.t('controls:options')}</h1>
             <div className="cell show-tips">
               <h3 className="nb-ui-title cell__title">{this.props.t('show-tips-title')}</h3>
@@ -71,27 +71,54 @@ interface IFontSizeProps {
   fontSize: string;
   setFontSize(event: React.SyntheticEvent<HTMLInputElement>): void;
 }
+interface IFontSizeState {
+  displaySlider: boolean;
+}
 
-function FontSize(props: IFontSizeProps) {
-  return (
-    <div className="cell font-size">
-      <h3 className="nb-ui-title cell__title">
-        {props.title} <span className="val">({Math.floor(parseFloat(props.fontSize) * 100)}%)</span>
-      </h3>
-      <p>
-        <small>A</small>
-        <input
-          type="range"
-          min="0.8"
-          max="2"
-          defaultValue={props.fontSize}
-          onChange={props.setFontSize}
-          step="0.1"
-        />
-        <big>A</big>
-      </p>
-    </div>
-  );
+class FontSize extends React.Component<IFontSizeProps, IFontSizeState> {
+  constructor(props: IFontSizeProps) {
+    super(props);
+
+    this.state = { displaySlider: false };
+  }
+
+  toggleSlider = () => {
+    this.setState({ ...this.state, displaySlider: !this.state.displaySlider });
+  };
+
+  render() {
+    return (
+      <div className="cell font-size">
+        <h3 className="nb-ui-title cell__title">{this.props.title}</h3>
+        <p>
+          <button onClick={this.toggleSlider}>
+            {Math.floor(parseFloat(this.props.fontSize) * 100)} %
+          </button>
+        </p>
+        <div
+          className={`font-size-slider ${this.state.displaySlider ? 'font-size-slider--show' : ''}`}
+        >
+          <p>
+            <strong>{this.props.title}</strong>
+          </p>
+          <p>
+            {Math.floor(parseFloat(this.props.fontSize) * 100)} %
+            <br />
+            <small>A</small>
+            <input
+              type="range"
+              min="0.6"
+              max="3"
+              defaultValue={this.props.fontSize}
+              onChange={this.props.setFontSize}
+              step="0.1"
+            />
+            <big>A</big>
+          </p>
+        </div>
+      </div>
+    );
+  }
 }
 
 const mapStateToProps = (state: ICombinedState) => {

@@ -1,15 +1,13 @@
 .nb-options {
   font-size: var(--ui-font-size);
 
-  .cols {
+  .options-wrapper {
     display: grid;
-    grid-template-columns: 1fr calc(13 * var(--ui-font-size));
     grid-gap: var(--base-padding);
     margin: var(--base-padding);
   }
 
   .cell {
-    grid-columns: 1 / -1;
     border: 1px solid var(--ui-c-soft);
     padding: calc(var(--base-padding) / 2);
     border-radius: var(--border-radius);
@@ -22,27 +20,49 @@
     border-bottom: 1px solid var(--ui-c-soft);
   }
 
-  .show-tips {
-    grid-column: 1;
-  }
-  .font-size {
-    grid-column: 2;
+  .font-size-slider {
+    /* font-sizes static because this element
+     * needs to stay the same while global
+     * font size changes */
+    font-size: 24px;
+    line-height: 36px;
+
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 200px;
+    margin-left: -100px;
+
+    background: var(--background);
+    border: 1px solid var(--ui-c-soft);
+    padding: 24px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 7px var(--ui-c-medium);
+
+    display: none;
+
+    &.font-size-slider--show {
+      display: block;
+    }
 
     p {
-      margin: 0;
+      font-size: 24px;
+      line-height: 36px;
+      margin: 12px 0;
+      text-align: center;
     }
 
     small,
     input,
     big {
-      margin: 0 calc(0.5 * var(--ui-font-size)) 0 0;
-      line-height: var(--ui-font-size);
+      margin: 0 12px 0 0;
+      line-height: 24px;
     }
 
     big,
     small {
       display: inline-block;
-      line-height: var(--ui-font-size);
+      line-height: 24px;
     }
 
     .val {
