@@ -44,7 +44,7 @@
     .control-bar {
       display: flex;
       grid-row: 2;
-      width: 100%;
+      width: $controls-width;
 
       @media (max-width: map-get($breakpoints, 'max-full-screen-controls')) {
         width: 100vw;

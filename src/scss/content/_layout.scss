@@ -43,6 +43,8 @@
 }
 
 body.nb-controls-open .content {
-  margin-left: calc((100vw - #{$controls-width} - var(--content-max-width)) / 2);
+  margin-left: calc(
+    (100vw - #{$controls-width} - var(--content-max-width)) / 2 - var(--base-padding)
+  );
   margin-right: auto;
 }
