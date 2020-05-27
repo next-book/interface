@@ -40,6 +40,7 @@ export interface IProps extends WithTranslation {
 export class Navigation extends React.Component<IProps> {
   private getScrollStep = (): number | null => null;
   private setPaddings = (): null | void => null;
+  private lastScrollStep: [Direction, number] | null = null;
 
   setScrollRatio = () => {
     this.props.setScrollRatio(getScrollRatio());
@@ -134,7 +135,9 @@ export class Navigation extends React.Component<IProps> {
     event.preventDefault();
 
     if (this.props.position === null || !this.props.position.chapterEnd) {
-      pageForward(this.getScrollStep(), showButtons);
+      const step = this.getScrollStep();
+      pageForward(step, showButtons);
+      this.lastScrollStep = step ? [Direction.Forward, step] : null;
       this.setPaddings();
     } else {
       const next = this.getNextChapterLink();
@@ -146,7 +149,12 @@ export class Navigation extends React.Component<IProps> {
     event.preventDefault();
 
     if (this.props.position === null || !this.props.position.chapterStart) {
-      pageBack(this.getScrollStep(), showButtons);
+      const step =
+        this.lastScrollStep !== null && this.lastScrollStep[0] !== Direction.Back
+          ? this.lastScrollStep[1]
+          : this.getScrollStep();
+      pageBack(step, showButtons);
+      this.lastScrollStep = step ? [Direction.Back, step] : null;
       this.setPaddings();
     } else {
       const prev = this.getPrevChapterLink();
