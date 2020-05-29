@@ -49,8 +49,11 @@
   }
 
   .desk__annotation {
-    margin-bottom: var(--base-padding);
     position: relative;
+    box-shadow: var(--ui-box-shadow);
+    margin-bottom: var(--base-padding);
+    border-radius: var(--border-radius-xl);
+    padding: 0.5rem;
 
     .desk__annotation__destroy {
       display: block;
@@ -127,8 +130,8 @@
   }
 
   .desk__note-editor__input {
-    border: 1px solid var(--ui-c-soft);
-    box-shadow: inset 0 0 4px #ddd;
+    border: none;
+    box-shadow: var(--ui-inset-shadow);
     padding: calc(var(--base-padding) / 2);
     border-radius: var(--border-radius);
     min-height: 4rem;

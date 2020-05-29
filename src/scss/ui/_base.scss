@@ -1,12 +1,11 @@
 .nb-ui-big-title {
-  font-size: calc(2 * var(--ui-font-size));
+  font-size: calc(1.5 * var(--ui-font-size));
   margin: calc(var(--base-padding) / 2) 0;
 }
 
 .nb-ui-title {
   font-size: var(--ui-font-size);
-  font-weight: bold;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .nb-ui-blank {

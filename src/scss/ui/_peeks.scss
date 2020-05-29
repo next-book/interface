@@ -15,7 +15,7 @@
       box-sizing: border-box;
       border: 1px solid var(--ui-c-soft);
       border-radius: var(--border-radius) var(--border-radius) 0 0;
-      box-shadow: 0 0 7px var(--ui-c-medium);
+      box-shadow: var(--ui-box-shadow);
       overflow: hidden;
 
       transition: bottom 0.2s ease-out;

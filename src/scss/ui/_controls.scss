@@ -2,6 +2,21 @@
   font-family: var(--ui-font);
   font-size: var(--ui-font-size);
 
+  button {
+    color: var(--accent-color);
+    padding: var(--small-padding);
+    font-size: calc(var(--ui-font-size) * 0.9);
+    box-shadow: var(--ui-box-shadow);
+    border: none;
+    border-radius: var(--border-radius);
+    background: var(--background);
+
+    &.primary {
+      color: var(--background);
+      background-color: var(--accent-color);
+    }
+  }
+
   .controls-launcher {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -20,7 +35,7 @@
 
   .control {
     display: grid;
-    grid-template-rows: 1fr calc(2.5 * var(--ui-font-size));
+    grid-template-rows: 1fr calc(3 * var(--ui-font-size));
     height: 100%;
     position: fixed;
     z-index: map-get($z-indexes, 'controls');
@@ -31,7 +46,7 @@
     width: $controls-width;
     box-sizing: border-box;
 
-    box-shadow: 0 0 7px var(--ui-c-medium);
+    box-shadow: var(--ui-box-shadow);
     transition: bottom 0.2s ease-out;
     animation: slide-up 0.2s ease-out;
     font-size: var(--ui-font-size);
@@ -45,6 +60,9 @@
       display: flex;
       grid-row: 2;
       width: $controls-width;
+      box-shadow: var(--ui-inset-shadow);
+      background: var(--ui-c-bg-shade);
+      overflow: hidden;
 
       @media (max-width: map-get($breakpoints, 'max-full-screen-controls')) {
         width: 100vw;
@@ -55,54 +73,57 @@
         height: 100%;
         flex: 2;
         min-width: 0;
-        padding: calc(var(--base-padding) / 2);
-        border: solid var(--ui-c-soft);
-        border-width: 1px 1px 0 0;
-        background: var(--ui-c-bg-shade);
+        padding: 0 var(--base-padding);
+        line-height: 3;
         box-sizing: border-box;
-        font-size: var(--ui-font-size);
+        font-size: calc(var(--ui-font-size) * 0.9);
 
         cursor: pointer;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-
-        &:nth-child(1)::before {
-          content: '✏️ ';
-        }
-
-        &:nth-child(2)::before {
-          content: '🔣 ';
-        }
-
-        &:nth-child(3)::before {
-          content: '📖 ';
-        }
-      }
-
-      .tab:first-child {
-        padding-left: var(--base-padding);
       }
 
       .tab--selected {
-        border-top: none;
+        box-shadow: var(--ui-box-shadow);
         background: var(--ui-background);
+        color: var(--accent-color);
       }
 
       .close {
         display: block;
         flex: 0;
-        padding: calc(var(--base-padding) / 2) var(--base-padding) calc(var(--base-padding) / 4);
+        padding: calc(var(--base-padding) / 2);
+        margin-top: calc(var(--base-padding) / 2);
         cursor: pointer;
-        border-top: 1px solid var(--ui-c-soft);
+
+        span {
+          color: var(--accent-color);
+          padding: calc(var(--base-padding) / 2);
+          box-shadow: var(--ui-box-shadow);
+          border-radius: var(--border-radius);
+          background: var(--background);
+        }
       }
     }
 
     .control__opened {
       grid-row: 1;
+      display: flex;
+      flex-direction: column;
       position: relative;
       box-sizing: border-box;
       overflow: hidden;
+    }
+
+    .control__details {
+      flex-grow: 1;
+      box-shadow: 0 0 40px var(--background);
+      background: var(--background);
+      padding: calc(var(--base-padding) * 2) var(--base-padding);
+      align-self: end;
+      z-index: 1;
+      display: flex;
     }
   }
 }

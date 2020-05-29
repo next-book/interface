@@ -8,16 +8,11 @@
   }
 
   .cell {
-    border: 1px solid var(--ui-c-soft);
-    padding: calc(var(--base-padding) / 2);
-    border-radius: var(--border-radius);
+    white-space: nowrap;
   }
 
   .cell__title {
-    margin: calc(-0.5 * var(--base-padding));
-    padding: calc(var(--base-padding) / 2);
     margin-bottom: calc(var(--ui-font-size) / 2);
-    border-bottom: 1px solid var(--ui-c-soft);
   }
 
   .font-size-slider {
@@ -37,7 +32,7 @@
     border: 1px solid var(--ui-c-soft);
     padding: 24px;
     border-radius: var(--border-radius);
-    box-shadow: 0 0 7px var(--ui-c-medium);
+    box-shadow: var(--ui-box-shadow);
 
     display: none;
 

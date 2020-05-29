@@ -3,11 +3,6 @@
   font-size: var(--ui-font-size);
 
   .current-position {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    margin: 0;
-    padding: 8px calc(var(--base-padding) - 1px);
     z-index: map-get($z-indexes, 'navigation') + 20;
 
     border: none;
@@ -25,16 +20,14 @@
   }
 
   .current-position--config {
-    padding: 3px;
-    position: absolute;
+    display: flex;
+    text-align: left;
 
     label {
-      display: inline-block;
-      padding: 3px 4px;
-      margin: 2px;
-      border: 1px solid var(--ui-c-soft);
-      background: var(--ui-background);
-      border-radius: var(--border-radius);
+      display: block;
+      margin-right: 1rem;
+      text-indent: -1rem;
+      padding-left: 1rem;
     }
   }
 

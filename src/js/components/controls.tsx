@@ -119,7 +119,7 @@ function Tabs(props: ITabsProps) {
         </span>
       ))}
       <span className="close" onClick={() => props.open(Control.None)}>
-        ╳
+        <span>✖</span>
       </span>
     </div>
   );

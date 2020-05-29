@@ -38,7 +38,7 @@
       font-family: var(--content-font);
 
       background: var(--ui-c-bg);
-      box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+      box-shadow: var(--ui-box-shadow);
       border-radius: var(--border-radius);
 
       &:hover {

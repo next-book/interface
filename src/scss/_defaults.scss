@@ -7,7 +7,7 @@
   // content typo
   --content-font: serif;
   --heading-font: sans-serif;
-  --base-font-size: 18px;
+  --base-font-size: $baseFontSize;
   --font-size-ratio: 1;
 
   // content colors
@@ -17,6 +17,7 @@
 
   // ui
   --base-padding: 16px;
+  --small-padding: 6px;
   --border-radius: 3px;
   --border-radius-xl: 6px;
   --ui-background: white;
@@ -27,8 +28,11 @@
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   --ui-font-size: calc(16px * var(--font-size-ratio));
 
+  --ui-box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  --ui-inset-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+
   --ui-c-bg: #fff;
-  --ui-c-bg-shade: #eee;
+  --ui-c-bg-shade: #fafafa;
   --ui-c-soft: #ccc;
   --ui-c-medium: #aaa;
   --ui-c-text-shade: #777;
