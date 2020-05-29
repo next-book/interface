@@ -17,10 +17,10 @@ interface IProps extends WithTranslation {
 }
 
 class Options extends React.Component<IProps> {
-  setFontSize = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    const value = event.currentTarget.value;
-    this.props.setFontSize(value);
-    applyFontSize(value);
+  setFontSize = (value: number) => {
+    const valueString = '' + value;
+    this.props.setFontSize(valueString);
+    applyFontSize(valueString);
   };
 
   render() {
@@ -69,11 +69,18 @@ class Options extends React.Component<IProps> {
 interface IFontSizeProps {
   title: string;
   fontSize: string;
-  setFontSize(event: React.SyntheticEvent<HTMLInputElement>): void;
+  setFontSize(value: number): void;
 }
+
 interface IFontSizeState {
   displaySlider: boolean;
 }
+
+const fontSizes = {
+  max: 3,
+  min: 0.6,
+  step: 0.1,
+};
 
 class FontSize extends React.Component<IFontSizeProps, IFontSizeState> {
   constructor(props: IFontSizeProps) {
@@ -86,15 +93,27 @@ class FontSize extends React.Component<IFontSizeProps, IFontSizeState> {
     this.setState({ ...this.state, displaySlider: !this.state.displaySlider });
   };
 
+  setFontSize = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    const value = event.currentTarget.value;
+    this.props.setFontSize(parseFloat(value));
+  };
+
+  enlargeFontSize = (amount: number) => {
+    const oldSize = parseFloat(this.props.fontSize);
+    const newSize = Math.round((oldSize + amount) * 10) / 10;
+
+    this.props.setFontSize(
+      newSize <= fontSizes.min ? fontSizes.min : newSize >= fontSizes.max ? fontSizes.max : newSize
+    );
+  };
+
   render() {
     return (
       <div className="cell font-size">
         <h3 className="nb-ui-title cell__title">{this.props.title}</h3>
-        <p>
-          <button onClick={this.toggleSlider}>
-            {Math.floor(parseFloat(this.props.fontSize) * 100)} %
-          </button>
-        </p>
+        <button onClick={this.toggleSlider}>
+          {Math.floor(parseFloat(this.props.fontSize) * 100)} %
+        </button>
         <div
           className={`font-size-slider ${this.state.displaySlider ? 'font-size-slider--show' : ''}`}
         >
@@ -104,16 +123,21 @@ class FontSize extends React.Component<IFontSizeProps, IFontSizeState> {
           <p>
             {Math.floor(parseFloat(this.props.fontSize) * 100)} %
             <br />
-            <small>A</small>
+            <button className="shrink-font-size" onClick={() => this.enlargeFontSize(-0.1)}>
+              A
+            </button>
             <input
+              className="set-font-size"
               type="range"
-              min="0.6"
-              max="3"
+              min={fontSizes.min}
+              max={fontSizes.max}
               defaultValue={this.props.fontSize}
-              onChange={this.props.setFontSize}
-              step="0.1"
+              onChange={this.setFontSize}
+              step={fontSizes.step}
             />
-            <big>A</big>
+            <button className="enlarge-font-size" onClick={() => this.enlargeFontSize(0.1)}>
+              A
+            </button>
           </p>
         </div>
       </div>

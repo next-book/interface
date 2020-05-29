@@ -25,8 +25,9 @@
     position: fixed;
     left: 50%;
     top: 50%;
-    width: 200px;
-    margin-left: -100px;
+    width: 280px;
+    margin-left: -140px;
+    margin-top: -33vh;
 
     background: var(--background);
     border: 1px solid var(--ui-c-soft);
@@ -35,6 +36,29 @@
     box-shadow: var(--ui-box-shadow);
 
     display: none;
+
+    .enlarge-font-size,
+    .shrink-font-size {
+      vertical-align: top;
+    }
+
+    .enlarge-font-size {
+      font-size: 32px;
+      line-height: 32px;
+      width: 38px;
+      height: 38px;
+    }
+
+    .shrink-font-size {
+      font-size: 16px;
+      line-height: 32px;
+      width: 38px;
+      height: 38px;
+    }
+
+    .set-font-size {
+      margin: 0 24px;
+    }
 
     &.font-size-slider--show {
       display: block;
