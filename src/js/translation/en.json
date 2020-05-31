@@ -16,9 +16,9 @@
     "show-tips-title": "How to read a web book?",
     "show-tips": "Show tips",
     "about-this-book": "Next-book production info",
-    "revision": "Book revision identifier",
-    "generated-at": "Book generated at",
-    "offline": "Offline"
+    "revision": "Revision identifier",
+    "generated-at": "Published at",
+    "offline-mode": "Offline mode"
   },
   "offline": {
     "cache-available": "Offline mode is available. You can read this book in airplane mode.",

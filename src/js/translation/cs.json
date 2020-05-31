@@ -17,8 +17,8 @@
     "show-tips": "Zobrazit tipy",
     "about-this-book": "Produkční informace o next-booku",
     "revision": "Identifikátor revize",
-    "generated-at": "Vygenerováno",
-    "offline": "Offline"
+    "generated-at": "Publikováno",
+    "offline-mode": "Offline mód"
   },
   "offline": {
     "cache-available": "Offline mód je dostupný, knížku můžete číst bez signálu (i v režimu Letadlo).",

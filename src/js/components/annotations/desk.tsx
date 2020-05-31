@@ -75,19 +75,11 @@ class AnnotationDesk extends React.Component<IProps, IState> {
     .filter(file => !this.props.readingOrder.includes(file));
 
   render() {
-    return (
+    return [
       <div className="scrollable-wrapper">
         <div className="scrollable nb-desk">
           <div className="auto-cols">
             <h1 className="nb-ui-big-title">{this.props.t('controls:annotations')}</h1>
-            <label className="nb-desk__show-all-toggle">
-              <input
-                type="checkbox"
-                defaultChecked={this.state.showAllChapters}
-                onChange={this.toggleAllChapters}
-              />{' '}
-              {this.props.t('show-all')}
-            </label>
           </div>
           {this.state.showAllChapters ? (
             this.props.readingOrder
@@ -118,8 +110,20 @@ class AnnotationDesk extends React.Component<IProps, IState> {
             />
           )}
         </div>
-      </div>
-    );
+      </div>,
+      <div className="control__details">
+        <div>
+          <label className="nb-desk__show-all-toggle">
+            <input
+              type="checkbox"
+              defaultChecked={this.state.showAllChapters}
+              onChange={this.toggleAllChapters}
+            />{' '}
+            {this.props.t('show-all')}
+          </label>
+        </div>
+      </div>,
+    ];
   }
 }
 

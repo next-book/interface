@@ -16,7 +16,28 @@ interface IProps extends WithTranslation {
   toggleOnboarding(): void;
 }
 
-class Options extends React.Component<IProps> {
+interface IState {
+  dateGenerated: string;
+}
+
+class Options extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
+
+    const date = new Date(this.props.manifest.generatedAt.date);
+
+    const dateTimeFormat = new Intl.DateTimeFormat('en', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+    });
+    const [{ value: month }, , { value: day }, , { value: year }] = dateTimeFormat.formatToParts(
+      date
+    );
+
+    this.state = { dateGenerated: `${month} ${day}, ${year}` };
+  }
+
   setFontSize = (value: number) => {
     const valueString = '' + value;
     this.props.setFontSize(valueString);
@@ -24,7 +45,7 @@ class Options extends React.Component<IProps> {
   };
 
   render() {
-    return (
+    return [
       <div className="scrollable-wrapper">
         <div className="scrollable nb-options">
           <div className="options-wrapper">
@@ -38,31 +59,32 @@ class Options extends React.Component<IProps> {
               setFontSize={this.setFontSize}
               fontSize={this.props.fontSize}
             />
-            <div className="cell">
-              <h3 className="nb-ui-title cell__title">{this.props.t('about-this-book')}</h3>
-              <p>
-                <strong>{this.props.t('revision')}</strong>: {this.props.manifest.revision}
-                <br />
-                <strong>{this.props.t('generated-at')}</strong>:{' '}
-                {this.props.manifest.generatedAt.date}
-              </p>
-            </div>
-            <div className="cell">
-              <h3 className="nb-ui-title cell__title">{this.props.t('offline-mode')}</h3>
-              <p>
-                {this.props.offline.cacheIsAvailable
-                  ? this.props.t('offline:cache-available')
-                  : this.props.offline.swIsAvailable === SwAvailability.NoSw
-                  ? this.props.t('offline:nosw')
-                  : this.props.offline.swIsAvailable === SwAvailability.Unsecure
-                  ? this.props.t('offline:unsecure')
-                  : this.props.t('offline:problem')}
-              </p>
-            </div>
           </div>
         </div>
-      </div>
-    );
+      </div>,
+      <div className="control__details">
+        <div>
+          <h3 className="nb-ui-title">{this.props.t('offline-mode')}</h3>
+          <p>
+            {this.props.offline.cacheIsAvailable
+              ? this.props.t('offline:cache-available')
+              : this.props.offline.swIsAvailable === SwAvailability.NoSw
+              ? this.props.t('offline:nosw')
+              : this.props.offline.swIsAvailable === SwAvailability.Unsecure
+              ? this.props.t('offline:unsecure')
+              : this.props.t('offline:problem')}
+          </p>
+        </div>
+        <div>
+          <h3 className="nb-ui-title">{this.props.t('about-this-book')}</h3>
+          <p>
+            {this.props.t('revision')} {this.props.manifest.revision}
+            <br />
+            {this.props.t('generated-at')} {this.state.dateGenerated}
+          </p>
+        </div>
+      </div>,
+    ];
   }
 }
 

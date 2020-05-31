@@ -9,7 +9,7 @@
     background: transparent;
 
     display: block;
-    font-size: 12px;
+    font-size: calc(var(--ui-font-size) * 0.8);
     font-family: var(--ui-font);
     text-align: right;
   }
