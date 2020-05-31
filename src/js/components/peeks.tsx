@@ -28,11 +28,11 @@ export class Peeks extends React.Component<IProps> {
         const footnoteEl = document.getElementById(attrHref.replace(/^#/, ''));
         if (footnoteEl !== null)
           this.props.addPeek({
-            content: footnoteEl.innerHTML,
+            content: `<div class="footnote-content">${footnoteEl.innerHTML}</div>`,
             title: this.props.t('note'),
             source: target.href,
             showSource: false,
-            hash: 0,
+            hash: hash('' + footnoteEl.innerHTML),
           });
       }
     }
@@ -64,6 +64,18 @@ export class Peeks extends React.Component<IProps> {
     );
   }
 }
+
+const hash = (str: string): number => {
+  let hash = 0,
+    i,
+    chr;
+  for (i = 0; i < str.length; i++) {
+    chr = str.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0;
+  }
+  return hash;
+};
 
 const mapStateToProps = (state: ICombinedState) => {
   return { peeks: state.peeks };

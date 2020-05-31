@@ -11,7 +11,8 @@
   --annotation-highlight--strong: #aff;
 }
 
-.content {
+.content,
+.footnote-content {
   .annotation {
     display: inline;
     padding: 0.1rem 0.125rem;
@@ -45,6 +46,7 @@
     margin: var(--annotation-margin-top) 0 0 -0.7rem;
     padding: 0.5rem;
     text-indent: 0;
+    font-style: normal;
 
     transition: transform 0.2s ease-out;
     will-change: transform;
