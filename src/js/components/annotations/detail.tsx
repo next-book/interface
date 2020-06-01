@@ -36,6 +36,26 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
     });
   };
 
+  closeOnClickOutside = (e: Event) => {
+    const el = e.target as Element;
+
+    const clickedOnStyleButton = el.classList.contains('style-button');
+    const clickedOnAnnotationHead = el.classList.contains('annotation__head');
+
+    const clickedInside =
+      el.classList.contains('annotation-detail') || el.closest('.annotation-detail') !== null;
+
+    if (!(clickedInside || clickedOnAnnotationHead || clickedOnStyleButton)) this.props.close();
+  };
+
+  componentDidMount() {
+    window.addEventListener('click', this.closeOnClickOutside);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this.closeOnClickOutside);
+  }
+
   // private pastePlainText = event => {
   //   event.preventDefault();
 
@@ -47,9 +67,6 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
     return this.props.annotation === undefined ? null : (
       <div className="annotation-detail">
         <div className="annotation-detail__tools">
-          <button className="annotation-detail__close" onClick={this.props.close}>
-            <span>Close annotation</span>
-          </button>
           <button
             className="annotation-detail__destroy"
             onClick={() => this.props.destroyAnnotation(this.props.annotation)}

@@ -182,10 +182,8 @@ class SeqReturn extends React.Component<IProps, IState> {
     return (
       <div className={className}>
         <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
-          {docInfo.role !== DocRole.Index && (
-            <div onClick={this.toggleCollapse} className="seq-return-toggle ui-target">
-              {this.state.collapsed ? content : '➖'}
-            </div>
+          {docInfo.role !== DocRole.Index && this.state.collapsed && (
+            <div className="seq-return-toggle ui-target">{content}</div>
           )}
           {!this.state.collapsed && (
             <>
@@ -204,6 +202,27 @@ class SeqReturn extends React.Component<IProps, IState> {
         </div>
       </div>
     );
+  }
+
+  /* native event is used to cover the need
+   * to collapse the component from the outside */
+  collapseOnClickOutside = (e: Event) => {
+    if (this.props.docRole === DocRole.Index) return;
+
+    const el = e.target as Element;
+    const clickedInside =
+      el.classList.contains('nb-seq-return') || el.closest('.nb-seq-return') !== null;
+
+    if ((!this.state.collapsed && !clickedInside) || (this.state.collapsed && clickedInside))
+      this.toggleCollapse();
+  };
+
+  componentDidMount() {
+    window.addEventListener('click', this.collapseOnClickOutside);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this.collapseOnClickOutside);
   }
 
   render() {
