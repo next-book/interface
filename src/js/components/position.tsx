@@ -149,6 +149,8 @@ function getFirstIdeaShown() {
     top: el.getBoundingClientRect().top,
     bottom: el.getBoundingClientRect().bottom,
   }));
+  if (ideas.length === 0) return null;
+
   const shown = ideas.filter(el => el.top > 0).sort((el1, el2) => el1.bottom - el2.bottom);
 
   const idea = shown.length > 0 ? shown[0] : ideas[ideas.length - 1];
