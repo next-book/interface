@@ -12,7 +12,53 @@ interface IProps extends WithTranslation {
   documents: IDocMap;
 }
 
-class Toc extends React.Component<IProps> {
+interface IState {
+  toc: JSX.Element | Element;
+}
+
+class Toc extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
+
+    const customToc = document.querySelector('[role="doc-toc"]');
+
+    this.state = {
+      toc: customToc ? this.insertCustomToc(customToc.innerHTML) : this.buildToc(),
+    };
+  }
+
+  insertCustomToc = (toc: string) => {
+    return <div role="doc-toc" dangerouslySetInnerHTML={{ __html: toc }}></div>;
+  };
+
+  buildToc = () => {
+    return (
+      <ol>
+        {this.props.readingOrder.map(file => {
+          const doc = this.props.documents[file];
+          const current = doc.order === docInfo.order;
+
+          return (
+            <li key={doc.order !== null ? doc.order : ''}>
+              <a className={current ? 'current-chapter' : undefined} href={`${doc.file}#idea1`}>
+                {doc.title}
+              </a>
+
+              {doc.toc && doc.toc[0].children.length ? (
+                <ol>
+                  {' '}
+                  {doc.toc[0].children.map((section, index) => {
+                    return <Section key={index} file={doc.file} section={section} />;
+                  })}{' '}
+                </ol>
+              ) : null}
+            </li>
+          );
+        })}
+      </ol>
+    );
+  };
+
   render() {
     const otherLinks = [];
 

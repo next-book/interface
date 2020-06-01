@@ -2,3 +2,7 @@ body {
   margin: 0;
   background: var(--background);
 }
+
+body > [role='doc-toc'] {
+  display: none;
+}
