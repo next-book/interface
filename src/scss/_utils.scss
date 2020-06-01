@@ -16,3 +16,10 @@
   grid-gap: 30px;
   align-items: end;
 }
+
+.svg-icon {
+  width: 1.5em;
+  height: auto;
+  vertical-align: bottom;
+  fill: var(--ui-c-text-shade);
+}

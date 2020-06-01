@@ -5,6 +5,8 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
 
+import Icons from './../icons';
+
 export enum Sequential {
   No = 0,
   Yes = 1,
@@ -20,7 +22,7 @@ interface IButton {
   link?: string;
   click?: (e: React.MouseEvent) => void;
   primary?: boolean;
-  text: string;
+  text: string | JSX.Element;
 }
 
 interface IProps extends WithTranslation {
@@ -71,14 +73,18 @@ class SeqReturn extends React.Component<IProps, IState> {
     if (this.props.colophonLink !== null) {
       buttons.push({
         link: this.props.colophonLink,
-        text: `ℹ️`,
+        text: Icons.Info,
       });
     }
 
     buttons.push({
       link: this.props.startLink,
       primary: false,
-      text: `${this.props.t('start')} ➡️`,
+      text: (
+        <span>
+          {this.props.t('start')} {Icons.ArrowForward}
+        </span>
+      ),
     });
 
     return this.renderWrapper(null, buttons);
@@ -106,7 +112,13 @@ class SeqReturn extends React.Component<IProps, IState> {
     const idea = this.props.targetIdea;
     if (chapter === null || idea === null) return null;
     if (this.state.collapsed)
-      return chapter.order !== null ? this.renderWrapper(`🔙 ${chapter.order + 1}.${idea}`) : null;
+      return chapter.order !== null
+        ? this.renderWrapper(
+            <span>
+              {Icons.ReturnKey} {chapter.order + 1}.{idea}
+            </span>
+          )
+        : null;
 
     const link = `./${chapter.file}#idea${idea}`;
 
@@ -115,7 +127,11 @@ class SeqReturn extends React.Component<IProps, IState> {
         link,
         click: this.returnToPosition,
         primary: true,
-        text: `🔙 ${this.props.t('return')}`,
+        text: (
+          <span>
+            {Icons.Check} {this.props.t('return')}
+          </span>
+        ),
       },
     ]);
   };
@@ -125,7 +141,13 @@ class SeqReturn extends React.Component<IProps, IState> {
     const idea = this.props.targetIdea;
     if (chapter === null || idea === null) return null;
     if (this.state.collapsed)
-      return chapter.order !== null ? this.renderWrapper(`🔙 ${chapter.order + 1}.${idea}`) : null;
+      return chapter.order !== null
+        ? this.renderWrapper(
+            <span>
+              {Icons.ReturnKey} {chapter.order + 1}.{idea}
+            </span>
+          )
+        : null;
 
     const link = `./${chapter.file}#idea${idea}`;
 
@@ -137,13 +159,21 @@ class SeqReturn extends React.Component<IProps, IState> {
     return this.renderWrapper(description, [
       {
         click: this.resetPosition,
-        text: `👇 ${this.props.t('continue')}`,
+        text: (
+          <span>
+            {Icons.Check} {this.props.t('continue')}
+          </span>
+        ),
       },
       {
         link: `./${chapter.file}#idea${idea}`,
         click: this.returnToPosition,
         primary: true,
-        text: `🔙 ${this.props.t('return')}`,
+        text: (
+          <span>
+            {Icons.ReturnKey} {this.props.t('return')}
+          </span>
+        ),
       },
     ]);
   };
