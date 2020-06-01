@@ -49,7 +49,7 @@ const INITIAL_STATE: IState = {
       },
       {
         format: IAnnotationFormat.Default,
-        symbol: '❌',
+        symbol: '🚩',
       },
       {
         format: IAnnotationFormat.Default,
