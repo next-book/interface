@@ -117,14 +117,13 @@
     }
 
     .control__details {
-      flex-grow: 1;
-      box-shadow: 0 0 40px var(--background);
-      background: var(--background);
-      padding: calc(var(--base-padding) * 2) var(--base-padding);
+      display: flex;
       align-self: end;
       z-index: 1;
-      display: flex;
-
+      width: 100%;
+      box-shadow: 0 0 40px var(--background), 0 0 40px var(--background), 0 0 40px var(--background);
+      background: var(--background);
+      padding: calc(var(--base-padding) * 2) var(--base-padding);
       font-size: calc(var(--ui-font-size) * 0.8);
 
       & > div {

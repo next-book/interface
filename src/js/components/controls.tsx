@@ -111,14 +111,14 @@ function Tabs(props: ITabsProps) {
     <div className="control-bar">
       {buttons.map((button, index) => (
         <span
-          key={index}
+          key={button.target}
           className={button.target === props.opened ? 'tab tab--selected' : 'tab'}
           onClick={() => props.open(button.target)}
         >
           {button.title}
         </span>
       ))}
-      <span className="close" onClick={() => props.open(Control.None)}>
+      <span key="close" className="close" onClick={() => props.open(Control.None)}>
         <span>✖</span>
       </span>
     </div>

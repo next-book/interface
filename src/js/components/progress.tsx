@@ -143,7 +143,7 @@ class Progress extends React.Component<IProps, IState> {
 
         return (
           <div className="nb-progress">
-            <span className="nb-ui-bottom-bar current-position current-position--display">
+            <span className="current-position current-position--display">
               {displays.map((display, index) => (
                 <span key={index}>
                   {display}

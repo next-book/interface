@@ -87,6 +87,7 @@
   }
 
   .desk-annotation-wrapper {
+    font-family: var(--content-font);
     color: var(--ui-c-text-shade);
   }
 
@@ -137,4 +138,11 @@
     min-height: 4rem;
     box-sizing: border-box;
   }
+}
+
+.desk__annotation__note {
+  font-family: calc(var(--ui-font-size) * 0.8);
+  border-top: 1px solid var(--accent-color);
+  padding-top: calc(var(--base-padding) / 2);
+  margin-top: calc(var(--base-padding) / 2);
 }
