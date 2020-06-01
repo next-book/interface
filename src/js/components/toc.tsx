@@ -32,50 +32,30 @@ class Toc extends React.Component<IProps> {
       });
     }
 
-    return [
-      <div className="scrollable-wrapper">
-        <div className="nb-toc scrollable">
-          <h1 className="nb-ui-big-title">{this.props.t('controls:toc')}</h1>
-          <Progress form={ProgressForm.Goto} />
-          <ol>
-            {this.props.readingOrder.map(file => {
-              const doc = this.props.documents[file];
-              const current = doc.order === docInfo.order;
-
-              return (
-                <li key={doc.order !== null ? doc.order : ''}>
-                  <a className={current ? 'current-chapter' : undefined} href={`${doc.file}#idea1`}>
-                    {doc.title}
-                  </a>
-
-                  {doc.toc && doc.toc[0].children.length ? (
-                    <ol>
-                      {' '}
-                      {doc.toc[0].children.map((section, index) => {
-                        return <Section key={index} file={doc.file} section={section} />;
-                      })}{' '}
-                    </ol>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ol>
-          <p>
-            {otherLinks.map((link, index) => {
-              return (
-                <span key={index}>
-                  <a className={link.classes} href={link.href}>
-                    {link.text}
-                  </a>
-                  {index !== otherLinks.length - 1 ? <> &middot; </> : null}
-                </span>
-              );
-            })}
-          </p>
+    return (
+      <>
+        <div className="scrollable-wrapper">
+          <div className="nb-toc scrollable">
+            <h1 className="nb-ui-big-title">{this.props.t('controls:toc')}</h1>
+            <Progress form={ProgressForm.Goto} />
+            {this.state.toc}
+            <p>
+              {otherLinks.map((link, index) => {
+                return (
+                  <span key={index}>
+                    <a className={link.classes} href={link.href}>
+                      {link.text}
+                    </a>
+                    {index !== otherLinks.length - 1 ? <> &middot; </> : null}
+                  </span>
+                );
+              })}
+            </p>
+          </div>
         </div>
-      </div>,
-      <Progress form={ProgressForm.Config} />,
-    ];
+        <Progress form={ProgressForm.Config} />
+      </>
+    );
   }
 }
 

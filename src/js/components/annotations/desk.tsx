@@ -75,55 +75,57 @@ class AnnotationDesk extends React.Component<IProps, IState> {
     .filter(file => !this.props.readingOrder.includes(file));
 
   render() {
-    return [
-      <div className="scrollable-wrapper">
-        <div className="scrollable nb-desk">
-          <div className="auto-cols">
-            <h1 className="nb-ui-big-title">{this.props.t('controls:annotations')}</h1>
+    return (
+      <>
+        <div className="scrollable-wrapper">
+          <div className="scrollable nb-desk">
+            <div className="auto-cols">
+              <h1 className="nb-ui-big-title">{this.props.t('controls:annotations')}</h1>
+            </div>
+            {this.state.showAllChapters ? (
+              this.props.readingOrder
+                .concat(this.nonChapters)
+                .map(file => (
+                  <ChapterAnnotations
+                    key={file}
+                    collapsible={true}
+                    document={this.props.documents[file]}
+                    allAnnotations={this.props.allAnnotations}
+                    addNote={this.addNote}
+                    updateNote={this.props.updateNote}
+                    destroyNote={this.props.destroyNote}
+                    destroyAnnotation={this.destroyAnnotation}
+                    t={this.props.t}
+                  />
+                ))
+            ) : (
+              <ChapterAnnotations
+                collapsible={false}
+                document={this.props.documents[docInfo.links.self]}
+                allAnnotations={this.props.allAnnotations}
+                addNote={this.addNote}
+                updateNote={this.props.updateNote}
+                destroyNote={this.props.destroyNote}
+                destroyAnnotation={this.destroyAnnotation}
+                t={this.props.t}
+              />
+            )}
           </div>
-          {this.state.showAllChapters ? (
-            this.props.readingOrder
-              .concat(this.nonChapters)
-              .map(file => (
-                <ChapterAnnotations
-                  key={file}
-                  collapsible={true}
-                  document={this.props.documents[file]}
-                  allAnnotations={this.props.allAnnotations}
-                  addNote={this.addNote}
-                  updateNote={this.props.updateNote}
-                  destroyNote={this.props.destroyNote}
-                  destroyAnnotation={this.destroyAnnotation}
-                  t={this.props.t}
-                />
-              ))
-          ) : (
-            <ChapterAnnotations
-              collapsible={false}
-              document={this.props.documents[docInfo.links.self]}
-              allAnnotations={this.props.allAnnotations}
-              addNote={this.addNote}
-              updateNote={this.props.updateNote}
-              destroyNote={this.props.destroyNote}
-              destroyAnnotation={this.destroyAnnotation}
-              t={this.props.t}
-            />
-          )}
         </div>
-      </div>,
-      <div className="control__details">
-        <div>
-          <label className="nb-desk__show-all-toggle">
-            <input
-              type="checkbox"
-              defaultChecked={this.state.showAllChapters}
-              onChange={this.toggleAllChapters}
-            />{' '}
-            {this.props.t('show-all')}
-          </label>
+        <div className="control__details">
+          <div>
+            <label className="nb-desk__show-all-toggle">
+              <input
+                type="checkbox"
+                defaultChecked={this.state.showAllChapters}
+                onChange={this.toggleAllChapters}
+              />{' '}
+              {this.props.t('show-all')}
+            </label>
+          </div>
         </div>
-      </div>,
-    ];
+      </>
+    );
   }
 }
 
@@ -237,13 +239,7 @@ function Highlights(props: IHighglightsProps) {
               </span>
             )}
             <div className="annotation__symbol">{annotation.style.symbol}</div>
-            {annotation.note ? (
-              <div
-                className="desk__annotation__note"
-                dangerouslySetInnerHTML={{ __html: annotation.note }}
-              ></div>
-            ) : null}
-            <small className="desk-annotation-wrapper">
+            <div className="desk-annotation-wrapper">
               {sortedIdeas
                 .filter(
                   (val, index) =>
@@ -261,7 +257,14 @@ function Highlights(props: IHighglightsProps) {
                     </span>
                   );
                 })}
-            </small>
+            </div>
+
+            {annotation.note ? (
+              <div
+                className="desk__annotation__note"
+                dangerouslySetInnerHTML={{ __html: annotation.note }}
+              ></div>
+            ) : null}
           </div>
         ))
       ) : (

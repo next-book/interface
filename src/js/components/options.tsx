@@ -45,46 +45,48 @@ class Options extends React.Component<IProps, IState> {
   };
 
   render() {
-    return [
-      <div className="scrollable-wrapper">
-        <div className="scrollable nb-options">
-          <div className="options-wrapper">
-            <h1 className="nb-ui-big-title">{this.props.t('controls:options')}</h1>
-            <div className="cell show-tips">
-              <h3 className="nb-ui-title cell__title">{this.props.t('show-tips-title')}</h3>
-              <button onClick={this.props.toggleOnboarding}>{this.props.t('show-tips')}</button>
+    return (
+      <>
+        <div className="scrollable-wrapper">
+          <div className="scrollable nb-options">
+            <div className="options-wrapper">
+              <h1 className="nb-ui-big-title">{this.props.t('controls:options')}</h1>
+              <div className="cell show-tips">
+                <h3 className="nb-ui-title cell__title">{this.props.t('show-tips-title')}</h3>
+                <button onClick={this.props.toggleOnboarding}>{this.props.t('show-tips')}</button>
+              </div>
+              <FontSize
+                title={this.props.t('font-size')}
+                setFontSize={this.setFontSize}
+                fontSize={this.props.fontSize}
+              />
             </div>
-            <FontSize
-              title={this.props.t('font-size')}
-              setFontSize={this.setFontSize}
-              fontSize={this.props.fontSize}
-            />
           </div>
         </div>
-      </div>,
-      <div className="control__details">
-        <div>
-          <h3 className="nb-ui-title">{this.props.t('offline-mode')}</h3>
-          <p>
-            {this.props.offline.cacheIsAvailable
-              ? this.props.t('offline:cache-available')
-              : this.props.offline.swIsAvailable === SwAvailability.NoSw
-              ? this.props.t('offline:nosw')
-              : this.props.offline.swIsAvailable === SwAvailability.Unsecure
-              ? this.props.t('offline:unsecure')
-              : this.props.t('offline:problem')}
-          </p>
+        <div className="control__details">
+          <div>
+            <h3 className="nb-ui-title">{this.props.t('offline-mode')}</h3>
+            <p>
+              {this.props.offline.cacheIsAvailable
+                ? this.props.t('offline:cache-available')
+                : this.props.offline.swIsAvailable === SwAvailability.NoSw
+                ? this.props.t('offline:nosw')
+                : this.props.offline.swIsAvailable === SwAvailability.Unsecure
+                ? this.props.t('offline:unsecure')
+                : this.props.t('offline:problem')}
+            </p>
+          </div>
+          <div>
+            <h3 className="nb-ui-title">{this.props.t('about-this-book')}</h3>
+            <p>
+              {this.props.t('revision')} {this.props.manifest.revision}
+              <br />
+              {this.props.t('generated-at')} {this.state.dateGenerated}
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="nb-ui-title">{this.props.t('about-this-book')}</h3>
-          <p>
-            {this.props.t('revision')} {this.props.manifest.revision}
-            <br />
-            {this.props.t('generated-at')} {this.state.dateGenerated}
-          </p>
-        </div>
-      </div>,
-    ];
+      </>
+    );
   }
 }
 
