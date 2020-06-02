@@ -5,6 +5,8 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
 
+import Icons from './../icons';
+
 export enum Sequential {
   No = 0,
   Yes = 1,
@@ -20,7 +22,7 @@ interface IButton {
   link?: string;
   click?: (e: React.MouseEvent) => void;
   primary?: boolean;
-  text: string;
+  text: string | JSX.Element;
 }
 
 interface IProps extends WithTranslation {
@@ -71,14 +73,18 @@ class SeqReturn extends React.Component<IProps, IState> {
     if (this.props.colophonLink !== null) {
       buttons.push({
         link: this.props.colophonLink,
-        text: `ℹ️`,
+        text: Icons.Info,
       });
     }
 
     buttons.push({
       link: this.props.startLink,
       primary: false,
-      text: `${this.props.t('start')} ➡️`,
+      text: (
+        <span>
+          {this.props.t('start')} {Icons.ArrowForward}
+        </span>
+      ),
     });
 
     return this.renderWrapper(null, buttons);
@@ -106,7 +112,13 @@ class SeqReturn extends React.Component<IProps, IState> {
     const idea = this.props.targetIdea;
     if (chapter === null || idea === null) return null;
     if (this.state.collapsed)
-      return chapter.order !== null ? this.renderWrapper(`🔙 ${chapter.order + 1}.${idea}`) : null;
+      return chapter.order !== null
+        ? this.renderWrapper(
+            <span>
+              {Icons.ReturnKey} {chapter.order + 1}.{idea}
+            </span>
+          )
+        : null;
 
     const link = `./${chapter.file}#idea${idea}`;
 
@@ -115,7 +127,11 @@ class SeqReturn extends React.Component<IProps, IState> {
         link,
         click: this.returnToPosition,
         primary: true,
-        text: `🔙 ${this.props.t('return')}`,
+        text: (
+          <span>
+            {Icons.Check} {this.props.t('return')}
+          </span>
+        ),
       },
     ]);
   };
@@ -125,7 +141,13 @@ class SeqReturn extends React.Component<IProps, IState> {
     const idea = this.props.targetIdea;
     if (chapter === null || idea === null) return null;
     if (this.state.collapsed)
-      return chapter.order !== null ? this.renderWrapper(`🔙 ${chapter.order + 1}.${idea}`) : null;
+      return chapter.order !== null
+        ? this.renderWrapper(
+            <span>
+              {Icons.ReturnKey} {chapter.order + 1}.{idea}
+            </span>
+          )
+        : null;
 
     const link = `./${chapter.file}#idea${idea}`;
 
@@ -137,13 +159,21 @@ class SeqReturn extends React.Component<IProps, IState> {
     return this.renderWrapper(description, [
       {
         click: this.resetPosition,
-        text: `👇 ${this.props.t('continue')}`,
+        text: (
+          <span>
+            {Icons.Check} {this.props.t('continue')}
+          </span>
+        ),
       },
       {
         link: `./${chapter.file}#idea${idea}`,
         click: this.returnToPosition,
         primary: true,
-        text: `🔙 ${this.props.t('return')}`,
+        text: (
+          <span>
+            {Icons.ReturnKey} {this.props.t('return')}
+          </span>
+        ),
       },
     ]);
   };
@@ -182,10 +212,8 @@ class SeqReturn extends React.Component<IProps, IState> {
     return (
       <div className={className}>
         <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
-          {docInfo.role !== DocRole.Index && (
-            <div onClick={this.toggleCollapse} className="seq-return-toggle ui-target">
-              {this.state.collapsed ? content : '➖'}
-            </div>
+          {docInfo.role !== DocRole.Index && this.state.collapsed && (
+            <div className="seq-return-toggle ui-target">{content}</div>
           )}
           {!this.state.collapsed && (
             <>
@@ -204,6 +232,27 @@ class SeqReturn extends React.Component<IProps, IState> {
         </div>
       </div>
     );
+  }
+
+  /* native event is used to cover the need
+   * to collapse the component from the outside */
+  collapseOnClickOutside = (e: Event) => {
+    if (this.props.docRole === DocRole.Index) return;
+
+    const el = e.target as Element;
+    const clickedInside =
+      el.classList.contains('nb-seq-return') || el.closest('.nb-seq-return') !== null;
+
+    if ((!this.state.collapsed && !clickedInside) || (this.state.collapsed && clickedInside))
+      this.toggleCollapse();
+  };
+
+  componentDidMount() {
+    window.addEventListener('click', this.collapseOnClickOutside);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this.collapseOnClickOutside);
   }
 
   render() {

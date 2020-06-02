@@ -4,12 +4,12 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import Progress, { ProgressForm } from './progress';
 import Toc from './toc';
 import Options from './options';
-import Notes from './annotations/desk';
+import Annotations from './annotations/desk';
 
-export enum Control {
+enum Control {
   None = 'none',
   Toc = 'toc',
-  Notes = 'notes',
+  Annotations = 'notes',
   Options = 'options',
 }
 
@@ -57,8 +57,8 @@ class Controls extends React.Component<IProps, IState> {
   render() {
     return this.state.opened === Control.Toc ? (
       this.renderWrapper(<Toc />)
-    ) : this.state.opened === Control.Notes ? (
-      this.renderWrapper(<Notes />)
+    ) : this.state.opened === Control.Annotations ? (
+      this.renderWrapper(<Annotations />)
     ) : this.state.opened === Control.Options ? (
       this.renderWrapper(<Options />)
     ) : (
@@ -76,7 +76,7 @@ function Launchbar(props: ILaunchbarProps) {
   return (
     <>
       <div className="controls-launcher ui-target">
-        {[Control.Notes, Control.Options, Control.Toc].map((control, index) => (
+        {[Control.Annotations, Control.Options, Control.Toc].map((control, index) => (
           <div key={index} title={props.t(`show-${control}`)} onClick={() => props.open(control)} />
         ))}
       </div>
@@ -94,16 +94,16 @@ interface ITabsProps {
 function Tabs(props: ITabsProps) {
   const buttons = [
     {
-      target: Control.Toc,
-      title: props.t('toc'),
-    },
-    {
-      target: Control.Notes,
+      target: Control.Annotations,
       title: props.t('annotations'),
     },
     {
       target: Control.Options,
       title: props.t('options'),
+    },
+    {
+      target: Control.Toc,
+      title: props.t('toc'),
     },
   ];
 
@@ -111,15 +111,15 @@ function Tabs(props: ITabsProps) {
     <div className="control-bar">
       {buttons.map((button, index) => (
         <span
-          key={index}
+          key={button.target}
           className={button.target === props.opened ? 'tab tab--selected' : 'tab'}
           onClick={() => props.open(button.target)}
         >
           {button.title}
         </span>
       ))}
-      <span className="close" onClick={() => props.open(Control.None)}>
-        ╳
+      <span key="close" className="close" onClick={() => props.open(Control.None)}>
+        <span>✖</span>
       </span>
     </div>
   );

@@ -155,22 +155,22 @@ class Progress extends React.Component<IProps, IState> {
         );
       case ProgressForm.Config:
         return (
-          <div className="nb-progress">
+          <div className="control__details nb-progress">
             <span className="current-position current-position--config">
               <label onClick={() => this.props.toggleDisplay(ProgressKind.MinutesInChapter)}>
-                {this.props.displayMinutesInChapter && '👁️ '}
+                {this.props.displayMinutesInChapter ? '● ' : '○ '}
                 {minutesLeft !== null
                   ? this.props.t('minutes-left-long', { minutes: minutesLeft })
                   : null}
               </label>
 
               <label onClick={() => this.props.toggleDisplay(ProgressKind.PercentRead)}>
-                {this.props.displayPercentRead && '👁️ '}
+                {this.props.displayPercentRead ? '● ' : '○ '}
                 {this.props.t('progress-long', { percent: cropProgress(progress) })}
               </label>
 
               <label onClick={() => this.props.toggleDisplay(ProgressKind.Position)}>
-                {this.props.displayPosition && '👁️ '}
+                {this.props.displayPosition ? '● ' : '○ '}
                 {this.props.t('nthChapterNthSentence', {
                   chapter: ro.indexOf(this.props.position.file) + 1,
                   idea: this.props.position.idea,

@@ -12,7 +12,53 @@ interface IProps extends WithTranslation {
   documents: IDocMap;
 }
 
-class Toc extends React.Component<IProps> {
+interface IState {
+  toc: JSX.Element | Element;
+}
+
+class Toc extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
+
+    const customToc = document.querySelector('[role="doc-toc"]');
+
+    this.state = {
+      toc: customToc ? this.insertCustomToc(customToc.innerHTML) : this.buildToc(),
+    };
+  }
+
+  insertCustomToc = (toc: string) => {
+    return <div role="doc-toc" dangerouslySetInnerHTML={{ __html: toc }}></div>;
+  };
+
+  buildToc = () => {
+    return (
+      <ol>
+        {this.props.readingOrder.map(file => {
+          const doc = this.props.documents[file];
+          const current = doc.order === docInfo.order;
+
+          return (
+            <li key={doc.order !== null ? doc.order : ''}>
+              <a className={current ? 'current-chapter' : undefined} href={`${doc.file}#idea1`}>
+                {doc.title}
+              </a>
+
+              {doc.toc && doc.toc[0].children.length ? (
+                <ol>
+                  {' '}
+                  {doc.toc[0].children.map((section, index) => {
+                    return <Section key={index} file={doc.file} section={section} />;
+                  })}{' '}
+                </ol>
+              ) : null}
+            </li>
+          );
+        })}
+      </ol>
+    );
+  };
+
   render() {
     const otherLinks = [];
 
@@ -33,45 +79,28 @@ class Toc extends React.Component<IProps> {
     }
 
     return (
-      <div className="nb-toc">
-        <Progress form={ProgressForm.Goto} />
+      <>
+        <div className="scrollable-wrapper">
+          <div className="nb-toc scrollable">
+            <h1 className="nb-ui-big-title">{this.props.t('controls:toc')}</h1>
+            <Progress form={ProgressForm.Goto} />
+            {this.state.toc}
+            <p>
+              {otherLinks.map((link, index) => {
+                return (
+                  <span key={index}>
+                    <a className={link.classes} href={link.href}>
+                      {link.text}
+                    </a>
+                    {index !== otherLinks.length - 1 ? <> &middot; </> : null}
+                  </span>
+                );
+              })}
+            </p>
+          </div>
+        </div>
         <Progress form={ProgressForm.Config} />
-        <ol>
-          {this.props.readingOrder.map(file => {
-            const doc = this.props.documents[file];
-            const current = doc.order === docInfo.order;
-
-            return (
-              <li key={doc.order !== null ? doc.order : ''}>
-                <a className={current ? 'current-chapter' : undefined} href={`${doc.file}#idea1`}>
-                  {doc.title}
-                </a>
-
-                {doc.toc && doc.toc[0].children.length ? (
-                  <ol>
-                    {' '}
-                    {doc.toc[0].children.map((section, index) => {
-                      return <Section key={index} file={doc.file} section={section} />;
-                    })}{' '}
-                  </ol>
-                ) : null}
-              </li>
-            );
-          })}
-        </ol>
-        <p>
-          {otherLinks.map((link, index) => {
-            return (
-              <span key={index}>
-                <a className={link.classes} href={link.href}>
-                  {link.text}
-                </a>
-                {index !== otherLinks.length - 1 ? <> &middot; </> : null}
-              </span>
-            );
-          })}
-        </p>
-      </div>
+      </>
     );
   }
 }

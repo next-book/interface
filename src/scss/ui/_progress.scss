@@ -3,52 +3,50 @@
   font-size: var(--ui-font-size);
 
   .current-position {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    margin: 0;
-    padding: 8px calc(var(--base-padding) - 1px);
     z-index: map-get($z-indexes, 'navigation') + 20;
 
     border: none;
     background: transparent;
 
     display: block;
-    font-size: 12px;
+    font-size: calc(var(--ui-font-size) * 0.8);
     font-family: var(--ui-font);
     text-align: right;
   }
 
   .current-position--display {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 8px calc(var(--base-padding) - 1px);
+
     opacity: 0.5;
     pointer-events: none;
   }
 
   .current-position--config {
-    padding: 3px;
+    display: flex;
+    text-align: left;
 
     label {
-      display: inline-block;
-      padding: 3px 4px;
-      margin: 2px;
-      border: 1px solid var(--ui-c-medium);
-      background: var(--ui-background);
-      border-radius: var(--border-radius);
+      display: block;
+      margin-right: 1rem;
+      text-indent: -1rem;
+      padding-left: 1rem;
     }
   }
 
   .progress--collapsed {
+    margin: 0 0 var(--base-padding) var(--base-padding);
     float: right;
   }
 
   .progress {
     display: flex;
-    margin-bottom: 1rem;
-
-    @media (min-width: 990px) {
-      margin: 0 0 1rem 1rem;
-      float: right;
-    }
+    margin-bottom: var(--ui-font-size);
+    padding-bottom: var(--ui-font-size);
+    border-bottom: 1px solid var(--ui-c-soft);
 
     select {
       max-width: 100%;

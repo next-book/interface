@@ -1,12 +1,12 @@
 import React from 'react';
-import { reducer, IState } from './offline-reducer';
+import { reducer, IState, SwAvailability } from './offline-reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../reducer';
 
 export interface IProps extends IState {
   setCacheAvailability(status: boolean): void;
-  setOfflineAvailability(status: boolean): void;
+  setSwAvailability(status: SwAvailability): void;
 }
 
 export class Offline extends React.Component<IProps> {
@@ -14,19 +14,22 @@ export class Offline extends React.Component<IProps> {
     super(props);
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
+    const setOA = this.props.setSwAvailability;
+
     if ('serviceWorker' in navigator) {
-      const props = this.props;
+      setOA(SwAvailability.Available);
 
-      props.setOfflineAvailability(true);
-
-      navigator.serviceWorker.ready.then(function(registration) {
-        props.setCacheAvailability(true);
+      navigator.serviceWorker.ready.then(registration => {
+        this.props.setCacheAvailability(true);
       });
 
       registerServiceWorker();
+    } else {
+      if (window.location.protocol !== 'https:') setOA(SwAvailability.Unsecure);
+      else setOA(SwAvailability.NoSw);
     }
-  }
+  };
 
   componentWillUnmount() {}
 
@@ -41,7 +44,7 @@ function registerServiceWorker() {
 
 const mapStateToProps = (state: ICombinedState) => {
   return {
-    offlineIsAvailable: state.offline.offlineIsAvailable,
+    swIsAvailable: state.offline.swIsAvailable,
     cacheIsAvailable: state.offline.cacheIsAvailable,
   };
 };
@@ -50,13 +53,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       setCacheAvailability: reducer.setCacheAvailability,
-      setOfflineAvailability: reducer.setOfflineAvailability,
+      setSwAvailability: reducer.setSwAvailability,
     },
     dispatch
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Offline);
+export default connect(mapStateToProps, mapDispatchToProps)(Offline);

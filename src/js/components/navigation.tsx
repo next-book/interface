@@ -14,9 +14,9 @@ import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
 import { Pagination } from './pagination';
 import { Sequential } from './seq-return';
-import { reducer, IPosition, IDocMap, IConfig } from './position-reducer';
+import { getScrollRatio } from './position';
+import { reducer, IPosition, IDocMap } from './position-reducer';
 import { IState as IManifest, IDocument } from './manifest-reducer';
-import { reducer as peeksReducer, IPeek } from './peeks-reducer';
 
 export enum Direction {
   Back = 'back',
@@ -25,7 +25,8 @@ export enum Direction {
 
 export interface IProps extends WithTranslation {
   manifest: IManifest;
-  config: IConfig;
+  keyboardNav: boolean;
+  invisibleNav: boolean;
   scrollRatio: number;
   position: IPosition | null;
   sequentialPosition: IPosition | null;
@@ -34,12 +35,12 @@ export interface IProps extends WithTranslation {
   sequential: Sequential;
   setScrollRatio(scrollRatio: number): void;
   setReadingOrder(documents: IDocument[]): void;
-  addPeek(peek: IPeek): void;
 }
 
 export class Navigation extends React.Component<IProps> {
   private getScrollStep = (): number | null => null;
   private setPaddings = (): null | void => null;
+  private lastScrollStep: [Direction, number] | null = null;
 
   setScrollRatio = () => {
     this.props.setScrollRatio(getScrollRatio());
@@ -69,7 +70,8 @@ export class Navigation extends React.Component<IProps> {
       if (this.props.readingOrder.indexOf(position.file) === 0) {
         return links.colophon ? links.colophon : links.index;
       }
-      return `${this.props.documents[position.file].prev}#chapter-end`;
+      const prev = this.props.documents[position.file].prev;
+      return prev ? `${prev}#chapter-end` : null;
     } else if (docInfo.role === DocRole.Colophon) return links.index;
     else return null;
   };
@@ -79,10 +81,12 @@ export class Navigation extends React.Component<IProps> {
     const position = this.props.position;
 
     if (role === DocRole.Chapter && position !== null) {
-      return `${this.props.documents[position.file].next}#idea1`;
-    } else if (role === DocRole.Colophon || role === DocRole.Index)
-      return `${this.props.readingOrder[0]}#idea1`;
-    else return null;
+      const next = this.props.documents[position.file].next;
+      return next ? `${next}#idea1` : null;
+    } else if (role === DocRole.Colophon || role === DocRole.Index) {
+      const next = this.props.readingOrder[0];
+      return next ? `${next}#idea1` : null;
+    } else return null;
   };
 
   handleKeyboardNav = (event: KeyboardEvent) => {
@@ -131,7 +135,9 @@ export class Navigation extends React.Component<IProps> {
     event.preventDefault();
 
     if (this.props.position === null || !this.props.position.chapterEnd) {
-      pageForward(this.getScrollStep(), showButtons);
+      const step = this.getScrollStep();
+      pageForward(step, showButtons);
+      this.lastScrollStep = step ? [Direction.Forward, step] : null;
       this.setPaddings();
     } else {
       const next = this.getNextChapterLink();
@@ -143,7 +149,12 @@ export class Navigation extends React.Component<IProps> {
     event.preventDefault();
 
     if (this.props.position === null || !this.props.position.chapterStart) {
-      pageBack(this.getScrollStep(), showButtons);
+      const step =
+        this.lastScrollStep !== null && this.lastScrollStep[0] !== Direction.Back
+          ? this.lastScrollStep[1]
+          : this.getScrollStep();
+      pageBack(step, showButtons);
+      this.lastScrollStep = step ? [Direction.Back, step] : null;
       this.setPaddings();
     } else {
       const prev = this.getPrevChapterLink();
@@ -153,10 +164,10 @@ export class Navigation extends React.Component<IProps> {
 
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
-    if (this.props.config.keyboardNav) {
+    if (this.props.keyboardNav) {
       window.document.body.addEventListener('keydown', this.handleKeyboardNav);
     }
-    if (this.props.config.invisibleNav) {
+    if (this.props.invisibleNav) {
       window.document.addEventListener('mousedown', this.handleInvisibleNav);
     }
     initSwipeNav(this.handleSwipeNav);
@@ -168,10 +179,10 @@ export class Navigation extends React.Component<IProps> {
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.getScrollHandler());
-    if (this.props.config.keyboardNav) {
+    if (this.props.keyboardNav) {
       window.document.body.removeEventListener('keydown', this.handleKeyboardNav);
     }
-    if (this.props.config.invisibleNav) {
+    if (this.props.invisibleNav) {
       window.document.body.removeEventListener('mousedown', this.handleInvisibleNav);
     }
   }
@@ -217,10 +228,6 @@ function displayPagination(dir: Direction, showButtons?: boolean) {
   }
 }
 
-function getScrollRatio(): number {
-  return window.scrollY / (document.body.scrollHeight - window.innerHeight);
-}
-
 function isInPaginationRect(dir: Direction, x: number, y: number) {
   const w = window.innerWidth;
   const h = window.innerHeight;
@@ -257,7 +264,8 @@ function pageBack(step: number | null, showButtons?: boolean) {
 
 const mapStateToProps = (state: ICombinedState) => {
   return {
-    config: state.position.config,
+    keyboardNav: state.config.keyboardNav,
+    invisibleNav: state.config.invisibleNav,
     readingOrder: state.position.readingOrder,
     documents: state.position.documents,
     position: state.position.position,
@@ -271,7 +279,6 @@ const mapStateToProps = (state: ICombinedState) => {
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
-      addPeek: peeksReducer.addPeek,
       setScrollRatio: reducer.setScrollRatio,
       setReadingOrder: reducer.setReadingOrder,
     },

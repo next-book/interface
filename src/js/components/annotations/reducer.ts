@@ -5,10 +5,20 @@ const ADD_NOTE = 'nb-base/annotations/ADD_NOTE';
 const UPDATE_NOTE = 'nb-base/annotations/UPDATE_NOTE';
 const DESTROY_NOTE = 'nb-base/annotations/DESTROY_NOTE';
 
-export enum IStyle {
+export enum IAnnotationFormat {
   Default = 'default',
   Secondary = 'secondary',
   Strong = 'strong',
+}
+
+export interface IAnnotationStyle {
+  format: IAnnotationFormat;
+  symbol: string;
+}
+
+export interface IAnnotationStyles {
+  quickNote: IAnnotationStyle;
+  styles: IAnnotationStyle[];
 }
 
 export interface IIdeaRange {
@@ -22,8 +32,7 @@ export interface IAnnotation {
   id: number;
   range: IIdeaRange;
   file: string;
-  symbol: string;
-  style: IStyle;
+  style: IAnnotationStyle;
   note: string;
   links: string[];
 }
@@ -65,7 +74,7 @@ export interface IState {
 
 const INITIAL_STATE: IState = {};
 
-export function reducer(state: IState = INITIAL_STATE, action: any) {
+export function reducer(state: IState = INITIAL_STATE, action: Actions) {
   switch (action.type) {
     case ADD_ANNOTATION:
       return addAnnotation(state, action.payload);
@@ -167,48 +176,48 @@ function destroyAnnotation(state: IState, payload: IAnnotationAndIdeas) {
 }
 
 reducer.addNote = function(data: INote) {
-  return {
+  return <const>{
     type: ADD_NOTE,
     payload: data,
   };
 };
 
 reducer.updateNote = function(data: INote) {
-  return {
+  return <const>{
     type: UPDATE_NOTE,
     payload: data,
   };
 };
 
 reducer.destroyNote = function(data: INote) {
-  return {
+  return <const>{
     type: DESTROY_NOTE,
     payload: data,
   };
 };
 
 reducer.addAnnotation = function(data: IAnnotationAndIdeas) {
-  return {
+  return <const>{
     type: ADD_ANNOTATION,
     payload: data,
   };
 };
 
 reducer.updateAnnotation = function(data: IAnnotationAndIdeas) {
-  return {
+  return <const>{
     type: UPDATE_ANNOTATION,
     payload: data,
   };
 };
 
 reducer.destroyAnnotation = function(data: IAnnotationAndIdeas) {
-  return {
+  return <const>{
     type: DESTROY_ANNOTATION,
     payload: data,
   };
 };
 
-export type Action = ReturnType<
+export type Actions = ReturnType<
   | typeof reducer.addNote
   | typeof reducer.updateNote
   | typeof reducer.destroyNote

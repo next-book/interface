@@ -37,9 +37,9 @@
     border-radius: 6px;
     overflow: hidden;
 
-    border: 1px solid var(--ui-c-medium);
+    border: 1px solid var(--ui-c-soft);
     border-radius: 8px;
-    box-shadow: 0 0 7px var(--ui-c-medium);
+    box-shadow: var(--ui-box-shadow);
   }
 
   p,
@@ -52,16 +52,16 @@
 
   .seq-buttons {
     display: flex;
-    border-top: 1px solid var(--ui-c-medium);
+    border-top: 1px solid var(--ui-c-soft);
 
     &:first-child {
       border: none;
     }
 
     a {
-      background: white;
+      background: var(--ui-c-bg);
       white-space: nowrap;
-      border: solid var(--ui-c-medium);
+      border: solid var(--ui-c-soft);
       border-width: 0 1px 0 0;
       flex: 1 1;
       text-align: center;

@@ -11,6 +11,34 @@
     "annotations": "Anotace",
     "options": "Nastavení"
   },
+  "options": {
+    "font-size": "Velikost písma",
+    "show-tips-title": "Jak číst webovou knížku?",
+    "show-tips": "Zobrazit tipy",
+    "about-this-book": "Produkční informace o next-booku",
+    "revision": "Identifikátor revize",
+    "generated-at": "Publikováno",
+    "offline-mode": "Offline mód"
+  },
+  "offline": {
+    "cache-available": "Offline mód je dostupný, knížku můžete číst bez signálu (i v režimu Letadlo).",
+    "problem": "Offline mód by měl být dostupný, ale z nějakého důvodu stahování selhalo.",
+    "nosw": "Offline mód není dostupný, protože váš prohlížeč nepodporuje potřebný standard.",
+    "unsecure": "Offline mód není dostupný, protože je kniha stažená přes nezabezpečený protokol."
+  },
+  "onboarding": {
+    "intro-heading": "4 tipy, pokud čtete webovou knížku poprvé",
+    "intro": "Menu s obsahem, nastavením apod. otevřete ťuknutím na pravý dolní roh, kde vidíte svou pozici v knize.",
+    "pagination-heading": "Soustředěné čtení",
+    "pagination": "Pokud vás posouvání textu rozptyluje, použijte svajpnutí, skrytá tlačítka na okrajích, nebo šipky na klávesnici.",
+    "remember-heading": "Kniha si pamatuje, kde jste přestali číst",
+    "remember": "Na titulní straně se objeví odkaz na místo, kde jste skončili. A v adresním řádku máte vždy odkaz na aktuální větu.",
+    "annotations-heading": "Dělejte si poznámky",
+    "annotations": "Pokud označíte text, můžete si jej zvýraznit nebo si k němu napsat poznámku.",
+    "next": "Další tip",
+    "close": "Šup do knížky",
+    "read-offline": "(A čtěte offline, knížka se vám stáhla celá.)"
+  },
   "annotations": {
     "work-desk": "Pracovní plocha",
     "no-annotations-in-chapter": "V textu kapitoly nemáte žádná zvýraznění.",
@@ -19,7 +47,9 @@
     "notes": "Poznámky",
     "add-note": "Přidat poznámku",
     "edit-note": "Upravit poznámku",
-    "update-note": "Uložit poznámku"
+    "update-note": "Uložit poznámku",
+    "show-all": "Zobrazit všechny kapitoly",
+    "confirm-annotation-destroy": "Chcete skutečně smazat toto zvýraznění?"
   },
   "navigation": {
     "title-page": "Titulní strana",
@@ -42,7 +72,6 @@
     "next-chapter": "Následující kapitola",
     "seqReturnAnotherChapter": "Dočetli jste po <1>{{idea}}. větu</1> v kapitole <3>{{title}}</3>.",
     "seqReturnThisChapter": "Dočetli jste po <2>{{idea}}. větu</2> v této kapitole.",
-    "go": "Přejít",
-    "toc": "Obsah"
+    "go": "Přejít"
   }
 }

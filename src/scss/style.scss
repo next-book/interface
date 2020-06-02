@@ -1,16 +1,33 @@
+$controls-width: 24rem;
+$base-font-size: 18px;
+
+@function remToPx($size) {
+  $px: ($size / 1rem) * $base-font-size;
+  @return #{$px / 1px}px;
+}
+
 $z-indexes: (
+  'onboarding': 4000,
   'pagination': 2000,
   'annotations': 1300,
   'navigation': 1000,
   'footnotes': 1200,
   'peeks': 1000,
   'toc': 1100,
-  'controls': 1400
+  'controls': 3000,
+);
+
+$breakpoints: (
+  'max-big-tabs': 400px,
+  'min-side-annotation-ui': remToPx(24rem),
+  'max-full-screen-controls': remToPx(32rem + $controls-width + 4rem),
+  'min-double-col-notes': 600px,
 );
 
 @import '_defaults';
 @import '_animations';
 @import '_base';
+@import '_utils';
 
 // always scoped to .content
 @import 'content/_layout';
@@ -22,6 +39,7 @@ $z-indexes: (
 // always scoped to .nb-* class
 // root custom props prefixed with name
 // TODO: prefix bodyclasses
+@import 'ui/_base';
 @import 'ui/_annotations';
 @import 'ui/_desk';
 @import 'ui/_navigation';
@@ -31,4 +49,4 @@ $z-indexes: (
 @import 'ui/_toc';
 @import 'ui/_controls';
 @import 'ui/_options';
-
+@import 'ui/_onboarding';

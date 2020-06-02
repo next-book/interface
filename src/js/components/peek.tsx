@@ -1,28 +1,11 @@
 import React from 'react';
+import { IPeek } from './peeks-reducer';
 
-export interface IProps {
-  content: object | null;
-  rawContent: string | null;
-  title: string;
-  source: string;
-  showSource: boolean;
+export interface IProps extends IPeek {
   destroy(index: number): void;
-  index: number;
 }
 
 export default function Peek(props: IProps) {
-  function html() {
-    if (props.rawContent !== null && props.rawContent !== undefined)
-      return { __html: props.rawContent };
-
-    return { __html: '' };
-  }
-
-  if (props.content !== null && !React.isValidElement(props.content)) {
-    props.destroy(props.index);
-    return null;
-  }
-
   return (
     <div className="peek">
       <div className="peek-head">
@@ -32,12 +15,11 @@ export default function Peek(props: IProps) {
             {!props.showSource && props.title}
           </p>
         </div>
-        <button className="peek-close" onClick={() => props.destroy(props.index)}>
+        <button className="peek-close" onClick={() => props.destroy(props.hash)}>
           ╳
         </button>
       </div>
-      {props.content && <div className="peek-content">{props.content}</div>}
-      {<div className="peek-content" dangerouslySetInnerHTML={html()} />}
+      {<div className="peek-content" dangerouslySetInnerHTML={{ __html: props.content }} />}
     </div>
   );
 }

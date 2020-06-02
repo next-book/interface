@@ -2,9 +2,24 @@
   font-family: var(--ui-font);
   font-size: var(--ui-font-size);
 
+  button {
+    color: var(--accent-color);
+    padding: var(--small-padding);
+    font-size: calc(var(--ui-font-size) * 0.9);
+    box-shadow: var(--ui-box-shadow);
+    border: none;
+    border-radius: var(--border-radius);
+    background: var(--background);
+
+    &.primary {
+      color: var(--background);
+      background-color: var(--accent-color);
+    }
+  }
+
   .controls-launcher {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
 
     position: fixed;
     bottom: 0;
@@ -19,82 +34,115 @@
   }
 
   .control {
+    display: grid;
+    grid-template-rows: 1fr calc(3 * var(--ui-font-size));
+    height: 100%;
     position: fixed;
     z-index: map-get($z-indexes, 'controls');
     top: 0;
     right: 0;
     bottom: 0;
     background: var(--ui-background);
-    width: calc(100vw - var(--content-max-width) - (2 * var(--base-padding)));
+    width: $controls-width;
+    box-sizing: border-box;
 
-    overflow: hidden;
-    box-shadow: 0 0 7px var(--ui-c-medium);
+    box-shadow: var(--ui-box-shadow);
     transition: bottom 0.2s ease-out;
     animation: slide-up 0.2s ease-out;
-
     font-size: var(--ui-font-size);
 
-    @media (max-width: 50rem) {
+    @media (max-width: map-get($breakpoints, 'max-full-screen-controls')) {
       left: 0;
       width: auto;
     }
 
     .control-bar {
       display: flex;
+      grid-row: 2;
+      width: $controls-width;
+      box-shadow: rgba(0, 0, 0, 0.3) -3px 0px 4px 0px inset;
+      background: var(--ui-c-bg-shade);
+      overflow: hidden;
+
+      @media (max-width: map-get($breakpoints, 'max-full-screen-controls')) {
+        width: 100vw;
+      }
 
       .tab {
         display: block;
-        height: calc(1.4 * var(--ui-font-size));
-        flex-grow: 1;
-        padding: calc(var(--base-padding) / 2) calc(var(--base-padding) / 2)
-          calc(var(--base-padding) / 4);
-        border: solid var(--ui-c-medium);
-        border-width: 0 1px 1px 0;
-        background: var(--ui-c-bg-shade);
+        height: 100%;
+        flex: 2;
+        min-width: 0;
+        padding: 0 var(--base-padding);
+        line-height: 3;
+        box-sizing: border-box;
+        font-size: calc(var(--ui-font-size) * 0.9);
 
         cursor: pointer;
+        text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-
-        &:nth-child(1)::before {
-          content: '📖 ';
-        }
-
-        &:nth-child(2)::before {
-          content: '✏️ ';
-        }
-
-        &:nth-child(3)::before {
-          content: '🔣 ';
-        }
-      }
-
-      .tab:first-child {
-        padding-left: var(--base-padding);
       }
 
       .tab--selected {
-        border-bottom: none;
+        box-shadow: var(--ui-box-shadow);
         background: var(--ui-background);
+        color: var(--accent-color);
       }
 
       .close {
         display: block;
-        height: calc(1.4 * var(--ui-font-size));
-        flex-grow: 2;
-        padding: calc(var(--base-padding) / 2) var(--base-padding) calc(var(--base-padding) / 4);
-        text-align: right;
-        margin-left: --ui-font-size;
+        flex: 0;
+        padding: calc(var(--base-padding) / 2);
+        margin-top: calc(var(--base-padding) / 2);
         cursor: pointer;
-        border-bottom: 1px solid var(--ui-c-medium);
+
+        span {
+          color: var(--accent-color);
+          padding: calc(var(--base-padding) / 2);
+          box-shadow: var(--ui-box-shadow);
+          border-radius: var(--border-radius);
+          background: var(--background);
+        }
       }
     }
 
-    .control-content {
+    .control__opened {
+      grid-row: 1;
+      display: flex;
+      flex-direction: column;
       position: relative;
       box-sizing: border-box;
-      overflow-x: hidden;
-      overflow-y: auto;
+      overflow: hidden;
+    }
+
+    .control__details {
+      display: flex;
+      align-self: end;
+      z-index: 1;
+      width: 100%;
+      box-shadow: 0 0 40px var(--background), 0 0 40px var(--background), 0 0 40px var(--background);
+      background: var(--background);
+      padding: calc(var(--base-padding) * 2) var(--base-padding);
+      font-size: calc(var(--ui-font-size) * 0.8);
+
+      & > div {
+        flex: 1;
+        margin-right: var(--ui-font-size);
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+
+      p {
+        margin: 0;
+      }
+
+      h3 {
+        font-size: calc(var(--ui-font-size) * 0.8);
+        margin: 0;
+      }
     }
   }
 }

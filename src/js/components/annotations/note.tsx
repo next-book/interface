@@ -52,7 +52,7 @@ class AnnotationNote extends React.Component<IProps, IState> {
         {this.state.editMode ? (
           <div className="note-editor">
             <ContentEditable
-              className="note-editor__input"
+              className="desk__note-editor__input"
               html={this.state.text}
               tagName="article"
               onChange={this.updateState}

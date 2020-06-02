@@ -39,7 +39,7 @@ const INITIAL_STATE: IState = {
   },
 };
 
-export function reducer(state = INITIAL_STATE, action: Action): IState {
+export function reducer(state = INITIAL_STATE, action: Actions): IState {
   switch (action.type) {
     case ADD_MOMENT:
       return addMoment(state, action.payload);
@@ -104,10 +104,10 @@ function concludeSession(session: ISession): ISession {
 }
 
 reducer.addMoment = function(moment: IMoment) {
-  return {
+  return <const>{
     type: ADD_MOMENT,
     payload: moment,
   };
 };
 
-export type Action = ReturnType<typeof reducer.addMoment>;
+export type Actions = ReturnType<typeof reducer.addMoment>;

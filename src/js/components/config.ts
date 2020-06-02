@@ -18,10 +18,10 @@ export class Config extends React.Component<IProps> {
 }
 
 export function setDocumentValues(config: IConfigState) {
-  setFontSize(config.fontSize);
+  applyFontSize(config.fontSize);
 }
 
-export function setFontSize(size: string) {
+export function applyFontSize(size: string) {
   document.documentElement.style.setProperty('--font-size-ratio', size);
 }
 

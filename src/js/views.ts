@@ -8,6 +8,7 @@ import trace from './components/trace';
 import offline from './components/offline';
 import controls from './components/controls';
 import config from './components/config';
+import onboarding from './components/onboarding';
 
 type IViews = { [key: string]: React.ComponentType };
 
@@ -21,6 +22,7 @@ const views: IViews = {
   offline,
   controls,
   config,
+  onboarding,
 };
 
 export default views;
