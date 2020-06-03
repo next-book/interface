@@ -49,7 +49,7 @@
     "edit-note": "Edit note",
     "update-note": "Save note",
     "show-all": "Show all chapters",
-    "confirm-annotation-destroy": "Are you sure you want to delete this annotation?"
+    "confirm-destroy": "Are you sure you want to delete this annotation?"
   },
   "navigation": {
     "title-page": "Title",

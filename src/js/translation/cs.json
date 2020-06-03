@@ -49,7 +49,7 @@
     "edit-note": "Upravit poznámku",
     "update-note": "Uložit poznámku",
     "show-all": "Zobrazit všechny kapitoly",
-    "confirm-annotation-destroy": "Chcete skutečně smazat toto zvýraznění?"
+    "confirm-destroy": "Chcete skutečně smazat toto zvýraznění?"
   },
   "navigation": {
     "title-page": "Titulní strana",

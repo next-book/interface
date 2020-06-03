@@ -58,8 +58,7 @@ class AnnotationDetail extends React.Component<IProps, IState> {
   }
 
   destroyAnnotation = (annotation: IAnnotation) => {
-    if (window.confirm(this.props.t('confirm-annotation-destroy')))
-      this.props.destroyAnnotation(annotation);
+    if (window.confirm(this.props.t('confirm-destroy'))) this.props.destroyAnnotation(annotation);
   };
 
   // private pastePlainText = event => {
