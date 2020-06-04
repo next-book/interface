@@ -114,6 +114,7 @@ export class Navigation extends React.Component<IProps> {
     const target = event.target as HTMLElement;
 
     if (
+      isInPaginationRect(Direction.Forward, event.clientX, event.clientY) &&
       target.tagName != 'A' &&
       target.tagName != 'BUTTON' &&
       target.tagName != 'INPUT' &&
@@ -123,11 +124,7 @@ export class Navigation extends React.Component<IProps> {
       target.closest('LABEL') === null &&
       target.closest('.ui-target') === null
     ) {
-      if (isInPaginationRect(Direction.Back, event.clientX, event.clientY)) {
-        return this.goBack(event);
-      } else if (isInPaginationRect(Direction.Forward, event.clientX, event.clientY)) {
-        return this.goForward(event);
-      }
+      return this.goForward(event);
     }
   };
 
@@ -236,15 +233,11 @@ function isInPaginationRect(dir: Direction, x: number, y: number) {
   const margin = 2;
 
   if ((x > margin && x < margin + rectW) || (x < w - margin && x > w - margin - rectW)) {
-    const backTop = h * 0.02;
-    const backH = h * 0.18;
-
     const forwardTop = h * 0.25;
     const forwardH = h * 0.5;
 
     if (y > forwardTop && y < forwardTop + forwardH)
       return dir === Direction.Forward ? true : false;
-    else if (y > backTop && y < backTop + backH) return dir === Direction.Back ? true : false;
   }
 
   return false;
