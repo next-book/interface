@@ -5,6 +5,7 @@ import Progress, { ProgressForm } from './progress';
 import Toc from './toc';
 import Options from './options';
 import Annotations from './annotations/desk';
+import Icons from './../icons';
 
 enum Control {
   None = 'none',
@@ -119,7 +120,7 @@ function Tabs(props: ITabsProps) {
         </span>
       ))}
       <span key="close" className="close" onClick={() => props.open(Control.None)}>
-        <span>✖</span>
+        <span>{Icons.Close}</span>
       </span>
     </div>
   );

@@ -7,6 +7,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 
 import docInfo from '../doc-info';
 import { DocRole } from './manifest-reducer';
+import Icons from './../icons';
 
 interface IProps extends WithTranslation {
   offline: boolean;
@@ -51,7 +52,7 @@ export class Onboarding extends React.Component<IProps, IState> {
           <div className="onboarding-overlay ui-target">
             <div className="onboarding ui-target">
               <span className="close" onClick={this.props.toggle}>
-                ╳
+                {Icons.Close}
               </span>
               <div className="onboarding__card">
                 <h2>{this.props.t(`${cards[this.state.card]}-heading`)}</h2>

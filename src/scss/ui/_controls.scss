@@ -93,12 +93,16 @@
       .close {
         display: block;
         flex: 0;
-        padding: calc(var(--base-padding) / 2);
+        padding: calc(var(--base-padding) / 2) var(--base-padding);
         margin-top: calc(var(--base-padding) / 2);
         cursor: pointer;
 
+        svg {
+          fill: var(--accent-color);
+          width: var(--ui-font-size);
+        }
+
         span {
-          color: var(--accent-color);
           padding: calc(var(--base-padding) / 2);
           box-shadow: var(--ui-box-shadow);
           border-radius: var(--border-radius);

@@ -64,11 +64,22 @@
       display: block;
     }
 
+    .font-size-slider__close {
+      display: block;
+      position: relative;
+      z-index: 1;
+      float: right;
+      margin: -24px -24px -24px 12px;
+      padding: var(--base-padding);
+      cursor: pointer;
+    }
+
     p {
       font-size: 24px;
       line-height: 36px;
       margin: 12px 0;
       text-align: center;
+      clear: right;
     }
 
     small,

@@ -93,7 +93,10 @@ $nb-red: #9a4663;
     background: none;
     cursor: pointer;
     text-align: right;
-    color: $nb-red;
+
+    svg {
+      width: calc(2 * var(--ui-font-size));
+    }
   }
 
   .onboarding__controls__button,

@@ -7,6 +7,7 @@ import { IState as IOfflineState, SwAvailability } from './offline-reducer';
 import { reducer } from './config-reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { applyFontSize } from './config';
+import Icons from './../icons';
 
 interface IProps extends WithTranslation {
   fontSize: string;
@@ -141,6 +142,7 @@ class FontSize extends React.Component<IFontSizeProps, IFontSizeState> {
         <div
           className={`font-size-slider ${this.state.displaySlider ? 'font-size-slider--show' : ''}`}
         >
+          <span className="font-size-slider__close">{Icons.Close}</span>
           <p>
             <strong>{this.props.title}</strong>
           </p>
