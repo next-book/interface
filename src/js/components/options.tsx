@@ -98,7 +98,7 @@ interface IFontSizeProps {
 }
 
 interface IFontSizeState {
-  displaySlider: boolean;
+  isShown: boolean;
 }
 
 const fontSizes = {
@@ -111,11 +111,11 @@ class FontSize extends React.Component<IFontSizeProps, IFontSizeState> {
   constructor(props: IFontSizeProps) {
     super(props);
 
-    this.state = { displaySlider: false };
+    this.state = { isShown: false };
   }
 
   toggleSlider = () => {
-    this.setState({ ...this.state, displaySlider: !this.state.displaySlider });
+    this.setState({ ...this.state, isShown: !this.state.isShown });
   };
 
   setFontSize = (event: React.SyntheticEvent<HTMLInputElement>) => {
@@ -132,16 +132,35 @@ class FontSize extends React.Component<IFontSizeProps, IFontSizeState> {
     );
   };
 
+  collapseOnClickOutside = (e: Event) => {
+    const el = e.target as Element;
+
+    const clickedButton =
+      el.classList.contains('font-size-slider__toggle') ||
+      el.classList.contains('font-size-slider__close') ||
+      el.closest('.font-size-slider') !== null;
+    const clickedOutside =
+      !el.classList.contains('font-size-slider') && el.closest('.font-size-slider') === null;
+
+    if (clickedButton || (this.state.isShown && clickedOutside)) this.toggleSlider();
+  };
+
+  componentDidMount() {
+    window.addEventListener('click', this.collapseOnClickOutside);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this.collapseOnClickOutside);
+  }
+
   render() {
     return (
       <div className="cell font-size">
         <h3 className="nb-ui-title cell__title">{this.props.title}</h3>
-        <button onClick={this.toggleSlider}>
+        <button className="font-size-slider__toggle">
           {Math.floor(parseFloat(this.props.fontSize) * 100)} %
         </button>
-        <div
-          className={`font-size-slider ${this.state.displaySlider ? 'font-size-slider--show' : ''}`}
-        >
+        <div className={`font-size-slider ${this.state.isShown ? 'font-size-slider--show' : ''}`}>
           <span className="font-size-slider__close">{Icons.Close}</span>
           <p>
             <strong>{this.props.title}</strong>
