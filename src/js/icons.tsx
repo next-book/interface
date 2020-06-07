@@ -1,11 +1,29 @@
 import React from 'react';
 
+/* All icons Material Design icons by Google
+ * Licensed under Apache License Version 2.0
+ * https://github.com/google/material-design-icons
+ */
+
+const Close = (
+  <svg
+    className="svg-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    height="24"
+    width="24"
+  >
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+  </svg>
+);
+
 const ArrowForward = (
   <svg
     className="svg-icon"
     xmlns="http://www.w3.org/2000/svg"
-    height="24"
     viewBox="0 0 24 24"
+    height="24"
     width="24"
   >
     <path d="M0 0h24v24H0z" fill="none" />
@@ -17,8 +35,8 @@ const Check = (
   <svg
     className="svg-icon"
     xmlns="http://www.w3.org/2000/svg"
-    height="24"
     viewBox="0 0 24 24"
+    height="24"
     width="24"
   >
     <path d="M0 0h24v24H0z" fill="none" />
@@ -30,8 +48,8 @@ const Info = (
   <svg
     className="svg-icon"
     xmlns="http://www.w3.org/2000/svg"
-    height="24"
     viewBox="0 0 24 24"
+    height="24"
     width="24"
   >
     <path d="M0 0h24v24H0z" fill="none" />
@@ -44,9 +62,8 @@ const ReturnKey = (
     className="svg-icon"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
-    fill="black"
-    width="18px"
-    height="18px"
+    height="24"
+    width="24"
   >
     <path d="M0 0h24v24H0V0z" fill="none" />
     <path d="M11 9l1.42 1.42L8.83 14H18V4h2v12H8.83l3.59 3.58L11 21l-6-6 6-6z" />
@@ -55,6 +72,7 @@ const ReturnKey = (
 
 export default {
   ArrowForward,
+  Close,
   Check,
   Info,
   ReturnKey,

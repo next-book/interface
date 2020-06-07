@@ -1,19 +1,24 @@
 import React from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { IState as ICombinedState } from '../reducer';
-import { IState as IManifestState } from './manifest-reducer';
-import { IState as IOfflineState, SwAvailability } from './offline-reducer';
-import { reducer } from './config-reducer';
+import { IState as ICombinedState } from '../../reducer';
+import { IState as IManifestState } from './../manifest-reducer';
+import { IState as IOfflineState, SwAvailability } from './../offline-reducer';
+import { reducer } from './../config-reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
-import { applyFontSize } from './config';
+import { applyFontSize } from './../config';
+import { FontSize } from './font-size';
+import AnnotationStyles from './annotation-styles';
+import { IAnnotationStyle } from './../annotations/reducer';
 
 interface IProps extends WithTranslation {
   fontSize: string;
+  annotationStyles: IAnnotationStyle[];
   offline: IOfflineState;
   manifest: IManifestState;
   setFontSize(size: string): void;
-  toggleOnboarding(): void;
+  updateStyle(index: number, style: IAnnotationStyle): void;
+  showOnboarding(): void;
 }
 
 interface IState {
@@ -53,12 +58,16 @@ class Options extends React.Component<IProps, IState> {
               <h1 className="nb-ui-big-title">{this.props.t('controls:options')}</h1>
               <div className="cell show-tips">
                 <h3 className="nb-ui-title cell__title">{this.props.t('show-tips-title')}</h3>
-                <button onClick={this.props.toggleOnboarding}>{this.props.t('show-tips')}</button>
+                <button onClick={this.props.showOnboarding}>{this.props.t('show-tips')}</button>
               </div>
               <FontSize
                 title={this.props.t('font-size')}
                 setFontSize={this.setFontSize}
                 fontSize={this.props.fontSize}
+              />
+              <AnnotationStyles
+                styles={this.props.annotationStyles}
+                updateStyle={this.props.updateStyle}
               />
             </div>
           </div>
@@ -90,88 +99,10 @@ class Options extends React.Component<IProps, IState> {
   }
 }
 
-interface IFontSizeProps {
-  title: string;
-  fontSize: string;
-  setFontSize(value: number): void;
-}
-
-interface IFontSizeState {
-  displaySlider: boolean;
-}
-
-const fontSizes = {
-  max: 3,
-  min: 0.6,
-  step: 0.1,
-};
-
-class FontSize extends React.Component<IFontSizeProps, IFontSizeState> {
-  constructor(props: IFontSizeProps) {
-    super(props);
-
-    this.state = { displaySlider: false };
-  }
-
-  toggleSlider = () => {
-    this.setState({ ...this.state, displaySlider: !this.state.displaySlider });
-  };
-
-  setFontSize = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    const value = event.currentTarget.value;
-    this.props.setFontSize(parseFloat(value));
-  };
-
-  enlargeFontSize = (amount: number) => {
-    const oldSize = parseFloat(this.props.fontSize);
-    const newSize = Math.round((oldSize + amount) * 10) / 10;
-
-    this.props.setFontSize(
-      newSize <= fontSizes.min ? fontSizes.min : newSize >= fontSizes.max ? fontSizes.max : newSize
-    );
-  };
-
-  render() {
-    return (
-      <div className="cell font-size">
-        <h3 className="nb-ui-title cell__title">{this.props.title}</h3>
-        <button onClick={this.toggleSlider}>
-          {Math.floor(parseFloat(this.props.fontSize) * 100)} %
-        </button>
-        <div
-          className={`font-size-slider ${this.state.displaySlider ? 'font-size-slider--show' : ''}`}
-        >
-          <p>
-            <strong>{this.props.title}</strong>
-          </p>
-          <p>
-            {Math.floor(parseFloat(this.props.fontSize) * 100)} %
-            <br />
-            <button className="shrink-font-size" onClick={() => this.enlargeFontSize(-0.1)}>
-              A
-            </button>
-            <input
-              className="set-font-size"
-              type="range"
-              min={fontSizes.min}
-              max={fontSizes.max}
-              defaultValue={this.props.fontSize}
-              onChange={this.setFontSize}
-              step={fontSizes.step}
-            />
-            <button className="enlarge-font-size" onClick={() => this.enlargeFontSize(0.1)}>
-              A
-            </button>
-          </p>
-        </div>
-      </div>
-    );
-  }
-}
-
 const mapStateToProps = (state: ICombinedState) => {
   return {
     fontSize: state.config.fontSize,
+    annotationStyles: state.config.annotationStyles,
     offline: state.offline,
     manifest: state.manifest,
   };
@@ -180,8 +111,9 @@ const mapStateToProps = (state: ICombinedState) => {
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
-      toggleOnboarding: reducer.toggleOnboarding,
+      showOnboarding: reducer.showOnboarding,
       setFontSize: reducer.setFontSize,
+      updateStyle: reducer.updateStyle,
     },
     dispatch
   );

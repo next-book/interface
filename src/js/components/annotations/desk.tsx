@@ -226,10 +226,7 @@ function Highlights(props: IHighglightsProps) {
 
       {Object.keys(props.annotations).length ? (
         Object.values(props.annotations).map((annotation: IAnnotation, key) => (
-          <div
-            key={key}
-            className={`desk__annotation desk__annotation--${annotation.style.format}`}
-          >
+          <div key={key} className={`desk__annotation`}>
             {false && (
               <span
                 className="desk__annotation__destroy"
@@ -238,7 +235,9 @@ function Highlights(props: IHighglightsProps) {
                 ╳
               </span>
             )}
-            <div className="annotation__symbol">{annotation.style.symbol}</div>
+            <div className="annotation__symbol">
+              {annotation.style.symbol} {annotation.style.name}
+            </div>
             <div className="desk-annotation-wrapper">
               {sortedIdeas
                 .filter(

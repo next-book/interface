@@ -7,7 +7,7 @@
   max-width: calc(100vw - 2 * var(--base-padding));
   animation: slide-up 0.2s ease-out;
   z-index: map-get($z-indexes, 'navigation') + 30;
-  min-height: 36px;
+  min-height: 1.5rem;
 
   .seq-text {
     padding: calc(var(--base-padding) / 2);
@@ -16,13 +16,13 @@
   .seq-return-toggle {
     font-family: var(--ui-font);
     display: block;
-    min-width: 24px;
-    height: 24px;
-    line-height: 24px;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    line-height: 1.5rem;
     color: var(--ui-c-medium);
     text-align: center;
     float: right;
-    padding: 6px;
+    padding: 0.25rem;
     cursor: pointer;
 
     &:hover {
@@ -34,11 +34,10 @@
     margin: 0 auto;
     background: var(--ui-c-bg-shade);
 
-    border-radius: 6px;
+    border: 1px solid var(--ui-c-soft);
+    border-radius: var(--border-radius-xl);
     overflow: hidden;
 
-    border: 1px solid var(--ui-c-soft);
-    border-radius: 8px;
     box-shadow: var(--ui-box-shadow);
   }
 

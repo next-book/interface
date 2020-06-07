@@ -6,7 +6,7 @@
     position: fixed;
     left: 0;
     width: 100vw;
-    background: var(--background);
+    background: var(--ui-background);
     box-sizing: border-box;
   }
 
@@ -93,7 +93,7 @@
 
   .top-bar {
     font-family: var(--content-font);
-    font-size: var(--base-font-size);
+    font-size: var(--ui-font-size);
 
     position: absolute;
     top: 0;

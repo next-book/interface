@@ -8,7 +8,7 @@
   --content-font: serif;
   --heading-font: sans-serif;
   --heading-font-weight: bold;
-  --base-font-size: $baseFontSize;
+  --base-font-size: #{$base-font-size};
   --font-size-ratio: 1;
 
   // content colors
@@ -40,5 +40,5 @@
   --ui-c-text-shade: #777;
   --ui-c-text: #222;
 
-  font-size: calc(var(--font-size-ratio) * var(--base-font-size));
+  font-size: calc(var(--base-font-size) * var(--font-size-ratio));
 }

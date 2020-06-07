@@ -33,7 +33,7 @@ export class Pagination extends React.Component<IProps, IState> {
     this.state = {
       barHeight: null,
       windowHeight: null,
-      zonePadding: { [Side.Top]: 18, [Side.Bottom]: 8 * 4 },
+      zonePadding: { [Side.Top]: 18, [Side.Bottom]: 48 },
       readingZone: { [Side.Top]: 0, [Side.Bottom]: 0 },
       lastScrollStart: null,
     };
@@ -118,11 +118,15 @@ export class Pagination extends React.Component<IProps, IState> {
 
     window.addEventListener('resize', this.setSizes);
 
-    window.requestAnimationFrame(this.setSizes);
+    window.requestAnimationFrame(() => {
+      this.setSizes();
+      document.body.classList.add('paginated');
+    });
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.getScrollHandler());
+    window.removeEventListener('resize', this.setSizes);
   }
 
   render() {
@@ -145,25 +149,23 @@ export class Pagination extends React.Component<IProps, IState> {
 }
 
 function calcCutoff(from: Side, readingZone: Sides) {
-  const els = [...document.querySelectorAll('.chunk')].filter(el =>
-    isElementOnTheEdge(el, readingZone[from])
-  );
+  const el =
+    from === Side.Top
+      ? getFirstVisibleChunk(readingZone[from])
+      : getLastVisibleChunk(readingZone[from]);
 
-  if (!els.length) {
-    return from === Side.Top ? 0 : window.innerHeight;
-  }
+  if (el === null) return from === Side.Top ? 0 : window.innerHeight;
 
-  const el = els[0];
-
-  const cStyle = window.getComputedStyle(el);
-  const lineHeight = parseInt(cStyle.lineHeight, 10);
+  const lineHeight = getComputedStyleNumber(el, 'lineHeight');
   const rect = el.getBoundingClientRect();
   let y = rect[from];
 
   if (from === Side.Top) {
-    y += parseInt(cStyle.paddingTop, 10);
+    y += getComputedStyleNumber(el, 'paddingTop');
 
-    while (y < readingZone[from]) {
+    // adding half of lineHeight to account for Firefox behavior
+    // (Chrome and Safari work OK without this)
+    while (y + lineHeight / 2 < readingZone[from]) {
       y += lineHeight;
     }
   } else if (from === Side.Bottom) {
@@ -183,8 +185,35 @@ function calcCutoff(from: Side, readingZone: Sides) {
   return y;
 }
 
-function isElementOnTheEdge(el: Element, edge: number) {
-  var rect = el.getBoundingClientRect();
+function getComputedStyleNumber(el: Element, attr: 'lineHeight' | 'paddingTop'): number {
+  const style = window.getComputedStyle(el);
+  return parseInt(style[attr], 10);
+}
 
-  return rect.top < edge && rect.bottom > edge;
+function getFirstVisibleChunk(edge: number) {
+  for (let chunk of [...document.querySelectorAll('.chunk')]) {
+    const rect = chunk.getBoundingClientRect();
+    const range = getComputedStyleNumber(chunk, 'lineHeight');
+
+    if (
+      (rect.top < edge && rect.bottom > edge + range) ||
+      (rect.top > edge && rect.top < edge + range)
+    )
+      return chunk;
+  }
+  return null;
+}
+
+function getLastVisibleChunk(edge: number) {
+  for (let chunk of [...document.querySelectorAll('.chunk')].reverse()) {
+    const rect = chunk.getBoundingClientRect();
+    const range = getComputedStyleNumber(chunk, 'lineHeight');
+
+    if (
+      (rect.top < edge + range && rect.bottom > edge) ||
+      (rect.bottom < edge && rect.bottom > edge + range)
+    )
+      return chunk;
+  }
+  return null;
 }

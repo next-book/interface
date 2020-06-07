@@ -1,6 +1,5 @@
 .content {
   main {
-    will-change: transform;
   }
 
   #chapter-end {
@@ -42,11 +41,15 @@ body.paginated .content {
     a[rel='prev'],
     a[rel='next'] {
       text-indent: -9999px;
-    }
 
-    a[rel='next'] {
-      padding-bottom: 80vh;
+      &:focus {
+        text-indent: 0;
+      }
     }
+  }
+
+  .end-nav {
+    padding-bottom: 90vh;
   }
 }
 

@@ -104,23 +104,34 @@ export class Position extends React.Component<IProps> {
 }
 
 function getTopBound(): number {
-  const beginNav = document.querySelector('.begin-nav');
-  return beginNav ? beginNav.getBoundingClientRect().bottom : -window.scrollY;
+  const chunk = document.querySelector('main .chunk') as Element | null;
+  if (chunk !== null) return chunk.getBoundingClientRect().top;
+
+  return -window.scrollY;
 }
 
 function isPageScrolledToTop(): boolean {
-  return getTopBound() > 16;
+  return getTopBound() > 18;
 }
 
 function getBottomBound(): number {
-  const endNav = document.querySelector('.end-nav');
-  return endNav
-    ? endNav.getBoundingClientRect().top - window.innerHeight + 70
-    : document.body.scrollHeight - window.innerHeight - window.scrollY;
+  const last = getLastChunk();
+
+  if (last !== null) return last.getBoundingClientRect().bottom - window.innerHeight;
+  return document.body.scrollHeight - window.innerHeight - window.scrollY;
+}
+
+function getLastChunk(): Element | null {
+  const chunks = [...document.querySelectorAll('main .chunk')];
+  for (let i = chunks.length - 1; i >= 0; i--) {
+    if (chunks[i].closest('.footnotes') === null) return chunks[i];
+  }
+
+  return null;
 }
 
 function isPageScrolledToBottom() {
-  return getBottomBound() < 16;
+  return getBottomBound() < -70;
 }
 
 export function getScrollRatio(): number {

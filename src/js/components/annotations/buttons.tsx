@@ -6,7 +6,6 @@ import {
   IAnnotationAndIdeas,
   INotes,
   IAnnotationStyle,
-  IAnnotationStyles,
 } from './reducer';
 import {
   getAnnotatedIdeas,
@@ -34,7 +33,7 @@ interface IProps {
   notes: INotes;
   file: string;
   selectedAnnotation: number | null;
-  styles: IAnnotationStyles;
+  styles: IAnnotationStyle[];
   addAnnotation(annotation: IAnnotationAndIdeas): void;
   updateAnnotation(data: IAnnotationAndIdeas): void;
   selectAnnotation(index: number, focus?: boolean): void;
@@ -72,7 +71,7 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
     return keys.length > 0 ? Math.max(...keys) + 1 : 1;
   };
 
-  private createAnnotationFromRange = (style: IAnnotationStyle, quickNote?: boolean) => {
+  private createAnnotationFromRange = (style: IAnnotationStyle) => {
     const selection = window.getSelection();
     if (selection === null) return;
     if (selection.rangeCount === 0) return;
@@ -99,7 +98,7 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
     this.show(Sets.None);
     selection.removeAllRanges();
 
-    if (quickNote) this.props.selectAnnotation(id, true);
+    if (style.quick) this.props.selectAnnotation(id, true);
   };
 
   private showIfRangeIsOkay = () => {
@@ -132,7 +131,11 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
     const selected = this.props.annotations[this.props.selectedAnnotation];
     const updated = { ...selected, style };
 
-    if (style.format !== selected.style.format) updateRanges(updated);
+    if (
+      style.color !== selected.style.color ||
+      style.backgroundColor !== selected.style.backgroundColor
+    )
+      updateRanges(updated);
     if (style.symbol !== selected.style.symbol) updateHead(updated);
     this.props.updateAnnotation({
       annotation: updated,
@@ -205,34 +208,37 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
   };
 
   renderCreate = (classes: string[]) => {
-    const { styles, quickNote } = this.props.styles;
     const fn = this.createAnnotationFromRange;
 
     return (
       <div className={classes.concat(['annotation-buttons--new']).join(' ')}>
         <div className="button-wrapper">
-          {styles.map((style, index) => (
-            <StyleButton key={index} style={style} fn={() => fn(style)} />
-          ))}
-
-          <StyleButton style={quickNote} className="quick-note" fn={() => fn(quickNote, true)} />
+          {this.props.styles
+            .filter(s => s.symbol !== '')
+            .map((style, index) => (
+              <StyleButton
+                className={style.quick ? 'quick-note' : ''}
+                key={index}
+                style={style}
+                fn={() => fn(style)}
+              />
+            ))}
         </div>
       </div>
     );
   };
 
   renderUpdate = (classes: string[]) => {
-    const { styles, quickNote } = this.props.styles;
     const fn = this.updateAnnotation;
 
     return (
       <div className={classes.join(' ')}>
         <div className="button-wrapper">
-          {styles.map((style, index) => (
-            <StyleButton key={index} style={style} fn={() => fn(style)} />
-          ))}
-
-          <StyleButton style={quickNote} className="quick-note" fn={() => fn(quickNote)} />
+          {this.props.styles
+            .filter(s => s.symbol !== '')
+            .map((style, index) => (
+              <StyleButton key={index} style={style} fn={() => fn(style)} />
+            ))}
         </div>
       </div>
     );
@@ -275,13 +281,18 @@ interface IStyleButtonProps {
 }
 
 export function StyleButton(props: IStyleButtonProps) {
+  const style: { color?: string; backgroundColor?: string } = {};
+  if (props.style.color) style.color = props.style.color;
+  if (props.style.backgroundColor) style.backgroundColor = props.style.backgroundColor;
+
   return (
     <span
-      className={`style-button style-button--${props.style.format} ${
-        props.className ? props.className : ''
+      className={`style-button ${props.className ? props.className : ''} ${
+        props.style.quick ? 'quick-note' : ''
       }`}
+      style={style}
       onMouseDown={buttonFn(props.fn)}
-      title={`Create annotation with ${props.style.format} style and ${props.style.symbol} icon.`}
+      title={`Create annotation`}
     >
       {props.style.symbol}
     </span>

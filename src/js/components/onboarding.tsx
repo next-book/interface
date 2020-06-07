@@ -7,11 +7,13 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 
 import docInfo from '../doc-info';
 import { DocRole } from './manifest-reducer';
+import Icons from './../icons';
 
 interface IProps extends WithTranslation {
   offline: boolean;
-  show: ShowOnboarding;
-  toggle(): void;
+  isShown: ShowOnboarding;
+  show(): void;
+  hide(): void;
 }
 
 interface IState {
@@ -19,7 +21,7 @@ interface IState {
 }
 
 enum Cards {
-  Intro = 'intro',
+  //Intro = 'intro',
   Pagination = 'pagination',
   Remember = 'remember',
   Annotations = 'annotations',
@@ -41,17 +43,42 @@ export class Onboarding extends React.Component<IProps, IState> {
   render() {
     const cards = Object.values(Cards);
 
-    const initialShow =
-      docInfo.role === DocRole.Index && this.props.show === ShowOnboarding.Initial;
-    const laterShow = this.props.show === ShowOnboarding.Enabled;
+    const showOpener =
+      docInfo.role !== DocRole.Index && this.props.isShown === ShowOnboarding.Initial;
 
-    return (
-      (initialShow || laterShow) && (
+    const showOnboarding = this.props.isShown === ShowOnboarding.Enabled;
+
+    if (showOpener)
+      return (
+        <div>
+          <div className="onboarding-opener ui-target">
+            <div className="onboarding-opener-bubble">
+              <div className="onboarding-opener-intro">{this.props.t('intro')}</div>
+              <div className="buttons">
+                <span className="button" onClick={this.props.show}>
+                  {this.props.t('intro-show')}
+                </span>
+                <span className="button" onClick={this.props.hide}>
+                  {this.props.t('intro-hide')}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="controls-launcher-demo">
+            <div>&rarr; {this.props.t('controls:annotations')}</div>
+            <div>&rarr; {this.props.t('controls:options')}</div>
+            <div>&rarr; {this.props.t('controls:toc')}</div>
+          </div>
+        </div>
+      );
+
+    if (showOnboarding)
+      return (
         <>
           <div className="onboarding-overlay ui-target">
             <div className="onboarding ui-target">
-              <span className="close" onClick={this.props.toggle}>
-                ╳
+              <span className="close" onClick={this.props.hide}>
+                {Icons.Close}
               </span>
               <div className="onboarding__card">
                 <h2>{this.props.t(`${cards[this.state.card]}-heading`)}</h2>
@@ -84,7 +111,7 @@ export class Onboarding extends React.Component<IProps, IState> {
                       {this.props.t('next')}
                     </div>
                   ) : (
-                    <div className="onboarding__controls__button" onClick={this.props.toggle}>
+                    <div className="onboarding__controls__button" onClick={this.props.hide}>
                       {this.props.t('close')}
                     </div>
                   )}
@@ -104,71 +131,13 @@ export class Onboarding extends React.Component<IProps, IState> {
             </div>
           </div>
         </>
-      )
-    );
+      );
+
+    return null;
   }
 }
 
 const Svgs = {
-  intro: () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fillRule="evenodd"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeMiterlimit="1.5"
-      clipRule="evenodd"
-      viewBox="0 0 286 552"
-    >
-      <path fill="none" d="M0 0H286V552H0z"></path>
-      <path
-        fill="#fff6de"
-        d="M280 32.4C280 17.278 267.722 5 252.6 5H33.4C18.278 5 6 17.278 6 32.4v487.2C6 534.722 18.278 547 33.4 547h219.2c15.122 0 27.4-12.278 27.4-27.4V32.4z"
-      ></path>
-      <clipPath id="a">
-        <path d="M280 32.4C280 17.278 267.722 5 252.6 5H33.4C18.278 5 6 17.278 6 32.4v487.2C6 534.722 18.278 547 33.4 547h219.2c15.122 0 27.4-12.278 27.4-27.4V32.4z"></path>
-      </clipPath>
-      <g clipPath="url(#a)">
-        <g fill="#9a4663">
-          <path d="M154.787 549a.036.036 0 00.037-.036v-9.928a.036.036 0 00-.037-.036h-3.574a.036.036 0 00-.037.036v9.928c0 .02.016.036.037.036h3.574zM183.029 549c.02 0 .036-.016.036-.036v-9.928a.036.036 0 00-.036-.036h-3.575a.036.036 0 00-.037.036v9.928c0 .02.016.036.037.036h3.575zM31.611 549a.036.036 0 00.037-.036v-9.928a.036.036 0 00-.037-.036h-3.575a.036.036 0 00-.036.036v9.928c0 .02.016.036.036.036h3.575zM258.611 549a.036.036 0 00.037-.036v-9.928a.036.036 0 00-.037-.036h-3.575a.036.036 0 00-.036.036v9.928c0 .02.016.036.036.036h3.575z"></path>
-        </g>
-      </g>
-      <path
-        fill="none"
-        stroke="#9a4663"
-        strokeWidth="5"
-        d="M280 32.4C280 17.278 267.722 5 252.6 5H33.4C18.278 5 6 17.278 6 32.4v487.2C6 534.722 18.278 547 33.4 547h219.2c15.122 0 27.4-12.278 27.4-27.4V32.4z"
-      ></path>
-      <path fill="#d9d3ca" d="M27.347 33H258.653V41H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 52H258.653V60H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 72H258.653V80H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 90H258.653V98H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 111H258.653V119H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 130H116.65299999999999V138H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 164.453H258.653V172.453H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 281.141H258.653V289.141H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 394.836H258.653V402.836H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 183.453H258.653V191.453H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 300.141H242.65300000000002V308.141H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 413.836H258.653V421.836H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 203.453H258.653V211.453H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 433.836H258.653V441.836H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 221.453H258.653V229.453H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 338.141H258.653V346.141H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 451.836H258.653V459.836H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 242.453H258.653V250.453H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 359.141H258.653V367.141H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 472.836H258.653V480.836H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 261.453H258.653V269.453H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 378.141H174V386.141H27.347z"></path>
-      <path fill="#d9d3ca" d="M27.347 491.836H236.65300000000002V499.836H27.347z"></path>
-      <path
-        fill="#9a4663"
-        fillRule="nonzero"
-        d="M195.116 517.475c0 .994.16 1.817.48 2.468.594 1.2 1.674 1.8 3.24 1.8.959 0 1.797-.328 2.511-.986.714-.657 1.071-1.602 1.071-2.836 0-1.635-.663-2.726-1.988-3.274-.755-.309-1.943-.463-3.566-.463v-3.497c1.589-.023 2.697-.177 3.326-.463 1.085-.48 1.628-1.451 1.628-2.914 0-.948-.277-1.72-.831-2.314-.554-.594-1.334-.891-2.34-.891-1.154 0-2.003.365-2.546 1.097-.542.731-.802 1.708-.779 2.931h-4.56c.046-1.234.257-2.406.634-3.514.4-.971 1.029-1.868 1.886-2.691a6.558 6.558 0 012.28-1.337c.879-.309 1.959-.463 3.239-.463 2.377 0 4.294.614 5.751 1.843 1.457 1.228 2.186 2.876 2.186 4.945 0 1.463-.435 2.697-1.303 3.702-.549.629-1.12 1.057-1.714 1.286.445 0 1.085.383 1.92 1.148 1.245 1.155 1.868 2.732 1.868 4.731 0 2.103-.728 3.952-2.185 5.546-1.457 1.594-3.614 2.391-6.471 2.391-3.52 0-5.966-1.149-7.337-3.445-.72-1.223-1.12-2.823-1.2-4.8h4.8zM210.012 525.103c.045-1.783.428-3.411 1.148-4.885.697-1.657 2.343-3.412 4.937-5.263 2.251-1.611 3.708-2.765 4.371-3.462 1.017-1.086 1.525-2.274 1.525-3.566 0-1.051-.291-1.925-.874-2.622-.583-.698-1.417-1.046-2.502-1.046-1.486 0-2.497.554-3.034 1.663-.309.64-.492 1.657-.549 3.051h-4.748c.08-2.114.463-3.823 1.148-5.125 1.303-2.48 3.617-3.72 6.943-3.72 2.628 0 4.719.728 6.273 2.185 1.555 1.457 2.332 3.386 2.332 5.786 0 1.839-.549 3.474-1.646 4.902-.72.949-1.903 2.006-3.548 3.171l-1.954 1.389c-1.223.868-2.06 1.497-2.512 1.885a5.53 5.53 0 00-1.139 1.354h10.85v4.303h-17.021zM235.621 509.47c.754 0 1.397-.266 1.928-.797a2.625 2.625 0 00.797-1.929c0-.754-.265-1.397-.797-1.928a2.627 2.627 0 00-1.928-.797 2.63 2.63 0 00-1.929.797 2.627 2.627 0 00-.797 1.928c0 .755.266 1.397.797 1.929a2.63 2.63 0 001.929.797zm6.376-2.726c0 1.76-.62 3.263-1.859 4.509-1.24 1.245-2.746 1.868-4.517 1.868-1.76 0-3.263-.623-4.508-1.868-1.246-1.246-1.869-2.749-1.869-4.509 0-1.759.623-3.262 1.869-4.508 1.245-1.245 2.748-1.868 4.508-1.868 1.76 0 3.262.623 4.508 1.868 1.246 1.246 1.868 2.749 1.868 4.508zm13.011 12.479c0-.754-.266-1.397-.797-1.928a2.63 2.63 0 00-1.929-.797c-.754 0-1.397.266-1.928.797a2.623 2.623 0 00-.797 1.928c0 .755.265 1.397.797 1.929a2.627 2.627 0 001.928.797 2.63 2.63 0 001.929-.797 2.63 2.63 0 00.797-1.929zm3.651 0c0 1.76-.623 3.263-1.869 4.509-1.245 1.245-2.748 1.868-4.508 1.868-1.76 0-3.262-.623-4.508-1.868-1.246-1.246-1.868-2.749-1.868-4.509 0-1.771.622-3.277 1.868-4.516 1.246-1.24 2.748-1.86 4.508-1.86 1.76 0 3.263.623 4.508 1.868 1.246 1.246 1.869 2.749 1.869 4.508zm-9.102-18.975h2.605l-13.85 25.506h-2.657l13.902-25.506z"
-      ></path>
-    </svg>
-  ),
   pagination: () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -214,9 +183,7 @@ const Svgs = {
         fill="#9a4663"
         d="M43.875 178c9.176 0 16.625 7.45 16.625 16.625v162.75c0 9.176-7.449 16.625-16.625 16.625h-33.25c-1.605 0-3.156-.228-4.625-.653V178.653a16.609 16.609 0 014.625-.653h33.25zM242.125 374c-9.176 0-16.625-7.45-16.625-16.625v-162.75c0-9.176 7.449-16.625 16.625-16.625h33.25c1.605 0 3.156.228 4.625.653v194.694c-1.468.425-3.02.653-4.625.653h-33.25z"
       ></path>
-      <g id="pagination1" fill="#9a4663">
-        <path d="M43.375 53C52.827 53 60.5 60.673 60.5 70.125v50.75c0 9.452-7.673 17.125-17.125 17.125H9.125c-1.067 0-2.111-.098-3.125-.285V53.287A36.704 36.704 0 0110.625 53h32.75zM275.375 53c1.605 0 3.156.1 4.625.287v84.567a17.39 17.39 0 01-2.25.146h-34.5c-9.521 0-17.25-7.729-17.25-17.25v-50.5c0-9.521 7.729-17.25 17.25-17.25h32.125z"></path>
-      </g>
+
       <path
         fill="#fff6de"
         d="M249.294 267.6v-6.064l20.3 14.464-20.3 14.464V284.4h-12.888v-16.8h12.888zM36.956 103.9v6.064L16.656 95.5l20.3-14.464V87.1h12.888v16.8H36.956zM29.544 267.6v-6.064L49.844 276l-20.3 14.464V284.4H16.656v-16.8h12.888zM256.706 103.9v6.064l-20.3-14.464 20.3-14.464V87.1h12.888v16.8h-12.888z"
@@ -330,13 +297,14 @@ const Svgs = {
 };
 
 const mapStateToProps = (state: ICombinedState) => {
-  return { offline: state.offline.cacheIsAvailable, show: state.config.showOnboarding };
+  return { offline: state.offline.cacheIsAvailable, isShown: state.config.showOnboarding };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
-      toggle: reducer.toggleOnboarding,
+      show: reducer.showOnboarding,
+      hide: reducer.hideOnboarding,
     },
     dispatch
   );
