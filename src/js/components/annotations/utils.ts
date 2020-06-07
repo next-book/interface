@@ -1,4 +1,4 @@
-import { IAnnotation, IAnnotations, IIdeas, IAnnotationFormat, IIdeaRange } from './reducer';
+import { IAnnotation, IAnnotations, IAnnotationStyle, IIdeas, IIdeaRange } from './reducer';
 
 type IHighlightFn = (selection: Selection, range: Range) => IAnnotation | null;
 type IRangeCheckFn = (range: Range) => boolean;
@@ -177,7 +177,7 @@ export const getAnnotatedIdeas = (): IIdeas => {
 export const updateHead = (annotation: IAnnotation) => {
   const selector = `.annotation__head[data-id="${annotation.id}"]`;
 
-  const head = document.querySelector(selector);
+  const head = document.querySelector(selector) as HTMLElement | null;
   if (head === null) return;
 
   const note =
@@ -191,7 +191,6 @@ export const updateHead = (annotation: IAnnotation) => {
       : annotation.note.replace(/&nbsp;|<[^>]+>/g, ' ');
   head.setAttribute('data-note', note);
 
-  head.setAttribute('data-format', annotation.style.format);
   head.innerHTML = annotation.style.symbol;
 };
 
@@ -335,13 +334,19 @@ export const getSafeRanges = (dangerous: Range) => {
 export const highlightRange = (range: Range, annotation: IAnnotation, isFirst: boolean) => {
   const span = document.createElement('SPAN');
   span.classList.add('annotation');
-  if (annotation.style.format !== IAnnotationFormat.Default)
-    span.classList.add(`annotation--${annotation.style.format}`);
+
+  applyStyle(span, annotation.style);
+
   span.setAttribute('data-id', annotation.id.toString());
   range.surroundContents(span);
 
   if (isFirst) addHead(annotation.id.toString(), span);
 };
+
+function applyStyle(el: HTMLElement, style: IAnnotationStyle) {
+  if (style.color) el.style.color = style.color;
+  if (style.backgroundColor) el.style.backgroundColor = style.backgroundColor;
+}
 
 export const markTempRange = (range: Range) => {
   const span = document.createElement('SPAN');
@@ -361,8 +366,9 @@ export const highlightTempRanges = (annotation: IAnnotation) => {
   spans.forEach((span, index) => {
     span.setAttribute('class', 'annotation');
     span.setAttribute('data-id', annotation.id.toString());
-    if (annotation.style.format !== IAnnotationFormat.Default)
-      span.classList.add(`annotation--${annotation.style.format}`);
+
+    applyStyle(span as HTMLElement, annotation.style);
+
     if (index === 0) addHead(annotation.id.toString(), span);
   });
 };
@@ -371,7 +377,7 @@ export const updateRanges = (annotation: IAnnotation) => {
   const spans = document.querySelectorAll(`.annotation[data-id="${annotation.id}"]`);
   spans.forEach(span => {
     span.setAttribute('class', 'annotation');
-    if (annotation.style.format !== IAnnotationFormat.Default)
-      span.classList.add(`annotation--${annotation.style.format}`);
+
+    applyStyle(span as HTMLElement, annotation.style);
   });
 };

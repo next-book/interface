@@ -112,20 +112,6 @@
     background: var(--annotation-highlight);
   }
 
-  .desk__annotation--secondary {
-    .annotation[data-hl='this'] {
-      color: var(--annotation-color--secondary);
-      background: var(--annotation-highlight--secondary);
-    }
-  }
-
-  .desk__annotation--strong {
-    .annotation[data-hl='this'] {
-      color: var(--annotation-color--strong);
-      background: var(--annotation-highlight--strong);
-    }
-  }
-
   .desk__note-editor {
     margin-bottom: var(--base-padding);
   }

@@ -55,16 +55,6 @@
       background: var(--annotation-highlight);
     }
 
-    .style-button--secondary {
-      color: var(--annotation-color--secondary);
-      background: var(--annotation-highlight--secondary);
-    }
-
-    .style-button--strong {
-      color: var(--annotation-color--strong);
-      background: var(--annotation-highlight--strong);
-    }
-
     &.annotation-buttons--new .quick-note::after {
       content: '…';
       position: absolute;

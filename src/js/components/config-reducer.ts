@@ -1,4 +1,5 @@
-import { IAnnotationStyles, IAnnotationFormat } from './annotations/reducer';
+import { IAnnotationStyle } from './annotations/reducer';
+import i18n from './../i18n';
 
 const HIDE_ONBOARDING = 'nb-base/offline/HIDE_ONBOARDING';
 const SHOW_ONBOARDING = 'nb-base/offline/SHOW_ONBOARDING';
@@ -25,8 +26,7 @@ export interface IState {
   displayPosition: boolean;
 
   fontSize: string;
-
-  annotationStyles: IAnnotationStyles;
+  annotationStyles: IAnnotationStyle[];
 
   keyboardNav: boolean;
   invisibleNav: boolean;
@@ -38,30 +38,36 @@ const INITIAL_STATE: IState = {
   displayPercentRead: true,
   displayPosition: true,
   fontSize: '1',
-  annotationStyles: {
-    quickNote: {
-      format: IAnnotationFormat.Secondary,
-      symbol: '◽',
+  annotationStyles: [
+    {
+      color: null,
+      backgroundColor: '#fdffb6',
+      symbol: '✅',
+      name: i18n.t('annotations:default-style-okay'),
+      quick: false,
     },
-    styles: [
-      {
-        format: IAnnotationFormat.Default,
-        symbol: '✅',
-      },
-      {
-        format: IAnnotationFormat.Default,
-        symbol: '🚩',
-      },
-      {
-        format: IAnnotationFormat.Default,
-        symbol: '👍',
-      },
-      {
-        format: IAnnotationFormat.Default,
-        symbol: '😳',
-      },
-    ],
-  },
+    {
+      color: null,
+      backgroundColor: '#fdffb6',
+      symbol: '🚩',
+      name: i18n.t('annotations:default-style-red-flag'),
+      quick: false,
+    },
+    {
+      color: null,
+      backgroundColor: '#fdffb6',
+      symbol: '😳',
+      name: i18n.t('annotations:default-style-omg'),
+      quick: false,
+    },
+    {
+      color: null,
+      backgroundColor: '#eeeeee',
+      symbol: '◽',
+      name: i18n.t('annotations:default-style-neutral'),
+      quick: true,
+    },
+  ],
   keyboardNav: true,
   invisibleNav: true,
 };

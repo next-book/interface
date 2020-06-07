@@ -5,20 +5,12 @@ const ADD_NOTE = 'nb-base/annotations/ADD_NOTE';
 const UPDATE_NOTE = 'nb-base/annotations/UPDATE_NOTE';
 const DESTROY_NOTE = 'nb-base/annotations/DESTROY_NOTE';
 
-export enum IAnnotationFormat {
-  Default = 'default',
-  Secondary = 'secondary',
-  Strong = 'strong',
-}
-
 export interface IAnnotationStyle {
-  format: IAnnotationFormat;
+  color: string | null;
+  backgroundColor: string | null;
   symbol: string;
-}
-
-export interface IAnnotationStyles {
-  quickNote: IAnnotationStyle;
-  styles: IAnnotationStyle[];
+  name: string;
+  quick: boolean;
 }
 
 export interface IIdeaRange {
@@ -71,6 +63,29 @@ export interface IAnnotationSet {
 export interface IState {
   [key: string]: IAnnotationSet;
 }
+
+export const bgColors = [
+  '#ffadad',
+  '#ffd6a5',
+  '#fdffb6',
+  '#caffbf',
+  '#9bf6ff',
+  '#a0c4ff',
+  '#bdb2ff',
+  '#ffc6ff',
+  '#eeeeee',
+];
+
+export const textColors = [
+  'hsla(0, 62%, 30%, 1)',
+  'hsla(33, 70%, 30%, 1)',
+  'hsla(62, 58%, 30%, 1)',
+  'hsla(110, 60%, 20%, 1)',
+  'hsla(185, 70%, 20%, 1)',
+  'hsla(217, 74%, 30%, 1)',
+  'hsla(249, 60%, 30%, 1)',
+  'hsla(300, 44%, 30%, 1)',
+];
 
 const INITIAL_STATE: IState = {};
 

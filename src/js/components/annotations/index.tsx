@@ -5,7 +5,7 @@ import {
   IAnnotation,
   IAnnotationAndIdeas,
   INote,
-  IAnnotationStyles,
+  IAnnotationStyle,
 } from './reducer';
 import AnnotationButtons from './buttons';
 import AnnotationDetail from './detail';
@@ -18,7 +18,7 @@ import docInfo from '../../doc-info';
 
 interface IProps {
   annotations: IState;
-  annotationStyles: IAnnotationStyles;
+  annotationStyles: IAnnotationStyle[];
   addAnnotation(data: IAnnotationAndIdeas): void;
   updateAnnotation(data: IAnnotationAndIdeas): void;
   destroyAnnotation(data: IAnnotationAndIdeas): void;

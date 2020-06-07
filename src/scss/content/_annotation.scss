@@ -3,16 +3,11 @@
 
   --annotation-color: black;
   --annotation-highlight: #ffa;
-
-  --annotation-color--secondary: inherit;
-  --annotation-highlight--secondary: #eee;
-
-  --annotation-color--strong: red;
-  --annotation-highlight--strong: #aff;
 }
 
 .content,
-.footnote-content {
+.footnote-content,
+.annotation-styles {
   .annotation {
     display: inline;
     padding: 0.1rem 0.125rem;
@@ -20,16 +15,6 @@
     color: var(--annotation-color);
     background: var(--annotation-highlight);
     border-radius: 3px;
-  }
-
-  .annotation--secondary {
-    color: var(--annotation-color--secondary);
-    background: var(--annotation-highlight--secondary);
-  }
-
-  .annotation--strong {
-    color: var(--annotation-color--strong);
-    background: var(--annotation-highlight--strong);
   }
 
   .annotation__head {
