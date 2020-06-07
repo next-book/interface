@@ -138,7 +138,7 @@ class FontSize extends React.Component<IFontSizeProps, IFontSizeState> {
     const clickedButton =
       el.classList.contains('font-size-slider__toggle') ||
       el.classList.contains('font-size-slider__close') ||
-      el.closest('.font-size-slider') !== null;
+      el.closest('.font-size-slider__close') !== null;
     const clickedOutside =
       !el.classList.contains('font-size-slider') && el.closest('.font-size-slider') === null;
 
