@@ -76,16 +76,7 @@ export const bgColors = [
   '#eeeeee',
 ];
 
-export const textColors = [
-  'hsla(0, 62%, 30%, 1)',
-  'hsla(33, 70%, 30%, 1)',
-  'hsla(62, 58%, 30%, 1)',
-  'hsla(110, 60%, 20%, 1)',
-  'hsla(185, 70%, 20%, 1)',
-  'hsla(217, 74%, 30%, 1)',
-  'hsla(249, 60%, 30%, 1)',
-  'hsla(300, 44%, 30%, 1)',
-];
+export const textColors = ['#edae49', '#d1495b', '#00798c', '#30638e', '#003d5b'];
 
 const INITIAL_STATE: IState = {};
 

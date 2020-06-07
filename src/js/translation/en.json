@@ -18,7 +18,10 @@
     "about-this-book": "Next-book production info",
     "revision": "Revision identifier",
     "generated-at": "Published at",
-    "offline-mode": "Offline mode"
+    "offline-mode": "Offline mode",
+    "annotation-styles": "Annotation styles",
+    "create-quick-note": "Open note editor right away",
+    "change-does-overwrite-existing": "Changes do not alter existing annotations."
   },
   "offline": {
     "cache-available": "Offline mode is available. You can read this book in airplane mode.",

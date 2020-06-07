@@ -235,7 +235,9 @@ function Highlights(props: IHighglightsProps) {
                 ╳
               </span>
             )}
-            <div className="annotation__symbol">{annotation.style.symbol}</div>
+            <div className="annotation__symbol">
+              {annotation.style.symbol} {annotation.style.name}
+            </div>
             <div className="desk-annotation-wrapper">
               {sortedIdeas
                 .filter(

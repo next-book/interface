@@ -8,7 +8,6 @@
   }
 
   .cell {
-    white-space: nowrap;
   }
 
   .cell__title {
@@ -98,6 +97,61 @@
     .val {
       font-weight: normal;
       color: var(--ui-c-medium);
+    }
+  }
+
+  .annotation-styles {
+    .styles {
+      line-height: 2;
+    }
+
+    .style {
+      display: inline-block;
+      padding: 0 var(--small-padding);
+      margin: 0 var(--small-padding) var(--small-padding) 0;
+      border: 1px solid transparent;
+      border-radius: var(--border-radius);
+      box-shadow: var(--ui-box-shadow);
+      cursor: pointer;
+
+      &.style-edited {
+        border: 1px solid var(--accent-color);
+      }
+
+      .quick {
+        padding-left: 0.5em;
+        opacity: 0.5;
+      }
+    }
+
+    .style-editor {
+      box-shadow: var(--ui-inset-shadow);
+      padding: var(--base-padding);
+      border-radius: var(--border-radius);
+
+      input {
+        font-size: var(--ui-font-size);
+        line-height: var(--ui-font-size);
+        height: var(--ui-font-size);
+        padding: var(--small-padding);
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      .color-select {
+        display: flex;
+        height: 42px;
+        line-height: 42px;
+        cursor: pointer;
+        border: 1px solid var(--ui-c-soft);
+        border-radius: var(--border-radius);
+        margin: var(--base-padding) 0;
+
+        div {
+          flex: 1;
+          text-align: center;
+        }
+      }
     }
   }
 }

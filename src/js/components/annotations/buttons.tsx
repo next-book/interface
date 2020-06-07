@@ -213,14 +213,16 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
     return (
       <div className={classes.concat(['annotation-buttons--new']).join(' ')}>
         <div className="button-wrapper">
-          {this.props.styles.map((style, index) => (
-            <StyleButton
-              className={style.quick ? 'quick-note' : ''}
-              key={index}
-              style={style}
-              fn={() => fn(style)}
-            />
-          ))}
+          {this.props.styles
+            .filter(s => s.symbol !== '')
+            .map((style, index) => (
+              <StyleButton
+                className={style.quick ? 'quick-note' : ''}
+                key={index}
+                style={style}
+                fn={() => fn(style)}
+              />
+            ))}
         </div>
       </div>
     );
@@ -232,9 +234,11 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
     return (
       <div className={classes.join(' ')}>
         <div className="button-wrapper">
-          {this.props.styles.map((style, index) => (
-            <StyleButton key={index} style={style} fn={() => fn(style)} />
-          ))}
+          {this.props.styles
+            .filter(s => s.symbol !== '')
+            .map((style, index) => (
+              <StyleButton key={index} style={style} fn={() => fn(style)} />
+            ))}
         </div>
       </div>
     );

@@ -12,3 +12,8 @@
   font-style: italic;
   color: var(--ui-c-medium);
 }
+
+.nb-ui-note {
+  font-size: calc(0.8 * var(--ui-font-size));
+  margin-bottom: 0;
+}

@@ -8,7 +8,7 @@ import { reducer } from './../config-reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { applyFontSize } from './../config';
 import { FontSize } from './font-size';
-import { AnnotationStyles } from './annotation-styles';
+import AnnotationStyles from './annotation-styles';
 import { IAnnotationStyle } from './../annotations/reducer';
 
 interface IProps extends WithTranslation {
@@ -17,6 +17,7 @@ interface IProps extends WithTranslation {
   offline: IOfflineState;
   manifest: IManifestState;
   setFontSize(size: string): void;
+  updateStyle(index: number, style: IAnnotationStyle): void;
   showOnboarding(): void;
 }
 
@@ -65,8 +66,8 @@ class Options extends React.Component<IProps, IState> {
                 fontSize={this.props.fontSize}
               />
               <AnnotationStyles
-                title={this.props.t('annotation-styles')}
                 styles={this.props.annotationStyles}
+                updateStyle={this.props.updateStyle}
               />
             </div>
           </div>
@@ -112,6 +113,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     {
       showOnboarding: reducer.showOnboarding,
       setFontSize: reducer.setFontSize,
+      updateStyle: reducer.updateStyle,
     },
     dispatch
   );
