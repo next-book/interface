@@ -33,7 +33,7 @@ export class Pagination extends React.Component<IProps, IState> {
     this.state = {
       barHeight: null,
       windowHeight: null,
-      zonePadding: { [Side.Top]: 18, [Side.Bottom]: 8 * 4 },
+      zonePadding: { [Side.Top]: 18, [Side.Bottom]: 48 },
       readingZone: { [Side.Top]: 0, [Side.Bottom]: 0 },
       lastScrollStart: null,
     };
@@ -118,11 +118,15 @@ export class Pagination extends React.Component<IProps, IState> {
 
     window.addEventListener('resize', this.setSizes);
 
-    window.requestAnimationFrame(this.setSizes);
+    window.requestAnimationFrame(() => {
+      this.setSizes();
+      document.body.classList.add('paginated');
+    });
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.getScrollHandler());
+    window.removeEventListener('resize', this.setSizes);
   }
 
   render() {
@@ -159,7 +163,9 @@ function calcCutoff(from: Side, readingZone: Sides) {
   if (from === Side.Top) {
     y += getComputedStyleNumber(el, 'paddingTop');
 
-    while (y < readingZone[from]) {
+    // adding half of lineHeight to account for Firefox behavior
+    // (Chrome and Safari work OK without this)
+    while (y + lineHeight / 2 < readingZone[from]) {
       y += lineHeight;
     }
   } else if (from === Side.Bottom) {

@@ -82,10 +82,10 @@ export class Navigation extends React.Component<IProps> {
 
     if (role === DocRole.Chapter && position !== null) {
       const next = this.props.documents[position.file].next;
-      return next ? `${next}#idea1` : null;
+      return next || null;
     } else if (role === DocRole.Colophon || role === DocRole.Index) {
       const next = this.props.readingOrder[0];
-      return next ? `${next}#idea1` : null;
+      return next || null;
     } else return null;
   };
 

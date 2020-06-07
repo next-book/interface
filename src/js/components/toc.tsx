@@ -40,7 +40,7 @@ class Toc extends React.Component<IProps, IState> {
 
           return (
             <li key={doc.order !== null ? doc.order : ''}>
-              <a className={current ? 'current-chapter' : undefined} href={`${doc.file}#idea1`}>
+              <a className={current ? 'current-chapter' : undefined} href={doc.file}>
                 {doc.title}
               </a>
 
@@ -73,7 +73,7 @@ class Toc extends React.Component<IProps, IState> {
     if (docInfo.links.colophon !== null) {
       otherLinks.push({
         classes: docInfo.role === DocRole.Colophon ? 'current-chapter' : undefined,
-        href: `${docInfo.links.colophon}#idea1`,
+        href: docInfo.links.colophon,
         text: this.props.t('colophon'),
       });
     }
