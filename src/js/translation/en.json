@@ -4,10 +4,10 @@
     "note": "Note"
   },
   "controls": {
-    "show-toc": "Show table of contents",
+    "show-toc": "Show contents",
     "show-notes": "Show notes",
     "show-options": "Show options",
-    "toc": "Table of contents",
+    "toc": "Contents",
     "annotations": "Annotations",
     "options": "Options"
   },
@@ -27,8 +27,9 @@
     "unsecure": "Offline mode is not available. This book is served over unsecured protocol."
   },
   "onboarding": {
-    "intro-heading": "4 tips in case this is your first web book",
-    "intro": "You can access Table of contents, Options etc. by tapping lower right corner of the screen where position in the book is shown.",
+    "intro": "Is this your first web book? Use these hidden buttons to access book menu.",
+    "intro-show": "Show 3 more tips",
+    "intro-hide": "Close",
     "pagination-heading": "Focused reading",
     "pagination": "If you are distracted by scrolling, navigate by swiping left/right, tapping hidden buttons or pressing arrow keys.",
     "remember-heading": "This book remembers, where you stopped reading",
@@ -54,7 +55,6 @@
   "navigation": {
     "title-page": "Title",
     "colophon": "Colophon",
-    "intro": "This book remembers where you stopped reading. You can view Table of Contents anytime by clicking the bottom bar.",
     "start": "Open first chapter",
     "return": "Return back",
     "continueReading": "Continue reading",

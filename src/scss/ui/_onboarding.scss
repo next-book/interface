@@ -2,6 +2,106 @@ $nb-yellow: #fff6de;
 $nb-red: #9a4663;
 
 .nb-onboarding {
+  .onboarding-opener {
+    z-index: 1;
+
+    position: fixed;
+    bottom: 55px;
+    left: 0;
+    width: 100vw;
+    padding: 0 3px;
+    box-sizing: border-box;
+    border-radius: var(--border-radius-xl);
+
+    font-family: var(--ui-font);
+    font-size: var(--ui-font-size);
+
+    .onboarding-opener-bubble {
+      margin: 0 0 0 auto;
+      max-width: 14rem;
+      overflow: hidden;
+
+      background: var(--ui-c-bg-shade);
+
+      border: 1px solid var(--ui-c-soft);
+      border-radius: var(--border-radius-xl);
+
+      .onboarding-opener-intro {
+        padding: calc(var(--base-padding) / 2);
+      }
+
+      .buttons {
+        display: flex;
+        border-top: 1px solid var(--ui-c-soft);
+
+        &:first-child {
+          border: none;
+        }
+
+        span {
+          background: var(--ui-c-bg);
+          white-space: nowrap;
+          border: solid var(--ui-c-soft);
+          border-width: 0 1px 0 0;
+          flex: 2;
+          text-align: center;
+          text-decoration: none;
+          color: var(--ui-c-text-shade);
+          line-height: 2;
+          padding: 0.5em;
+          cursor: pointer;
+
+          &:last-child {
+            flex: 1;
+            border-right: 0;
+          }
+        }
+      }
+    }
+  }
+
+  /* keep in sync with .controls-launcher */
+  .controls-launcher-demo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    cursor: pointer;
+
+    div {
+      min-height: 48px;
+    }
+  }
+
+  /* custom demo styles */
+  .controls-launcher-demo {
+    animation: pulse-opacity 5s ease-in-out infinite;
+    pointer-events: none;
+    bottom: 3px;
+    opacity: 0.5;
+    font-family: var(--ui-font);
+
+    div {
+      min-height: none;
+      height: 45px;
+
+      border: 1px solid $nb-red;
+      background: rgba(255, 255, 255, 0.5);
+      color: $nb-red;
+      font-size: calc(0.9 * var(--ui-font-size));
+
+      border-radius: 5px;
+      border-width: 1px 1px 0 0;
+      margin: 0 3px;
+      line-height: 48px;
+      text-align: center;
+    }
+  }
+
   .onboarding-overlay {
     position: fixed;
     top: 0;
@@ -28,6 +128,16 @@ $nb-red: #9a4663;
     overflow: auto;
 
     animation: fade-in 0.4s ease-in;
+
+    @media only screen and (min-width: 760px) {
+      bottom: 25vh;
+      left: 50%;
+      top: auto;
+      right: auto;
+
+      width: 20rem;
+      margin-left: -10rem;
+    }
   }
 
   h2 {
@@ -43,11 +153,15 @@ $nb-red: #9a4663;
   .onboarding__card {
     display: grid;
     height: 100%;
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: 1fr 2fr 1fr;
     align-items: center;
     grid-gap: var(--base-padding);
     max-width: calc(16 * var(--ui-font-size));
     margin: 0 auto;
+
+    @media only screen and (min-width: 760px) {
+      height: auto;
+    }
   }
 
   .onboarding__content {

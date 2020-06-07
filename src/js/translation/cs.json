@@ -27,8 +27,9 @@
     "unsecure": "Offline mód není dostupný, protože je kniha stažená přes nezabezpečený protokol."
   },
   "onboarding": {
-    "intro-heading": "4 tipy, pokud čtete webovou knížku poprvé",
-    "intro": "Menu s obsahem, nastavením apod. otevřete ťuknutím na pravý dolní roh, kde vidíte svou pozici v knize.",
+    "intro": "Je tohle vaše první webová knížka? U spodního okraje najdete vždy tato skrytá tlačítka pro otevření menu.",
+    "intro-show": "Další 3 tipy",
+    "intro-hide": "Zavřít",
     "pagination-heading": "Soustředěné čtení",
     "pagination": "Pokud vás posouvání textu rozptyluje, použijte svajpnutí, skrytá tlačítka na okrajích, nebo šipky na klávesnici.",
     "remember-heading": "Kniha si pamatuje, kde jste přestali číst",
@@ -54,7 +55,6 @@
   "navigation": {
     "title-page": "Titulní strana",
     "colophon": "Tiráž",
-    "intro": "Tato kniha si pamatuje, kam jste ji dočetli. Pro zobrazení obsahu knihy můžete kliknout na spodní lištu.",
     "start": "Otevřít první kapitolu",
     "return": "Vrátit se",
     "continueReading": "Pokračovat ve čtení",

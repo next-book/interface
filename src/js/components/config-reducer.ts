@@ -1,6 +1,7 @@
 import { IAnnotationStyles, IAnnotationFormat } from './annotations/reducer';
 
-const TOGGLE_ONBOARDING = 'nb-base/offline/TOGGLE_ONBOARDING';
+const HIDE_ONBOARDING = 'nb-base/offline/HIDE_ONBOARDING';
+const SHOW_ONBOARDING = 'nb-base/offline/SHOW_ONBOARDING';
 const TOGGLE_PROGRESS_DISPLAY = 'nb-base/offline/TOGGLE_PROGRESS_DISPLAY';
 const SET_FONT_SIZE = 'nb-base/offline/SET_FONT_SIZE';
 
@@ -67,13 +68,10 @@ const INITIAL_STATE: IState = {
 
 export function reducer(state: IState = INITIAL_STATE, action: Actions) {
   switch (action.type) {
-    case TOGGLE_ONBOARDING:
-      const newState =
-        state.showOnboarding === ShowOnboarding.Disabled
-          ? ShowOnboarding.Enabled
-          : ShowOnboarding.Disabled;
-
-      return { ...state, ...{ showOnboarding: newState } };
+    case SHOW_ONBOARDING:
+      return { ...state, ...{ showOnboarding: ShowOnboarding.Enabled } };
+    case HIDE_ONBOARDING:
+      return { ...state, ...{ showOnboarding: ShowOnboarding.Disabled } };
     case TOGGLE_PROGRESS_DISPLAY:
       return {
         ...state,
@@ -86,9 +84,15 @@ export function reducer(state: IState = INITIAL_STATE, action: Actions) {
   }
 }
 
-reducer.toggleOnboarding = function() {
+reducer.showOnboarding = function() {
   return <const>{
-    type: TOGGLE_ONBOARDING,
+    type: SHOW_ONBOARDING,
+  };
+};
+
+reducer.hideOnboarding = function() {
+  return <const>{
+    type: HIDE_ONBOARDING,
   };
 };
 
@@ -107,5 +111,8 @@ reducer.setFontSize = function(size: string) {
 };
 
 export type Actions = ReturnType<
-  typeof reducer.toggleOnboarding | typeof reducer.toggleDisplay | typeof reducer.setFontSize
+  | typeof reducer.showOnboarding
+  | typeof reducer.hideOnboarding
+  | typeof reducer.toggleDisplay
+  | typeof reducer.setFontSize
 >;
