@@ -85,7 +85,7 @@ class Toc extends React.Component<IProps, IState> {
             <h1 className="nb-ui-big-title">{this.props.t('controls:toc')}</h1>
             <Progress form={ProgressForm.Goto} />
             {this.state.toc}
-            <p>
+            <p className="nb-toc-other">
               {otherLinks.map((link, index) => {
                 return (
                   <span key={index}>

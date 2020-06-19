@@ -83,6 +83,7 @@
 
         cursor: pointer;
         text-overflow: ellipsis;
+        text-align: center;
         white-space: nowrap;
         overflow: hidden;
       }
@@ -131,7 +132,7 @@
       box-shadow: 0 0 40px var(--ui-background), 0 0 40px var(--ui-background),
         0 0 40px var(--ui-background);
       background: var(--ui-background);
-      padding: calc(var(--base-padding) * 2) var(--base-padding);
+      padding: calc(var(--base-padding) * 2);
       font-size: calc(var(--ui-font-size) * 0.8);
 
       & > div {

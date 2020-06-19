@@ -4,7 +4,7 @@
   .options-wrapper {
     display: grid;
     grid-gap: var(--base-padding);
-    margin: var(--base-padding);
+    margin: var(--base-padding) calc(2 * var(--base-padding));
   }
 
   .cell {
