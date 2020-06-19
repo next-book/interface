@@ -130,6 +130,7 @@
       align-self: end;
       z-index: 1;
       width: 100%;
+      box-sizing: border-box;
       box-shadow: 0 0 40px var(--ui-background), 0 0 40px var(--ui-background),
         0 0 40px var(--ui-background);
       background: var(--ui-background);
