@@ -4,14 +4,14 @@
 
   ul,
   ol {
-    font-size: var(--ui-font-size);
+    font-size: 1rem;
     font-family: var(--content-font);
-    margin: var(--ui-font-size) 0;
-    padding-left: calc(2 * var(--ui-font-size));
+    margin: 1rem 0;
+    padding-left: calc(2 * 1rem);
   }
 
   li {
-    margin-bottom: calc(var(--ui-font-size) / 2);
+    margin-bottom: calc(1rem / 2);
   }
 
   ul li {
@@ -24,7 +24,7 @@
 }
 
 .nb-toc-other {
-  font-size: var(--ui-font-size);
+  font-size: 1rem;
 }
 
 .nb-toc,
