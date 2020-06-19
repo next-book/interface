@@ -6,10 +6,10 @@ $nb-red: #9a4663;
     z-index: 1;
 
     position: fixed;
-    bottom: 55px;
+    bottom: 65px;
     left: 0;
     width: 100vw;
-    padding: 0 3px;
+    padding: 0 15px;
     box-sizing: border-box;
     border-radius: var(--border-radius-xl);
 
@@ -20,6 +20,7 @@ $nb-red: #9a4663;
       margin: 0 0 0 auto;
       max-width: 14rem;
       overflow: hidden;
+      box-shadow: var(--ui-box-shadow);
 
       background: var(--ui-c-bg-shade);
 
@@ -28,6 +29,7 @@ $nb-red: #9a4663;
 
       .onboarding-opener-intro {
         padding: calc(var(--base-padding) / 2);
+        background: #ffa;
       }
 
       .buttons {
@@ -89,14 +91,17 @@ $nb-red: #9a4663;
       min-height: none;
       height: 45px;
 
-      border: 1px solid $nb-red;
       background: rgba(255, 255, 255, 0.5);
       color: $nb-red;
       font-size: calc(0.9 * var(--ui-font-size));
 
       border-radius: 5px;
-      border-width: 1px 1px 0 0;
-      margin: 0 3px;
+      background: linear-gradient(
+        to bottom,
+        rgba(200, 200, 200, 0.3) 0%,
+        rgba(234, 234, 234, 0) 100%
+      );
+      margin: 0 15px;
       line-height: 48px;
       text-align: center;
     }
