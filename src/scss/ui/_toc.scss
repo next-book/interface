@@ -1,14 +1,31 @@
 .nb-toc {
   padding: var(--base-padding);
   padding-bottom: calc(4 * var(--base-padding));
+  font-family: var(--content-font);
 
+  ul,
   ol {
-    margin-top: 0;
-    padding-left: calc(1.5 * var(--ui-font-size));
+    font-size: 1rem;
+    margin: 0 0 1rem;
+    padding-left: calc(2 * var(--ui-font-size));
   }
 
   li {
     margin-bottom: calc(var(--ui-font-size) / 2);
+
+    a {
+      font-weight: bold;
+      color: var(--text-color);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  ul li {
+    list-style-type: none;
   }
 
   .current-chapter {
