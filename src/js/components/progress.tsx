@@ -154,23 +154,34 @@ class Progress extends React.Component<IProps, IState> {
           </div>
         );
       case ProgressForm.Config:
+        const { displayPosition, displayPercentRead, displayMinutesInChapter } = this.props;
+
         return (
           <div className="control__details nb-progress">
             <span className="current-position current-position--config">
-              <label onClick={() => this.props.toggleDisplay(ProgressKind.MinutesInChapter)}>
-                {this.props.displayMinutesInChapter ? '● ' : '○ '}
+              <label
+                className={`dot-select ${displayMinutesInChapter ? 'dot-selected' : ''}`}
+                onClick={() => this.props.toggleDisplay(ProgressKind.MinutesInChapter)}
+              >
+                {displayMinutesInChapter ? '● ' : '○ '}
                 {minutesLeft !== null
                   ? this.props.t('minutes-left-long', { minutes: minutesLeft })
                   : null}
               </label>
 
-              <label onClick={() => this.props.toggleDisplay(ProgressKind.PercentRead)}>
-                {this.props.displayPercentRead ? '● ' : '○ '}
+              <label
+                className={`dot-select ${displayPercentRead ? 'dot-selected' : ''}`}
+                onClick={() => this.props.toggleDisplay(ProgressKind.PercentRead)}
+              >
+                {displayPercentRead ? '● ' : '○ '}
                 {this.props.t('progress-long', { percent: cropProgress(progress) })}
               </label>
 
-              <label onClick={() => this.props.toggleDisplay(ProgressKind.Position)}>
-                {this.props.displayPosition ? '● ' : '○ '}
+              <label
+                className={`dot-select ${displayPosition ? 'dot-selected' : ''}`}
+                onClick={() => this.props.toggleDisplay(ProgressKind.Position)}
+              >
+                {displayPosition ? '● ' : '○ '}
                 {this.props.t('nthChapterNthSentence', {
                   chapter: ro.indexOf(this.props.position.file) + 1,
                   idea: this.props.position.idea,

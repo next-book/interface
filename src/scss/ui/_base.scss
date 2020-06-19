@@ -17,3 +17,11 @@
   font-size: calc(0.8 * var(--ui-font-size));
   margin-bottom: 0;
 }
+
+.dot-select {
+  opacity: 0.7;
+
+  &.dot-selected {
+    opacity: 1;
+  }
+}

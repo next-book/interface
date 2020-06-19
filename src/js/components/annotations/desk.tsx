@@ -114,12 +114,11 @@ class AnnotationDesk extends React.Component<IProps, IState> {
         </div>
         <div className="control__details">
           <div>
-            <label className="nb-desk__show-all-toggle">
-              <input
-                type="checkbox"
-                defaultChecked={this.state.showAllChapters}
-                onChange={this.toggleAllChapters}
-              />{' '}
+            <label
+              className={`dot-select ${this.state.showAllChapters ? 'dot-selected' : ''}`}
+              onClick={this.toggleAllChapters}
+            >
+              {this.state.showAllChapters ? '● ' : '○ '}
               {this.props.t('show-all')}
             </label>
           </div>
