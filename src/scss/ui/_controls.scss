@@ -97,7 +97,8 @@
       .close {
         display: block;
         flex: 0;
-        padding: calc(var(--base-padding) / 2) var(--base-padding);
+        padding: calc(var(--base-padding) / 2) var(--base-padding) calc(var(--base-padding) / 2)
+          calc(var(--base-padding) / 2);
         margin-top: calc(var(--base-padding) / 2);
         cursor: pointer;
 
