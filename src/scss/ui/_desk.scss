@@ -96,7 +96,15 @@
   }
 
   .annotation__symbol {
+    display: block;
+    margin-top: -0.25em;
     font-family: var(--content-font);
+    padding-bottom: 0.25em;
+  }
+
+  .annotation__name {
+    font-family: var(--ui-font);
+    padding-left: 0.25em;
   }
 
   .annotation {

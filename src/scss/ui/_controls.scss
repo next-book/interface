@@ -74,7 +74,7 @@
       .tab {
         display: block;
         height: 100%;
-        flex: 2;
+        flex-grow: 1;
         min-width: 0;
         padding: 0 var(--base-padding);
         line-height: 3;
