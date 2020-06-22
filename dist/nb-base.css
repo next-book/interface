@@ -14,8 +14,8 @@
   --highlight-color: rgba(255, 255, 0, 1);
   --base-padding: 16px;
   --small-padding: 6px;
-  --border-radius: 3px;
-  --border-radius-xl: 6px;
+  --border-radius: 6px;
+  --border-radius-xl: 9px;
   --ui-background: white;
   --ui-overlay: rgba(0, 0, 0, 0.5);
   --ui-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
@@ -606,7 +606,13 @@ body.paginated-button-back::after {
   .nb-desk .annotation__head {
     display: none; }
   .nb-desk .annotation__symbol {
-    font-family: var(--content-font); }
+    display: block;
+    margin-top: -0.25em;
+    font-family: var(--content-font);
+    padding-bottom: 0.25em; }
+  .nb-desk .annotation__name {
+    font-family: var(--ui-font);
+    padding-left: 0.25em; }
   .nb-desk .annotation {
     display: inline;
     padding: 0.1rem 0.125rem;
@@ -903,19 +909,19 @@ body.paginated-button-back::after {
   padding-bottom: calc(4 * var(--base-padding)); }
   .nb-toc ul,
   .nb-toc ol {
-    font-size: var(--ui-font-size);
+    font-size: 1rem;
     font-family: var(--content-font);
-    margin: var(--ui-font-size) 0;
-    padding-left: calc(2 * var(--ui-font-size)); }
+    margin: 1rem 0;
+    padding-left: calc(2 * 1rem); }
   .nb-toc li {
-    margin-bottom: calc(var(--ui-font-size) / 2); }
+    margin-bottom: calc(1rem / 2); }
   .nb-toc ul li {
     list-style-type: none; }
   .nb-toc .current-chapter {
     font-weight: bold; }
 
 .nb-toc-other {
-  font-size: var(--ui-font-size); }
+  font-size: 1rem; }
 
 .nb-toc a,
 .nb-toc-other a {
@@ -986,7 +992,7 @@ body.paginated-button-back::after {
       .nb-controls .control .control-bar .tab {
         display: block;
         height: 100%;
-        flex: 2;
+        flex-grow: 1;
         min-width: 0;
         padding: 0 var(--base-padding);
         line-height: 3;
@@ -1027,6 +1033,7 @@ body.paginated-button-back::after {
       align-self: end;
       z-index: 1;
       width: 100%;
+      box-sizing: border-box;
       box-shadow: 0 0 40px var(--ui-background), 0 0 40px var(--ui-background), 0 0 40px var(--ui-background);
       background: var(--ui-background);
       padding: calc(var(--base-padding) * 2);
