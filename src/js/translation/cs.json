@@ -30,7 +30,8 @@
     "unsecure": "Offline mód není dostupný, protože je kniha stažená přes nezabezpečený protokol."
   },
   "onboarding": {
-    "intro": "Je tohle vaše první webová knížka? U spodního okraje najdete vždy tato skrytá tlačítka pro otevření menu.",
+    "intro-head": "Je tohle vaše první webová knížka?",
+    "intro": "U spodního okraje najdete vždy skryté tlačítko pro otevření menu.",
     "intro-show": "Další 3 tipy",
     "intro-hide": "Zavřít",
     "pagination-heading": "Soustředěné čtení",

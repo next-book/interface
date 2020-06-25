@@ -53,14 +53,14 @@ export class Onboarding extends React.Component<IProps, IState> {
         <div>
           <div className="onboarding-opener ui-target">
             <div className="onboarding-opener-bubble">
-              <div className="onboarding-opener-intro">{this.props.t('intro')}</div>
-              <div className="buttons">
-                <span className="button" onClick={this.props.show}>
+              <div className="onboarding-opener-close" onClick={this.props.hide}>
+                {Icons.Close}
+              </div>
+              <div className="onboarding-opener-intro">
+                <strong>{this.props.t('intro-head')}</strong> {this.props.t('intro')}{' '}
+                <a className="onboarding-opener-open" onClick={this.props.show}>
                   {this.props.t('intro-show')}
-                </span>
-                <span className="button" onClick={this.props.hide}>
-                  {this.props.t('intro-hide')}
-                </span>
+                </a>
               </div>
             </div>
           </div>
