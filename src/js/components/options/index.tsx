@@ -58,7 +58,9 @@ class Options extends React.Component<IProps, IState> {
               <h1 className="nb-ui-big-title">{this.props.t('controls:options')}</h1>
               <div className="cell show-tips">
                 <h3 className="nb-ui-title cell__title">{this.props.t('show-tips-title')}</h3>
-                <button onClick={this.props.showOnboarding}>{this.props.t('show-tips')}</button>
+                <button className="button" onClick={this.props.showOnboarding}>
+                  {this.props.t('show-tips')}
+                </button>
               </div>
               <FontSize
                 title={this.props.t('font-size')}

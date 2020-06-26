@@ -10,10 +10,15 @@
     border: none;
     border-radius: var(--border-radius);
     background: var(--ui-background);
+    line-height: 1.6;
 
-    &.primary {
+    &.button-primary {
       color: var(--ui-background);
       background-color: var(--accent-color);
+
+      .svg-icon {
+        fill: var(--ui-background);
+      }
     }
   }
 

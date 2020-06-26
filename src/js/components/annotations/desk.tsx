@@ -276,6 +276,7 @@ interface INotesProps {
 }
 
 interface INotesState {
+  newNoteIsShown: boolean;
   newNote: string;
 }
 
@@ -284,6 +285,7 @@ class Notes extends React.Component<INotesProps, INotesState> {
     super(props);
 
     this.state = {
+      newNoteIsShown: false,
       newNote: '',
     };
   }
@@ -292,30 +294,49 @@ class Notes extends React.Component<INotesProps, INotesState> {
     this.setState({ ...this.state, newNote: event.target.value });
   };
 
+  private toggleNewNote = (event: React.SyntheticEvent) => {
+    this.setState({ ...this.state, newNoteIsShown: !this.state.newNoteIsShown });
+  };
+
   private addNote = () => {
     this.props.addNote(getNewNoteId(this.props.notes), this.state.newNote, this.props.file);
 
-    this.setState({ ...this.state, newNote: '' });
+    this.setState({ ...this.state, newNoteIsShown: false, newNote: '' });
   };
 
   render() {
     return (
       <div className="desk__notes">
-        <h2 className="nb-ui-title">{this.props.t('notes')}</h2>
+        <h2 className="nb-ui-title">
+          {this.props.t('notes')}{' '}
+          {!this.state.newNoteIsShown && (
+            <button className="button button-primary" onClick={this.toggleNewNote}>
+              {Icons.Plus} {this.props.t('add-note')}
+            </button>
+          )}
+        </h2>
 
-        <div className="desk__note-editor">
-          <ContentEditable
-            className="desk__note-editor__input"
-            html={this.state.newNote}
-            tagName="article"
-            onChange={this.updateNewNote}
-          />
-        </div>
-        <div className="button-zero-bar button-zero-bar--bottom button-zero-bar--single-button">
-          <button className="round-button" onClick={this.addNote}>
-            {Icons.Check}
-          </button>
-        </div>
+        {this.state.newNoteIsShown && (
+          <>
+            <div className="desk__note-editor">
+              <ContentEditable
+                className="desk__note-editor__input"
+                html={this.state.newNote}
+                tagName="article"
+                onChange={this.updateNewNote}
+              />
+            </div>
+
+            <div className="button-zero-bar button-zero-bar--bottom button-zero-bar--two-buttons">
+              <button className="round-button" onClick={this.addNote}>
+                {Icons.Check}
+              </button>
+              <button className="round-button round-button--warning" onClick={this.toggleNewNote}>
+                {Icons.Delete}
+              </button>
+            </div>
+          </>
+        )}
 
         {Object.values(this.props.notes).length ? (
           Object.entries(this.props.notes)
