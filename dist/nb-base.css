@@ -971,10 +971,13 @@ body.paginated-button-back::after {
     box-shadow: var(--ui-box-shadow);
     border: none;
     border-radius: var(--border-radius);
-    background: var(--ui-background); }
-    .nb-controls .button.primary {
+    background: var(--ui-background);
+    line-height: 1.6; }
+    .nb-controls .button.button-primary {
       color: var(--ui-background);
       background-color: var(--accent-color); }
+      .nb-controls .button.button-primary .svg-icon {
+        fill: var(--ui-background); }
   .nb-controls .controls-launcher {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
