@@ -20,6 +20,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import docInfo from '../../doc-info';
 import { IDocMap, INavDocument } from '../position-reducer';
 import { getAnnotatedIdeas } from './utils';
+import Icons from '../../icons';
 
 interface IProps extends WithTranslation {
   allAnnotations: IAllAnnotations;
@@ -225,15 +226,7 @@ function Highlights(props: IHighglightsProps) {
 
       {Object.keys(props.annotations).length ? (
         Object.values(props.annotations).map((annotation: IAnnotation, key) => (
-          <div key={key} className={`desk__annotation`}>
-            {false && (
-              <span
-                className="desk__annotation__destroy"
-                onClick={() => props.destroyAnnotation(annotation)}
-              >
-                ╳
-              </span>
-            )}
+          <div key={key} className="desk__annotation desk__annotation--box">
             <div className="annotation__symbol">
               {annotation.style.symbol}
               <span className="annotation__name">{annotation.style.name}</span>
@@ -317,7 +310,11 @@ class Notes extends React.Component<INotesProps, INotesState> {
             tagName="article"
             onChange={this.updateNewNote}
           />
-          <button onClick={this.addNote}>{this.props.t('add-note')}</button>
+        </div>
+        <div className="button-zero-bar button-zero-bar--bottom button-zero-bar--single-button">
+          <button className="round-button" onClick={this.addNote}>
+            {Icons.Check}
+          </button>
         </div>
 
         {Object.values(this.props.notes).length ? (
