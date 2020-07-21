@@ -13,6 +13,10 @@
   },
   "options": {
     "font-size": "Font size",
+    "dark-mode": "Color scheme",
+    "dark-mode-auto": "Auto (browser setting)",
+    "dark-mode-dark": "Dark",
+    "dark-mode-light": "Light",
     "show-tips-title": "How to read a web book?",
     "show-tips": "Show tips",
     "about-this-book": "Next-book production info",

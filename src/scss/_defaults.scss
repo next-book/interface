@@ -1,3 +1,75 @@
+@mixin root-color-reset {
+  color: var(--text-color);
+  background: var(--background);
+  :link {
+    color: var(--link);
+  }
+  :visited {
+    color: var(--visited);
+  }
+}
+
+@mixin root-colors {
+  // content colors
+  --background: white;
+  --transparent-background: rgba(255, 255, 255, 0);
+  --text-color: black;
+  --accent-color: #0033f8;
+  --highlight-color: rgba(255, 255, 0, 1);
+
+  --link: blue;
+  --visited: purple;
+
+  // ui colors
+  --ui-c-bg: #fff;
+  --ui-c-bg-shade: #fafafa;
+  --ui-c-soft: #ccc;
+  --ui-c-medium: #aaa;
+  --ui-c-text-shade: #777;
+  --ui-c-text: #222;
+
+  --ui-background: white;
+  --ui-overlay: rgba(0, 0, 0, 0.5);
+
+  --ui-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+  --ui-inset-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+
+  --ui-c-warning: red;
+  --soft-border-color: rgba(0, 0, 0, 0.1);
+  --overlay-bg: rgba(0, 0, 0, 0.6);
+
+  @include root-color-reset;
+}
+
+@mixin root-dark-colors {
+  --background: #333;
+  --transparent-background: #3333300;
+  --text-color: #eee;
+  --accent-color: #53c3ff;
+  --highlight-color: rgba(155, 50, 0, 1);
+
+  --link: aqua;
+  --visited: pink;
+
+  --ui-background: #222;
+  --ui-overlay: rgba(255, 255, 255, 0.5);
+
+  --ui-box-shadow: 0 0 5px rgba(255, 255, 255, 0.25);
+  --ui-inset-shadow: inset 0 0 4px rgba(255, 255, 255, 0.3);
+
+  --ui-c-bg: #222;
+  --ui-c-bg-shade: #333;
+  --ui-c-soft: #555;
+  --ui-c-medium: #777;
+  --ui-c-text-shade: #ddd;
+  --ui-c-text: #eee;
+
+  --soft-border-color: rgba(255, 255, 255, 0.1);
+  --overlay-bg: rgba(255, 255, 255, 0.6);
+
+  @include root-color-reset;
+}
+
 :root {
   // layout
   --content-max-width: 32rem;
@@ -11,34 +83,32 @@
   --base-font-size: #{$base-font-size};
   --font-size-ratio: 1;
 
-  // content colors
-  --background: white;
-  --text-color: black;
-  --accent-color: #0033f8;
-  --highlight-color: rgba(255, 255, 0, 1);
-
   // ui
   --base-padding: 16px;
   --small-padding: 6px;
   --border-radius: 6px;
   --border-radius-xl: 9px;
-  --ui-background: white;
-  --ui-overlay: rgba(0, 0, 0, 0.5);
 
   // ui typo
   --ui-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   --ui-font-size: calc(16px * var(--font-size-ratio));
 
-  --ui-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
-  --ui-inset-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
-
-  --ui-c-bg: #fff;
-  --ui-c-bg-shade: #fafafa;
-  --ui-c-soft: #ccc;
-  --ui-c-medium: #aaa;
-  --ui-c-text-shade: #777;
-  --ui-c-text: #222;
-
   font-size: calc(var(--base-font-size) * var(--font-size-ratio));
+
+  @include root-colors;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    @include root-dark-colors;
+  }
+}
+
+.nb-light-mode {
+  @include root-colors;
+}
+
+.nb-dark-mode {
+  @include root-dark-colors;
 }

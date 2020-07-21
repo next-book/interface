@@ -79,7 +79,7 @@ body.paginated-button-forward {
 
     display: block;
     overflow: hidden;
-    opacity: 0;
+    opacity: 0.1;
     width: calc(24px + 5vw);
     padding: 0;
     z-index: map-get($z-indexes, 'pagination');
@@ -89,9 +89,9 @@ body.paginated-button-forward {
     right: 0;
     height: 50vh;
 
-    border: solid rgba(0, 0, 0, 0.2);
+    border: solid var(--ui-c-text-shade);
     border-width: 2px;
-    color: rgba(0, 0, 0, 0.1);
+    color: var(--ui-c-text-shade);
     line-height: 60vh;
     font-size: 5vw;
     text-align: center;

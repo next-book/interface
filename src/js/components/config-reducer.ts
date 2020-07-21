@@ -8,6 +8,7 @@ const SET_FONT_SIZE = 'nb-base/config/SET_FONT_SIZE';
 const ADD_STYLE = 'nb-base/config/ADD_STYLE';
 const UPDATE_STYLE = 'nb-base/config/UPDATE_STYLE';
 const REMOVE_STYLE = 'nb-base/config/REMOVE_STYLE';
+const SET_DARK_MODE = 'nb-base/config/SET_DARK_MODE';
 
 export enum ProgressKind {
   MinutesInChapter = 'displayMinutesInChapter',
@@ -21,6 +22,12 @@ export enum ShowOnboarding {
   Initial,
 }
 
+export enum DarkMode {
+  Auto,
+  Light,
+  Dark,
+}
+
 export interface IState {
   showOnboarding: ShowOnboarding;
 
@@ -29,6 +36,7 @@ export interface IState {
   displayPosition: boolean;
 
   fontSize: string;
+  darkMode: DarkMode;
   annotationStyles: IAnnotationStyle[];
 
   keyboardNav: boolean;
@@ -41,6 +49,7 @@ const INITIAL_STATE: IState = {
   displayPercentRead: true,
   displayPosition: true,
   fontSize: '1',
+  darkMode: DarkMode.Auto,
   annotationStyles: [
     {
       color: null,
@@ -85,6 +94,8 @@ export function reducer(state: IState = INITIAL_STATE, action: Actions) {
       return updateStyle(state, action.payload);
     case REMOVE_STYLE:
       return removeStyle(state, action.payload);
+    case SET_DARK_MODE:
+      return { ...state, darkMode: action.payload };
     case HIDE_ONBOARDING:
       return { ...state, ...{ showOnboarding: ShowOnboarding.Disabled } };
     case TOGGLE_PROGRESS_DISPLAY:
@@ -142,6 +153,13 @@ reducer.setFontSize = function(size: string) {
   };
 };
 
+reducer.setDarkMode = function(mode: DarkMode) {
+  return <const>{
+    type: SET_DARK_MODE,
+    payload: mode,
+  };
+};
+
 reducer.updateStyle = function(index: number, style: IAnnotationStyle) {
   return <const>{
     type: UPDATE_STYLE,
@@ -168,6 +186,7 @@ export type Actions = ReturnType<
   | typeof reducer.hideOnboarding
   | typeof reducer.toggleDisplay
   | typeof reducer.setFontSize
+  | typeof reducer.setDarkMode
   | typeof reducer.updateStyle
   | typeof reducer.addStyle
   | typeof reducer.removeStyle

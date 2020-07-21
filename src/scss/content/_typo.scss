@@ -85,8 +85,8 @@
 
   .button,
   button {
-    border: 1px solid #aaa;
-    background: #ddd;
+    border: 1px solid var(--ui-c-medium);
+    background: var(--ui-c-soft);
     border-radius: var(--border-radius);
   }
 }

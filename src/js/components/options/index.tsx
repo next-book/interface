@@ -4,9 +4,10 @@ import { connect } from 'react-redux';
 import { IState as ICombinedState } from '../../reducer';
 import { IState as IManifestState } from './../manifest-reducer';
 import { IState as IOfflineState, SwAvailability } from './../offline-reducer';
-import { reducer } from './../config-reducer';
+import { reducer, DarkMode } from './../config-reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
-import { applyFontSize } from './../config';
+import { WithT } from 'i18next';
+import { applyFontSize, applyDarkMode } from './../config';
 import { FontSize } from './font-size';
 import AnnotationStyles from './annotation-styles';
 import { IAnnotationStyle } from './../annotations/reducer';
@@ -17,6 +18,8 @@ interface IProps extends WithTranslation {
   offline: IOfflineState;
   manifest: IManifestState;
   setFontSize(size: string): void;
+  darkMode: DarkMode;
+  setDarkMode(darkMode: DarkMode): void;
   updateStyle(index: number, style: IAnnotationStyle): void;
   showOnboarding(): void;
 }
@@ -49,6 +52,11 @@ class Options extends React.Component<IProps, IState> {
     applyFontSize(valueString);
   };
 
+  setDarkMode = (mode: DarkMode) => {
+    this.props.setDarkMode(mode);
+    applyDarkMode(mode);
+  };
+
   render() {
     return (
       <>
@@ -66,6 +74,11 @@ class Options extends React.Component<IProps, IState> {
                 title={this.props.t('font-size')}
                 setFontSize={this.setFontSize}
                 fontSize={this.props.fontSize}
+              />
+              <DarkModeComp
+                t={this.props.t}
+                setDarkMode={this.setDarkMode}
+                darkMode={this.props.darkMode}
               />
               <AnnotationStyles
                 styles={this.props.annotationStyles}
@@ -101,9 +114,59 @@ class Options extends React.Component<IProps, IState> {
   }
 }
 
+interface IDarkModeProps extends WithT {
+  darkMode: DarkMode;
+  setDarkMode(darkMode: DarkMode): void;
+}
+
+function DarkModeComp(props: IDarkModeProps) {
+  const isAuto = props.darkMode === DarkMode.Auto;
+  const isDark = props.darkMode === DarkMode.Dark;
+  const isLight = props.darkMode === DarkMode.Light;
+
+  return (
+    <div className="cell font-size">
+      <h3 className="nb-ui-title cell__title">{props.t('dark-mode')}</h3>
+      <div className="dark-mode-select">
+        <DarkModeLabel
+          title={props.t('dark-mode-auto')}
+          isSet={isAuto}
+          fn={() => props.setDarkMode(DarkMode.Auto)}
+        />
+        <DarkModeLabel
+          title={props.t('dark-mode-light')}
+          isSet={isLight}
+          fn={() => props.setDarkMode(DarkMode.Light)}
+        />
+        <DarkModeLabel
+          title={props.t('dark-mode-dark')}
+          isSet={isDark}
+          fn={() => props.setDarkMode(DarkMode.Dark)}
+        />
+      </div>
+    </div>
+  );
+}
+
+interface IDarkModeLabelProps {
+  title: string;
+  isSet: boolean;
+  fn(): void;
+}
+
+function DarkModeLabel(props: IDarkModeLabelProps) {
+  return (
+    <label className={`dot-select ${props.isSet ? 'dot-selected' : ''}`} onClick={props.fn}>
+      {props.isSet ? '● ' : '○ '}
+      {props.title}
+    </label>
+  );
+}
+
 const mapStateToProps = (state: ICombinedState) => {
   return {
     fontSize: state.config.fontSize,
+    darkMode: state.config.darkMode,
     annotationStyles: state.config.annotationStyles,
     offline: state.offline,
     manifest: state.manifest,
@@ -115,6 +178,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     {
       showOnboarding: reducer.showOnboarding,
       setFontSize: reducer.setFontSize,
+      setDarkMode: reducer.setDarkMode,
       updateStyle: reducer.updateStyle,
     },
     dispatch

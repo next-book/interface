@@ -13,6 +13,10 @@
   },
   "options": {
     "font-size": "Velikost písma",
+    "dark-mode": "Barevné schéma",
+    "dark-mode-auto": "Dle prohlížeče",
+    "dark-mode-dark": "Tmavý",
+    "dark-mode-light": "Světlý",
     "show-tips-title": "Jak číst webovou knížku?",
     "show-tips": "Zobrazit tipy",
     "about-this-book": "Produkční informace o next-booku",
