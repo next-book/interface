@@ -26,24 +26,34 @@ function getOrder() {
   return value !== null ? parseInt(value, 10) : null;
 }
 
-const docInfo = {
-  languageCode: getValue('html', 'lang'),
-  role: getRole(),
-  identifier: getValue('meta[name="identifier"]', 'content'),
-  order: getOrder(),
-  totals: {
-    words: getNumericValue('body', 'data-nb-words'),
-    chars: getNumericValue('body', 'data-nb-chars'),
-  },
-  links: {
-    index: getValue('link[rel="index"]', 'href'),
-    self: getValue('link[rel="self"]', 'href') || 'null.html',
-    manifest: getValue('link[rel="publication"]', 'href'),
-    prev: getValue('link[rel="prev"]', 'href'),
-    next: getValue('link[rel="next"]', 'href'),
-    colophon: getValue('link[rel="colophon"]', 'href'),
-    license: getValue('link[rel="license"]', 'href'),
-  },
+export const languageCode = getValue('html', 'lang');
+
+export const role = getRole();
+
+export const identifier = getValue('meta[name="identifier"]', 'content');
+
+export const order = getOrder();
+
+export const totals = {
+  words: getNumericValue('body', 'data-nb-words'),
+  chars: getNumericValue('body', 'data-nb-chars'),
 };
 
-export default docInfo;
+export const links = {
+  index: getValue('link[rel="index"]', 'href'),
+  self: getValue('link[rel="self"]', 'href') || 'null.html',
+  manifest: getValue('link[rel="publication"]', 'href'),
+  prev: getValue('link[rel="prev"]', 'href'),
+  next: getValue('link[rel="next"]', 'href'),
+  colophon: getValue('link[rel="colophon"]', 'href'),
+  license: getValue('link[rel="license"]', 'href'),
+};
+
+export default {
+  languageCode,
+  role,
+  identifier,
+  order,
+  totals,
+  links,
+};
