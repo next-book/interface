@@ -114,7 +114,7 @@ $nb-red: #9a4663;
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--ui-overlay);
+    background: var(--ui-c-shadow);
     z-index: map-get($z-indexes, 'onboarding');
   }
   .onboarding {

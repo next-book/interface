@@ -60,7 +60,7 @@
     left: var(--base-padding);
     bottom: 0;
     width: calc(100vw - 2 * var(--base-padding));
-    border-right: 1px solid var(--ui-overlay);
+    border-right: 1px solid var(--ui-c-shadow);
 
     height: var(--height);
     margin: 0;
@@ -69,7 +69,7 @@
 
     .chapter {
       display: block;
-      border-left: 1px solid var(--ui-overlay);
+      border-left: 1px solid var(--ui-c-shadow);
       list-style-type: none;
       position: absolute;
       top: 0;

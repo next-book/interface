@@ -28,20 +28,18 @@
   --ui-c-text-shade: #777;
   --ui-c-text: #222;
 
-  --ui-background: white;
-  --ui-overlay: rgba(0, 0, 0, 0.5);
-
   --ui-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
   --ui-inset-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
 
   --ui-c-warning: red;
   --soft-border-color: rgba(0, 0, 0, 0.1);
-  --overlay-bg: rgba(0, 0, 0, 0.6);
+  --ui-c-shadow: rgba(0, 0, 0, 0.5);
 
   @include root-color-reset;
 }
 
 @mixin root-dark-colors {
+  // content colors
   --background: #333;
   --transparent-background: #3333300;
   --text-color: #eee;
@@ -51,21 +49,19 @@
   --link: aqua;
   --visited: pink;
 
-  --ui-background: #222;
-  --ui-overlay: rgba(255, 255, 255, 0.5);
+  // ui colors
+  --ui-box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+  --ui-inset-shadow: inset 0 0 4px rgba(0, 0, 0, 0.7);
 
-  --ui-box-shadow: 0 0 5px rgba(255, 255, 255, 0.25);
-  --ui-inset-shadow: inset 0 0 4px rgba(255, 255, 255, 0.3);
-
-  --ui-c-bg: #222;
-  --ui-c-bg-shade: #333;
-  --ui-c-soft: #555;
+  --ui-c-bg: #444;
+  --ui-c-bg-shade: #555;
+  --ui-c-soft: #666;
   --ui-c-medium: #777;
   --ui-c-text-shade: #ddd;
   --ui-c-text: #eee;
 
   --soft-border-color: rgba(255, 255, 255, 0.1);
-  --overlay-bg: rgba(255, 255, 255, 0.6);
+  --ui-c-shadow: rgba(255, 255, 255, 0.5);
 
   @include root-color-reset;
 }

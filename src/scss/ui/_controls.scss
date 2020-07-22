@@ -10,15 +10,15 @@
     box-shadow: var(--ui-box-shadow);
     border: none;
     border-radius: var(--border-radius);
-    background: var(--ui-background);
+    background: var(--ui-c-bg);
     line-height: 1.6;
 
     &.button-primary {
-      color: var(--ui-background);
+      color: var(--ui-c-bg);
       background-color: var(--accent-color);
 
       .svg-icon {
-        fill: var(--ui-background);
+        fill: var(--ui-c-bg);
       }
     }
   }
@@ -49,7 +49,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    background: var(--ui-background);
+    background: var(--ui-c-bg);
     width: $controls-width;
     max-width: 100vw;
     box-sizing: border-box;
@@ -96,7 +96,7 @@
 
       .tab--selected {
         box-shadow: var(--ui-box-shadow);
-        background: var(--ui-background);
+        background: var(--ui-c-bg);
         color: var(--accent-color);
       }
 
@@ -117,7 +117,7 @@
           padding: calc(var(--base-padding) / 2);
           box-shadow: var(--ui-box-shadow);
           border-radius: var(--border-radius);
-          background: var(--ui-background);
+          background: var(--ui-c-bg);
         }
       }
     }
@@ -137,9 +137,8 @@
       z-index: 1;
       width: 100%;
       box-sizing: border-box;
-      box-shadow: 0 0 40px var(--ui-background), 0 0 40px var(--ui-background),
-        0 0 40px var(--ui-background);
-      background: var(--ui-background);
+      box-shadow: 0 0 40px var(--ui-c-bg), 0 0 40px var(--ui-c-bg), 0 0 40px var(--ui-c-bg);
+      background: var(--ui-c-bg);
       padding: calc(var(--base-padding) * 2);
       font-size: calc(var(--ui-font-size) * 0.8);
 
