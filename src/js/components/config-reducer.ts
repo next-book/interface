@@ -9,6 +9,7 @@ const ADD_STYLE = 'nb-base/config/ADD_STYLE';
 const UPDATE_STYLE = 'nb-base/config/UPDATE_STYLE';
 const REMOVE_STYLE = 'nb-base/config/REMOVE_STYLE';
 const SET_DARK_MODE = 'nb-base/config/SET_DARK_MODE';
+const SET_RICH_STYLE = 'nb-base/config/SET_RICH_STYLE';
 
 export enum ProgressKind {
   MinutesInChapter = 'displayMinutesInChapter',
@@ -35,6 +36,7 @@ export interface IState {
   displayPercentRead: boolean;
   displayPosition: boolean;
 
+  basicStyle: boolean;
   fontSize: string;
   darkMode: DarkMode;
   annotationStyles: IAnnotationStyle[];
@@ -48,6 +50,7 @@ const INITIAL_STATE: IState = {
   displayMinutesInChapter: true,
   displayPercentRead: true,
   displayPosition: true,
+  basicStyle: false,
   fontSize: '1',
   darkMode: DarkMode.Auto,
   annotationStyles: [
@@ -94,6 +97,8 @@ export function reducer(state: IState = INITIAL_STATE, action: Actions) {
       return updateStyle(state, action.payload);
     case REMOVE_STYLE:
       return removeStyle(state, action.payload);
+    case SET_RICH_STYLE:
+      return { ...state, basicStyle: action.payload };
     case SET_DARK_MODE:
       return { ...state, darkMode: action.payload };
     case HIDE_ONBOARDING:
@@ -160,6 +165,13 @@ reducer.setDarkMode = function(mode: DarkMode) {
   };
 };
 
+reducer.setBasicStyle = function(basicStyle: boolean) {
+  return <const>{
+    type: SET_RICH_STYLE,
+    payload: basicStyle,
+  };
+};
+
 reducer.updateStyle = function(index: number, style: IAnnotationStyle) {
   return <const>{
     type: UPDATE_STYLE,
@@ -187,6 +199,7 @@ export type Actions = ReturnType<
   | typeof reducer.toggleDisplay
   | typeof reducer.setFontSize
   | typeof reducer.setDarkMode
+  | typeof reducer.setBasicStyle
   | typeof reducer.updateStyle
   | typeof reducer.addStyle
   | typeof reducer.removeStyle

@@ -20,10 +20,16 @@ export class Config extends React.Component<IProps> {
 export function setDocumentValues(config: IConfigState) {
   applyFontSize(config.fontSize);
   applyDarkMode(config.darkMode);
+  applyBasicStyle(config.basicStyle);
 }
 
 export function applyFontSize(size: string) {
   document.documentElement.style.setProperty('--font-size-ratio', size);
+}
+
+export function applyBasicStyle(basicStyle: boolean) {
+  if (basicStyle) document.body.classList.remove('nb-custom-style');
+  else document.body.classList.add('nb-custom-style');
 }
 
 export function applyDarkMode(mode: DarkMode) {

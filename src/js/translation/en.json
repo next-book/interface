@@ -17,6 +17,8 @@
     "dark-mode-auto": "Auto (browser setting)",
     "dark-mode-dark": "Dark",
     "dark-mode-light": "Light",
+    "basic-style": "Visual design",
+    "basic-style-label": "Disable book’s custom style",
     "show-tips-title": "How to read a web book?",
     "show-tips": "Show tips",
     "about-this-book": "Next-book production info",
