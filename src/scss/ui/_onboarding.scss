@@ -22,6 +22,7 @@ $nb-red: #9a4663;
       max-width: 14rem;
       //box-shadow: var(--ui-box-shadow);
       background: rgb(240, 232, 211);
+      color: black;
       padding: var(--base-padding);
       border-radius: var(--border-radius-xl);
 
@@ -46,6 +47,7 @@ $nb-red: #9a4663;
         padding: var(--base-padding);
         margin: calc(-1.5 * var(--base-padding)) calc(-1.5 * var(--base-padding)) 0 0;
         text-align: right;
+        color: black;
       }
 
       .onboarding-opener-open {

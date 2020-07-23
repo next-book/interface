@@ -7,7 +7,7 @@ import keycode from 'keycode';
 
 import { withTranslation, WithTranslation } from 'react-i18next';
 
-import docInfo from '../doc-info';
+import docInfo, { setLastScrollStep } from '../doc-info';
 import { DocRole } from './manifest-reducer';
 import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
@@ -135,6 +135,7 @@ export class Navigation extends React.Component<IProps> {
       const step = this.getScrollStep();
       pageForward(step, showButtons);
       this.lastScrollStep = step ? [Direction.Forward, step] : null;
+      setLastScrollStep(this.lastScrollStep);
       this.setPaddings();
     } else {
       const next = this.getNextChapterLink();
@@ -152,6 +153,7 @@ export class Navigation extends React.Component<IProps> {
           : this.getScrollStep();
       pageBack(step, showButtons);
       this.lastScrollStep = step ? [Direction.Back, step] : null;
+      setLastScrollStep(this.lastScrollStep);
       this.setPaddings();
     } else {
       const prev = this.getPrevChapterLink();
@@ -216,12 +218,12 @@ export class Navigation extends React.Component<IProps> {
 }
 
 function displayPagination(dir: Direction, showButtons?: boolean) {
-  document.body.classList.add(`paginated-${dir}`);
-  window.setTimeout(() => document.body.classList.remove(`paginated-${dir}`), 300);
+  document.body.classList.add(`nb-paginated-${dir}`);
+  window.setTimeout(() => document.body.classList.remove(`nb-paginated-${dir}`), 300);
 
   if (showButtons !== false) {
-    document.body.classList.add(`paginated-button-${dir}`);
-    window.setTimeout(() => document.body.classList.remove(`paginated-button-${dir}`), 300);
+    document.body.classList.add(`nb-paginated-button-${dir}`);
+    window.setTimeout(() => document.body.classList.remove(`nb-paginated-button-${dir}`), 300);
   }
 }
 

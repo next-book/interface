@@ -35,7 +35,7 @@
   }
 }
 
-body.paginated .content {
+body.nb-paginated .content {
   .begin-nav,
   .end-nav {
     a[rel='prev'],
@@ -53,8 +53,8 @@ body.paginated .content {
   }
 }
 
-body.paginated-back,
-body.paginated-forward {
+body.nb-paginated-back,
+body.nb-paginated-forward {
   .content {
     overflow: hidden;
 
@@ -64,14 +64,14 @@ body.paginated-forward {
   }
 }
 
-body.paginated-button-back {
+body.nb-paginated-button-back {
   .content main {
     animation: back 0.2s ease-out;
   }
 }
 
-body.paginated-button-back,
-body.paginated-button-forward {
+body.nb-paginated-button-back,
+body.nb-paginated-button-forward {
   &::before,
   &::after {
     font-family: monospace;
@@ -107,7 +107,7 @@ body.paginated-button-forward {
   }
 }
 
-body.paginated-button-back {
+body.nb-paginated-button-back {
   &::before,
   &::after {
     top: 2vh;

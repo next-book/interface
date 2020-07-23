@@ -1,4 +1,19 @@
 import { DocRole } from './components/manifest-reducer';
+import { Direction } from './components/navigation';
+
+export let lastScrollStep: [Direction, number] | null = null;
+
+export function setLastScrollStep(step: [Direction, number] | null) {
+  lastScrollStep = step;
+}
+
+export function wasLastStepForward() {
+  return lastScrollStep !== null && lastScrollStep[0] === Direction.Forward;
+}
+
+export function wasLastStepBack() {
+  return lastScrollStep !== null && lastScrollStep[0] === Direction.Back;
+}
 
 function getValue(selector: string, attrName: string) {
   const el = document.querySelector(selector);
