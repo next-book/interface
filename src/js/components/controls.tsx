@@ -46,11 +46,11 @@ class Controls extends React.Component<IProps, IState> {
   );
 
   componentDidMount() {
-    window.document.body.addEventListener('click', this.closeControls);
+    document.body.addEventListener('click', this.closeControls);
   }
 
   componentWillUnmount() {
-    window.document.body.removeEventListener('click', this.closeControls);
+    document.body.removeEventListener('click', this.closeControls);
   }
 
   closeControls = (event: MouseEvent) => {};

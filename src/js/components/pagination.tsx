@@ -1,6 +1,12 @@
 import React from 'react';
 import { throttle } from 'lodash';
-import { wasLastStepForward, wasLastStepBack } from '../doc-info';
+import {
+  wasLastStepForward,
+  wasLastStepBack,
+  elements,
+  setVisibleChunks,
+  clearVisibleChunks,
+} from '../doc-info';
 
 enum Side {
   Bottom = 'bottom',
@@ -59,6 +65,10 @@ export class Pagination extends React.Component<IProps, IState> {
   clipVisible = () => {
     if (this.state.windowHeight === null) return;
 
+    clearVisibleChunks();
+    setVisibleChunks(
+      findVisibleChunks(this.state.readingZone[Side.Top], this.state.readingZone[Side.Bottom])
+    );
     const realReadingZone = clipReadingZone(this.state.readingZone);
 
     this.setState({
@@ -92,7 +102,7 @@ export class Pagination extends React.Component<IProps, IState> {
 
     if (this.state.paginatedDisplay) document.body.classList.add('nb-paginated');
     else {
-      clearPreviouslyVisible();
+      clearVisibleChunks();
       document.body.classList.remove('nb-paginated');
     }
   };
@@ -139,10 +149,7 @@ export class Pagination extends React.Component<IProps, IState> {
 }
 
 function clipReadingZone(readingZone: Sides): { top: number; bottom: number } {
-  clearPreviouslyVisible();
-
-  const chunks = getVisibleChunks(readingZone[Side.Top], readingZone[Side.Bottom]);
-
+  const chunks = elements.visibleChunks;
   const cutoffs = calcCutoffs(chunks.top, chunks.bottom, readingZone);
 
   if (chunks.top !== null && chunks.top === chunks.bottom)
@@ -163,13 +170,6 @@ function clipReadingZone(readingZone: Sides): { top: number; bottom: number } {
     top: cutoffs.top.zone,
     bottom: cutoffs.bottom.zone,
   };
-}
-
-function clearPreviouslyVisible() {
-  [...document.querySelectorAll('.visible')].forEach(c => {
-    c.classList.remove('visible', 'step-forward', 'step-back');
-    (c as HTMLElement).style.clipPath = 'none';
-  });
 }
 
 function calcCutoffs(
@@ -237,10 +237,10 @@ function getComputedStyleNumber(el: Element, attr: 'lineHeight' | 'paddingTop'):
   return parseInt(style[attr], 10);
 }
 
-function getVisibleChunks(topEdge: number, bottomEdge: number) {
+function findVisibleChunks(topEdge: number, bottomEdge: number) {
   let top: null | Element = null;
   let bottom: null | Element = null;
-  const chunks = [...document.querySelectorAll('.chunk')];
+  const chunks = elements.chunks;
 
   for (let chunk of chunks) {
     if (top !== null && bottom !== null) break;

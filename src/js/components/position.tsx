@@ -104,9 +104,9 @@ export class Position extends React.Component<IProps> {
 }
 
 function getTopBound(): number {
-  const chunk = document.querySelector('main .chunk') as Element | null;
-  if (chunk !== null) return chunk.getBoundingClientRect().top;
+  const chunk = docInfo.elements.chunks[0];
 
+  if (chunk !== undefined) return chunk.getBoundingClientRect().top;
   return -window.scrollY;
 }
 
@@ -115,19 +115,10 @@ function isPageScrolledToTop(): boolean {
 }
 
 function getBottomBound(): number {
-  const last = getLastChunk();
+  const last = docInfo.elements.chunks[docInfo.elements.chunks.length - 1];
 
-  if (last !== null) return last.getBoundingClientRect().bottom - window.innerHeight;
+  if (last !== undefined) return last.getBoundingClientRect().bottom - window.innerHeight;
   return document.body.scrollHeight - window.innerHeight - window.scrollY;
-}
-
-function getLastChunk(): Element | null {
-  const chunks = [...document.querySelectorAll('main .chunk')];
-  for (let i = chunks.length - 1; i >= 0; i--) {
-    if (chunks[i].closest('.footnotes') === null) return chunks[i];
-  }
-
-  return null;
 }
 
 function isPageScrolledToBottom() {

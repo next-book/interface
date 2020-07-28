@@ -64,6 +64,33 @@ export const links = {
   license: getValue('link[rel="license"]', 'href'),
 };
 
+function getChunks(): Element[] {
+  return [...document.querySelectorAll('main .chunk')].filter(
+    chunk => chunk.closest('.footnotes') === null
+  );
+}
+
+type IVisibleChunks = { top: Element | null; bottom: Element | null; all: Element[] };
+
+export const elements: {
+  chunks: Element[];
+  visibleChunks: IVisibleChunks;
+} = {
+  chunks: getChunks(),
+  visibleChunks: { top: null, bottom: null, all: [] },
+};
+
+export function setVisibleChunks(chunks: IVisibleChunks) {
+  elements.visibleChunks = chunks;
+}
+
+export function clearVisibleChunks() {
+  [...document.querySelectorAll('.visible')].forEach(c => {
+    c.classList.remove('visible', 'step-forward', 'step-back');
+    (c as HTMLElement).style.clipPath = 'none';
+  });
+}
+
 export default {
   languageCode,
   role,
@@ -71,4 +98,5 @@ export default {
   order,
   totals,
   links,
+  elements,
 };

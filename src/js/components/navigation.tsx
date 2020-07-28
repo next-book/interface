@@ -164,10 +164,10 @@ export class Navigation extends React.Component<IProps> {
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
     if (this.props.keyboardNav) {
-      window.document.body.addEventListener('keydown', this.handleKeyboardNav);
+      document.body.addEventListener('keydown', this.handleKeyboardNav);
     }
     if (this.props.invisibleNav) {
-      window.document.addEventListener('mousedown', this.handleInvisibleNav);
+      document.body.addEventListener('mousedown', this.handleInvisibleNav);
     }
     initSwipeNav(this.handleSwipeNav);
 
@@ -179,10 +179,10 @@ export class Navigation extends React.Component<IProps> {
   componentWillUnmount() {
     window.removeEventListener('scroll', this.getScrollHandler());
     if (this.props.keyboardNav) {
-      window.document.body.removeEventListener('keydown', this.handleKeyboardNav);
+      document.body.removeEventListener('keydown', this.handleKeyboardNav);
     }
     if (this.props.invisibleNav) {
-      window.document.body.removeEventListener('mousedown', this.handleInvisibleNav);
+      document.body.removeEventListener('mousedown', this.handleInvisibleNav);
     }
   }
 
