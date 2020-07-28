@@ -6,6 +6,7 @@ import {
   elements,
   setVisibleChunks,
   clearVisibleChunks,
+  setDomFn,
 } from '../doc-info';
 
 enum Side {
@@ -18,10 +19,7 @@ export type Sides = {
   [Side.Bottom]: number;
 };
 
-interface IProps {
-  setScrollStepGetter(fn: () => number | null): void;
-  setPaddingsSetter(fn: () => void): void;
-}
+interface IProps {}
 
 export interface IState {
   paginatedDisplay: boolean;
@@ -58,11 +56,11 @@ export class Pagination extends React.Component<IProps, IState> {
           [Side.Bottom]: windowHeight - this.state.zonePadding[Side.Bottom],
         },
       },
-      this.clipVisible
+      this.clipPage
     );
   };
 
-  clipVisible = () => {
+  clipPage = () => {
     if (this.state.windowHeight === null) return;
 
     clearVisibleChunks();
@@ -127,8 +125,8 @@ export class Pagination extends React.Component<IProps, IState> {
 
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
-    this.props.setScrollStepGetter(this.getScrollStep);
-    this.props.setPaddingsSetter(this.clipVisible);
+    setDomFn('getScrollStep', this.getScrollStep);
+    setDomFn('clipPage', this.clipPage);
 
     window.addEventListener('resize', this.setSizes);
 

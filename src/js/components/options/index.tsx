@@ -3,6 +3,7 @@ import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { IState as ICombinedState } from '../../reducer';
 import { IState as IManifestState } from './../manifest-reducer';
+import { IPosition } from './../position-reducer';
 import { IState as IOfflineState, SwAvailability } from './../offline-reducer';
 import { reducer, DarkMode } from './../config-reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
@@ -11,6 +12,7 @@ import { applyFontSize, applyDarkMode, applyBasicStyle } from './../config';
 import { FontSize } from './font-size';
 import AnnotationStyles from './annotation-styles';
 import { IAnnotationStyle } from './../annotations/reducer';
+import { scrollToIdea } from './../../doc-info';
 
 interface IProps extends WithTranslation {
   fontSize: string;
@@ -24,6 +26,7 @@ interface IProps extends WithTranslation {
   setBasicStyle(basicStyle: boolean): void;
   updateStyle(index: number, style: IAnnotationStyle): void;
   showOnboarding(): void;
+  position: IPosition | null;
 }
 
 interface IState {
@@ -49,9 +52,13 @@ class Options extends React.Component<IProps, IState> {
   }
 
   setFontSize = (value: number) => {
+    const idea = this.props.position !== null ? this.props.position.idea : null;
+
     const valueString = '' + value;
     this.props.setFontSize(valueString);
     applyFontSize(valueString);
+
+    scrollToIdea(idea);
   };
 
   setDarkMode = (mode: DarkMode) => {
@@ -60,8 +67,12 @@ class Options extends React.Component<IProps, IState> {
   };
 
   setBasicStyle = (basicStyle: boolean) => {
+    const idea = this.props.position !== null ? this.props.position.idea : null;
+
     this.props.setBasicStyle(basicStyle);
     applyBasicStyle(basicStyle);
+
+    scrollToIdea(idea);
   };
 
   render() {
@@ -188,6 +199,7 @@ const mapStateToProps = (state: ICombinedState) => {
     annotationStyles: state.config.annotationStyles,
     offline: state.offline,
     manifest: state.manifest,
+    position: state.position.position,
   };
 };
 

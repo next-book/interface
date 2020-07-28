@@ -7,7 +7,7 @@ import keycode from 'keycode';
 
 import { withTranslation, WithTranslation } from 'react-i18next';
 
-import docInfo, { setLastScrollStep } from '../doc-info';
+import docInfo, { setLastScrollStep, lastScrollStep, domFns } from '../doc-info';
 import { DocRole } from './manifest-reducer';
 import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
@@ -38,10 +38,6 @@ export interface IProps extends WithTranslation {
 }
 
 export class Navigation extends React.Component<IProps> {
-  private getScrollStep = (): number | null => null;
-  private setPaddings = (): null | void => null;
-  private lastScrollStep: [Direction, number] | null = null;
-
   setScrollRatio = () => {
     this.props.setScrollRatio(getScrollRatio());
   };
@@ -52,14 +48,6 @@ export class Navigation extends React.Component<IProps> {
     return function throttled() {
       t2();
     };
-  };
-
-  setScrollStepGetter = (fn: () => number | null) => {
-    this.getScrollStep = fn;
-  };
-
-  setPaddingsSetter = (fn: () => void) => {
-    this.setPaddings = fn;
   };
 
   getPrevChapterLink = () => {
@@ -132,11 +120,10 @@ export class Navigation extends React.Component<IProps> {
     event.preventDefault();
 
     if (this.props.position === null || !this.props.position.chapterEnd) {
-      const step = this.getScrollStep();
+      const step = domFns.getScrollStep();
       pageForward(step, showButtons);
-      this.lastScrollStep = step ? [Direction.Forward, step] : null;
-      setLastScrollStep(this.lastScrollStep);
-      this.setPaddings();
+      setLastScrollStep(step ? [Direction.Forward, step] : null);
+      domFns.clipPage();
     } else {
       const next = this.getNextChapterLink();
       if (next) window.location.assign(next);
@@ -148,13 +135,12 @@ export class Navigation extends React.Component<IProps> {
 
     if (this.props.position === null || !this.props.position.chapterStart) {
       const step =
-        this.lastScrollStep !== null && this.lastScrollStep[0] !== Direction.Back
-          ? this.lastScrollStep[1]
-          : this.getScrollStep();
+        lastScrollStep !== null && lastScrollStep[0] !== Direction.Back
+          ? lastScrollStep[1]
+          : domFns.getScrollStep();
       pageBack(step, showButtons);
-      this.lastScrollStep = step ? [Direction.Back, step] : null;
-      setLastScrollStep(this.lastScrollStep);
-      this.setPaddings();
+      setLastScrollStep(step ? [Direction.Back, step] : null);
+      domFns.clipPage();
     } else {
       const prev = this.getPrevChapterLink();
       if (prev) window.location.assign(prev);
@@ -197,10 +183,7 @@ export class Navigation extends React.Component<IProps> {
 
     return (
       <nav>
-        <Pagination
-          setScrollStepGetter={this.setScrollStepGetter}
-          setPaddingsSetter={this.setPaddingsSetter}
-        />
+        <Pagination />
         <NavBar
           docRole={docInfo.role}
           readingOrder={ro}

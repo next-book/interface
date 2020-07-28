@@ -70,6 +70,18 @@ function getChunks(): Element[] {
   );
 }
 
+export const domFns: {
+  getScrollStep: { (): number | null };
+  clipPage: { (): void };
+} = {
+  getScrollStep: () => null,
+  clipPage: () => null,
+};
+
+export function setDomFn(name: 'clipPage' | 'getScrollStep', fn: any): void {
+  domFns[name] = fn;
+}
+
 type IVisibleChunks = { top: Element | null; bottom: Element | null; all: Element[] };
 
 export const elements: {
@@ -91,6 +103,15 @@ export function clearVisibleChunks() {
   });
 }
 
+export function scrollToIdea(number: number | null) {
+  if (number !== null) {
+    const el = document.getElementById(`idea${number}`);
+    if (el) window.scrollTo(window.scrollX, window.scrollY + el.getBoundingClientRect().top);
+  }
+
+  domFns.clipPage();
+}
+
 export default {
   languageCode,
   role,
@@ -99,4 +120,5 @@ export default {
   totals,
   links,
   elements,
+  domFns,
 };
