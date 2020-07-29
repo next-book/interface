@@ -204,7 +204,7 @@ function displayPagination(dir: Direction, showButtons?: boolean) {
   document.body.classList.add(`nb-paginated-${dir}`);
   window.setTimeout(() => document.body.classList.remove(`nb-paginated-${dir}`), 300);
 
-  if (showButtons !== false) {
+  if (showButtons) {
     document.body.classList.add(`nb-paginated-button-${dir}`);
     window.setTimeout(() => document.body.classList.remove(`nb-paginated-button-${dir}`), 300);
   }

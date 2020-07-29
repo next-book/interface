@@ -76,7 +76,7 @@ export class Pagination extends React.Component<IProps, IState> {
     });
   };
 
-  collapseBars = () => {
+  assessPagination = () => {
     if (!this.state.paginatedDisplay) return;
     const ms = new Date().getTime();
 
@@ -96,10 +96,12 @@ export class Pagination extends React.Component<IProps, IState> {
   };
 
   displayPaginated = () => {
-    this.collapseBars();
+    this.assessPagination();
 
-    if (this.state.paginatedDisplay) document.body.classList.add('nb-paginated');
-    else {
+    if (this.state.paginatedDisplay) {
+      document.body.classList.add('nb-paginated');
+      this.clipPage();
+    } else {
       clearVisibleChunks();
       document.body.classList.remove('nb-paginated');
     }
