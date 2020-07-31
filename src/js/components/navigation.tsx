@@ -80,6 +80,9 @@ export class Navigation extends React.Component<IProps> {
   handleKeyboardNav = (event: KeyboardEvent) => {
     if (document.activeElement !== document.body || document.activeElement === null) return;
 
+    const selection = window.getSelection();
+    if (event.shiftKey === true && selection !== null && !selection.isCollapsed) return;
+
     switch (keycode(event)) {
       case 'left':
         return this.goBack(event, false);
