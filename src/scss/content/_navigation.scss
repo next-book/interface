@@ -58,15 +58,15 @@ body.nb-paginated-forward {
   .content {
     overflow: hidden;
 
-    main {
-      animation: forward 0.2s ease-out;
+    .visible {
+      animation: pagination-slide-in 0.3s;
     }
   }
 }
 
-body.nb-paginated-button-back {
-  .content main {
-    animation: back 0.2s ease-out;
+body.nb-paginated-back {
+  .content .visible {
+    animation: pagination-slide-in-rev 0.3s;
   }
 }
 

@@ -7,14 +7,6 @@ export function setLastScrollStep(step: [Direction, number] | null) {
   lastScrollStep = step;
 }
 
-export function wasLastStepForward() {
-  return lastScrollStep !== null && lastScrollStep[0] === Direction.Forward;
-}
-
-export function wasLastStepBack() {
-  return lastScrollStep !== null && lastScrollStep[0] === Direction.Back;
-}
-
 function getValue(selector: string, attrName: string) {
   const el = document.querySelector(selector);
   return el !== null ? el.getAttribute(attrName) : null;
@@ -73,12 +65,14 @@ function getChunks(): Element[] {
 export const domFns: {
   getScrollStep: { (): number | null };
   clipPage: { (): void };
+  setPaginatedMode: { (): void };
 } = {
   getScrollStep: () => null,
   clipPage: () => null,
+  setPaginatedMode: () => null,
 };
 
-export function setDomFn(name: 'clipPage' | 'getScrollStep', fn: any): void {
+export function setDomFn(name: 'clipPage' | 'getScrollStep' | 'setPaginatedMode', fn: any): void {
   domFns[name] = fn;
 }
 
@@ -108,8 +102,6 @@ export function scrollToIdea(number: number | null) {
     const el = document.getElementById(`idea${number}`);
     if (el) window.scrollTo(window.scrollX, window.scrollY + el.getBoundingClientRect().top);
   }
-
-  domFns.clipPage();
 }
 
 export default {

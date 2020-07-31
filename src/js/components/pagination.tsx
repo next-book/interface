@@ -1,8 +1,6 @@
 import React from 'react';
 import { throttle } from 'lodash';
 import {
-  wasLastStepForward,
-  wasLastStepBack,
   elements,
   setVisibleChunks,
   clearVisibleChunks,
@@ -64,15 +62,19 @@ export class Pagination extends React.Component<IProps, IState> {
     if (this.state.windowHeight === null) return;
 
     clearVisibleChunks();
-    setVisibleChunks(
-      findVisibleChunks(this.state.readingZone[Side.Top], this.state.readingZone[Side.Bottom])
-    );
+    setVisibleChunks(findVisibleChunks(this.state.readingZone));
     const realReadingZone = clipReadingZone(this.state.readingZone);
 
     this.setState({
       ...this.state,
-      paginatedDisplay: true,
       realReadingZone,
+    });
+  };
+
+  setPaginatedMode = () => {
+    this.setState({
+      ...this.state,
+      paginatedDisplay: true,
     });
   };
 
@@ -129,10 +131,12 @@ export class Pagination extends React.Component<IProps, IState> {
     window.addEventListener('scroll', this.getScrollHandler());
     setDomFn('getScrollStep', this.getScrollStep);
     setDomFn('clipPage', this.clipPage);
+    setDomFn('setPaginatedMode', this.setPaginatedMode);
 
     window.addEventListener('resize', this.setSizes);
 
     window.requestAnimationFrame(() => {
+      this.setPaginatedMode();
       this.setSizes();
       document.body.classList.add('nb-paginated');
     });
@@ -160,10 +164,7 @@ function clipReadingZone(readingZone: Sides): { top: number; bottom: number } {
   }
 
   window.requestAnimationFrame(() => {
-    if (chunks.all !== null)
-      if (wasLastStepForward()) chunks.all.forEach(c => c.classList.add('visible', 'step-forward'));
-      else if (wasLastStepBack()) chunks.all.forEach(c => c.classList.add('visible', 'step-back'));
-      else chunks.all.forEach(c => c.classList.add('visible'));
+    if (chunks.all !== null) chunks.all.forEach(c => c.classList.add('visible'));
   });
 
   return {
@@ -237,7 +238,7 @@ function getComputedStyleNumber(el: Element, attr: 'lineHeight' | 'paddingTop'):
   return parseInt(style[attr], 10);
 }
 
-function findVisibleChunks(topEdge: number, bottomEdge: number) {
+function findVisibleChunks(readingZone: Sides) {
   let top: null | Element = null;
   let bottom: null | Element = null;
   const chunks = elements.chunks;
@@ -248,8 +249,8 @@ function findVisibleChunks(topEdge: number, bottomEdge: number) {
     const rect = chunk.getBoundingClientRect();
     const range = getComputedStyleNumber(chunk, 'lineHeight');
 
-    if (top === null && isChunkOnTopEdge(rect, range, topEdge)) top = chunk;
-    if (isChunkOnBottomEdge(rect, range, bottomEdge)) bottom = chunk;
+    if (top === null && isChunkOnTopEdge(rect, range, readingZone[Side.Top])) top = chunk;
+    if (isChunkOnBottomEdge(rect, range, readingZone[Side.Bottom])) bottom = chunk;
   }
 
   return { top, bottom, all: getRangeOfChunks(top, bottom, chunks) };

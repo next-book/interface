@@ -123,7 +123,7 @@ export class Navigation extends React.Component<IProps> {
       const step = domFns.getScrollStep();
       pageForward(step, showButtons);
       setLastScrollStep(step ? [Direction.Forward, step] : null);
-      domFns.clipPage();
+      domFns.setPaginatedMode();
     } else {
       const next = this.getNextChapterLink();
       if (next) window.location.assign(next);
@@ -140,7 +140,7 @@ export class Navigation extends React.Component<IProps> {
           : domFns.getScrollStep();
       pageBack(step, showButtons);
       setLastScrollStep(step ? [Direction.Back, step] : null);
-      domFns.clipPage();
+      domFns.setPaginatedMode();
     } else {
       const prev = this.getPrevChapterLink();
       if (prev) window.location.assign(prev);
@@ -158,7 +158,6 @@ export class Navigation extends React.Component<IProps> {
     initSwipeNav(this.handleSwipeNav);
 
     this.props.setReadingOrder(this.props.manifest.documents);
-
     this.props.setScrollRatio(getScrollRatio());
   }
 

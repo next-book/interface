@@ -88,24 +88,6 @@
   }
 }
 
-@keyframes forward {
-  0% {
-    transform: translateX(10px);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
-@keyframes back {
-  0% {
-    transform: translateX(-10px);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
 @keyframes pagination-bar-fade {
   0% {
     display: block;
