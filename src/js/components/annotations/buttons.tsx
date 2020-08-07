@@ -169,7 +169,7 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
       if (el) el.innerHTML = html;
     }
 
-    const wrapper = document.querySelector('.content');
+    const wrapper = document.querySelector('main');
     if (wrapper) {
       document.addEventListener('selectionchange', this.showIfRangeIsOkay);
       wrapper.addEventListener('click', this.selectAnnotation);
@@ -177,7 +177,7 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
   }
 
   componentWillUnmount() {
-    const wrapper = document.querySelector('.content');
+    const wrapper = document.querySelector('main');
     if (wrapper) {
       document.removeEventListener('selectionchange', this.showIfRangeIsOkay);
       wrapper.removeEventListener('click', this.selectAnnotation);

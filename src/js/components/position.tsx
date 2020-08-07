@@ -122,7 +122,7 @@ function getBottomBound(): number {
 }
 
 function isPageScrolledToBottom() {
-  return getBottomBound() < -70;
+  return getBottomBound() < -50;
 }
 
 export function getScrollRatio(): number {
