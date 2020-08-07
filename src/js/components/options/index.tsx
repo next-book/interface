@@ -5,10 +5,10 @@ import { IState as ICombinedState } from '../../reducer';
 import { IState as IManifestState } from './../manifest-reducer';
 import { IPosition } from './../position-reducer';
 import { IState as IOfflineState, SwAvailability } from './../offline-reducer';
-import { reducer, DarkMode } from './../config-reducer';
+import { reducer, ColorScheme } from './../config-reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
-import { applyFontSize, applyDarkMode, applyBasicStyle } from './../config';
+import { applyFontSize, applyColorScheme, applyBasicStyle } from './../config';
 import { FontSize } from './font-size';
 import AnnotationStyles from './annotation-styles';
 import { IAnnotationStyle } from './../annotations/reducer';
@@ -20,8 +20,8 @@ interface IProps extends WithTranslation {
   offline: IOfflineState;
   manifest: IManifestState;
   setFontSize(size: string): void;
-  darkMode: DarkMode;
-  setDarkMode(darkMode: DarkMode): void;
+  colorScheme: ColorScheme;
+  setColorScheme(colorScheme: ColorScheme): void;
   basicStyle: boolean;
   setBasicStyle(basicStyle: boolean): void;
   updateStyle(index: number, style: IAnnotationStyle): void;
@@ -61,9 +61,9 @@ class Options extends React.Component<IProps, IState> {
     scrollToIdea(idea);
   };
 
-  setDarkMode = (mode: DarkMode) => {
-    this.props.setDarkMode(mode);
-    applyDarkMode(mode);
+  setColorScheme = (mode: ColorScheme) => {
+    this.props.setColorScheme(mode);
+    applyColorScheme(mode);
   };
 
   setBasicStyle = (basicStyle: boolean) => {
@@ -93,10 +93,10 @@ class Options extends React.Component<IProps, IState> {
                 setFontSize={this.setFontSize}
                 fontSize={this.props.fontSize}
               />
-              <DarkModeComp
+              <ColorSchemeComp
                 t={this.props.t}
-                setDarkMode={this.setDarkMode}
-                darkMode={this.props.darkMode}
+                setColorScheme={this.setColorScheme}
+                colorScheme={this.props.colorScheme}
               />
               <div className="cell font-size">
                 <h3 className="nb-ui-title cell__title">{this.props.t('basic-style')}</h3>
@@ -142,34 +142,40 @@ class Options extends React.Component<IProps, IState> {
   }
 }
 
-interface IDarkModeProps extends WithT {
-  darkMode: DarkMode;
-  setDarkMode(darkMode: DarkMode): void;
+interface IColorSchemeProps extends WithT {
+  colorScheme: ColorScheme;
+  setColorScheme(colorScheme: ColorScheme): void;
 }
 
-function DarkModeComp(props: IDarkModeProps) {
-  const isAuto = props.darkMode === DarkMode.Auto;
-  const isDark = props.darkMode === DarkMode.Dark;
-  const isLight = props.darkMode === DarkMode.Light;
+function ColorSchemeComp(props: IColorSchemeProps) {
+  const isAuto = props.colorScheme === ColorScheme.Auto;
+  const isDark = props.colorScheme === ColorScheme.Dark;
+  const isLight = props.colorScheme === ColorScheme.Light;
+  const isSepia = props.colorScheme === ColorScheme.Sepia;
 
   return (
     <div className="cell font-size">
-      <h3 className="nb-ui-title cell__title">{props.t('dark-mode')}</h3>
-      <div className="dark-mode-select">
+      <h3 className="nb-ui-title cell__title">{props.t('color-scheme')}</h3>
+      <div className="color-scheme-select">
         <Option
-          title={props.t('dark-mode-auto')}
+          title={props.t('color-scheme-auto')}
           isSet={isAuto}
-          fn={() => props.setDarkMode(DarkMode.Auto)}
+          fn={() => props.setColorScheme(ColorScheme.Auto)}
         />
         <Option
-          title={props.t('dark-mode-light')}
+          title={props.t('color-scheme-light')}
           isSet={isLight}
-          fn={() => props.setDarkMode(DarkMode.Light)}
+          fn={() => props.setColorScheme(ColorScheme.Light)}
         />
         <Option
-          title={props.t('dark-mode-dark')}
+          title={props.t('color-scheme-dark')}
           isSet={isDark}
-          fn={() => props.setDarkMode(DarkMode.Dark)}
+          fn={() => props.setColorScheme(ColorScheme.Dark)}
+        />
+        <Option
+          title={props.t('color-scheme-sepia')}
+          isSet={isSepia}
+          fn={() => props.setColorScheme(ColorScheme.Sepia)}
         />
       </div>
     </div>
@@ -195,7 +201,7 @@ const mapStateToProps = (state: ICombinedState) => {
   return {
     fontSize: state.config.fontSize,
     basicStyle: state.config.basicStyle,
-    darkMode: state.config.darkMode,
+    colorScheme: state.config.colorScheme,
     annotationStyles: state.config.annotationStyles,
     offline: state.offline,
     manifest: state.manifest,
@@ -208,7 +214,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     {
       showOnboarding: reducer.showOnboarding,
       setFontSize: reducer.setFontSize,
-      setDarkMode: reducer.setDarkMode,
+      setColorScheme: reducer.setColorScheme,
       setBasicStyle: reducer.setBasicStyle,
       updateStyle: reducer.updateStyle,
     },

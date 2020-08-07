@@ -23,10 +23,11 @@ export enum ShowOnboarding {
   Initial,
 }
 
-export enum DarkMode {
-  Auto,
-  Light,
-  Dark,
+export enum ColorScheme {
+  Auto = 'auto',
+  Light = 'light',
+  Dark = 'dark',
+  Sepia = 'sepia',
 }
 
 export interface IState {
@@ -38,7 +39,7 @@ export interface IState {
 
   basicStyle: boolean;
   fontSize: string;
-  darkMode: DarkMode;
+  colorScheme: ColorScheme;
   annotationStyles: IAnnotationStyle[];
 
   keyboardNav: boolean;
@@ -52,7 +53,7 @@ const INITIAL_STATE: IState = {
   displayPosition: true,
   basicStyle: false,
   fontSize: '1',
-  darkMode: DarkMode.Auto,
+  colorScheme: ColorScheme.Auto,
   annotationStyles: [
     {
       color: null,
@@ -100,7 +101,7 @@ export function reducer(state: IState = INITIAL_STATE, action: Actions) {
     case SET_RICH_STYLE:
       return { ...state, basicStyle: action.payload };
     case SET_DARK_MODE:
-      return { ...state, darkMode: action.payload };
+      return { ...state, colorScheme: action.payload };
     case HIDE_ONBOARDING:
       return { ...state, ...{ showOnboarding: ShowOnboarding.Disabled } };
     case TOGGLE_PROGRESS_DISPLAY:
@@ -158,7 +159,7 @@ reducer.setFontSize = function(size: string) {
   };
 };
 
-reducer.setDarkMode = function(mode: DarkMode) {
+reducer.setColorScheme = function(mode: ColorScheme) {
   return <const>{
     type: SET_DARK_MODE,
     payload: mode,
@@ -198,7 +199,7 @@ export type Actions = ReturnType<
   | typeof reducer.hideOnboarding
   | typeof reducer.toggleDisplay
   | typeof reducer.setFontSize
-  | typeof reducer.setDarkMode
+  | typeof reducer.setColorScheme
   | typeof reducer.setBasicStyle
   | typeof reducer.updateStyle
   | typeof reducer.addStyle

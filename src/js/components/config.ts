@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { IState as IConfigState, DarkMode } from './config-reducer';
+import { IState as IConfigState, ColorScheme } from './config-reducer';
 import { IState as ICombinedState } from '../reducer';
 
 interface IProps {
@@ -19,7 +19,7 @@ export class Config extends React.Component<IProps> {
 
 export function setDocumentValues(config: IConfigState) {
   applyFontSize(config.fontSize);
-  applyDarkMode(config.darkMode);
+  applyColorScheme(config.colorScheme);
   applyBasicStyle(config.basicStyle);
 }
 
@@ -32,21 +32,16 @@ export function applyBasicStyle(basicStyle: boolean) {
   else document.body.classList.add('nb-custom-style');
 }
 
-export function applyDarkMode(mode: DarkMode) {
-  if (mode === DarkMode.Light) {
-    document.body.classList.remove('nb-dark-mode');
-    document.body.classList.add('nb-light-mode');
-  }
+export function applyColorScheme(mode: ColorScheme) {
+  removeColorSchemes();
 
-  if (mode === DarkMode.Dark) {
-    document.body.classList.remove('nb-light-mode');
-    document.body.classList.add('nb-dark-mode');
+  if (mode !== ColorScheme.Auto) {
+    document.body.classList.add(`nb-color-scheme-${mode}`);
   }
+}
 
-  if (mode === DarkMode.Auto) {
-    document.body.classList.remove('nb-light-mode');
-    document.body.classList.remove('nb-dark-mode');
-  }
+function removeColorSchemes() {
+  document.body.classList.remove('nb-color-scheme-light', 'nb-color-scheme-dark', 'nb-color-scheme-sepia');
 }
 
 const mapStateToProps = (state: ICombinedState) => {
