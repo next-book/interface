@@ -21,7 +21,6 @@ interface IState {
 }
 
 enum Cards {
-  //Intro = 'intro',
   Pagination = 'pagination',
   Remember = 'remember',
   Annotations = 'annotations',
@@ -58,9 +57,6 @@ export class Onboarding extends React.Component<IProps, IState> {
               </div>
               <div className="onboarding-opener-intro">
                 <strong>{this.props.t('intro-head')}</strong> {this.props.t('intro')}{' '}
-                <a className="onboarding-opener-open" onClick={this.props.show}>
-                  {this.props.t('intro-show')}
-                </a>
               </div>
             </div>
           </div>

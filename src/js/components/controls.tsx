@@ -7,6 +7,11 @@ import Options from './options';
 import Annotations from './annotations/desk';
 import Icons from './../icons';
 
+import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import { IState as ICombinedState } from '../reducer';
+import { reducer as onboardingReducer, ShowOnboarding } from './config-reducer';
+
 enum Control {
   None = 'none',
   Toc = 'toc',
@@ -14,7 +19,10 @@ enum Control {
   Options = 'options',
 }
 
-interface IProps extends WithTranslation {}
+interface IProps extends WithTranslation {
+  isOnboardingShown: ShowOnboarding;
+  hideOnboarding(): void;
+}
 
 interface IState {
   opened: Control;
@@ -30,6 +38,8 @@ class Controls extends React.Component<IProps, IState> {
   }
 
   open = (control: Control) => {
+    if (this.props.isOnboardingShown === ShowOnboarding.Initial) this.props.hideOnboarding();
+
     this.setState({ ...this.state, opened: control });
 
     if (control === Control.None) document.body.classList.remove('nb-controls-open');
@@ -126,4 +136,19 @@ function Tabs(props: ITabsProps) {
   );
 }
 
-export default withTranslation('controls')(Controls);
+const mapStateToProps = (state: ICombinedState) => {
+  return {
+    isOnboardingShown: state.config.showOnboarding,
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators(
+    {
+      hideOnboarding: onboardingReducer.hideOnboarding,
+    },
+    dispatch
+  );
+};
+
+export default withTranslation('controls')(connect(mapStateToProps, mapDispatchToProps)(Controls));
