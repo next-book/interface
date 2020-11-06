@@ -1,17 +1,41 @@
 .nb-toc {
-  padding: var(--base-padding);
+  padding: var(--base-padding) calc(2 * var(--base-padding));
   padding-bottom: calc(4 * var(--base-padding));
 
+  ul,
   ol {
-    margin-top: 0;
-    padding-left: calc(1.5 * var(--ui-font-size));
+    font-size: 1rem;
+    font-family: var(--content-font);
+    margin: 1rem 0;
+    padding-left: calc(2 * 1rem);
   }
 
   li {
-    margin-bottom: calc(var(--ui-font-size) / 2);
+    margin-bottom: calc(1rem / 2);
+  }
+
+  ul li {
+    list-style-type: none;
   }
 
   .current-chapter {
     font-weight: bold;
+  }
+}
+
+.nb-toc-other {
+  font-size: 1rem;
+}
+
+.nb-toc,
+.nb-toc-other {
+  a {
+    font-weight: bold;
+    color: var(--text-color);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }

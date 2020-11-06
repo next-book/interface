@@ -75,9 +75,6 @@
     bottom: calc(var(--base-padding) / 2);
     right: calc(var(--base-padding) / 2);
     z-index: map-get($z-indexes, 'annotations') + 1;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: 0 0.5rem 0.5rem var(--ui-c-text-shade);
     box-sizing: border-box;
   }
 
@@ -94,13 +91,14 @@
 
   .annotation-detail__note {
     min-height: 4rem;
-    border: 1px solid var(--ui-c-soft);
     padding: 0.5rem;
     background: var(--ui-c-bg);
-    border-radius: 0 0 var(--border-radius) var(--border-radius);
-    border-width: 1px 0;
+
+    border-radius: var(--border-radius);
+    box-shadow: var(--ui-inset-shadow);
 
     max-height: 6rem;
+    overflow-x: hidden;
     overflow-y: auto;
   }
 
@@ -142,7 +140,7 @@
   }
 
   .annotation-detail__destroy {
-    color: red;
+    color: var(--ui-c-warning);
     background-position: 0% 50%;
     background-image: url("data:image/svg+xml;utf8,<svg viewBox='4 0 16 24' width='24' height='24' xmlns='http://www.w3.org/2000/svg'><path d='M19,4L15.5,4L14.5,3L9.5,3L8.5,4L5,4L5,6L19,6L19,4ZM5.979,7.967L6,19C6,20.1 6.9,21 8,21L16,21C17.1,21 18,20.1 18,19L17.979,7.967L5.979,7.967Z' fill='red'/></svg>");
   }

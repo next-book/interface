@@ -6,10 +6,10 @@ $nb-red: #9a4663;
     z-index: 1;
 
     position: fixed;
-    bottom: 55px;
+    bottom: 60px;
     left: 0;
     width: 100vw;
-    padding: 0 3px;
+    padding: 0 15px;
     box-sizing: border-box;
     border-radius: var(--border-radius-xl);
 
@@ -17,45 +17,44 @@ $nb-red: #9a4663;
     font-size: var(--ui-font-size);
 
     .onboarding-opener-bubble {
+      position: relative;
       margin: 0 0 0 auto;
       max-width: 14rem;
-      overflow: hidden;
-
-      background: var(--ui-c-bg-shade);
-
-      border: 1px solid var(--ui-c-soft);
+      //box-shadow: var(--ui-box-shadow);
+      background: rgb(240, 232, 211);
+      color: black;
+      padding: var(--base-padding);
       border-radius: var(--border-radius-xl);
 
+      &:after {
+        content: '';
+        position: absolute;
+        bottom: -20px;
+        right: 20px;
+
+        width: 0;
+        height: 0;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-top: 20px solid rgb(240, 232, 211);
+      }
       .onboarding-opener-intro {
-        padding: calc(var(--base-padding) / 2);
       }
 
-      .buttons {
-        display: flex;
-        border-top: 1px solid var(--ui-c-soft);
+      .onboarding-opener-close {
+        cursor: pointer;
+        float: right;
+        padding: var(--base-padding);
+        margin: calc(-1.5 * var(--base-padding)) calc(-1.5 * var(--base-padding)) 0 0;
+        text-align: right;
+        color: black;
+      }
 
-        &:first-child {
-          border: none;
-        }
-
-        span {
-          background: var(--ui-c-bg);
-          white-space: nowrap;
-          border: solid var(--ui-c-soft);
-          border-width: 0 1px 0 0;
-          flex: 2;
-          text-align: center;
-          text-decoration: none;
-          color: var(--ui-c-text-shade);
-          line-height: 2;
-          padding: 0.5em;
-          cursor: pointer;
-
-          &:last-child {
-            flex: 1;
-            border-right: 0;
-          }
-        }
+      .onboarding-opener-open {
+        display: block;
+        text-align: right;
+        margin-top: var(--base-padding);
+        text-decoration: underline;
       }
     }
   }
@@ -79,26 +78,41 @@ $nb-red: #9a4663;
 
   /* custom demo styles */
   .controls-launcher-demo {
-    animation: pulse-opacity 5s ease-in-out infinite;
     pointer-events: none;
     bottom: 3px;
-    opacity: 0.5;
+
     font-family: var(--ui-font);
 
     div {
+      visibility: hidden;
       min-height: none;
+      margin: 0 15px;
+      line-height: 48px;
       height: 45px;
 
-      border: 1px solid $nb-red;
-      background: rgba(255, 255, 255, 0.5);
-      color: $nb-red;
-      font-size: calc(0.9 * var(--ui-font-size));
+      background: var(--ui-c-shadow);
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(0, 0, 0, 0.2),
+        rgba(0, 0, 0, 0.2) 10px,
+        var(--ui-c-shadow) 10px,
+        var(--ui-c-shadow) 11px,
+        rgba(0, 0, 0, 0.2) 11px
+      );
+      color: var(--text-color);
+      text-shadow: 0 0 2px var(--background);
 
+      border: 1px solid var(--ui-c-shadow);
       border-radius: 5px;
-      border-width: 1px 1px 0 0;
-      margin: 0 3px;
-      line-height: 48px;
+      box-shadow: var(--ui-box-shadow);
+
+      font-size: calc(0.9 * var(--ui-font-size));
       text-align: center;
+      font-weight: bold;
+    }
+
+    div:last-child {
+      visibility: visible;
     }
   }
 
@@ -108,7 +122,7 @@ $nb-red: #9a4663;
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--ui-overlay);
+    background: var(--ui-c-shadow);
     z-index: map-get($z-indexes, 'onboarding');
   }
   .onboarding {
@@ -145,11 +159,6 @@ $nb-red: #9a4663;
     align-self: end;
   }
 
-  svg {
-    display: block;
-    width: 100%;
-  }
-
   .onboarding__card {
     display: grid;
     height: 100%;
@@ -158,6 +167,11 @@ $nb-red: #9a4663;
     grid-gap: var(--base-padding);
     max-width: calc(16 * var(--ui-font-size));
     margin: 0 auto;
+
+    svg {
+      display: block;
+      width: 100%;
+    }
 
     @media only screen and (min-width: 760px) {
       height: auto;

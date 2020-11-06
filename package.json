@@ -1,6 +1,6 @@
 {
   "name": "nb-base",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Next-book’s base browser library",
   "repository": "https://github.com/next-book/nb-base",
   "main": "lib/index.js",
@@ -47,8 +47,8 @@
     "i18next": "^19.1.0",
     "i18next-browser-languagedetector": "^4.0.1",
     "keycode": "^2.2.0",
-    "lodash": "^4.17.15",
-    "node-sass": "^4.13.1",
+    "lodash": "^4.17.19",
+    "node-sass": "^4.14.1",
     "numbro": "^2.1.2",
     "react": "^16.10.1",
     "react-contenteditable": "^3.3.3",

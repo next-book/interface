@@ -4,7 +4,7 @@
 
   #chapter-end {
     position: relative;
-    top: -70vh;
+    top: -30vh;
   }
 
   .begin-nav,
@@ -35,7 +35,7 @@
   }
 }
 
-body.paginated .content {
+body.nb-paginated .content {
   .begin-nav,
   .end-nav {
     a[rel='prev'],
@@ -53,25 +53,25 @@ body.paginated .content {
   }
 }
 
-body.paginated-back,
-body.paginated-forward {
+body.nb-paginated-back,
+body.nb-paginated-forward {
   .content {
     overflow: hidden;
 
-    main {
-      animation: forward 0.2s ease-out;
+    .visible {
+      animation: pagination-slide-in 0.3s;
     }
   }
 }
 
-body.paginated-button-back {
-  .content main {
-    animation: back 0.2s ease-out;
+body.nb-paginated-back {
+  .content .visible {
+    animation: pagination-slide-in-rev 0.3s;
   }
 }
 
-body.paginated-button-back,
-body.paginated-button-forward {
+body.nb-paginated-button-back,
+body.nb-paginated-button-forward {
   &::before,
   &::after {
     font-family: monospace;
@@ -79,7 +79,7 @@ body.paginated-button-forward {
 
     display: block;
     overflow: hidden;
-    opacity: 0;
+    opacity: 0.1;
     width: calc(24px + 5vw);
     padding: 0;
     z-index: map-get($z-indexes, 'pagination');
@@ -89,9 +89,9 @@ body.paginated-button-forward {
     right: 0;
     height: 50vh;
 
-    border: solid rgba(0, 0, 0, 0.2);
+    border: solid var(--ui-c-text-shade);
     border-width: 2px;
-    color: rgba(0, 0, 0, 0.1);
+    color: var(--ui-c-text-shade);
     line-height: 60vh;
     font-size: 5vw;
     text-align: center;
@@ -107,7 +107,7 @@ body.paginated-button-forward {
   }
 }
 
-body.paginated-button-back {
+body.nb-paginated-button-back {
   &::before,
   &::after {
     top: 2vh;

@@ -15,6 +15,8 @@ interface IProps {
 export function NavBar(props: IProps) {
   return (
     <ul className="nav-bar">
+      <div className="nav-bar__overlay"></div>
+
       {props.chapter && props.docRole === DocRole.Chapter && (
         <Pointer
           scrollRatio={props.scrollRatio}

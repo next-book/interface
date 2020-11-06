@@ -1,6 +1,6 @@
 .nb-desk {
   font-family: var(--ui-font);
-  padding: var(--base-padding);
+  padding: var(--base-padding) calc(2 * var(--base-padding));
   overflow-y: auto;
 
   .nb-desk__show-all-toggle {
@@ -48,42 +48,30 @@
     border-radius: var(--ui-font-size);
   }
 
-  .desk__annotation {
-    position: relative;
+  .desk__content-box {
     box-shadow: var(--ui-box-shadow);
     margin-bottom: var(--base-padding);
     border-radius: var(--border-radius-xl);
-    padding: 0.5rem;
+  }
 
-    .desk__annotation__destroy {
-      display: block;
-      float: right;
-      width: 1.5rem;
-      height: 1.5rem;
-      margin: 0 0 var(--base-padding) var(--base-padding);
-      text-indent: 3rem;
-      border: none;
-      background-color: transparent;
-      background-position: 100% 50%;
-      background-repeat: no-repeat;
-      background-size: contain;
+  .desk__content-box--editing {
+    box-shadow: var(--ui-inset-shadow);
+  }
 
-      white-space: nowrap;
+  .desk__content-box__buttons {
+    height: 1rem;
+    margin-bottom: 2rem;
+  }
 
-      box-sizing: border-box;
-      overflow: hidden;
-      cursor: pointer;
-      transition: 0.2s ease-in;
-      will-change: transform;
-      transform-origin: 50% 50%;
+  .desk__annotation {
+    position: relative;
+    margin-bottom: 1rem;
+  }
 
-      color: red;
-      background-image: url("data:image/svg+xml;utf8,<svg viewBox='4 0 16 24' width='24' height='24' xmlns='http://www.w3.org/2000/svg'><path d='M19,4L15.5,4L14.5,3L9.5,3L8.5,4L5,4L5,6L19,6L19,4ZM5.979,7.967L6,19C6,20.1 6.9,21 8,21L16,21C17.1,21 18,20.1 18,19L17.979,7.967L5.979,7.967Z' fill='red'/></svg>");
-
-      &:hover {
-        transform: scale(1.1);
-      }
-    }
+  .desk__annotation--box {
+    padding: calc(var(--base-padding) / 2);
+    box-shadow: var(--ui-box-shadow);
+    border-radius: var(--border-radius);
   }
 
   .desk-annotation-wrapper {
@@ -96,7 +84,15 @@
   }
 
   .annotation__symbol {
+    display: block;
+    margin-top: -0.25em;
     font-family: var(--content-font);
+    padding-bottom: 0.25em;
+  }
+
+  .annotation__name {
+    font-family: var(--ui-font);
+    padding-left: 0.25em;
   }
 
   .annotation {
@@ -104,7 +100,7 @@
     padding: 0.1rem 0.125rem;
     margin: 0 -0.125rem;
     border-radius: 3px;
-    background-color: #fafafa;
+    background-color: var(--ui-c-bg-shade);
   }
 
   .annotation[data-hl='this'] {
@@ -112,13 +108,19 @@
     background: var(--annotation-highlight);
   }
 
+  .desk__note-wrapper {
+    padding: calc(var(--base-padding) / 2);
+    box-shadow: var(--ui-box-shadow);
+    border-radius: var(--border-radius);
+  }
+
   .desk__note-editor {
-    margin-bottom: var(--base-padding);
+    box-shadow: var(--ui-inset-shadow);
+    border-radius: var(--border-radius);
   }
 
   .desk__note-editor__input {
     border: none;
-    box-shadow: var(--ui-inset-shadow);
     padding: calc(var(--base-padding) / 2);
     border-radius: var(--border-radius);
     min-height: 4rem;

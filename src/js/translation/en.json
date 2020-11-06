@@ -13,6 +13,13 @@
   },
   "options": {
     "font-size": "Font size",
+    "color-scheme": "Color scheme",
+    "color-scheme-auto": "Auto (browser setting)",
+    "color-scheme-dark": "Dark",
+    "color-scheme-light": "Light",
+    "color-scheme-sepia": "Sepia",
+    "basic-style": "Visual design",
+    "basic-style-label": "Disable book’s custom style",
     "show-tips-title": "How to read a web book?",
     "show-tips": "Show tips",
     "about-this-book": "Next-book production info",
@@ -30,7 +37,8 @@
     "unsecure": "Offline mode is not available. This book is served over unsecured protocol."
   },
   "onboarding": {
-    "intro": "Is this your first web book? Use these hidden buttons to access book menu.",
+    "intro-head": "Is this your first web book?",
+    "intro": "Use this hidden button to access book menu.",
     "intro-show": "Show 3 more tips",
     "intro-hide": "Close",
     "pagination-heading": "Focused reading",

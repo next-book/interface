@@ -43,7 +43,15 @@ You may use `book.getState()` to get current e-book state — it returns a seri
 
 Clone repository and install devDependencies. Build a complete project with `npm run build`. Limit PRs only to changed source files.
 
-[walden]: https://github.com/jan-martinek/henry-david-thoreau_walden/
+## License
+
+nb-base &copy; 2016–2020 next-book
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
+
+[walden]: https://books.next-book.info/henry-david-thoreau_walden/docs/
 [mapper]: http://next-book.github.io/nb-mapper/
 [api]: http://next-book.github.io/nb-mapper/api
 [options]: http://next-book.github.io/nb-mapper/api/#options

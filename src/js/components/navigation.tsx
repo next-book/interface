@@ -7,7 +7,7 @@ import keycode from 'keycode';
 
 import { withTranslation, WithTranslation } from 'react-i18next';
 
-import docInfo from '../doc-info';
+import docInfo, { setLastScrollStep, lastScrollStep, domFns } from '../doc-info';
 import { DocRole } from './manifest-reducer';
 import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
@@ -38,10 +38,6 @@ export interface IProps extends WithTranslation {
 }
 
 export class Navigation extends React.Component<IProps> {
-  private getScrollStep = (): number | null => null;
-  private setPaddings = (): null | void => null;
-  private lastScrollStep: [Direction, number] | null = null;
-
   setScrollRatio = () => {
     this.props.setScrollRatio(getScrollRatio());
   };
@@ -52,14 +48,6 @@ export class Navigation extends React.Component<IProps> {
     return function throttled() {
       t2();
     };
-  };
-
-  setScrollStepGetter = (fn: () => number | null) => {
-    this.getScrollStep = fn;
-  };
-
-  setPaddingsSetter = (fn: () => void) => {
-    this.setPaddings = fn;
   };
 
   getPrevChapterLink = () => {
@@ -91,6 +79,9 @@ export class Navigation extends React.Component<IProps> {
 
   handleKeyboardNav = (event: KeyboardEvent) => {
     if (document.activeElement !== document.body || document.activeElement === null) return;
+
+    const selection = window.getSelection();
+    if (event.shiftKey === true && selection !== null && !selection.isCollapsed) return;
 
     switch (keycode(event)) {
       case 'left':
@@ -132,10 +123,10 @@ export class Navigation extends React.Component<IProps> {
     event.preventDefault();
 
     if (this.props.position === null || !this.props.position.chapterEnd) {
-      const step = this.getScrollStep();
+      const step = domFns.getScrollStep();
       pageForward(step, showButtons);
-      this.lastScrollStep = step ? [Direction.Forward, step] : null;
-      this.setPaddings();
+      setLastScrollStep(step ? [Direction.Forward, step] : null);
+      domFns.setPaginatedMode();
     } else {
       const next = this.getNextChapterLink();
       if (next) window.location.assign(next);
@@ -147,12 +138,12 @@ export class Navigation extends React.Component<IProps> {
 
     if (this.props.position === null || !this.props.position.chapterStart) {
       const step =
-        this.lastScrollStep !== null && this.lastScrollStep[0] !== Direction.Back
-          ? this.lastScrollStep[1]
-          : this.getScrollStep();
+        lastScrollStep !== null && lastScrollStep[0] !== Direction.Back
+          ? lastScrollStep[1]
+          : domFns.getScrollStep();
       pageBack(step, showButtons);
-      this.lastScrollStep = step ? [Direction.Back, step] : null;
-      this.setPaddings();
+      setLastScrollStep(step ? [Direction.Back, step] : null);
+      domFns.setPaginatedMode();
     } else {
       const prev = this.getPrevChapterLink();
       if (prev) window.location.assign(prev);
@@ -162,25 +153,24 @@ export class Navigation extends React.Component<IProps> {
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
     if (this.props.keyboardNav) {
-      window.document.body.addEventListener('keydown', this.handleKeyboardNav);
+      document.body.addEventListener('keydown', this.handleKeyboardNav);
     }
     if (this.props.invisibleNav) {
-      window.document.addEventListener('mousedown', this.handleInvisibleNav);
+      document.body.addEventListener('mousedown', this.handleInvisibleNav);
     }
     initSwipeNav(this.handleSwipeNav);
 
     this.props.setReadingOrder(this.props.manifest.documents);
-
     this.props.setScrollRatio(getScrollRatio());
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.getScrollHandler());
     if (this.props.keyboardNav) {
-      window.document.body.removeEventListener('keydown', this.handleKeyboardNav);
+      document.body.removeEventListener('keydown', this.handleKeyboardNav);
     }
     if (this.props.invisibleNav) {
-      window.document.body.removeEventListener('mousedown', this.handleInvisibleNav);
+      document.body.removeEventListener('mousedown', this.handleInvisibleNav);
     }
   }
 
@@ -195,10 +185,7 @@ export class Navigation extends React.Component<IProps> {
 
     return (
       <nav>
-        <Pagination
-          setScrollStepGetter={this.setScrollStepGetter}
-          setPaddingsSetter={this.setPaddingsSetter}
-        />
+        <Pagination />
         <NavBar
           docRole={docInfo.role}
           readingOrder={ro}
@@ -216,12 +203,12 @@ export class Navigation extends React.Component<IProps> {
 }
 
 function displayPagination(dir: Direction, showButtons?: boolean) {
-  document.body.classList.add(`paginated-${dir}`);
-  window.setTimeout(() => document.body.classList.remove(`paginated-${dir}`), 300);
+  document.body.classList.add(`nb-paginated-${dir}`);
+  window.setTimeout(() => document.body.classList.remove(`nb-paginated-${dir}`), 300);
 
-  if (showButtons !== false) {
-    document.body.classList.add(`paginated-button-${dir}`);
-    window.setTimeout(() => document.body.classList.remove(`paginated-button-${dir}`), 300);
+  if (showButtons) {
+    document.body.classList.add(`nb-paginated-button-${dir}`);
+    window.setTimeout(() => document.body.classList.remove(`nb-paginated-button-${dir}`), 300);
   }
 }
 

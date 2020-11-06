@@ -67,7 +67,7 @@ export class FontSize extends React.Component<IProps, IState> {
     return (
       <div className="cell font-size">
         <h3 className="nb-ui-title cell__title">{this.props.title}</h3>
-        <button className="font-size-slider__toggle">
+        <button className="button font-size-slider__toggle">
           {Math.floor(parseFloat(this.props.fontSize) * 100)} %
         </button>
         <div className={`font-size-slider ${this.state.isShown ? 'font-size-slider--show' : ''}`}>
@@ -78,7 +78,7 @@ export class FontSize extends React.Component<IProps, IState> {
           <p>
             {Math.floor(parseFloat(this.props.fontSize) * 100)} %
             <br />
-            <button className="shrink-font-size" onClick={() => this.enlargeFontSize(-0.1)}>
+            <button className="button shrink-font-size" onClick={() => this.enlargeFontSize(-0.1)}>
               A
             </button>
             <input
@@ -90,7 +90,7 @@ export class FontSize extends React.Component<IProps, IState> {
               onChange={this.setFontSize}
               step={fontSizes.step}
             />
-            <button className="enlarge-font-size" onClick={() => this.enlargeFontSize(0.1)}>
+            <button className="button enlarge-font-size" onClick={() => this.enlargeFontSize(0.1)}>
               A
             </button>
           </p>

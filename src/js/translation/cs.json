@@ -13,6 +13,13 @@
   },
   "options": {
     "font-size": "Velikost písma",
+    "color-scheme": "Barevné schéma",
+    "color-scheme-auto": "Dle prohlížeče",
+    "color-scheme-dark": "Tmavé",
+    "color-scheme-light": "Světlé",
+    "color-scheme-sepia": "Sépiové",
+    "basic-style": "Základní zobrazení",
+    "basic-style-label": "Vypnout pokročilé vizuální prvky",
     "show-tips-title": "Jak číst webovou knížku?",
     "show-tips": "Zobrazit tipy",
     "about-this-book": "Produkční informace o next-booku",
@@ -30,7 +37,8 @@
     "unsecure": "Offline mód není dostupný, protože je kniha stažená přes nezabezpečený protokol."
   },
   "onboarding": {
-    "intro": "Je tohle vaše první webová knížka? U spodního okraje najdete vždy tato skrytá tlačítka pro otevření menu.",
+    "intro-head": "Je tohle vaše první webová knížka?",
+    "intro": "U spodního okraje najdete vždy skryté tlačítko pro otevření menu.",
     "intro-show": "Další 3 tipy",
     "intro-hide": "Zavřít",
     "pagination-heading": "Soustředěné čtení",

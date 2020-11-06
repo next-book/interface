@@ -34,12 +34,14 @@ $breakpoints: (
 @import 'content/_typo';
 @import 'content/_footnote';
 @import 'content/_navigation';
+@import 'content/_pagination';
 @import 'content/_annotation';
 
 // always scoped to .nb-* class
 // root custom props prefixed with name
 // TODO: prefix bodyclasses
 @import 'ui/_base';
+@import 'ui/_round-buttons';
 @import 'ui/_annotations';
 @import 'ui/_desk';
 @import 'ui/_navigation';

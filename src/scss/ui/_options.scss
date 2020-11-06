@@ -4,7 +4,7 @@
   .options-wrapper {
     display: grid;
     grid-gap: var(--base-padding);
-    margin: var(--base-padding);
+    margin: var(--base-padding) calc(2 * var(--base-padding));
   }
 
   .cell {
@@ -12,6 +12,12 @@
 
   .cell__title {
     margin-bottom: calc(var(--ui-font-size) / 2);
+  }
+
+  .color-scheme-select {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: var(--ui-font-size);
   }
 
   .font-size-slider {
@@ -28,7 +34,7 @@
     margin-left: -140px;
     margin-top: -33vh;
 
-    background: var(--ui-background);
+    background: var(--ui-c-bg);
     border: 1px solid var(--ui-c-soft);
     padding: 24px;
     border-radius: var(--border-radius);
@@ -112,6 +118,7 @@
       border: 1px solid transparent;
       border-radius: var(--border-radius);
       box-shadow: var(--ui-box-shadow);
+      color: black;
       cursor: pointer;
 
       &.style-edited {
