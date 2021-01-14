@@ -1,6 +1,6 @@
 {
   "name": "nb-base",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "Next-book’s base browser library",
   "repository": "https://github.com/next-book/nb-base",
   "main": "lib/index.js",
