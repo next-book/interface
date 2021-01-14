@@ -218,12 +218,18 @@ body {
 
 @media (min-width: 990.1px) {
   body.nb-controls-open {
-    --margins: calc(100vw - 24rem - var(--content-max-width) - 2 * var(--base-padding));
+    --margins: calc(
+      100vw - 24rem - var(--content-max-width) - 2 * var(--base-padding)
+    );
     --content-margin-left: calc(var(--margins) / 2);
     --content-margin-right: auto; } }
 
 body > [role='doc-toc'] {
   display: none; }
+
+.content select {
+  font-size: 1rem;
+  -webkit-appearance: none; }
 
 .emoji {
   font-family: sans-serif; }
@@ -254,30 +260,6 @@ body > [role='doc-toc'] {
   margin: 0 var(--content-margin-right) 0 var(--content-margin-left);
   max-width: var(--content-max-width);
   padding: calc(var(--base-padding) * 2) var(--base-padding); }
-  .content #chunk1 {
-    padding-top: 2rem; }
-  .content :target {
-    animation: highlight 0.8s ease-in-out; }
-    .content :target:before {
-      display: block;
-      position: absolute;
-      content: ' ';
-      margin-top: -150px;
-      height: 150px;
-      visibility: hidden; }
-    .content :target + dd {
-      animation: highlight 0.8s ease-in-out; }
-  .content .highlighted {
-    animation: highlight 0.8s ease-in-out;
-    will-change: background-color; }
-  .content #chunk1:target,
-  .content #chunk1.highlighted,
-  .content #idea1:target,
-  .content #idea1.highlighted {
-    animation: none; }
-  .content select {
-    font-size: 1rem;
-    -webkit-appearance: none; }
 
 .content p,
 .content blockquote,
@@ -372,15 +354,42 @@ body > [role='doc-toc'] {
     text-indent: 0;
     color: var(--ui-c-text-shade);
     vertical-align: baseline;
-    background: var(--ui-c-bg-shade);
-    padding: 0.3rem 0.5rem 0.2rem;
-    border-radius: 0.5rem;
-    display: inline-block;
+    padding: 0.5em 0.75em 0.4em;
+    margin: 0 -0.75em;
+    border-radius: 0.5em;
     line-height: 1;
     text-decoration: none;
-    font-size: 0.6rem;
+    font-size: 0.8em;
     position: relative;
-    top: -0.3rem; }
+    top: -0.3em;
+    color: var(--accent-color);
+    overflow: hidden;
+    white-space: nowrap; }
+    .content sup[id^='fnref'] a.footnote-ref:hover {
+      box-shadow: var(--ui-inset-shadow);
+      background: var(--background); }
+
+.content .idea,
+.content .chunk {
+  scroll-snap-margin-top: 30vh;
+  scroll-margin-top: 30vh; }
+
+.content :target {
+  scroll-snap-margin-top: 30vh;
+  scroll-margin-top: 30vh;
+  animation: highlight 3s ease-in-out; }
+  .content :target + dd {
+    animation: highlight 3s ease-in-out; }
+
+.content .highlighted {
+  animation: highlight 0.8s ease-in-out;
+  will-change: background-color; }
+
+.content #chunk1:target,
+.content #chunk1.highlighted,
+.content #idea1:target,
+.content #idea1.highlighted {
+  animation: none; }
 
 .content #chapter-end {
   position: relative;
@@ -915,7 +924,7 @@ body.nb-paginated-button-back::after {
     flex-shrink: 1;
     padding-right: 0.5rem; }
   .nb-progress .progress__chapter {
-    max-width: 40vw; }
+    max-width: 40%; }
 
 .nb-seq-return {
   font-family: var(--ui-font);
@@ -974,14 +983,16 @@ body.nb-paginated-button-back::after {
 
 .nb-peeks {
   font-family: var(--ui-font);
-  font-size: var(--ui-font-size); }
+  font-size: var(--ui-font-size);
+  position: fixed;
+  z-index: 1005;
+  bottom: 0;
+  left: 0;
+  right: 0; }
   .nb-peeks .peeks {
     max-height: 60vh;
-    position: fixed;
-    z-index: 1005;
-    left: 0;
-    right: 0;
-    bottom: 0; }
+    margin: 0 var(--content-margin-right) 0 var(--content-margin-left);
+    max-width: calc(var(--content-max-width) + 2 * var(--base-padding)); }
     .nb-peeks .peeks .peek {
       position: relative;
       box-sizing: border-box;
@@ -1359,23 +1370,25 @@ body.nb-paginated-button-back::after {
     .nb-onboarding .controls-launcher-demo div {
       min-height: 48px; }
   .nb-onboarding .controls-launcher-demo {
-    animation: pulse-opacity 5s ease-in-out infinite;
     pointer-events: none;
     bottom: 3px;
     font-family: var(--ui-font); }
     .nb-onboarding .controls-launcher-demo div {
       visibility: hidden;
       min-height: none;
-      height: 45px;
-      background: rgba(255, 255, 255, 0.5);
-      color: #9a4663;
-      font-size: calc(0.9 * var(--ui-font-size));
-      border-radius: 5px;
-      box-shadow: var(--ui-box-shadow);
-      background: linear-gradient(to bottom, rgba(200, 200, 200, 0.3) 0%, rgba(234, 234, 234, 0) 100%);
       margin: 0 15px;
       line-height: 48px;
-      text-align: center; }
+      height: 45px;
+      background: var(--ui-c-shadow);
+      background: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) 10px, var(--ui-c-shadow) 10px, var(--ui-c-shadow) 11px, rgba(0, 0, 0, 0.2) 11px);
+      color: var(--text-color);
+      text-shadow: 0 0 2px var(--background);
+      border: 1px solid var(--ui-c-shadow);
+      border-radius: 5px;
+      box-shadow: var(--ui-box-shadow);
+      font-size: calc(0.9 * var(--ui-font-size));
+      text-align: center;
+      font-weight: bold; }
     .nb-onboarding .controls-launcher-demo div:last-child {
       visibility: visible; }
   .nb-onboarding .onboarding-overlay {
