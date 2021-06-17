@@ -1,15 +1,15 @@
 import { IAnnotationStyle } from './annotations/reducer';
 import i18n from './../i18n';
 
-const HIDE_ONBOARDING = 'nb-base/config/HIDE_ONBOARDING';
-const SHOW_ONBOARDING = 'nb-base/config/SHOW_ONBOARDING';
-const TOGGLE_PROGRESS_DISPLAY = 'nb-base/config/TOGGLE_PROGRESS_DISPLAY';
-const SET_FONT_SIZE = 'nb-base/config/SET_FONT_SIZE';
-const ADD_STYLE = 'nb-base/config/ADD_STYLE';
-const UPDATE_STYLE = 'nb-base/config/UPDATE_STYLE';
-const REMOVE_STYLE = 'nb-base/config/REMOVE_STYLE';
-const SET_DARK_MODE = 'nb-base/config/SET_DARK_MODE';
-const SET_RICH_STYLE = 'nb-base/config/SET_RICH_STYLE';
+const HIDE_ONBOARDING = 'interface/config/HIDE_ONBOARDING';
+const SHOW_ONBOARDING = 'interface/config/SHOW_ONBOARDING';
+const TOGGLE_PROGRESS_DISPLAY = 'interface/config/TOGGLE_PROGRESS_DISPLAY';
+const SET_FONT_SIZE = 'interface/config/SET_FONT_SIZE';
+const ADD_STYLE = 'interface/config/ADD_STYLE';
+const UPDATE_STYLE = 'interface/config/UPDATE_STYLE';
+const REMOVE_STYLE = 'interface/config/REMOVE_STYLE';
+const SET_DARK_MODE = 'interface/config/SET_DARK_MODE';
+const SET_RICH_STYLE = 'interface/config/SET_RICH_STYLE';
 
 export enum ProgressKind {
   MinutesInChapter = 'displayMinutesInChapter',

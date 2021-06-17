@@ -1,9 +1,9 @@
 import { IDocument, DocRole } from './manifest-reducer';
 import { Sequential, SeqReturnStatus } from './seq-return';
 
-const SET_POSITION = 'nb-base/navigation/SET_POSITION';
-const SET_SCROLL_RATIO = 'nb-base/navigation/SET_SCROLL_RATIO';
-const SET_READING_ORDER = 'nb-base/navigation/SET_READING_ORDER';
+const SET_POSITION = 'interface/navigation/SET_POSITION';
+const SET_SCROLL_RATIO = 'interface/navigation/SET_SCROLL_RATIO';
+const SET_READING_ORDER = 'interface/navigation/SET_READING_ORDER';
 
 export interface IState {
   scrollRatio: number;

@@ -1,4 +1,4 @@
-const SET_MANIFEST_DATA = 'nb-base/manifest/SET_MANIFEST_DATA';
+const SET_MANIFEST_DATA = 'interface/manifest/SET_MANIFEST_DATA';
 
 export interface IState {
   title: string;

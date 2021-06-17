@@ -5,7 +5,9 @@ body {
 
 @media (min-width: 0.1px + map-get($breakpoints, 'max-full-screen-controls')) {
   body.nb-controls-open {
-    --margins: calc(100vw - #{$controls-width} - var(--content-max-width) - 2 * var(--base-padding));
+    --margins: calc(
+      100vw - #{$controls-width} - var(--content-max-width) - 2 * var(--base-padding)
+    );
     --content-margin-left: calc(var(--margins) / 2);
     --content-margin-right: auto;
   }
@@ -13,6 +15,11 @@ body {
 
 body > [role='doc-toc'] {
   display: none;
+}
+
+.content select {
+  font-size: 1rem;
+  -webkit-appearance: none;
 }
 
 .emoji {

@@ -1,9 +1,9 @@
-const ADD_ANNOTATION = 'nb-base/annotations/ADD_ANNOTATION';
-const UPDATE_ANNOTATION = 'nb-base/annotations/UPDATE_ANNOTATION';
-const DESTROY_ANNOTATION = 'nb-base/annotations/DESTROY_ANNOTATION';
-const ADD_NOTE = 'nb-base/annotations/ADD_NOTE';
-const UPDATE_NOTE = 'nb-base/annotations/UPDATE_NOTE';
-const DESTROY_NOTE = 'nb-base/annotations/DESTROY_NOTE';
+const ADD_ANNOTATION = 'interface/annotations/ADD_ANNOTATION';
+const UPDATE_ANNOTATION = 'interface/annotations/UPDATE_ANNOTATION';
+const DESTROY_ANNOTATION = 'interface/annotations/DESTROY_ANNOTATION';
+const ADD_NOTE = 'interface/annotations/ADD_NOTE';
+const UPDATE_NOTE = 'interface/annotations/UPDATE_NOTE';
+const DESTROY_NOTE = 'interface/annotations/DESTROY_NOTE';
 
 export interface IAnnotationStyle {
   color: string | null;
