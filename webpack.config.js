@@ -12,10 +12,10 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ],
+    extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    filename: 'nb-base.js',
+    filename: 'interface.js',
     path: path.resolve(__dirname, 'dist'),
   },
 };

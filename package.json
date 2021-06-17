@@ -1,8 +1,8 @@
 {
-  "name": "nb-base",
+  "name": "@next-book/interface",
   "version": "0.1.18",
-  "description": "Next-book’s base browser library",
-  "repository": "https://github.com/next-book/nb-base",
+  "description": "Next-book’s browser interface",
+  "repository": "https://github.com/next-book/interface",
   "main": "lib/index.js",
   "scripts": {
     "ts": "tsc",
@@ -11,7 +11,7 @@
     "build": "rm -r dist && mkdir dist && npm run build:css && npm run bundle",
     "build:types": "tsc --emitDeclarationOnly --watch",
     "build:js-dev": "webpack --mode development --watch",
-    "build:css": "node-sass src/scss/style.scss dist/nb-base.css",
+    "build:css": "node-sass src/scss/style.scss dist/interface.css",
     "bundle": "webpack --mode production",
     "test": "jest"
   },

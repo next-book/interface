@@ -1,5 +1,5 @@
-const ADD_PEEK = 'nb-base/peeks/ADD_PEEK';
-const DESTROY_PEEK = 'nb-base/peeks/DESTROY_PEEK';
+const ADD_PEEK = 'interface/peeks/ADD_PEEK';
+const DESTROY_PEEK = 'interface/peeks/DESTROY_PEEK';
 
 export interface IPeek {
   title: string;

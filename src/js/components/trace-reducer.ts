@@ -2,7 +2,7 @@
 import toMilliseconds from 'to-milliseconds';
 import { Sequential } from './seq-return';
 
-const ADD_MOMENT = 'nb-base/trace/ADD_MOMENT';
+const ADD_MOMENT = 'interface/trace/ADD_MOMENT';
 
 interface IBreakLength {
   hours?: number;

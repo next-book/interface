@@ -1,5 +1,5 @@
-const SET_SW_AVAILABILITY = 'nb-base/offline/SET_SW_AVAILABILITY';
-const SET_CACHE_AVAILABILITY = 'nb-base/offline/SET_CACHE_AVAILABILITY';
+const SET_SW_AVAILABILITY = 'interface/offline/SET_SW_AVAILABILITY';
+const SET_CACHE_AVAILABILITY = 'interface/offline/SET_CACHE_AVAILABILITY';
 
 export enum SwAvailability {
   Initial,
