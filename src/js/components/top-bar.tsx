@@ -1,6 +1,5 @@
 import React from 'react';
 
-import FullScreen from './full-screen';
 import { IDocument } from './manifest-reducer';
 
 interface IProps {
@@ -25,9 +24,6 @@ export function TopBar(props: IProps) {
           {chapterNumber()}
           {props.chapter.title}
         </span>
-      </p>
-      <p className="tools">
-        <FullScreen />
       </p>
     </div>
   );

@@ -4,8 +4,9 @@ import { IState as ICombinedState } from '../reducer';
 import Peek from './peek';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
+import { withTranslation, WithTranslation } from 'react-i18next';
 
-export interface IProps {
+export interface IProps extends WithTranslation {
   peeks: IPeek[];
   addPeek(peek: IPeek): void;
   destroyPeek(index: number): void;
@@ -27,10 +28,11 @@ export class Peeks extends React.Component<IProps> {
         const footnoteEl = document.getElementById(attrHref.replace(/^#/, ''));
         if (footnoteEl !== null)
           this.props.addPeek({
-            content: footnoteEl.innerHTML,
-            title: 'Footnote',
+            content: `<div class="footnote-content">${footnoteEl.innerHTML}</div>`,
+            title: this.props.t('note'),
             source: target.href,
             showSource: false,
+            hash: hash('' + footnoteEl.innerHTML),
           });
       }
     }
@@ -47,15 +49,14 @@ export class Peeks extends React.Component<IProps> {
   render() {
     return (
       <div className="peeks ui-target">
-        {this.props.peeks.map((peek, index) => (
+        {this.props.peeks.map(peek => (
           <Peek
-            key={index}
-            index={index}
+            key={peek.hash}
+            hash={peek.hash}
             source={peek.source}
             showSource={peek.showSource}
             title={peek.title}
-            content={typeof peek.content !== 'string' ? peek.content : null}
-            rawContent={typeof peek.content === 'string' ? peek.content : null}
+            content={peek.content}
             destroy={this.props.destroyPeek}
           />
         ))}
@@ -63,6 +64,18 @@ export class Peeks extends React.Component<IProps> {
     );
   }
 }
+
+const hash = (str: string): number => {
+  let hash = 0,
+    i,
+    chr;
+  for (i = 0; i < str.length; i++) {
+    chr = str.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0;
+  }
+  return hash;
+};
 
 const mapStateToProps = (state: ICombinedState) => {
   return { peeks: state.peeks };
@@ -78,4 +91,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Peeks);
+export default withTranslation('common')(connect(mapStateToProps, mapDispatchToProps)(Peeks));

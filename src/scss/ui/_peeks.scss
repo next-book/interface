@@ -1,0 +1,98 @@
+.nb-peeks {
+  font-family: var(--ui-font);
+  font-size: var(--ui-font-size);
+
+  position: fixed;
+  z-index: map-get($z-indexes, 'peeks') + 5;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  .peeks {
+    max-height: 60vh;
+
+    margin: 0 var(--content-margin-right) 0 var(--content-margin-left);
+    max-width: calc(var(--content-max-width) + 2 * var(--base-padding));
+
+    .peek {
+      position: relative;
+      box-sizing: border-box;
+      border: 1px solid var(--ui-c-soft);
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      box-shadow: var(--ui-box-shadow);
+      overflow: hidden;
+
+      transition: bottom 0.2s ease-out;
+      animation: slide-up 0.2s ease-out;
+
+      display: none;
+
+      .peek-content {
+        padding: 4rem 1rem 2rem;
+        max-height: calc(60vh - 6rem);
+        background: var(--ui-c-bg);
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .peek-head {
+        position: absolute;
+        display: flex;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2rem;
+        line-height: 2rem;
+        text-align: left;
+        border-bottom: 1px solid var(--ui-c-soft);
+        z-index: map-get($z-indexes, 'peeks') + 10;
+
+        .peek-info {
+          flex-grow: 1;
+          padding: 0 var(--base-padding);
+
+          p {
+            margin: 0;
+            line-height: 2rem;
+          }
+        }
+
+        .peek-close {
+          display: block;
+          width: 3rem;
+          height: 2rem;
+          font-size: var(--ui-font-size);
+
+          border: none;
+          color: var(--ui-c-text);
+          background: none;
+          cursor: pointer;
+          text-align: center;
+        }
+      }
+    }
+
+    .peek:nth-last-child(3),
+    .peek:nth-last-child(2) {
+      display: block;
+      height: 2vh;
+      margin-bottom: -1vh;
+      background: var(--ui-c-bg-shade);
+
+      .peek-head,
+      .peek-content {
+        display: none;
+      }
+    }
+
+    .peek:last-child {
+      display: block;
+      height: auto;
+      margin-bottom: 0;
+    }
+
+    .footnote-backref {
+      display: none;
+    }
+  }
+}

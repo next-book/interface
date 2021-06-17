@@ -1,0 +1,104 @@
+.nb-navigation nav {
+  font-size: var(--ui-font-size);
+
+  /* nav bar */
+  .nav-bar {
+    --height: 6px;
+
+    display: block;
+    position: fixed;
+    left: var(--base-padding);
+    bottom: 0;
+    width: calc(100vw - 2 * var(--base-padding));
+    border-right: 1px solid var(--ui-c-shadow);
+
+    height: var(--height);
+    margin: 0;
+    list-style-type: none;
+    box-sizing: border-box;
+
+    .nav-bar__overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 30px;
+
+      background: linear-gradient(
+        to bottom,
+        var(--transparent-background) 0%,
+        var(--background) 100%
+      );
+    }
+
+    .chapter {
+      display: block;
+      border-left: 1px solid var(--ui-c-shadow);
+      list-style-type: none;
+      position: absolute;
+      top: 0;
+      z-index: map-get($z-indexes, 'navigation') + 11;
+      height: var(--height);
+      margin: 0;
+
+      box-sizing: border-box;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .info {
+      visibility: hidden;
+    }
+
+    .pointer {
+      display: block;
+      list-style-type: none;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      width: 0;
+      z-index: map-get($z-indexes, 'navigation') + 10;
+      background: var(--accent-color);
+    }
+  }
+
+  .top-bar {
+    font-family: var(--content-font);
+    font-size: var(--ui-font-size);
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+
+    p.info {
+      font-family: var(--heading-font);
+      font-weight: var(--heading-font-weight);
+      max-width: var(--content-max-width);
+      padding: calc(var(--base-padding) / 4) var(--base-padding);
+      margin: 0 var(--content-margin-right) 0 var(--content-margin-left);
+
+      a {
+        color: var(--text-color);
+        text-decoration: none;
+      }
+
+      .chapter {
+        display: none;
+      }
+    }
+  }
+
+  .top-bar .fixed {
+    p.info .chapter {
+      display: inline-block;
+    }
+  }
+
+  .next,
+  .prev {
+    display: none;
+  }
+}

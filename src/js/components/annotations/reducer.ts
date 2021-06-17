@@ -1,14 +1,16 @@
-const ADD_ANNOTATION = 'nb-base/annotations/ADD_ANNOTATION';
-const UPDATE_ANNOTATION = 'nb-base/annotations/UPDATE_ANNOTATION';
-const DESTROY_ANNOTATION = 'nb-base/annotations/DESTROY_ANNOTATION';
-const ADD_NOTE = 'nb-base/annotations/ADD_NOTE';
-const UPDATE_NOTE = 'nb-base/annotations/UPDATE_NOTE';
-const DESTROY_NOTE = 'nb-base/annotations/DESTROY_NOTE';
+const ADD_ANNOTATION = 'interface/annotations/ADD_ANNOTATION';
+const UPDATE_ANNOTATION = 'interface/annotations/UPDATE_ANNOTATION';
+const DESTROY_ANNOTATION = 'interface/annotations/DESTROY_ANNOTATION';
+const ADD_NOTE = 'interface/annotations/ADD_NOTE';
+const UPDATE_NOTE = 'interface/annotations/UPDATE_NOTE';
+const DESTROY_NOTE = 'interface/annotations/DESTROY_NOTE';
 
-export enum IStyle {
-  Default = 'default',
-  Secondary = 'secondary',
-  Strong = 'strong',
+export interface IAnnotationStyle {
+  color: string | null;
+  backgroundColor: string | null;
+  symbol: string;
+  name: string;
+  quick: boolean;
 }
 
 export interface IIdeaRange {
@@ -21,9 +23,8 @@ export interface IAnnotation {
   dateModified: number;
   id: number;
   range: IIdeaRange;
-  chapterNum: string;
-  symbol: string;
-  style: IStyle;
+  file: string;
+  style: IAnnotationStyle;
   note: string;
   links: string[];
 }
@@ -46,7 +47,7 @@ export interface INote {
   dateModified: number;
   id: number;
   text: string;
-  chapterNum: string;
+  file: string;
 }
 
 export interface INotes {
@@ -63,9 +64,23 @@ export interface IState {
   [key: string]: IAnnotationSet;
 }
 
+export const bgColors = [
+  '#ffadad',
+  '#ffd6a5',
+  '#fdffb6',
+  '#caffbf',
+  '#9bf6ff',
+  '#a0c4ff',
+  '#bdb2ff',
+  '#ffc6ff',
+  '#eeeeee',
+];
+
+export const textColors = ['#edae49', '#d1495b', '#00798c', '#30638e', '#003d5b'];
+
 const INITIAL_STATE: IState = {};
 
-export function reducer(state: IState = INITIAL_STATE, action: any) {
+export function reducer(state: IState = INITIAL_STATE, action: Actions) {
   switch (action.type) {
     case ADD_ANNOTATION:
       return addAnnotation(state, action.payload);
@@ -90,10 +105,10 @@ function addNote(state: IState, payload: INote) {
   note.dateModified = new Date().getTime();
 
   const newState = { ...state };
-  const notes = state[note.chapterNum] ? state[note.chapterNum].notes : {};
+  const notes = state[note.file] ? state[note.file].notes : {};
 
-  newState[note.chapterNum] = {
-    ...newState[note.chapterNum],
+  newState[note.file] = {
+    ...newState[note.file],
     notes: {
       ...notes,
       [note.id]: note,
@@ -108,7 +123,7 @@ function updateNote(state: IState, payload: INote) {
   note.dateModified = new Date().getTime();
 
   const newState = { ...state };
-  newState[payload.chapterNum].notes[note.id] = note;
+  newState[payload.file].notes[note.id] = note;
 
   return newState;
 }
@@ -117,8 +132,7 @@ function destroyNote(state: IState, payload: INote) {
   const note = { ...payload };
 
   const newState = { ...state };
-  console.log(newState);
-  delete newState[note.chapterNum].notes[note.id];
+  delete newState[note.file].notes[note.id];
 
   return newState;
 }
@@ -129,10 +143,10 @@ function addAnnotation(state: IState, payload: IAnnotationAndIdeas) {
   annotation.dateModified = new Date().getTime();
 
   const newState = { ...state };
-  const annotations = state[annotation.chapterNum] ? state[annotation.chapterNum].annotations : {};
+  const annotations = state[annotation.file] ? state[annotation.file].annotations : {};
 
-  newState[annotation.chapterNum] = {
-    ...newState[annotation.chapterNum],
+  newState[annotation.file] = {
+    ...newState[annotation.file],
     annotations: {
       ...annotations,
       [annotation.id]: annotation,
@@ -148,11 +162,11 @@ function updateAnnotation(state: IState, payload: IAnnotationAndIdeas) {
 
   const newState = { ...state };
 
-  newState[annotation.chapterNum].annotations[annotation.id] = {
+  newState[annotation.file].annotations[annotation.id] = {
     ...annotation,
     dateModified: new Date().getTime(),
   };
-  newState[annotation.chapterNum].ideas = ideas;
+  newState[annotation.file].ideas = ideas;
   return newState;
 }
 
@@ -160,57 +174,56 @@ function destroyAnnotation(state: IState, payload: IAnnotationAndIdeas) {
   const { annotation, ideas } = payload;
 
   const newState = { ...state };
-  delete newState[annotation.chapterNum].annotations[annotation.id];
+  delete newState[annotation.file].annotations[annotation.id];
 
-  newState[annotation.chapterNum].ideas = ideas;
+  newState[annotation.file].ideas = ideas;
 
-  console.log(newState);
   return newState;
 }
 
 reducer.addNote = function(data: INote) {
-  return {
+  return <const>{
     type: ADD_NOTE,
     payload: data,
   };
 };
 
 reducer.updateNote = function(data: INote) {
-  return {
+  return <const>{
     type: UPDATE_NOTE,
     payload: data,
   };
 };
 
 reducer.destroyNote = function(data: INote) {
-  return {
+  return <const>{
     type: DESTROY_NOTE,
     payload: data,
   };
 };
 
 reducer.addAnnotation = function(data: IAnnotationAndIdeas) {
-  return {
+  return <const>{
     type: ADD_ANNOTATION,
     payload: data,
   };
 };
 
 reducer.updateAnnotation = function(data: IAnnotationAndIdeas) {
-  return {
+  return <const>{
     type: UPDATE_ANNOTATION,
     payload: data,
   };
 };
 
 reducer.destroyAnnotation = function(data: IAnnotationAndIdeas) {
-  return {
+  return <const>{
     type: DESTROY_ANNOTATION,
     payload: data,
   };
 };
 
-export type Action = ReturnType<
+export type Actions = ReturnType<
   | typeof reducer.addNote
   | typeof reducer.updateNote
   | typeof reducer.destroyNote

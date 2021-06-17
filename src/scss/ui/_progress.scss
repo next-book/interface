@@ -1,0 +1,69 @@
+.nb-progress {
+  font-family: var(--ui-font);
+  font-size: var(--ui-font-size);
+
+  .current-position {
+    z-index: map-get($z-indexes, 'navigation') + 20;
+
+    border: none;
+    background: transparent;
+
+    display: block;
+    font-size: calc(var(--ui-font-size) * 0.8);
+    font-family: var(--ui-font);
+    text-align: right;
+  }
+
+  .current-position--display {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 8px calc(var(--base-padding) - 1px);
+
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .current-position--config {
+    display: flex;
+    text-align: left;
+
+    label {
+      display: block;
+      margin-right: 1rem;
+      text-indent: -1rem;
+      padding-left: 1rem;
+    }
+  }
+
+  .progress--collapsed {
+    margin: 0 0 var(--base-padding) var(--base-padding);
+    float: right;
+  }
+
+  .progress {
+    display: flex;
+    margin-bottom: var(--ui-font-size);
+    padding-bottom: var(--ui-font-size);
+    border-bottom: 1px solid var(--ui-c-soft);
+
+    select {
+      max-width: 100%;
+      padding: 0 0.25rem;
+    }
+  }
+
+  .progress__idea,
+  .progress__chapter {
+    display: block;
+    font-family: var(--ui-font);
+    flex-grow: 0;
+    flex-shrink: 1;
+    padding-right: 0.5rem;
+  }
+
+  .progress__chapter {
+    max-width: 40%;
+  }
+}

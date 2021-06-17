@@ -1,8 +1,9 @@
 import React from 'react';
 import ContentEditable from 'react-contenteditable';
 import { ContentEditableEvent } from 'react-contenteditable';
-import { INote } from './annotations-reducer';
+import { INote } from './reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
+import Icons from '../../icons';
 
 interface IProps extends WithTranslation {
   note: INote;
@@ -29,11 +30,13 @@ class AnnotationNote extends React.Component<IProps, IState> {
     this.setState({ ...this.state, text: event.target.value });
   };
 
-  private toggleUpdateState = () => {
-    this.setState({ ...this.state, editMode: !this.state.editMode });
+  private enableEditMode = (event: React.SyntheticEvent) => {
+    this.setState({ ...this.state, editMode: true });
+    event.stopPropagation();
   };
 
   private update = (event: React.SyntheticEvent) => {
+    event.stopPropagation();
     const note = { ...this.props.note, text: this.state.text };
     this.props.update(note);
     this.setState({ ...this.state, editMode: false });
@@ -45,24 +48,32 @@ class AnnotationNote extends React.Component<IProps, IState> {
 
   render() {
     return (
-      <div className="desk--annotation">
-        <span className="desk--annotation__destroy" onClick={this.destroy}>
-          ╳
-        </span>
+      <div className="desk__annotation" onClick={this.enableEditMode}>
         {this.state.editMode ? (
-          <div className="note-editor">
-            <ContentEditable
-              className="note-editor__input"
-              html={this.state.text}
-              tagName="article"
-              onChange={this.updateState}
-            />
-            <button onClick={this.update}>{this.props.t('update-note')}</button>
-          </div>
+          <>
+            <div className="desk__note-editor">
+              <ContentEditable
+                className="desk__note-editor__input"
+                html={this.state.text}
+                tagName="article"
+                onChange={this.updateState}
+              />
+            </div>
+            <div className="button-zero-bar button-zero-bar--bottom button-zero-bar--two-buttons">
+              <button className="round-button" onClick={this.update}>
+                {Icons.Check}
+              </button>
+              <button className="round-button round-button--warning" onClick={this.destroy}>
+                {Icons.Delete}
+              </button>
+            </div>
+          </>
         ) : (
           <>
-            <div dangerouslySetInnerHTML={{ __html: this.props.note.text }}></div>
-            <button onClick={this.toggleUpdateState}>{this.props.t('edit-note')}</button>
+            <div
+              className="desk__note-wrapper"
+              dangerouslySetInnerHTML={{ __html: this.props.note.text }}
+            ></div>
           </>
         )}
       </div>

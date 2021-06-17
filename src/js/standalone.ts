@@ -1,4 +1,4 @@
-import { initBook } from './index';
+import { initBook } from './';
 
 document.addEventListener('DOMContentLoaded', () => {
   initBook();

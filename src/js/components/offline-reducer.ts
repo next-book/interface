@@ -1,20 +1,27 @@
-const SET_OFFLINE_AVAILABILITY = 'nb-base/offline/SET_OFFLINE_AVAILABILITY';
-const SET_CACHE_AVAILABILITY = 'nb-base/offline/SET_CACHE_AVAILABILITY';
+const SET_SW_AVAILABILITY = 'interface/offline/SET_SW_AVAILABILITY';
+const SET_CACHE_AVAILABILITY = 'interface/offline/SET_CACHE_AVAILABILITY';
+
+export enum SwAvailability {
+  Initial,
+  Unsecure,
+  NoSw,
+  Available,
+}
 
 export interface IState {
-  offlineIsAvailable: boolean;
+  swIsAvailable: SwAvailability;
   cacheIsAvailable: boolean;
 }
 
 const INITIAL_STATE: IState = {
-  offlineIsAvailable: false,
+  swIsAvailable: SwAvailability.Initial,
   cacheIsAvailable: false,
 };
 
-export function reducer(state = INITIAL_STATE, action: Action) {
+export function reducer(state = INITIAL_STATE, action: Actions) {
   switch (action.type) {
-    case SET_OFFLINE_AVAILABILITY:
-      return { ...state, ...{ offlineIsAvailable: action.payload } };
+    case SET_SW_AVAILABILITY:
+      return { ...state, ...{ swIsAvailable: action.payload } };
     case SET_CACHE_AVAILABILITY:
       return { ...state, ...{ cacheIsAvailable: action.payload } };
     default:
@@ -22,20 +29,20 @@ export function reducer(state = INITIAL_STATE, action: Action) {
   }
 }
 
-reducer.setOfflineAvailability = function(status: boolean) {
-  return {
-    type: SET_OFFLINE_AVAILABILITY,
+reducer.setSwAvailability = (status: SwAvailability) => {
+  return <const>{
+    type: SET_SW_AVAILABILITY,
     payload: status,
   };
 };
 
-reducer.setCacheAvailability = function(status: boolean) {
-  return {
+reducer.setCacheAvailability = (status: boolean) => {
+  return <const>{
     type: SET_CACHE_AVAILABILITY,
     payload: status,
   };
 };
 
-export type Action = ReturnType<
-  typeof reducer.setOfflineAvailability | typeof reducer.setCacheAvailability
+export type Actions = ReturnType<
+  typeof reducer.setSwAvailability | typeof reducer.setCacheAvailability
 >;

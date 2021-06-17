@@ -1,10 +1,12 @@
 import React from 'react';
 import ContentEditable from 'react-contenteditable';
 import { ContentEditableEvent } from 'react-contenteditable';
-import { IAnnotation, IAnnotationAndIdeas, IStyle } from './annotations-reducer';
-import { getAnnotatedIdeas, updateHead } from './annotation-utils';
+import { IAnnotation, IAnnotationAndIdeas } from './reducer';
+import { getAnnotatedIdeas, updateHead } from './utils';
+import { withTranslation, WithTranslation } from 'react-i18next';
+import Icons from '../../icons';
 
-interface IProps {
+interface IProps extends WithTranslation {
   annotation: IAnnotation;
   close(): void;
   updateAnnotation(data: IAnnotationAndIdeas): void;
@@ -12,19 +14,15 @@ interface IProps {
 }
 
 interface IState {
-  symbol: string;
   note: string;
-  style: IStyle;
 }
 
-export default class AnnotationDetail extends React.Component<IProps, IState> {
+class AnnotationDetail extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
     this.state = {
       note: props.annotation.note,
-      symbol: props.annotation.symbol,
-      style: IStyle.Default,
     };
   }
 
@@ -40,6 +38,30 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
     });
   };
 
+  closeOnClickOutside = (e: Event) => {
+    const el = e.target as Element;
+
+    const clickedOnStyleButton = el.classList.contains('style-button');
+    const clickedOnAnnotationHead = el.classList.contains('annotation__head');
+
+    const clickedInside =
+      el.classList.contains('annotation-detail') || el.closest('.annotation-detail') !== null;
+
+    if (!(clickedInside || clickedOnAnnotationHead || clickedOnStyleButton)) this.props.close();
+  };
+
+  componentDidMount() {
+    window.addEventListener('click', this.closeOnClickOutside);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this.closeOnClickOutside);
+  }
+
+  destroyAnnotation = (annotation: IAnnotation) => {
+    if (window.confirm(this.props.t('confirm-destroy'))) this.props.destroyAnnotation(annotation);
+  };
+
   // private pastePlainText = event => {
   //   event.preventDefault();
 
@@ -50,15 +72,12 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
   render() {
     return this.props.annotation === undefined ? null : (
       <div className="annotation-detail">
-        <div className="annotation-detail__tools">
-          <button className="annotation-detail__close" onClick={this.props.close}>
-            <span>Close annotation</span>
-          </button>
+        <div className="button-zero-bar button-zero-bar--single-button">
           <button
-            className="annotation-detail__destroy"
-            onClick={() => this.props.destroyAnnotation(this.props.annotation)}
+            className="round-button round-button--warning"
+            onClick={() => this.destroyAnnotation(this.props.annotation)}
           >
-            <span>Delete annotation</span>
+            {Icons.Delete}
           </button>
         </div>
 
@@ -72,6 +91,8 @@ export default class AnnotationDetail extends React.Component<IProps, IState> {
     );
   }
 }
+
+export default withTranslation('annotations')(AnnotationDetail);
 
 // onPaste={this.pastePlainText
 // <!-- <p>{JSON.stringify(this.props, null, ' ')}</p> -->

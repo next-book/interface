@@ -1,0 +1,28 @@
+.nb-ui-big-title {
+  font-size: calc(1.5 * var(--ui-font-size));
+  margin: calc(var(--base-padding) / 2) 0;
+}
+
+.nb-ui-title {
+  font-size: var(--ui-font-size);
+  font-weight: 600;
+}
+
+.nb-ui-blank {
+  font-style: italic;
+  color: var(--ui-c-medium);
+}
+
+.nb-ui-note {
+  font-size: calc(0.8 * var(--ui-font-size));
+  margin-bottom: 0;
+}
+
+.dot-select {
+  opacity: 0.7;
+  cursor: pointer;
+
+  &.dot-selected {
+    opacity: 1;
+  }
+}

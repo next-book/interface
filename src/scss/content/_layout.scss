@@ -1,0 +1,5 @@
+.content {
+  margin: 0 var(--content-margin-right) 0 var(--content-margin-left);
+  max-width: var(--content-max-width);
+  padding: calc(var(--base-padding) * 2) var(--base-padding);
+}

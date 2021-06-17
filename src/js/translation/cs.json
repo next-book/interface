@@ -1,31 +1,92 @@
 {
   "common": {
-    "toggle-full-screen": "Přepnout na celou obrazovku"
+    "toggle-full-screen": "Přepnout na celou obrazovku",
+    "note": "Poznámka"
+  },
+  "controls": {
+    "show-toc": "Zobrazit obsah",
+    "show-notes": "Zobrazit poznámky",
+    "show-options": "Zobrazit nastavení",
+    "toc": "Obsah",
+    "annotations": "Anotace",
+    "options": "Nastavení"
+  },
+  "options": {
+    "font-size": "Velikost písma",
+    "color-scheme": "Barevné schéma",
+    "color-scheme-auto": "Dle prohlížeče",
+    "color-scheme-dark": "Tmavé",
+    "color-scheme-light": "Světlé",
+    "color-scheme-sepia": "Sépiové",
+    "basic-style": "Základní zobrazení",
+    "basic-style-label": "Vypnout pokročilé vizuální prvky",
+    "show-tips-title": "Jak číst webovou knížku?",
+    "show-tips": "Zobrazit tipy",
+    "about-this-book": "Produkční informace o next-booku",
+    "revision": "Identifikátor revize",
+    "generated-at": "Publikováno",
+    "offline-mode": "Offline mód",
+    "annotation-styles": "Styly anotací",
+    "create-quick-note": "Ihned otevřít editor poznámky",
+    "change-does-overwrite-existing": "Změny se nepromítnou do existujících anotací."
+  },
+  "offline": {
+    "cache-available": "Offline mód je dostupný, knížku můžete číst bez signálu (i v režimu Letadlo).",
+    "problem": "Offline mód by měl být dostupný, ale z nějakého důvodu stahování selhalo.",
+    "nosw": "Offline mód není dostupný, protože váš prohlížeč nepodporuje potřebný standard.",
+    "unsecure": "Offline mód není dostupný, protože je kniha stažená přes nezabezpečený protokol."
+  },
+  "onboarding": {
+    "intro-head": "Je tohle vaše první webová knížka?",
+    "intro": "U spodního okraje najdete vždy skryté tlačítko pro otevření menu.",
+    "intro-show": "Další 3 tipy",
+    "intro-hide": "Zavřít",
+    "pagination-heading": "Soustředěné čtení",
+    "pagination": "Pokud vás posouvání textu rozptyluje, použijte svajpnutí, skrytá tlačítka na okrajích, nebo šipky na klávesnici.",
+    "remember-heading": "Kniha si pamatuje, kde jste přestali číst",
+    "remember": "Na titulní straně se objeví odkaz na místo, kde jste skončili. A v adresním řádku máte vždy odkaz na aktuální větu.",
+    "annotations-heading": "Dělejte si poznámky",
+    "annotations": "Pokud označíte text, můžete si jej zvýraznit nebo si k němu napsat poznámku.",
+    "next": "Další tip",
+    "close": "Šup do knížky",
+    "read-offline": "(A čtěte offline, knížka se vám stáhla celá.)"
   },
   "annotations": {
     "work-desk": "Pracovní plocha",
-    "no-annotations-in-chapter": "V textu kapitoly nemáte žádné anotace.",
+    "no-annotations-in-chapter": "V textu kapitoly nemáte žádná zvýraznění.",
     "no-notes-in-chapter": "V textu kapitoly nemáte žádné poznámky.",
-    "annotations-in-text": "Anotace v textu",
+    "highlights": "Zvýraznění",
     "notes": "Poznámky",
     "add-note": "Přidat poznámku",
     "edit-note": "Upravit poznámku",
-    "update-note": "Uložit poznámku"
+    "update-note": "Uložit poznámku",
+    "show-all": "Zobrazit všechny kapitoly",
+    "confirm-destroy": "Chcete skutečně smazat toto zvýraznění?",
+    "default-style-okay": "OK",
+    "default-style-red-flag": "Problém",
+    "default-style-omg": "Sporné",
+    "default-style-neutral": "Poznámky"
   },
   "navigation": {
-    "intro": "Tato kniha si pamatuje, kam jste ji dočetli. Pro zobrazení obsahu knihy můžete kliknout na spodní lištu.",
+    "title-page": "Titulní strana",
+    "colophon": "Tiráž",
     "start": "Otevřít první kapitolu",
     "return": "Vrátit se",
     "continueReading": "Pokračovat ve čtení",
     "continue": "Pokračovat odtud",
     "chapter": "Kapitola",
     "sentence": "Věta",
-    "percent-sign": " %",
+    "nthSentence": "{{number, ordinal}} věta",
+    "turn-to": "Přelistovat…",
+    "progress": "{{percent}} %",
+    "progress-long": "{{percent}}% přečteno",
+    "minutes-left": "{{minutes}} min",
+    "minutes-left-long": "v kapitole zbývá {{minutes}} minut",
+    "nthChapterNthSentence": "{{chapter, ordinal}} kapitola, {{idea, ordinal}} věta",
     "prev-chapter": "Předchozí kapitola",
     "next-chapter": "Následující kapitola",
-    "seqReturnAnotherChapter": "Dočetli jste po <1>{{idea}}. větu</1> v kapitole <3>{{chapter}}</3>.",
+    "seqReturnAnotherChapter": "Dočetli jste po <1>{{idea}}. větu</1> v kapitole <3>{{title}}</3>.",
     "seqReturnThisChapter": "Dočetli jste po <2>{{idea}}. větu</2> v této kapitole.",
-    "go": "Přejít",
-    "toc": "Obsah"
+    "go": "Přejít"
   }
 }

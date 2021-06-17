@@ -1,7 +1,8 @@
 /// <reference path="../types/to-ms.d.ts"/>
 import toMilliseconds from 'to-milliseconds';
+import { Sequential } from './seq-return';
 
-const ADD_MOMENT = 'nb-base/trace/ADD_MOMENT';
+const ADD_MOMENT = 'interface/trace/ADD_MOMENT';
 
 interface IBreakLength {
   hours?: number;
@@ -17,9 +18,9 @@ interface ISession {
 
 export interface IMoment {
   time: number;
-  chapter: number;
+  file: string;
   idea: number;
-  sequential: boolean;
+  sequential: Sequential;
 }
 
 interface IConfig {
@@ -38,7 +39,7 @@ const INITIAL_STATE: IState = {
   },
 };
 
-export function reducer(state = INITIAL_STATE, action: Action): IState {
+export function reducer(state = INITIAL_STATE, action: Actions): IState {
   switch (action.type) {
     case ADD_MOMENT:
       return addMoment(state, action.payload);
@@ -103,10 +104,10 @@ function concludeSession(session: ISession): ISession {
 }
 
 reducer.addMoment = function(moment: IMoment) {
-  return {
+  return <const>{
     type: ADD_MOMENT,
     payload: moment,
   };
 };
 
-export type Action = ReturnType<typeof reducer.addMoment>;
+export type Actions = ReturnType<typeof reducer.addMoment>;

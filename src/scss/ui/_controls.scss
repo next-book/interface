@@ -1,0 +1,164 @@
+.nb-controls {
+  font-family: var(--ui-font);
+  font-size: var(--ui-font-size);
+  color: var(--ui-c-text);
+
+  .button {
+    color: var(--accent-color);
+    padding: var(--small-padding);
+    font-size: calc(var(--ui-font-size) * 0.9);
+    box-shadow: var(--ui-box-shadow);
+    border: none;
+    border-radius: var(--border-radius);
+    background: var(--ui-c-bg);
+    line-height: 1.6;
+
+    &.button-primary {
+      color: var(--ui-c-bg);
+      background-color: var(--accent-color);
+
+      .svg-icon {
+        fill: var(--ui-c-bg);
+      }
+    }
+  }
+
+  /* keep in sync with onboarding/controls-launcher-demo */
+  .controls-launcher {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    cursor: pointer;
+
+    div {
+      min-height: 48px;
+    }
+  }
+
+  .control {
+    display: grid;
+    grid-template-rows: 1fr calc(3 * var(--ui-font-size));
+    height: 100%;
+    position: fixed;
+    z-index: map-get($z-indexes, 'controls');
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--ui-c-bg);
+    width: $controls-width;
+    max-width: 100vw;
+    box-sizing: border-box;
+
+    box-shadow: var(--ui-box-shadow);
+    transition: bottom 0.2s ease-out;
+    animation: slide-up 0.2s ease-out;
+    font-size: var(--ui-font-size);
+
+    @media (max-width: map-get($breakpoints, 'max-full-screen-controls')) {
+      left: 0;
+      width: auto;
+    }
+
+    .control-bar {
+      display: flex;
+      grid-row: 2;
+      width: $controls-width;
+      max-width: 100vw;
+      box-shadow: rgba(0, 0, 0, 0.3) -3px 0px 4px 0px inset;
+      background: var(--ui-c-bg-shade);
+      overflow: hidden;
+
+      @media (max-width: map-get($breakpoints, 'max-full-screen-controls')) {
+        width: 100vw;
+      }
+
+      .tab {
+        display: block;
+        height: 100%;
+        flex-grow: 1;
+        min-width: 0;
+        padding: 0 var(--base-padding);
+        line-height: 3;
+        box-sizing: border-box;
+        font-size: calc(var(--ui-font-size) * 0.9);
+
+        cursor: pointer;
+        text-overflow: ellipsis;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .tab--selected {
+        box-shadow: var(--ui-box-shadow);
+        background: var(--ui-c-bg);
+        color: var(--accent-color);
+      }
+
+      .close {
+        display: block;
+        flex: 0;
+        padding: calc(var(--base-padding) / 2) var(--base-padding) calc(var(--base-padding) / 2)
+          calc(var(--base-padding) / 2);
+        margin-top: calc(var(--base-padding) / 2);
+        cursor: pointer;
+
+        svg {
+          fill: var(--accent-color);
+          width: var(--ui-font-size);
+        }
+
+        span {
+          padding: calc(var(--base-padding) / 2);
+          box-shadow: var(--ui-box-shadow);
+          border-radius: var(--border-radius);
+          background: var(--ui-c-bg);
+        }
+      }
+    }
+
+    .control__opened {
+      grid-row: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .control__details {
+      display: flex;
+      align-self: end;
+      z-index: 1;
+      width: 100%;
+      box-sizing: border-box;
+      box-shadow: 0 0 40px var(--ui-c-bg), 0 0 40px var(--ui-c-bg), 0 0 40px var(--ui-c-bg);
+      background: var(--ui-c-bg);
+      padding: calc(var(--base-padding) * 2);
+      font-size: calc(var(--ui-font-size) * 0.8);
+
+      & > div {
+        flex: 1;
+        margin-right: var(--ui-font-size);
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+
+      p {
+        margin: 0;
+      }
+
+      h3 {
+        font-size: calc(var(--ui-font-size) * 0.8);
+        margin: 0;
+      }
+    }
+  }
+}

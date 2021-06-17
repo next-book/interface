@@ -1,34 +1,57 @@
 import React from 'react';
-import { IDocument } from './manifest-reducer';
+import { IDocument, DocRole } from './manifest-reducer';
 
-import { WithT } from 'i18next';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
+import docInfo from '../doc-info';
 
-interface IProps extends WithT {
+import Icons from './../icons';
+
+export enum Sequential {
+  No = 0,
+  Yes = 1,
+}
+
+export enum SeqReturnStatus {
+  Initializing = 0,
+  Enabled = 1,
+  Disabled = 2,
+}
+
+interface IButton {
+  link?: string;
+  click?: (e: React.MouseEvent) => void;
+  primary?: boolean;
+  text: string | JSX.Element;
+}
+
+interface IProps extends WithTranslation {
   targetIdea: number | null;
   targetChapter: IDocument | null;
-  sequential: boolean;
-  thisChapter: boolean;
-  isChapter: boolean;
+  sequential: Sequential;
+  status: SeqReturnStatus;
+  docRole: DocRole;
   setPosition(resetSequence: boolean): void;
   startLink: string;
+  colophonLink: string | null;
 }
 
 interface IState {
   collapsed: boolean;
 }
 
-export class SeqReturn extends React.Component<IProps, IState> {
+class SeqReturn extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
     this.state = {
-      collapsed: props.isChapter ? true : false,
+      collapsed: docInfo.role !== DocRole.Index,
     };
   }
 
   resetPosition = (e: React.MouseEvent) => {
     e.preventDefault();
+
     this.props.setPosition(true);
   };
 
@@ -36,73 +59,140 @@ export class SeqReturn extends React.Component<IProps, IState> {
     if (this.props.targetIdea) highlightIdea(this.props.targetIdea);
   };
 
-  firstTime = () => {
-    return (
-      <>
-        <p>{this.props.t('intro')}</p>
-        <div className="seq-buttons">
-          <a href={this.props.startLink}>
-            <b>{this.props.t('start')}</b>
-          </a>
-        </div>
-      </>
-    );
+  returnToPosition = () => {
+    this.setState({ ...this.state, collapsed: true });
+
+    const sameChapter =
+      this.props.targetChapter && this.props.targetChapter.order === docInfo.order;
+    sameChapter ? this.highlightPosition : null;
   };
 
-  nthTime = () => {
-    const link = this.props.targetChapter
-      ? `./${this.props.targetChapter.file}#idea${this.props.targetIdea}`
-      : '';
+  renderFirstOpen = () => {
+    const buttons = [];
+
+    if (this.props.colophonLink !== null) {
+      buttons.push({
+        link: this.props.colophonLink,
+        text: Icons.Info,
+      });
+    }
+
+    buttons.push({
+      link: this.props.startLink,
+      primary: false,
+      text: (
+        <span>
+          {this.props.t('start')} {Icons.ArrowForward}
+        </span>
+      ),
+    });
+
+    return this.renderWrapper(null, buttons);
+  };
+
+  renderReturnFromTitle = () => {
+    const chapter = this.props.targetChapter;
     const idea = this.props.targetIdea;
-    const chapter = this.props.targetChapter && this.props.targetChapter.title;
+    if (chapter === null || idea === null) return null;
 
-    const readingPosition =
-      !this.props.isChapter || !this.props.thisChapter ? (
-        <p>
-          <Trans i18nKey="navigation:seqReturnAnotherChapter">
-            You read up to <a href={link}>sentence #{{ idea }}</a> in chapter <b>{{ chapter }}</b>.
-          </Trans>
-        </p>
-      ) : (
-        <p>
-          <Trans i18nKey="navigation:seqReturnThisChapter">
-            You read up to{' '}
-            <a href={link} onClick={this.highlightPosition}>
-              sentence #{{ idea }}
-            </a>{' '}
-            in this chapter.
-          </Trans>
-        </p>
-      );
+    const link = `./${chapter.file}#idea${idea}`;
 
-    return (
-      (!this.props.sequential || !this.props.isChapter) && (
-        <>
-          {readingPosition}
-          <div className="seq-buttons">
-            {this.props.isChapter && (
-              <a href="#" onClick={this.resetPosition}>
-                👇 {this.props.t('continue')}
-              </a>
-            )}
-            <a
-              href={link}
-              onClick={() => {
-                this.setState({ ...this.state, collapsed: true });
-                this.props.thisChapter ? this.highlightPosition : null;
-              }}
-            >
-              <b>
-                {this.props.isChapter
-                  ? `🔙 ${this.props.t('return')}`
-                  : this.props.t('continueReading')}
-              </b>
-            </a>
-          </div>
-        </>
-      )
-    );
+    return this.renderWrapper(this.posInAnotherChapter(link, idea, chapter.title), [
+      {
+        link,
+        click: this.returnToPosition,
+        primary: true,
+        text: this.props.t('continueReading'),
+      },
+    ]);
   };
+
+  renderReturnFromOther = () => {
+    const chapter = this.props.targetChapter;
+    const idea = this.props.targetIdea;
+    if (chapter === null || idea === null) return null;
+    if (this.state.collapsed)
+      return chapter.order !== null
+        ? this.renderWrapper(
+            <span>
+              {Icons.ReturnKey} {chapter.order + 1}.{idea}
+            </span>
+          )
+        : null;
+
+    const link = `./${chapter.file}#idea${idea}`;
+
+    return this.renderWrapper(this.posInAnotherChapter(link, idea, chapter.title), [
+      {
+        link,
+        click: this.returnToPosition,
+        primary: true,
+        text: (
+          <span>
+            {Icons.Check} {this.props.t('return')}
+          </span>
+        ),
+      },
+    ]);
+  };
+
+  renderReturnFromChapter = () => {
+    const chapter = this.props.targetChapter;
+    const idea = this.props.targetIdea;
+    if (chapter === null || idea === null) return null;
+    if (this.state.collapsed)
+      return chapter.order !== null
+        ? this.renderWrapper(
+            <span>
+              {Icons.ReturnKey} {chapter.order + 1}.{idea}
+            </span>
+          )
+        : null;
+
+    const link = `./${chapter.file}#idea${idea}`;
+
+    const description =
+      chapter.order === docInfo.order
+        ? this.posInThisChapter(link, idea)
+        : this.posInAnotherChapter(link, idea, chapter.title);
+
+    return this.renderWrapper(description, [
+      {
+        click: this.resetPosition,
+        text: (
+          <span>
+            {Icons.Check} {this.props.t('continue')}
+          </span>
+        ),
+      },
+      {
+        link: `./${chapter.file}#idea${idea}`,
+        click: this.returnToPosition,
+        primary: true,
+        text: (
+          <span>
+            {Icons.ReturnKey} {this.props.t('return')}
+          </span>
+        ),
+      },
+    ]);
+  };
+
+  posInThisChapter = (link: string, idea: number) => (
+    <Trans i18nKey="navigation:seqReturnThisChapter">
+      You read up to{' '}
+      <a href={link} onClick={this.highlightPosition}>
+        sentence #{{ idea }}
+      </a>{' '}
+      in this chapter.
+    </Trans>
+  );
+
+  posInAnotherChapter = (link: string, idea: number, title: string) => (
+    <Trans i18nKey="navigation:seqReturnAnotherChapter">
+      You read up to <a href={link}>sentence #{{ idea }}</a> in chapter <b>{{ title }}</b>.
+    </Trans>
+  );
 
   toggleCollapse = () => {
     this.setState({
@@ -111,30 +201,85 @@ export class SeqReturn extends React.Component<IProps, IState> {
     });
   };
 
-  render() {
-    const content = this.props.targetIdea === null ? this.firstTime() : this.nthTime();
-    const classes = ['seq-return-wrapper'];
-    const collapsedText =
-      this.props.targetChapter !== null &&
-      this.props.targetChapter.order !== null &&
-      this.props.targetIdea !== null
-        ? `🔙 ${this.props.targetChapter.order + 1}.${this.props.targetIdea}`
-        : '➕';
-
-    if (this.props.targetIdea === null) classes.push('seq-return-wrapper--high');
+  renderWrapper(
+    content: JSX.Element | string | null,
+    buttons?: IButton[],
+    classes: string[] = [],
+    forceCollapsed?: boolean
+  ) {
+    const className = ['nb-seq-return'].concat(classes).join(' ');
 
     return (
-      content && (
-        <div className={classes.join(' ')}>
-          <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
-            <div onClick={this.toggleCollapse} className="seq-return-toggle ui-target">
-              {this.state.collapsed ? collapsedText : '➖'}
-            </div>
-            {this.state.collapsed ? null : content}
-          </div>
+      <div className={className}>
+        <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
+          {docInfo.role !== DocRole.Index && this.state.collapsed && (
+            <div className="seq-return-toggle ui-target">{content}</div>
+          )}
+          {!this.state.collapsed && (
+            <>
+              {content && <p className="seq-text">{content}</p>}
+              {buttons && (
+                <div className="seq-buttons">
+                  {buttons.map((button: IButton, index: number) => (
+                    <a key={index} href={button.link || '#'} onClick={button.click}>
+                      {button.primary ? <b>{button.text}</b> : button.text}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </div>
-      )
+      </div>
     );
+  }
+
+  /* native event is used to cover the need
+   * to collapse the component from the outside */
+  collapseOnClickOutside = (e: Event) => {
+    if (this.props.docRole === DocRole.Index) return;
+
+    const el = e.target as Element;
+    const clickedInside =
+      el.classList.contains('nb-seq-return') || el.closest('.nb-seq-return') !== null;
+
+    if ((!this.state.collapsed && !clickedInside) || (this.state.collapsed && clickedInside))
+      this.toggleCollapse();
+  };
+
+  componentDidMount() {
+    window.addEventListener('click', this.collapseOnClickOutside);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this.collapseOnClickOutside);
+  }
+
+  render() {
+    switch (this.props.status) {
+      case SeqReturnStatus.Disabled:
+        return null;
+      case SeqReturnStatus.Initializing:
+        switch (this.props.docRole) {
+          case DocRole.Index:
+            if (this.props.targetChapter === null) return this.renderFirstOpen();
+            else return this.renderReturnFromTitle();
+          default:
+            return null;
+        }
+      case SeqReturnStatus.Enabled:
+        switch (this.props.docRole) {
+          case DocRole.Index:
+            return this.renderReturnFromTitle();
+          case DocRole.Chapter:
+            if (this.props.sequential === Sequential.No) return this.renderReturnFromChapter();
+            else return null;
+          default:
+            return this.renderReturnFromOther();
+        }
+      default:
+        return null;
+    }
   }
 }
 
@@ -150,3 +295,5 @@ function highlightIdea(id: number) {
     el.classList.remove(className);
   }, 1000);
 }
+
+export default withTranslation('navigation')(SeqReturn);

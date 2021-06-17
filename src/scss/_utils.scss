@@ -1,0 +1,25 @@
+.scrollable-wrapper {
+  height: 100%;
+  overflow: hidden;
+}
+
+.scrollable {
+  height: 100%;
+  padding-bottom: 2rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.auto-cols {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: 30px;
+  align-items: end;
+}
+
+.svg-icon {
+  width: 1.5em;
+  height: auto;
+  vertical-align: bottom;
+  fill: var(--ui-c-text-shade);
+}

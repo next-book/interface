@@ -1,0 +1,35 @@
+.content {
+  .footnotes {
+    display: none;
+  }
+
+  sup[id^='fnref'] {
+    vertical-align: baseline;
+
+    a.footnote-ref {
+      font-family: var(--ui-font);
+      font-weight: 700;
+      text-indent: 0;
+      color: var(--ui-c-text-shade);
+      vertical-align: baseline;
+
+      padding: 0.5em 0.75em 0.4em;
+      margin: 0 -0.75em;
+      border-radius: 0.5em;
+      line-height: 1;
+      text-decoration: none;
+      font-size: 0.8em;
+      position: relative;
+      top: -0.3em;
+      color: var(--accent-color);
+      overflow: hidden;
+
+      white-space: nowrap;
+
+      &:hover {
+        box-shadow: var(--ui-inset-shadow);
+        background: var(--background);
+      }
+    }
+  }
+}

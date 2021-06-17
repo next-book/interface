@@ -1,0 +1,18 @@
+.nb-paginated {
+  .chunk {
+    visibility: hidden;
+  }
+
+  .visible {
+    visibility: visible;
+    will-change: transform, opacity;
+  }
+
+  .step-forward {
+    animation: pagination-slide-in 0.3s;
+  }
+
+  .step-back {
+    animation: pagination-slide-in-rev 0.3s;
+  }
+}

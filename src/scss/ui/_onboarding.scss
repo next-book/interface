@@ -1,0 +1,281 @@
+$nb-yellow: #fff6de;
+$nb-red: #9a4663;
+
+.nb-onboarding {
+  .onboarding-opener {
+    z-index: 1;
+
+    position: fixed;
+    bottom: 60px;
+    left: 0;
+    width: 100vw;
+    padding: 0 15px;
+    box-sizing: border-box;
+    border-radius: var(--border-radius-xl);
+
+    font-family: var(--ui-font);
+    font-size: var(--ui-font-size);
+
+    .onboarding-opener-bubble {
+      position: relative;
+      margin: 0 0 0 auto;
+      max-width: 14rem;
+      //box-shadow: var(--ui-box-shadow);
+      background: rgb(240, 232, 211);
+      color: black;
+      padding: var(--base-padding);
+      border-radius: var(--border-radius-xl);
+
+      &:after {
+        content: '';
+        position: absolute;
+        bottom: -20px;
+        right: 20px;
+
+        width: 0;
+        height: 0;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-top: 20px solid rgb(240, 232, 211);
+      }
+      .onboarding-opener-intro {
+      }
+
+      .onboarding-opener-close {
+        cursor: pointer;
+        float: right;
+        padding: var(--base-padding);
+        margin: calc(-1.5 * var(--base-padding)) calc(-1.5 * var(--base-padding)) 0 0;
+        text-align: right;
+        color: black;
+      }
+
+      .onboarding-opener-open {
+        display: block;
+        text-align: right;
+        margin-top: var(--base-padding);
+        text-decoration: underline;
+      }
+    }
+  }
+
+  /* keep in sync with .controls-launcher */
+  .controls-launcher-demo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    cursor: pointer;
+
+    div {
+      min-height: 48px;
+    }
+  }
+
+  /* custom demo styles */
+  .controls-launcher-demo {
+    pointer-events: none;
+    bottom: 3px;
+
+    font-family: var(--ui-font);
+
+    div {
+      visibility: hidden;
+      min-height: none;
+      margin: 0 15px;
+      line-height: 48px;
+      height: 45px;
+
+      background: var(--ui-c-shadow);
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(0, 0, 0, 0.2),
+        rgba(0, 0, 0, 0.2) 10px,
+        var(--ui-c-shadow) 10px,
+        var(--ui-c-shadow) 11px,
+        rgba(0, 0, 0, 0.2) 11px
+      );
+      color: var(--text-color);
+      text-shadow: 0 0 2px var(--background);
+
+      border: 1px solid var(--ui-c-shadow);
+      border-radius: 5px;
+      box-shadow: var(--ui-box-shadow);
+
+      font-size: calc(0.9 * var(--ui-font-size));
+      text-align: center;
+      font-weight: bold;
+    }
+
+    div:last-child {
+      visibility: visible;
+    }
+  }
+
+  .onboarding-overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--ui-c-shadow);
+    z-index: map-get($z-indexes, 'onboarding');
+  }
+  .onboarding {
+    font-family: var(--ui-font);
+    font-size: var(--ui-font-size);
+    z-index: map-get($z-indexes, 'onboarding');
+
+    position: fixed;
+    top: var(--base-padding);
+    bottom: var(--base-padding);
+    left: var(--base-padding);
+    right: var(--base-padding);
+    border-radius: var(--border-radius-xl);
+    background: var(--ui-c-bg);
+
+    padding: var(--base-padding);
+    overflow: auto;
+
+    animation: fade-in 0.4s ease-in;
+
+    @media only screen and (min-width: 760px) {
+      bottom: 25vh;
+      left: 50%;
+      top: auto;
+      right: auto;
+
+      width: 20rem;
+      margin-left: -10rem;
+    }
+  }
+
+  h2 {
+    margin: 0;
+    align-self: end;
+  }
+
+  .onboarding__card {
+    display: grid;
+    height: 100%;
+    grid-template-rows: 1fr 2fr 1fr;
+    align-items: center;
+    grid-gap: var(--base-padding);
+    max-width: calc(16 * var(--ui-font-size));
+    margin: 0 auto;
+
+    svg {
+      display: block;
+      width: 100%;
+    }
+
+    @media only screen and (min-width: 760px) {
+      height: auto;
+    }
+  }
+
+  .onboarding__content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    align-items: start;
+    grid-gap: var(--base-padding);
+  }
+
+  @media only screen and (min-aspect-ratio: 3/2) and (max-width: 700px) {
+    .onboarding__card {
+      max-width: none;
+    }
+
+    .onboarding__content {
+      display: block;
+      height: calc(4 * var(--ui-font-size));
+    }
+
+    svg {
+      float: left;
+      width: 10vw;
+      margin-right: var(--base-padding);
+    }
+  }
+
+  .onboarding__controls {
+    align-self: end;
+  }
+
+  .tip p:first-child {
+    margin-top: 0;
+  }
+
+  .close {
+    display: block;
+    float: right;
+    font-size: var(--ui-font-size);
+    padding: var(--base-padding);
+    margin: calc(-1.5 * var(--base-padding)) calc(-1.5 * var(--base-padding)) 0 -2rem;
+
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-align: right;
+
+    svg {
+      width: calc(2 * var(--ui-font-size));
+    }
+  }
+
+  .onboarding__controls__button,
+  .onboarding__controls__back-button {
+    line-height: calc(3.5 * var(--ui-font-size));
+    height: calc(3.5 * var(--ui-font-size));
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .onboarding__controls__back-button {
+    float: left;
+    color: $nb-red;
+    font-size: calc(2 * var(--ui-font-size));
+  }
+
+  .onboarding__controls__button {
+    width: calc(9.5 * var(--ui-font-size));
+    margin: 0 auto;
+    border-radius: var(--border-radius);
+    background: $nb-red;
+    color: $nb-yellow;
+    text-align: center;
+  }
+
+  .dots {
+    user-select: none;
+    margin: var(--base-padding) auto 0;
+    text-align: center;
+
+    span {
+      color: $nb-red;
+      line-height: 10px;
+      display: inline-block;
+      height: 10px;
+      opacity: 0.5;
+      transform: scale(0.5);
+      transition: transform 0.3s ease-out;
+      will-change: transform;
+      margin-right: 12px;
+      cursor: pointer;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &.current {
+        line-height: 10px;
+        opacity: 1;
+        transform: scale(0.8);
+      }
+    }
+  }
+}

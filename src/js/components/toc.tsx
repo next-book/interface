@@ -1,40 +1,105 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../reducer';
-import { IToc } from './manifest-reducer';
-import { INavDocument } from './navigation-reducer';
+import { IToc, DocRole } from './manifest-reducer';
+import { IDocMap } from './position-reducer';
+import docInfo from '../doc-info';
+import { withTranslation, WithTranslation } from 'react-i18next';
+import Progress, { ProgressForm } from './progress';
 
-interface IProps {
-  idea: number;
-  chapterNum: number;
-  readingOrder: INavDocument[];
+interface IProps extends WithTranslation {
+  readingOrder: string[];
+  documents: IDocMap;
 }
 
-class Toc extends React.Component<IProps> {
+interface IState {
+  toc: JSX.Element | Element;
+}
+
+class Toc extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
+
+    const customToc = document.querySelector('[role="doc-toc"]');
+
+    this.state = {
+      toc: customToc ? this.insertCustomToc(customToc.innerHTML) : this.buildToc(),
+    };
+  }
+
+  insertCustomToc = (toc: string) => {
+    return <div role="doc-toc" dangerouslySetInnerHTML={{ __html: toc }}></div>;
+  };
+
+  buildToc = () => {
+    return (
+      <ol>
+        {this.props.readingOrder.map(file => {
+          const doc = this.props.documents[file];
+          const current = doc.order === docInfo.order;
+
+          return (
+            <li key={doc.order !== null ? doc.order : ''}>
+              <a className={current ? 'current-chapter' : undefined} href={doc.file}>
+                {doc.title}
+              </a>
+
+              {doc.toc && doc.toc[0].children.length ? (
+                <ol>
+                  {' '}
+                  {doc.toc[0].children.map((section, index) => {
+                    return <Section key={index} file={doc.file} section={section} />;
+                  })}{' '}
+                </ol>
+              ) : null}
+            </li>
+          );
+        })}
+      </ol>
+    );
+  };
+
   render() {
+    const otherLinks = [];
+
+    if (docInfo.links.index !== null) {
+      otherLinks.push({
+        classes: docInfo.role === DocRole.Index ? 'current-chapter' : undefined,
+        href: docInfo.links.index,
+        text: this.props.t('title-page'),
+      });
+    }
+
+    if (docInfo.links.colophon !== null) {
+      otherLinks.push({
+        classes: docInfo.role === DocRole.Colophon ? 'current-chapter' : undefined,
+        href: docInfo.links.colophon,
+        text: this.props.t('colophon'),
+      });
+    }
+
     return (
       <>
-        <ol>
-          {this.props.readingOrder.map(doc => {
-            const current = this.props.chapterNum === doc.order;
-
-            return (
-              <li key={doc.order !== null ? doc.order : ''}>
-                <a className={current ? 'current-chapter' : undefined} href={doc.file}>
-                  {doc.title}
-                </a>
-                <ul>
-                  {doc.toc && doc.toc[0].children.length
-                    ? doc.toc[0].children.map((section, index) => {
-                        return <Section key={index} file={doc.file} section={section} />;
-                      })
-                    : null}
-                </ul>
-              </li>
-            );
-          })}
-        </ol>
+        <div className="scrollable-wrapper">
+          <div className="nb-toc scrollable">
+            <h1 className="nb-ui-big-title">{this.props.t('controls:toc')}</h1>
+            <Progress form={ProgressForm.Goto} />
+            {this.state.toc}
+            <p className="nb-toc-other">
+              {otherLinks.map((link, index) => {
+                return (
+                  <span key={index}>
+                    <a className={link.classes} href={link.href}>
+                      {link.text}
+                    </a>
+                    {index !== otherLinks.length - 1 ? <> &middot; </> : null}
+                  </span>
+                );
+              })}
+            </p>
+          </div>
+        </div>
+        <Progress form={ProgressForm.Config} />
       </>
     );
   }
@@ -55,12 +120,9 @@ function Section(props: ISectionProps) {
 
 const mapStateToProps = (state: ICombinedState) => {
   return {
-    readingOrder: state.navigation.readingOrder,
+    readingOrder: state.position.readingOrder,
+    documents: state.position.documents,
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({}, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Toc);
+export default withTranslation('navigation')(connect(mapStateToProps)(Toc));
