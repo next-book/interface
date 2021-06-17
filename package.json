@@ -1,8 +1,11 @@
 {
   "name": "@next-book/interface",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "Next-book’s browser interface",
-  "repository": "https://github.com/next-book/interface",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/next-book/interface.git"
+  },
   "main": "lib/index.js",
   "scripts": {
     "ts": "tsc",
@@ -63,5 +66,12 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
+  },
+  "bugs": {
+    "url": "https://github.com/next-book/interface/issues"
+  },
+  "homepage": "https://github.com/next-book/interface#readme",
+  "directories": {
+    "lib": "lib"
   }
 }
