@@ -13,7 +13,7 @@ import docInfo from './doc-info';
 import reducer from './reducer';
 import views from './views';
 
-import { reducer as manifestReducer } from './components/manifest-reducer';
+import { reducer as manifestReducer } from './components/manifest/reducer';
 import { setDocumentValues } from './components/config';
 
 export function initBook() {

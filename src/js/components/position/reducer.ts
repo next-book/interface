@@ -1,5 +1,5 @@
-import { IDocument, DocRole } from './manifest-reducer';
-import { Sequential, SeqReturnStatus } from './seq-return';
+import { IDocument, DocRole } from './../manifest/reducer';
+import { Sequential, SeqReturnStatus } from './../seq-return';
 
 const SET_POSITION = 'interface/navigation/SET_POSITION';
 const SET_SCROLL_RATIO = 'interface/navigation/SET_SCROLL_RATIO';

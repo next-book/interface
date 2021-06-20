@@ -10,7 +10,7 @@ import Icons from './../icons';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../reducer';
-import { reducer as onboardingReducer, ShowOnboarding } from './config-reducer';
+import { reducer as onboardingReducer, ShowOnboarding } from './config/reducer';
 
 enum Control {
   None = 'none',

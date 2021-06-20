@@ -18,7 +18,7 @@ import { getChapterAnnotations } from './index';
 import AnnotationNote from './note';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import docInfo from '../../doc-info';
-import { IDocMap, INavDocument } from '../position-reducer';
+import { IDocMap, INavDocument } from '../position/reducer';
 import { getAnnotatedIdeas } from './utils';
 import Icons from '../../icons';
 

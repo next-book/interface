@@ -1,8 +1,8 @@
 import React from 'react';
-import { reducer, IState, SwAvailability } from './offline-reducer';
+import { reducer, IState, SwAvailability } from './../offline/reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { IState as ICombinedState } from '../reducer';
+import { IState as ICombinedState } from '../../reducer';
 
 export interface IProps extends IState {
   setCacheAvailability(status: boolean): void;

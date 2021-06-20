@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { IState as IConfigState, ColorScheme } from './config-reducer';
-import { IState as ICombinedState } from '../reducer';
+import { IState as IConfigState, ColorScheme } from './../config/reducer';
+import { IState as ICombinedState } from '../../reducer';
 
 interface IProps {
   fontSize: string;
@@ -41,7 +41,11 @@ export function applyColorScheme(mode: ColorScheme) {
 }
 
 function removeColorSchemes() {
-  document.body.classList.remove('nb-color-scheme-light', 'nb-color-scheme-dark', 'nb-color-scheme-sepia');
+  document.body.classList.remove(
+    'nb-color-scheme-light',
+    'nb-color-scheme-dark',
+    'nb-color-scheme-sepia'
+  );
 }
 
 const mapStateToProps = (state: ICombinedState) => {

@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { IState as ICombinedState } from '../reducer';
+import { IState as ICombinedState } from '../../reducer';
 import { throttle } from 'lodash';
 
-import docInfo from '../doc-info';
-import SeqReturn, { Sequential, SeqReturnStatus } from './seq-return';
-import { DocRole } from './manifest-reducer';
-import { reducer, IPosition, IDocMap, INavDocument } from './position-reducer';
+import docInfo from '../../doc-info';
+import SeqReturn, { Sequential, SeqReturnStatus } from './../seq-return';
+import { DocRole } from './../manifest/reducer';
+import { reducer, IPosition, IDocMap, INavDocument } from './../position/reducer';
 
 export interface IProps {
   readingOrder: string[];

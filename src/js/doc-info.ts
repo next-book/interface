@@ -1,4 +1,4 @@
-import { DocRole } from './components/manifest-reducer';
+import { DocRole } from './components/manifest/reducer';
 import { Direction } from './components/navigation';
 
 export let lastScrollStep: [Direction, number] | null = null;
