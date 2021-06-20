@@ -1,6 +1,6 @@
 # @next-book/interface
 
-_Nb-base_ is a library providing functionality that builds on the structure of a [mapped next-book][mapper]. It provides basic e-reading functionalities.
+`@next-book/interface` is a library providing functionality that builds on the structure of a [mapped next-book][mapper]. It provides basic e-reading functionalities.
 
 See an [example of an e-book][walden] created with the next-book tools.
 
@@ -8,20 +8,20 @@ See an [example of an e-book][walden] created with the next-book tools.
 
 Some web tech knowledge and command line use is needed to produce a next-book at the time. But we‘re preparing an easier way right now! (If you want to know when it’s out, please subscribe to our newsletter 💌).
 
-### 1. Add `@next-book/publisher` and `@next-book/interface` dependencies
+### 1. Add `publisher` and `interface` dependencies
 
 You can install publisher and interface:
 
 - via Yarn `yarn add @next-book/publisher @next-book/interface`
 - via NPM `npm install @next-book/publisher @next-book/interface`
 
-### 2\. Import `@next-book/interface` styles in your SCSS
+### 2\. Import `interface` styles in your SCSS
 
 ```scss
 @import './../../node_modules/@next-book/interface/src/scss/style.scss';
 ```
 
-### 3\. Import `@next-book/interface` module in your scripts
+### 3\. Import `interface` module in your scripts
 
 ```javascript
 import { initBook } from '@next-book/interface';
