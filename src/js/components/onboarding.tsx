@@ -1,12 +1,12 @@
 import React from 'react';
-import { reducer, ShowOnboarding } from './config-reducer';
+import { reducer, ShowOnboarding } from './config/reducer';
 import { IState as ICombinedState } from '../reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
 import docInfo from '../doc-info';
-import { DocRole } from './manifest-reducer';
+import { DocRole } from './manifest/reducer';
 import Icons from './../icons';
 
 interface IProps extends WithTranslation {

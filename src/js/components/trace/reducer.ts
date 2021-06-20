@@ -1,6 +1,6 @@
-/// <reference path="../types/to-ms.d.ts"/>
+/// <reference path="../../types/to-ms.d.ts"/>
 import toMilliseconds from 'to-milliseconds';
-import { Sequential } from './seq-return';
+import { Sequential } from './../seq-return';
 
 const ADD_MOMENT = 'interface/trace/ADD_MOMENT';
 

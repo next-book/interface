@@ -1,5 +1,5 @@
 import React from 'react';
-import { IPeek } from './peeks-reducer';
+import { IPeek } from './peeks/reducer';
 
 export interface IProps extends IPeek {
   destroy(index: number): void;

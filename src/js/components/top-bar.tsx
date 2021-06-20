@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IDocument } from './manifest-reducer';
+import { IDocument } from './manifest/reducer';
 
 interface IProps {
   title: string;

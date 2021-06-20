@@ -8,15 +8,15 @@ import keycode from 'keycode';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
 import docInfo, { setLastScrollStep, lastScrollStep, domFns } from '../doc-info';
-import { DocRole } from './manifest-reducer';
+import { DocRole } from './manifest/reducer';
 import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
 import { Pagination } from './pagination';
 import { Sequential } from './seq-return';
 import { getScrollRatio } from './position';
-import { reducer, IPosition, IDocMap } from './position-reducer';
-import { IState as IManifest, IDocument } from './manifest-reducer';
+import { reducer, IPosition, IDocMap } from './position/reducer';
+import { IState as IManifest, IDocument } from './manifest/reducer';
 
 export enum Direction {
   Back = 'back',

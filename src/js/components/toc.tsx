@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { IState as ICombinedState } from '../reducer';
-import { IToc, DocRole } from './manifest-reducer';
-import { IDocMap } from './position-reducer';
+import { IToc, DocRole } from './manifest/reducer';
+import { IDocMap } from './position/reducer';
 import docInfo from '../doc-info';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import Progress, { ProgressForm } from './progress';

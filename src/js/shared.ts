@@ -1,4 +1,4 @@
-import { IState as IManifest } from './components/manifest-reducer';
+import { IState as IManifest } from './components/manifest/reducer';
 
 import cuid from 'cuid';
 
@@ -63,4 +63,3 @@ export function assignManifest(data: any): IManifest {
     data.keywords && { keywords: data.keywords }
   );
 }
-

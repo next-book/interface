@@ -1,5 +1,5 @@
-import { IAnnotationStyle } from './annotations/reducer';
-import i18n from './../i18n';
+import { IAnnotationStyle } from './../annotations/reducer';
+import i18n from './../../i18n';
 
 const HIDE_ONBOARDING = 'interface/config/HIDE_ONBOARDING';
 const SHOW_ONBOARDING = 'interface/config/SHOW_ONBOARDING';

@@ -1,11 +1,11 @@
 import React from 'react';
-import { reducer, IMoment } from './trace-reducer';
-import { IPosition } from './position-reducer';
+import { reducer, IMoment } from './../trace/reducer';
+import { IPosition } from './../position/reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { debounce } from 'lodash';
-import { IState as ICombinedState } from '../reducer';
-import { Sequential } from './seq-return';
+import { IState as ICombinedState } from '../../reducer';
+import { Sequential } from './../seq-return';
 
 export interface IProps {
   position: IPosition | null;

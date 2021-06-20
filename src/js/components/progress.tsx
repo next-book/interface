@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { IPosition, IDocMap, INavDocument } from './position-reducer';
-import { reducer as configReducer, ProgressKind } from './config-reducer';
+import { IPosition, IDocMap, INavDocument } from './position/reducer';
+import { reducer as configReducer, ProgressKind } from './config/reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { IState as ICombinedState } from '../reducer';
 

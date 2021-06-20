@@ -1,8 +1,8 @@
 import React from 'react';
-import { reducer, IState as IManifest } from './manifest-reducer';
+import { reducer, IState as IManifest } from './../manifest/reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { IState as ICombinedState } from '../reducer';
+import { IState as ICombinedState } from '../../reducer';
 
 export interface IProps {
   manifest: IManifest;
@@ -38,7 +38,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Manifest);
+export default connect(mapStateToProps, mapDispatchToProps)(Manifest);

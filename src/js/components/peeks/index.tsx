@@ -1,7 +1,7 @@
 import React from 'react';
-import { reducer, IPeek } from './peeks-reducer';
-import { IState as ICombinedState } from '../reducer';
-import Peek from './peek';
+import { reducer, IPeek } from './../peeks/reducer';
+import { IState as ICombinedState } from '../../reducer';
+import Peek from './../peek';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { withTranslation, WithTranslation } from 'react-i18next';
