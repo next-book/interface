@@ -9,6 +9,7 @@ import { reducer as peeks, IState as IPeeksState } from './components/peeks-redu
 import { reducer as trace, IState as ITraceState } from './components/trace-reducer';
 import { reducer as offline, IState as IOfflineState } from './components/offline-reducer';
 import { reducer as config, IState as IConfigState } from './components/config-reducer';
+import { reducer as research, IState as IResearchState } from './components/research/reducer';
 
 export interface IState {
   annotations: IAnnotationsState;
@@ -18,6 +19,7 @@ export interface IState {
   trace: ITraceState;
   offline: IOfflineState;
   config: IConfigState;
+  research: IResearchState;
 }
 
 export default combineReducers({
@@ -28,4 +30,5 @@ export default combineReducers({
   trace,
   offline,
   config,
+  research,
 });

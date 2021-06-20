@@ -1,9 +1,11 @@
+@use "sass:math";
+
 $controls-width: 24rem !default;
 $base-font-size: 18px !default;
 
 @function remToPx($size) {
-  $px: ($size / 1rem) * $base-font-size;
-  @return #{$px / 1px}px;
+  $px: math.div($size, 1rem) * $base-font-size;
+  @return #{math.div($px, 1px)}px;
 }
 
 $z-indexes: (
