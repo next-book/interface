@@ -9,6 +9,12 @@ export interface IState {
   consent: Consent;
 }
 
-class Research extends React.Component<IProps, IState> {}
+class Research extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
+
+    this.state = { consent: Consent.None };
+  }
+}
 
 export default withTranslation('research')(Research);

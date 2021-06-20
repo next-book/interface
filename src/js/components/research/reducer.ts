@@ -23,11 +23,11 @@ export function reducer(state: IState = INITIAL_STATE, action: Actions) {
   }
 }
 
-reducer.updateConsent = function(data: boolean) {
+reducer.grantConsent = function(data: boolean) {
   return <const>{
     type: UPDATE_CONSENT,
-    payload: data,
+    payload: data ? Consent.Granted : Consent.Denied,
   };
 };
 
-export type Actions = ReturnType<typeof reducer.updateConsent>;
+export type Actions = ReturnType<typeof reducer.grantConsent>;
