@@ -5,7 +5,7 @@
     scroll-margin-top: 30vh;
   }
 
-  :target {
+  .idea:target {
     scroll-snap-margin-top: 30vh;
     scroll-margin-top: 30vh;
     animation: highlight 3s ease-in-out;

@@ -268,11 +268,16 @@ function getRangeOfChunks(
 
   if (topNum === null || bottomNum === null) return [];
 
-  const range = [];
-  for (let i = topNum; i <= bottomNum; i++) {
-    const el = document.getElementById(`chunk${i}`);
-    if (el) range.push(el);
-  }
+  const range: Element[] = [];
+
+  chunks.forEach(chunk => {
+    const attr = chunk.getAttribute('data-nb-ref-number');
+    if (attr !== null) {
+      const num = parseInt(attr, 10);
+      if (num >= topNum && num <= bottomNum) range.push(chunk);
+    }
+  });
+
   return range;
 }
 
