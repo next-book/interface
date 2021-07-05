@@ -1,11 +1,6 @@
 import React from 'react';
 import { throttle } from 'lodash';
-import {
-  elements,
-  setVisibleChunks,
-  clearVisibleChunks,
-  setDomFn,
-} from '../doc-info';
+import { elements, setVisibleChunks, clearVisibleChunks, setDomFn } from '../doc-info';
 
 enum Side {
   Bottom = 'bottom',
