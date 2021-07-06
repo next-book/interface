@@ -43,6 +43,10 @@
       line-height: 48px;
       text-align: right;
 
+      &:hover {
+        opacity: 1;
+      }
+
       .svg-icon {
         vertical-align: middle;
       }
@@ -116,12 +120,6 @@
         width: calc(var(--ui-font-size) * 3);
         cursor: pointer;
 
-        svg {
-          fill: var(--ui-c-text);
-          width: calc(var(--ui-font-size) * 1.5);
-          margin-top: calc(var(--ui-font-size) * 0.25);
-        }
-
         span {
           display: block;
           position: absolute;
@@ -129,11 +127,19 @@
           right: calc(var(--base-padding) / 2);
           bottom: calc(var(--base-padding) / 2);
           left: calc(var(--base-padding) / 2);
+          padding: calc(var(--base-padding) / 4);
           box-shadow: var(--ui-box-shadow);
           border-radius: var(--border-radius);
           background: var(--ui-c-bg);
 
           text-align: center;
+          line-height: var(--ui-font-size);
+        }
+
+        svg {
+          display: block;
+          width: 100%;
+          fill: var(--ui-c-text);
         }
       }
     }
