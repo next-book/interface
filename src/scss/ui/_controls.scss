@@ -12,6 +12,7 @@
     border-radius: var(--border-radius);
     background: var(--ui-c-bg);
     line-height: 1.6;
+    cursor: pointer;
 
     &.button-primary {
       color: var(--ui-c-bg);
@@ -29,20 +30,28 @@
     grid-template-columns: repeat(3, 1fr);
 
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-
+    top: 0;
+    right: var(--base-padding);
+    width: 10rem;
     cursor: pointer;
 
     div {
-      min-height: 48px;
+      opacity: 0.5;
+      height: 48px;
+
+      margin-left: 1rem;
+      line-height: 48px;
+      text-align: right;
+
+      .svg-icon {
+        vertical-align: middle;
+      }
     }
   }
 
   .control {
     display: grid;
-    grid-template-rows: 1fr calc(3 * var(--ui-font-size));
+    grid-template-rows: calc(3 * var(--ui-font-size)) 1fr;
     height: 100%;
     position: fixed;
     z-index: map-get($z-indexes, 'controls');
@@ -55,8 +64,8 @@
     box-sizing: border-box;
 
     box-shadow: var(--ui-box-shadow);
-    transition: bottom 0.2s ease-out;
-    animation: slide-up 0.2s ease-out;
+    transition: top 0.2s ease-out;
+    animation: slide-from-top 0.2s ease-out;
     font-size: var(--ui-font-size);
 
     @media (max-width: map-get($breakpoints, 'max-full-screen-controls')) {
@@ -66,7 +75,7 @@
 
     .control-bar {
       display: flex;
-      grid-row: 2;
+      grid-row: 1;
       width: $controls-width;
       max-width: 100vw;
       box-shadow: rgba(0, 0, 0, 0.3) -3px 0px 4px 0px inset;
@@ -83,7 +92,7 @@
         flex-grow: 1;
         min-width: 0;
         padding: 0 var(--base-padding);
-        line-height: 3;
+        line-height: 3.5;
         box-sizing: border-box;
         font-size: calc(var(--ui-font-size) * 0.9);
 
@@ -102,28 +111,35 @@
 
       .close {
         display: block;
-        flex: 0;
-        padding: calc(var(--base-padding) / 2) var(--base-padding) calc(var(--base-padding) / 2)
-          calc(var(--base-padding) / 2);
-        margin-top: calc(var(--base-padding) / 2);
+        position: relative;
+        box-sizing: border-box;
+        width: calc(var(--ui-font-size) * 3);
         cursor: pointer;
 
         svg {
-          fill: var(--accent-color);
-          width: var(--ui-font-size);
+          fill: var(--ui-c-text);
+          width: calc(var(--ui-font-size) * 1.5);
+          margin-top: calc(var(--ui-font-size) * 0.25);
         }
 
         span {
-          padding: calc(var(--base-padding) / 2);
+          display: block;
+          position: absolute;
+          top: calc(var(--base-padding) / 2);
+          right: calc(var(--base-padding) / 2);
+          bottom: calc(var(--base-padding) / 2);
+          left: calc(var(--base-padding) / 2);
           box-shadow: var(--ui-box-shadow);
           border-radius: var(--border-radius);
           background: var(--ui-c-bg);
+
+          text-align: center;
         }
       }
     }
 
     .control__opened {
-      grid-row: 1;
+      grid-row: 2;
       display: flex;
       flex-direction: column;
       position: relative;

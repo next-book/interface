@@ -101,4 +101,31 @@
   .prev {
     display: none;
   }
+
+  .button-navigation {
+    .back-button,
+    .forward-button {
+      position: fixed;
+      opacity: 0.25;
+
+      left: 2px;
+      top: 25vh;
+      line-height: 25vh;
+      text-align: center;
+
+      width: calc(5vw + 24px);
+      height: 50vh;
+
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+
+    .forward-button {
+      left: auto;
+      right: 2px;
+    }
+  }
 }

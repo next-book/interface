@@ -30,7 +30,7 @@ export class Pagination extends React.Component<IProps, IState> {
     this.state = {
       paginatedDisplay: false,
       windowHeight: null,
-      zonePadding: { [Side.Top]: 18, [Side.Bottom]: 48 },
+      zonePadding: { [Side.Top]: 48, [Side.Bottom]: 48 },
       readingZone: { [Side.Top]: 0, [Side.Bottom]: 0 },
       realReadingZone: null,
       lastScrollStart: null,

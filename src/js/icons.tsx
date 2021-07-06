@@ -5,7 +5,7 @@ import React from 'react';
  * https://github.com/google/material-design-icons
  */
 
-const Close = (
+export const Close = (
   <svg
     className="svg-icon"
     xmlns="http://www.w3.org/2000/svg"
@@ -18,7 +18,7 @@ const Close = (
   </svg>
 );
 
-const ArrowForward = (
+export const ArrowForward = (
   <svg
     className="svg-icon"
     xmlns="http://www.w3.org/2000/svg"
@@ -31,7 +31,46 @@ const ArrowForward = (
   </svg>
 );
 
-const Check = (
+export const Menu = (
+  <svg
+    className="svg-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    height="24"
+    viewBox="0 0 24 24"
+    width="24"
+  >
+    <path d="M0 0h24v24H0z" fill="none" />
+    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+  </svg>
+);
+
+export const Note = (
+  <svg
+    className="svg-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    height="24"
+    viewBox="0 0 24 24"
+    width="24"
+  >
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" />
+  </svg>
+);
+
+export const Format = (
+  <svg
+    className="svg-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    height="24"
+    viewBox="0 0 24 24"
+    width="24"
+  >
+    <path d="M0 0h24v24H0z" fill="none" />
+    <path d="M5 17v2h14v-2H5zm4.5-4.2h5l.9 2.2h2.1L12.75 4h-1.5L6.5 15h2.1l.9-2.2zM12 5.98L13.87 11h-3.74L12 5.98z" />
+  </svg>
+);
+
+export const Check = (
   <svg
     className="svg-icon"
     xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +83,7 @@ const Check = (
   </svg>
 );
 
-const Info = (
+export const Info = (
   <svg
     className="svg-icon"
     xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +96,7 @@ const Info = (
   </svg>
 );
 
-const ReturnKey = (
+export const ReturnKey = (
   <svg
     className="svg-icon"
     xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +109,7 @@ const ReturnKey = (
   </svg>
 );
 
-const Delete = (
+export const Delete = (
   <svg
     className="svg-icon"
     xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +123,7 @@ const Delete = (
   </svg>
 );
 
-const Plus = (
+export const Plus = (
   <svg
     className="svg-icon"
     xmlns="http://www.w3.org/2000/svg"
@@ -97,12 +136,85 @@ const Plus = (
   </svg>
 );
 
+export const Next = (
+  <svg
+    className="svg-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    height="24"
+    viewBox="0 0 24 24"
+    width="24"
+  >
+    <path d="M0 0h24v24H0z" fill="none" />
+    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+  </svg>
+);
+
+export const NextChapter = (
+  <svg
+    className="svg-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    height="24"
+    viewBox="0 0 24 24"
+    width="24"
+  >
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M6 18l8.5-6L6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z" />
+  </svg>
+);
+
+export const Prev = (
+  <svg
+    className="svg-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    height="24"
+    viewBox="0 0 24 24"
+    width="24"
+  >
+    <path d="M0 0h24v24H0z" fill="none" />
+    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+  </svg>
+);
+
+export const PrevChapter = (
+  <svg
+    className="svg-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    height="24"
+    viewBox="0 0 24 24"
+    width="24"
+  >
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6l-8.5 6zm6.5 2.14L12.97 12 16 9.86v4.28z" />
+  </svg>
+);
+
+export const End = (
+  <svg
+    className="svg-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    height="24"
+    viewBox="0 0 24 24"
+    width="24"
+  >
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5-9h10v2H7z" />
+  </svg>
+);
+
 export default {
   ArrowForward,
-  Close,
   Check,
-  Info,
-  ReturnKey,
+  Close,
   Delete,
+  End,
+  Format,
+  Info,
+  Menu,
+  Next,
+  NextChapter,
+  Note,
   Plus,
+  Prev,
+  PrevChapter,
+  ReturnKey,
 };

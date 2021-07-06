@@ -85,8 +85,8 @@
     "nthChapterNthSentence": "{{chapter, ordinal}} chapter, {{idea, ordinal}} sentence",
     "prev-chapter": "Previous chapter",
     "next-chapter": "Next chapter",
-    "seqReturnAnotherChapter": "You read up to <1>sentence #{{idea}}</1> in chapter <3>{{title}}</3>.",
-    "seqReturnThisChapter": "You read up to <2>sentence #{{idea}}</2> in this chapter.",
+    "seqReturnAnotherChapter": "You read up to sentence no. {{idea}} in chapter <3>{{title}}</3>.",
+    "seqReturnThisChapter": "You read up to sentence no. {{idea}} in this chapter.",
     "go": "Go"
   }
 }

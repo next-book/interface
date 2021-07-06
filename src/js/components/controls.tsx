@@ -15,9 +15,24 @@ import { reducer as onboardingReducer, ShowOnboarding } from './config/reducer';
 enum Control {
   None = 'none',
   Toc = 'toc',
-  Annotations = 'notes',
+  Annotations = 'annotations',
   Options = 'options',
 }
+
+const buttons = [
+  {
+    target: Control.Annotations,
+    icon: Icons.Note,
+  },
+  {
+    target: Control.Options,
+    icon: Icons.Format,
+  },
+  {
+    target: Control.Toc,
+    icon: Icons.Menu,
+  },
+];
 
 interface IProps extends WithTranslation {
   isOnboardingShown: ShowOnboarding;
@@ -87,8 +102,14 @@ function Launchbar(props: ILaunchbarProps) {
   return (
     <>
       <div className="controls-launcher ui-target">
-        {[Control.Annotations, Control.Options, Control.Toc].map((control, index) => (
-          <div key={index} title={props.t(`show-${control}`)} onClick={() => props.open(control)} />
+        {buttons.map((button, index) => (
+          <div
+            key={index}
+            title={props.t(`show-${button.target}`)}
+            onClick={() => props.open(button.target)}
+          >
+            {button.icon}
+          </div>
         ))}
       </div>
       <Progress form={ProgressForm.Display} />
@@ -103,21 +124,6 @@ interface ITabsProps {
 }
 
 function Tabs(props: ITabsProps) {
-  const buttons = [
-    {
-      target: Control.Annotations,
-      title: props.t('annotations'),
-    },
-    {
-      target: Control.Options,
-      title: props.t('options'),
-    },
-    {
-      target: Control.Toc,
-      title: props.t('toc'),
-    },
-  ];
-
   return (
     <div className="control-bar">
       {buttons.map((button, index) => (
@@ -126,7 +132,7 @@ function Tabs(props: ITabsProps) {
           className={button.target === props.opened ? 'tab tab--selected' : 'tab'}
           onClick={() => props.open(button.target)}
         >
-          {button.title}
+          {props.t(button.target)}
         </span>
       ))}
       <span key="close" className="close" onClick={() => props.open(Control.None)}>

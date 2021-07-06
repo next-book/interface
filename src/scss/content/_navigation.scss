@@ -28,8 +28,7 @@
   }
 
   #chapter-end {
-    position: relative;
-    top: -30vh;
+    margin-bottom: 100vh;
   }
 
   .begin-nav,
@@ -71,10 +70,6 @@ body.nb-paginated .content {
         text-indent: 0;
       }
     }
-  }
-
-  .end-nav {
-    padding-bottom: 90vh;
   }
 }
 
