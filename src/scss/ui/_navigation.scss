@@ -127,5 +127,25 @@
       left: auto;
       right: 2px;
     }
+
+    @media screen and (max-width: map-get($breakpoints, 'max-full-screen-controls')) {
+      .back-button {
+        text-align: left;
+      }
+
+      .forward-button {
+        text-align: right;
+      }
+    }
+
+    @media screen and (max-width: map-get($breakpoints, 'min-side-annotation-ui')) {
+      .back-button svg {
+        margin-left: -0.5em;
+      }
+
+      .forward-button svg {
+        margin-right: -0.5em;
+      }
+    }
   }
 }

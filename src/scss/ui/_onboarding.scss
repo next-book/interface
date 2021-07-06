@@ -8,6 +8,7 @@ $nb-red: #9a4663;
     top: 60px;
     right: 1rem;
     box-sizing: border-box;
+    margin-left: var(--base-padding);
     border-radius: var(--border-radius-xl);
 
     font-family: var(--ui-font);
@@ -64,6 +65,7 @@ $nb-red: #9a4663;
         padding: calc(var(--base-padding) / 2);
         margin: 0;
         line-height: 1.4;
+        cursor: pointer;
       }
 
       &:first-child {
