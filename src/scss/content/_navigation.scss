@@ -1,13 +1,5 @@
 .content {
-  .idea,
-  .chunk {
-    scroll-snap-margin-top: 30vh;
-    scroll-margin-top: 30vh;
-  }
-
   .idea:target {
-    scroll-snap-margin-top: 30vh;
-    scroll-margin-top: 30vh;
     animation: highlight 3s ease-in-out;
 
     & + dd {

@@ -67,10 +67,6 @@ export class Position extends React.Component<IProps> {
   };
 
   componentDidMount() {
-    if (window.location.hash.match(/#idea\d+/) && window.scrollY != 0) {
-      window.scrollTo(window.scrollX, window.scrollY - 150);
-    }
-
     window.addEventListener('scroll', this.getScrollHandler());
     const isTop =
       window.scrollY === 0 && (window.location.hash === '' || window.location.hash === '#idea1');
