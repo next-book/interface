@@ -45,7 +45,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      collapsed: docInfo.role !== DocRole.BookCover,
+      collapsed: docInfo.role !== DocRole.Cover,
     };
   }
 
@@ -212,7 +212,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     return (
       <div className={className}>
         <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
-          {docInfo.role !== DocRole.BookCover && this.state.collapsed && (
+          {docInfo.role !== DocRole.Cover && this.state.collapsed && (
             <div className="seq-return-toggle ui-target">{content}</div>
           )}
           {!this.state.collapsed && (
@@ -237,7 +237,7 @@ class SeqReturn extends React.Component<IProps, IState> {
   /* native event is used to cover the need
    * to collapse the component from the outside */
   collapseOnClickOutside = (e: Event) => {
-    if (this.props.docRole === DocRole.BookCover) return;
+    if (this.props.docRole === DocRole.Cover) return;
 
     const el = e.target as Element;
     const clickedInside =
@@ -261,7 +261,7 @@ class SeqReturn extends React.Component<IProps, IState> {
         return null;
       case SeqReturnStatus.Initializing:
         switch (this.props.docRole) {
-          case DocRole.BookCover:
+          case DocRole.Cover:
             if (this.props.targetChapter === null) return this.renderFirstOpen();
             else return this.renderReturnFromTitle();
           default:
@@ -269,9 +269,10 @@ class SeqReturn extends React.Component<IProps, IState> {
         }
       case SeqReturnStatus.Enabled:
         switch (this.props.docRole) {
-          case DocRole.BookCover:
+          case DocRole.Cover:
             return this.renderReturnFromTitle();
           case DocRole.Chapter:
+          case DocRole.Break:
             if (this.props.sequential === Sequential.No) return this.renderReturnFromChapter();
             else return null;
           default:

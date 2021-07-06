@@ -19,17 +19,17 @@ function getNumericValue(selector: string, attrName: string) {
 }
 
 function getRole() {
-  const value = getValue('meta[name="role"]', 'content');
+  const value = getValue('meta[name="nb-role"]', 'content');
 
   if (value === DocRole.Chapter) return DocRole.Chapter;
+  if (value === DocRole.Break) return DocRole.Break;
   if (value === DocRole.Cover) return DocRole.Cover;
-  if (value === DocRole.BookCover) return DocRole.BookCover;
   if (value === DocRole.Colophon) return DocRole.Colophon;
   else return DocRole.Other;
 }
 
 function getOrder() {
-  const value = getValue('meta[name="order"]', 'content');
+  const value = getValue('meta[name="nb-order"]', 'content');
 
   return value !== null ? parseInt(value, 10) : null;
 }
@@ -38,7 +38,7 @@ export const languageCode = getValue('html', 'lang');
 
 export const role = getRole();
 
-export const identifier = getValue('meta[name="identifier"]', 'content');
+export const identifier = getValue('meta[name="nb-identifier"]', 'content');
 
 export const order = getOrder();
 

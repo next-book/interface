@@ -34,7 +34,7 @@ export class Position extends React.Component<IProps> {
 
     const sequential = resetSequence
       ? Sequential.Yes
-      : docInfo.role !== DocRole.Chapter
+      : docInfo.role !== DocRole.Chapter && docInfo.role !== DocRole.Break
       ? Sequential.No
       : this.props.seqReturnStatus === SeqReturnStatus.Initializing &&
         this.props.sequential === Sequential.No

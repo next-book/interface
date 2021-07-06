@@ -75,7 +75,7 @@ function prepReadingOrder(documents: IDocument[]) {
   let totalWords = 0;
 
   const chapters = documents
-    .filter(doc => doc.role === DocRole.Chapter)
+    .filter(doc => doc.role === DocRole.Chapter || doc.role === DocRole.Break)
     .sort((a, b) => {
       const oA = a.order !== null ? a.order : -1;
       const oB = b.order !== null ? b.order : -1;
@@ -93,7 +93,7 @@ function prepReadingOrder(documents: IDocument[]) {
     });
 
   const other = documents
-    .filter(doc => doc.role !== DocRole.Chapter)
+    .filter(doc => doc.role !== DocRole.Chapter && doc.role !== DocRole.Break)
     .map(doc => ({ ...doc, offsetChars: 0, offsetWords: 0, totalChars, totalWords }));
 
   return {
@@ -109,21 +109,21 @@ function arrayToDocMap(arr: INavDocument[]) {
   }, {});
 }
 
-reducer.setReadingOrder = function(documents: IDocument[]) {
+reducer.setReadingOrder = function (documents: IDocument[]) {
   return <const>{
     type: SET_READING_ORDER,
     payload: documents,
   };
 };
 
-reducer.setScrollRatio = function(scrollRatio: number) {
+reducer.setScrollRatio = function (scrollRatio: number) {
   return <const>{
     type: SET_SCROLL_RATIO,
     payload: scrollRatio,
   };
 };
 
-reducer.setPosition = function(
+reducer.setPosition = function (
   position: IPosition,
   sequential: Sequential,
   seqReturnStatus: SeqReturnStatus

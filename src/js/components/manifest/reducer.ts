@@ -49,8 +49,8 @@ export interface IDocument {
 
 export enum DocRole {
   Chapter = 'chapter',
-  BookCover = 'index',
   Cover = 'cover',
+  Break = 'break',
   Colophon = 'colophon',
   Other = 'other',
 }
