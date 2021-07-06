@@ -78,7 +78,7 @@ export class Navigation extends React.Component<IProps> {
     if (role === DocRole.Chapter && position !== null) {
       const next = this.props.documents[position.file].next;
       return next || null;
-    } else if (role === DocRole.Colophon || role === DocRole.Index) {
+    } else if (role === DocRole.Colophon || role === DocRole.BookCover) {
       const next = this.props.readingOrder[0];
       return next || null;
     } else return null;
@@ -198,7 +198,7 @@ export class Navigation extends React.Component<IProps> {
           scrollRatio={this.props.scrollRatio}
           totalWords={totalWords}
         />
-        {docInfo.role !== DocRole.Index && chapter && (
+        {docInfo.role !== DocRole.BookCover && chapter && (
           <TopBar title={this.props.manifest.title} chapter={chapter} />
         )}
         {this.props.invisibleNav && (

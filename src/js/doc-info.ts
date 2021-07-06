@@ -22,7 +22,8 @@ function getRole() {
   const value = getValue('meta[name="role"]', 'content');
 
   if (value === DocRole.Chapter) return DocRole.Chapter;
-  if (value === DocRole.Index) return DocRole.Index;
+  if (value === DocRole.Cover) return DocRole.Cover;
+  if (value === DocRole.BookCover) return DocRole.BookCover;
   if (value === DocRole.Colophon) return DocRole.Colophon;
   else return DocRole.Other;
 }

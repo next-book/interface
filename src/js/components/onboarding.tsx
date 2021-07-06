@@ -43,7 +43,7 @@ export class Onboarding extends React.Component<IProps, IState> {
     const cards = Object.values(Cards);
 
     const showOpener =
-      docInfo.role !== DocRole.Index && this.props.isShown === ShowOnboarding.Initial;
+      docInfo.role !== DocRole.BookCover && this.props.isShown === ShowOnboarding.Initial;
 
     const showOnboarding = this.props.isShown === ShowOnboarding.Enabled;
 

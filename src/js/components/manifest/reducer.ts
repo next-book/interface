@@ -49,7 +49,8 @@ export interface IDocument {
 
 export enum DocRole {
   Chapter = 'chapter',
-  Index = 'index',
+  BookCover = 'index',
+  Cover = 'cover',
   Colophon = 'colophon',
   Other = 'other',
 }
@@ -63,7 +64,7 @@ export function reducer(state: IState | null = null, action: Actions) {
   }
 }
 
-reducer.setManifestData = function(data: IState) {
+reducer.setManifestData = function (data: IState) {
   return <const>{
     type: SET_MANIFEST_DATA,
     payload: data,

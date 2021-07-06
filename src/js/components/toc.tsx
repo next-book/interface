@@ -64,7 +64,7 @@ class Toc extends React.Component<IProps, IState> {
 
     if (docInfo.links.index !== null) {
       otherLinks.push({
-        classes: docInfo.role === DocRole.Index ? 'current-chapter' : undefined,
+        classes: docInfo.role === DocRole.BookCover ? 'current-chapter' : undefined,
         href: docInfo.links.index,
         text: this.props.t('title-page'),
       });
