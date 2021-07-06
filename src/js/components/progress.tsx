@@ -5,6 +5,7 @@ import { IPosition, IDocMap, INavDocument } from './position/reducer';
 import { reducer as configReducer, ProgressKind } from './config/reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { IState as ICombinedState } from '../reducer';
+import { Paginate } from '../icons';
 
 export enum ProgressForm {
   Display,
@@ -77,13 +78,14 @@ class Progress extends React.Component<IProps, IState> {
     switch (this.props.form) {
       case ProgressForm.Goto:
         return this.state.collapsed ? (
-          <div className="nb-progress">
-            <button className="progress--collapsed" onClick={this.toggleCollapsed}>
-              {this.props.t('turn-to')}
-            </button>
-          </div>
+          <a className="icon-link" onClick={this.toggleCollapsed}>
+            {this.props.t('turn-to')}
+          </a>
         ) : (
-          <div className="nb-progress">
+          <div className="nb-progress turn-to">
+            <h3>
+              {Paginate} {this.props.t('turn-to')}
+            </h3>
             <div className="progress">
               <label className="progress__chapter">
                 {this.props.t('chapter')}

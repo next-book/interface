@@ -1,15 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../reducer';
 import { IToc, DocRole } from './manifest/reducer';
 import { IDocMap } from './position/reducer';
 import docInfo from '../doc-info';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import Progress, { ProgressForm } from './progress';
+import { reducer } from './config/reducer';
+import { Help } from '../icons';
 
 interface IProps extends WithTranslation {
   readingOrder: string[];
   documents: IDocMap;
+  showOnboarding(): void;
 }
 
 interface IState {
@@ -82,8 +86,16 @@ class Toc extends React.Component<IProps, IState> {
       <>
         <div className="scrollable-wrapper">
           <div className="nb-toc scrollable">
-            <h1 className="nb-ui-big-title">{this.props.t('controls:toc')}</h1>
-            <Progress form={ProgressForm.Goto} />
+            <h1 className="nb-ui-big-title">
+              {this.props.t('controls:toc')}
+
+              <a className="icon-link" onClick={this.props.showOnboarding}>
+                {Help} {this.props.t('show-tips')}
+              </a>
+
+              <Progress form={ProgressForm.Goto} />
+            </h1>
+
             {this.state.toc}
             <p className="nb-toc-other">
               {otherLinks.map((link, index) => {
@@ -99,7 +111,9 @@ class Toc extends React.Component<IProps, IState> {
             </p>
           </div>
         </div>
-        <Progress form={ProgressForm.Config} />
+        <div>
+          <Progress form={ProgressForm.Config} />
+        </div>
       </>
     );
   }
@@ -125,4 +139,13 @@ const mapStateToProps = (state: ICombinedState) => {
   };
 };
 
-export default withTranslation('navigation')(connect(mapStateToProps)(Toc));
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators(
+    {
+      showOnboarding: reducer.showOnboarding,
+    },
+    dispatch
+  );
+};
+
+export default withTranslation('navigation')(connect(mapStateToProps, mapDispatchToProps)(Toc));

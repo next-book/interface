@@ -201,24 +201,25 @@ export class Navigation extends React.Component<IProps> {
         {docInfo.role !== DocRole.BookCover && chapter && (
           <TopBar title={this.props.manifest.title} chapter={chapter} />
         )}
-        {this.props.invisibleNav && (
-          <div className="button-navigation">
-            <div className="back-button" onClick={this.goBack}>
-              {backAction === Action.Paginate
+
+        <div className="button-navigation">
+          <div className="back-button" onClick={this.goBack}>
+            {this.props.invisibleNav ||
+              (backAction === Action.Paginate
                 ? Prev
                 : backAction === Action.ChangeChapter
                 ? PrevChapter
-                : End}
-            </div>
-            <div className="forward-button" onClick={this.goForward}>
-              {forwardAction === Action.Paginate
+                : End)}
+          </div>
+          <div className="forward-button" onClick={this.goForward}>
+            {this.props.invisibleNav ||
+              (forwardAction === Action.Paginate
                 ? Next
                 : forwardAction === Action.ChangeChapter
                 ? NextChapter
-                : End}
-            </div>
+                : End)}
           </div>
-        )}
+        </div>
       </nav>
     );
   }

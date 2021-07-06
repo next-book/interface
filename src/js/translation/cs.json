@@ -5,7 +5,7 @@
   },
   "controls": {
     "show-toc": "Zobrazit obsah",
-    "show-notes": "Zobrazit poznámky",
+    "show-annotations": "Zobrazit poznámky",
     "show-options": "Zobrazit nastavení",
     "toc": "Obsah",
     "annotations": "Anotace",
@@ -14,14 +14,14 @@
   "options": {
     "font-size": "Velikost písma",
     "color-scheme": "Barevné schéma",
-    "color-scheme-auto": "Dle prohlížeče",
+    "color-scheme-auto": "Automatické",
+    "color-scheme-auto-explanation": "Automatický mód přebírá nastavení prohlížeče či zařízení.",
     "color-scheme-dark": "Tmavé",
     "color-scheme-light": "Světlé",
     "color-scheme-sepia": "Sépiové",
     "basic-style": "Základní zobrazení",
     "basic-style-label": "Vypnout pokročilé vizuální prvky",
-    "show-tips-title": "Jak číst webovou knížku?",
-    "show-tips": "Zobrazit tipy",
+    "invisible-nav-label": "Skrýt ikony na tlačítkách okolo textu",
     "about-this-book": "Produkční informace o next-booku",
     "revision": "Identifikátor revize",
     "generated-at": "Publikováno",
@@ -37,9 +37,9 @@
     "unsecure": "Offline mód není dostupný, protože je kniha stažená přes nezabezpečený protokol."
   },
   "onboarding": {
-    "intro-head": "Je tohle vaše první webová knížka?",
-    "intro": "U spodního okraje najdete vždy skryté tlačítko pro otevření menu.",
-    "intro-show": "Další 3 tipy",
+    "intro-head": "Vaše první webová knížka?",
+    "intro": "V menu najdete obsah, poznámky i nastavení.",
+    "intro-show": "3 tipy ke čtení",
     "intro-hide": "Zavřít",
     "pagination-heading": "Soustředěné čtení",
     "pagination": "Pokud vás posouvání textu rozptyluje, použijte svajpnutí, skrytá tlačítka na okrajích, nebo šipky na klávesnici.",
@@ -87,6 +87,7 @@
     "next-chapter": "Následující kapitola",
     "seqReturnAnotherChapter": "Dočetli jste po <1>{{idea}}. větu</1> v kapitole <3>{{title}}</3>.",
     "seqReturnThisChapter": "Dočetli jste po <2>{{idea}}. větu</2> v této kapitole.",
-    "go": "Přejít"
+    "go": "Přejít",
+    "show-tips": "Tipy"
   }
 }
