@@ -55,7 +55,7 @@ export class Onboarding extends React.Component<IProps, IState> {
               <strong>{this.props.t('intro-head')}</strong> {this.props.t('intro')}{' '}
             </div>
             <div className="buttons">
-              <a onClick={() => this.props.show(1)}>{this.props.t('intro-show')}</a>
+              <a onClick={() => this.props.show()}>{this.props.t('intro-show')}</a>
               <a onClick={this.props.hide}>{this.props.t('intro-hide')}</a>
             </div>
           </div>

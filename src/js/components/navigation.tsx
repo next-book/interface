@@ -92,9 +92,9 @@ export class Navigation extends React.Component<IProps> {
 
     switch (keycode(event)) {
       case 'left':
-        return this.goBack(event, false);
+        return this.goBack(this.getBackAction());
       case 'right':
-        return this.goForward(event, false);
+        return this.goForward(this.getForwardAction());
       default:
         return;
     }
@@ -102,58 +102,58 @@ export class Navigation extends React.Component<IProps> {
 
   handleSwipeNav = (event: TouchEvent, dir: Direction) => {
     if (dir === Direction.Forward) {
-      this.goForward(event, false);
+      this.goForward(this.getForwardAction());
     } else if (dir === Direction.Back) {
-      this.goBack(event, false);
+      this.goBack(this.getBackAction());
     }
   };
 
   getForwardAction = () => {
-    if (this.props.position === null || !this.props.position.chapterEnd) return Action.Paginate;
+    if (document.body.clientHeight <= window.innerHeight) return Action.ChangeChapter;
+    else if (this.props.position === null || !this.props.position.chapterEnd)
+      return Action.Paginate;
     else if (this.getNextChapterLink() !== null) return Action.ChangeChapter;
     else return Action.None;
   };
 
   getBackAction = () => {
-    if (this.props.position === null || !this.props.position.chapterStart) return Action.Paginate;
+    if (document.body.clientHeight <= window.innerHeight) return Action.ChangeChapter;
+    else if (this.props.position === null || !this.props.position.chapterStart)
+      return Action.Paginate;
     else if (this.getPrevChapterLink() !== null) return Action.ChangeChapter;
     else return Action.None;
   };
 
-  goForward = (
-    event: MouseEvent | TouchEvent | KeyboardEvent | React.SyntheticEvent,
-    showButtons?: boolean
-  ) => {
-    event.preventDefault();
-
-    if (this.props.position === null || !this.props.position.chapterEnd) {
-      const step = domFns.getScrollStep();
-      pageForward(step, showButtons);
-      setLastScrollStep(step ? [Direction.Forward, step] : null);
-      domFns.setPaginatedMode();
-    } else {
-      const next = this.getNextChapterLink();
-      if (next) window.location.assign(next);
+  goForward = (action: Action) => {
+    switch (action) {
+      case Action.Paginate:
+        const step = domFns.getScrollStep();
+        pageForward(step);
+        setLastScrollStep(step ? [Direction.Forward, step] : null);
+        domFns.setPaginatedMode();
+        return;
+      case Action.ChangeChapter:
+        const next = this.getNextChapterLink();
+        if (next) window.location.assign(next);
+        return;
     }
   };
 
-  goBack = (
-    event: MouseEvent | TouchEvent | KeyboardEvent | React.SyntheticEvent,
-    showButtons?: boolean
-  ) => {
-    event.preventDefault();
-
-    if (this.props.position === null || !this.props.position.chapterStart) {
-      const step =
-        lastScrollStep !== null && lastScrollStep[0] !== Direction.Back
-          ? lastScrollStep[1]
-          : domFns.getScrollStep();
-      pageBack(step, showButtons);
-      setLastScrollStep(step ? [Direction.Back, step] : null);
-      domFns.setPaginatedMode();
-    } else {
-      const prev = this.getPrevChapterLink();
-      if (prev) window.location.assign(prev);
+  goBack = (action: Action) => {
+    switch (action) {
+      case Action.Paginate:
+        const step =
+          lastScrollStep !== null && lastScrollStep[0] !== Direction.Back
+            ? lastScrollStep[1]
+            : domFns.getScrollStep();
+        pageBack(step);
+        setLastScrollStep(step ? [Direction.Back, step] : null);
+        domFns.setPaginatedMode();
+        return;
+      case Action.ChangeChapter:
+        const prev = this.getPrevChapterLink();
+        if (prev) window.location.assign(prev);
+        return;
     }
   };
 
@@ -203,7 +203,7 @@ export class Navigation extends React.Component<IProps> {
         )}
 
         <div className="button-navigation">
-          <div className="back-button" onClick={this.goBack}>
+          <div className="back-button" onClick={() => this.goBack(backAction)}>
             {this.props.invisibleNav ||
               (backAction === Action.Paginate
                 ? Prev
@@ -211,7 +211,7 @@ export class Navigation extends React.Component<IProps> {
                 ? PrevChapter
                 : End)}
           </div>
-          <div className="forward-button" onClick={this.goForward}>
+          <div className="forward-button" onClick={() => this.goForward(forwardAction)}>
             {this.props.invisibleNav ||
               (forwardAction === Action.Paginate
                 ? Next
@@ -225,26 +225,21 @@ export class Navigation extends React.Component<IProps> {
   }
 }
 
-function displayPagination(dir: Direction, showButtons?: boolean) {
+function displayPagination(dir: Direction) {
   document.body.classList.add(`nb-paginated-${dir}`);
   window.setTimeout(() => document.body.classList.remove(`nb-paginated-${dir}`), 300);
-
-  if (showButtons) {
-    document.body.classList.add(`nb-paginated-button-${dir}`);
-    window.setTimeout(() => document.body.classList.remove(`nb-paginated-button-${dir}`), 300);
-  }
 }
 
-function pageForward(step: number | null, showButtons?: boolean) {
+function pageForward(step: number | null) {
   if (step === null) return;
   window.scrollTo(window.scrollX, window.scrollY + step);
-  displayPagination(Direction.Forward, showButtons);
+  displayPagination(Direction.Forward);
 }
 
-function pageBack(step: number | null, showButtons?: boolean) {
+function pageBack(step: number | null) {
   if (step === null) return;
   window.scrollTo(window.scrollX, window.scrollY - step);
-  displayPagination(Direction.Back, showButtons);
+  displayPagination(Direction.Back);
 }
 
 const mapStateToProps = (state: ICombinedState) => {

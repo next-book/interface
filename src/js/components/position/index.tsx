@@ -116,7 +116,7 @@ function getTopBound(): number {
 }
 
 function isPageScrolledToTop(): boolean {
-  return getTopBound() > 48;
+  return document.body.clientHeight <= window.innerHeight || getTopBound() > 48;
 }
 
 function getBottomBound(): number {
@@ -127,7 +127,7 @@ function getBottomBound(): number {
 }
 
 function isPageScrolledToBottom() {
-  return getBottomBound() < -50;
+  return document.body.clientHeight <= window.innerHeight || getBottomBound() < -50;
 }
 
 export function getScrollRatio(): number {

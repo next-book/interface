@@ -149,3 +149,17 @@
     }
   }
 }
+
+.nb-role-index .nb-navigation nav .button-navigation {
+  .back-button {
+    display: none;
+  }
+
+  .forward-button {
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vw;
+  }
+}
