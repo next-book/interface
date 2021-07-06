@@ -5,7 +5,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
 
-import Icons from './../icons';
+import { Info, ArrowForward, ReturnKey, Check } from './../icons';
 
 export enum Sequential {
   No = 0,
@@ -73,7 +73,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     if (this.props.colophonLink !== null) {
       buttons.push({
         link: this.props.colophonLink,
-        text: Icons.Info,
+        text: Info,
       });
     }
 
@@ -82,7 +82,7 @@ class SeqReturn extends React.Component<IProps, IState> {
       primary: false,
       text: (
         <span>
-          {this.props.t('start')} {Icons.ArrowForward}
+          {this.props.t('start')} {ArrowForward}
         </span>
       ),
     });
@@ -115,7 +115,7 @@ class SeqReturn extends React.Component<IProps, IState> {
       return chapter.order !== null
         ? this.renderWrapper(
             <span>
-              {Icons.ReturnKey} {chapter.order + 1}.{idea}
+              {ReturnKey} {chapter.order + 1}.{idea}
             </span>
           )
         : null;
@@ -129,7 +129,7 @@ class SeqReturn extends React.Component<IProps, IState> {
         primary: true,
         text: (
           <span>
-            {Icons.Check} {this.props.t('return')}
+            {Check} {this.props.t('return')}
           </span>
         ),
       },
@@ -144,7 +144,7 @@ class SeqReturn extends React.Component<IProps, IState> {
       return chapter.order !== null
         ? this.renderWrapper(
             <span>
-              {Icons.ReturnKey} {chapter.order + 1}.{idea}
+              {ReturnKey} {chapter.order + 1}.{idea}
             </span>
           )
         : null;
@@ -161,7 +161,7 @@ class SeqReturn extends React.Component<IProps, IState> {
         click: this.resetPosition,
         text: (
           <span>
-            {Icons.Check} {this.props.t('continue')}
+            {Check} {this.props.t('continue')}
           </span>
         ),
       },
@@ -171,7 +171,7 @@ class SeqReturn extends React.Component<IProps, IState> {
         primary: true,
         text: (
           <span>
-            {Icons.ReturnKey} {this.props.t('return')}
+            {ReturnKey} {this.props.t('return')}
           </span>
         ),
       },

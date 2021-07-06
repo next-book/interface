@@ -1,5 +1,5 @@
 import React from 'react';
-import Icons from './../../icons';
+import { Close } from './../../icons';
 
 interface IProps {
   title: string;
@@ -71,7 +71,7 @@ export class FontSize extends React.Component<IProps, IState> {
           {Math.floor(parseFloat(this.props.fontSize) * 100)} %
         </button>
         <div className={`font-size-slider ${this.state.isShown ? 'font-size-slider--show' : ''}`}>
-          <span className="font-size-slider__close">{Icons.Close}</span>
+          <span className="font-size-slider__close">{Close}</span>
           <p>
             <strong>{this.props.title}</strong>
           </p>

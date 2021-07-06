@@ -7,7 +7,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 
 import docInfo from '../doc-info';
 import { DocRole } from './manifest/reducer';
-import Icons from './../icons';
+import { Close } from './../icons';
 
 interface IProps extends WithTranslation {
   offline: boolean;
@@ -53,7 +53,7 @@ export class Onboarding extends React.Component<IProps, IState> {
           <div className="onboarding-opener ui-target">
             <div className="onboarding-opener-bubble">
               <div className="onboarding-opener-close" onClick={this.props.hide}>
-                {Icons.Close}
+                {Close}
               </div>
               <div className="onboarding-opener-intro">
                 <strong>{this.props.t('intro-head')}</strong> {this.props.t('intro')}{' '}
@@ -74,7 +74,7 @@ export class Onboarding extends React.Component<IProps, IState> {
           <div className="onboarding-overlay ui-target">
             <div className="onboarding ui-target">
               <span className="close" onClick={this.props.hide}>
-                {Icons.Close}
+                {Close}
               </span>
               <div className="onboarding__card">
                 <h2>{this.props.t(`${cards[this.state.card]}-heading`)}</h2>

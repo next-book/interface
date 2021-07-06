@@ -5,7 +5,7 @@ import Progress, { ProgressForm } from './progress';
 import Toc from './toc';
 import Options from './options';
 import Annotations from './annotations/desk';
-import Icons from './../icons';
+import { Note, Format, Menu, Close } from './../icons';
 
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
@@ -22,15 +22,15 @@ enum Control {
 const buttons = [
   {
     target: Control.Annotations,
-    icon: Icons.Note,
+    icon: Note,
   },
   {
     target: Control.Options,
-    icon: Icons.Format,
+    icon: Format,
   },
   {
     target: Control.Toc,
-    icon: Icons.Menu,
+    icon: Menu,
   },
 ];
 
@@ -136,7 +136,7 @@ function Tabs(props: ITabsProps) {
         </span>
       ))}
       <span key="close" className="close" onClick={() => props.open(Control.None)}>
-        <span>{Icons.Close}</span>
+        <span>{Close}</span>
       </span>
     </div>
   );

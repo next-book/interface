@@ -20,7 +20,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import docInfo from '../../doc-info';
 import { IDocMap, INavDocument } from '../position/reducer';
 import { getAnnotatedIdeas } from './utils';
-import Icons from '../../icons';
+import { Plus, Check, Delete } from '../../icons';
 
 interface IProps extends WithTranslation {
   allAnnotations: IAllAnnotations;
@@ -311,7 +311,7 @@ class Notes extends React.Component<INotesProps, INotesState> {
           {this.props.t('notes')}{' '}
           {!this.state.newNoteIsShown && (
             <button className="button button-primary" onClick={this.toggleNewNote}>
-              {Icons.Plus} {this.props.t('add-note')}
+              {Plus} {this.props.t('add-note')}
             </button>
           )}
         </h2>
@@ -329,10 +329,10 @@ class Notes extends React.Component<INotesProps, INotesState> {
 
             <div className="button-zero-bar button-zero-bar--bottom button-zero-bar--two-buttons">
               <button className="round-button" onClick={this.addNote}>
-                {Icons.Check}
+                {Check}
               </button>
               <button className="round-button round-button--warning" onClick={this.toggleNewNote}>
-                {Icons.Delete}
+                {Delete}
               </button>
             </div>
           </>
