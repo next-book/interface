@@ -42,8 +42,10 @@
       box-shadow: var(--ui-box-shadow);
       border-radius: var(--border-radius);
 
-      &:hover {
-        transform: scale(1.1);
+      @media (hover) {
+        &:hover {
+          transform: scale(1.1);
+        }
       }
 
       &:last-child {
@@ -129,8 +131,10 @@
     will-change: transform;
     transform-origin: 50% 50%;
 
-    &:hover {
-      transform: scale(1.1);
+    @media (hover) {
+      &:hover {
+        transform: scale(1.1);
+      }
     }
   }
 

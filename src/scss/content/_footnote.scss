@@ -26,9 +26,11 @@
 
       white-space: nowrap;
 
-      &:hover {
-        box-shadow: var(--ui-inset-shadow);
-        background: var(--background);
+      @media (hover) {
+        &:hover {
+          box-shadow: var(--ui-inset-shadow);
+          background: var(--background);
+        }
       }
     }
   }

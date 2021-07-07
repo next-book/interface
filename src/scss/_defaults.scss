@@ -28,6 +28,7 @@
   --ui-c-text-shade: #777;
   --ui-c-text: #222;
 
+  --ui-box-shadow-color: rgba(0, 0, 0, 0.1);
   --ui-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
   --ui-inset-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
 
@@ -50,6 +51,7 @@
   --visited: pink;
 
   // ui colors
+  --ui-box-shadow-color: rgba(0, 0, 0, 0.2);
   --ui-box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
   --ui-inset-shadow: inset 0 0 4px rgba(0, 0, 0, 0.7);
 
@@ -85,6 +87,7 @@
   --ui-c-text-shade: rgb(161, 132, 104);
   --ui-c-text: rgb(74, 45, 18);
 
+  --ui-box-shadow-color: rgba(62, 32, 7, 0.25);
   --ui-box-shadow: 0 0 5px rgba(62, 32, 7, 0.25);
   --ui-inset-shadow: inset 0 0 4px rgba(62, 32, 7, 0.3);
 

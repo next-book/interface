@@ -42,9 +42,11 @@
     fill: var(--ui-c-bg);
   }
 
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.4);
+  @media (hover) {
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.4);
+    }
   }
 }
 

@@ -37,8 +37,10 @@
       fill: var(--accent-color);
     }
 
-    &:hover {
-      text-decoration: none;
+    @media (hover) {
+      &:hover {
+        text-decoration: none;
+      }
     }
   }
 
@@ -49,33 +51,40 @@
 
     position: fixed;
     top: 0;
-    right: var(--base-padding);
-    width: 10rem;
+    right: 0;
+
     cursor: pointer;
 
     div {
       opacity: 0;
     }
 
-    &:hover {
-      div {
-        opacity: 0.25;
+    @media (hover) {
+      &:hover {
+        div {
+          opacity: 0.25;
+        }
       }
     }
 
     div {
       height: 48px;
-
-      margin-left: 1rem;
       line-height: 48px;
+
+      margin-left: var(--base-padding);
+      padding-left: var(--base-padding);
+      padding-right: var(--base-padding);
+
       text-align: right;
 
       &:last-child {
         opacity: 0.5;
       }
 
-      &:hover {
-        opacity: 1;
+      @media (hover) {
+        &:hover {
+          opacity: 1;
+        }
       }
 
       .svg-icon {
