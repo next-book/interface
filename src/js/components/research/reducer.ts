@@ -1,4 +1,7 @@
-const UPDATE_CONSENT = 'interface/annotations/UPDATE_CONSENT';
+import { init as initTracking } from './tracker';
+
+const DENY_CONSENT = 'interface/research/DENY_CONSENT';
+const GRANT_CONSENT = 'interface/research/GRANT_CONSENT';
 
 export enum Consent {
   Granted,
@@ -16,18 +19,27 @@ const INITIAL_STATE: IState = {
 
 export function reducer(state: IState = INITIAL_STATE, action: Actions) {
   switch (action.type) {
-    case UPDATE_CONSENT:
-      return { ...state, consent: action.payload };
+    case DENY_CONSENT:
+      return { ...state, consent: Consent.Denied };
+    case GRANT_CONSENT:
+      return { ...state, consent: Consent.Granted };
     default:
       return state;
   }
 }
 
-reducer.grantConsent = function(data: boolean) {
+reducer.denyConsent = function () {
   return <const>{
-    type: UPDATE_CONSENT,
-    payload: data ? Consent.Granted : Consent.Denied,
+    type: DENY_CONSENT,
   };
 };
 
-export type Actions = ReturnType<typeof reducer.grantConsent>;
+reducer.grantConsent = function (ga: string) {
+  initTracking(ga);
+
+  return <const>{
+    type: GRANT_CONSENT,
+  };
+};
+
+export type Actions = ReturnType<typeof reducer.grantConsent | typeof reducer.denyConsent>;

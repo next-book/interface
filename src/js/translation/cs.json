@@ -89,5 +89,11 @@
     "seqReturnThisChapter": "Dočetli jste po <2>{{idea}}. větu</2> v této kapitole.",
     "go": "Přejít",
     "show-tips": "Tipy"
+  },
+  "research": {
+    "plea-title": "Výzkum",
+    "researcher": "Zadavatel výzkumu",
+    "agree": "Souhlasím",
+    "decline": "Nesouhlasím"
   }
 }

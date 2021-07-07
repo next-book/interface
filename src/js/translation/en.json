@@ -89,5 +89,11 @@
     "seqReturnThisChapter": "You read up to sentence no. {{idea}} in this chapter.",
     "go": "Go",
     "show-tips": "Tips"
+  },
+  "research": {
+    "plea-title": "Research",
+    "researcher": "Researching organization",
+    "agree": "Agree",
+    "decline": "Decline"
   }
 }

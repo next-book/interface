@@ -105,6 +105,26 @@ export function scrollToIdea(number: number | null) {
   }
 }
 
+export function getResearchParams(): { text: string; orgs: string; ga: string } | null {
+  const textEl = document.querySelector('meta[name="nb-research"]');
+  const orgsEl = document.querySelector('meta[name="nb-research-orgs"]');
+  const gaEl = document.querySelector('meta[name="nb-research-ga"]');
+
+  if (textEl === null || orgsEl === null || gaEl === null) return null;
+
+  const text = textEl.getAttribute('content');
+  const orgs = orgsEl.getAttribute('content');
+  const ga = gaEl.getAttribute('content');
+
+  if (!text || !orgs || !ga) return null;
+
+  return {
+    text,
+    orgs,
+    ga,
+  };
+}
+
 export default {
   languageCode,
   role,

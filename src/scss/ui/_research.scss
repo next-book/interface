@@ -1,0 +1,64 @@
+._nb-research {
+  position: fixed;
+  top: 20vh;
+  left: 50vw;
+
+  box-sizing: border-box;
+
+  width: 300px;
+  margin-left: -150px;
+
+  font-family: var(--ui-font);
+  font-size: var(--ui-font-size);
+  background: var(--ui-c-bg-shade);
+  color: var(--ui-c-text);
+  border: 1px solid var(--soft-border-color);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--ui-box-shadow);
+  overflow: hidden;
+
+  .plea {
+    max-height: 20vh;
+    overflow-y: auto;
+  }
+
+  h2,
+  p {
+    margin: var(--ui-font-size);
+  }
+
+  .agree {
+    font-weight: bold;
+  }
+
+  .buttons {
+    display: flex;
+    border-top: 1px solid var(--ui-c-soft);
+
+    a {
+      padding: calc(var(--base-padding) / 2);
+      margin: 0;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+
+    &:first-child {
+      border: none;
+    }
+
+    a {
+      background: var(--ui-c-bg);
+      white-space: nowrap;
+      border: solid var(--ui-c-soft);
+      border-width: 0 1px 0 0;
+      flex: 1 1;
+      text-align: center;
+      text-decoration: none;
+      color: var(--ui-c-text-shade);
+
+      &:last-child {
+        border-right: 0;
+      }
+    }
+  }
+}
