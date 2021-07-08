@@ -91,12 +91,12 @@ export class Navigation extends React.Component<IProps> {
     const selection = window.getSelection();
     if (event.shiftKey === true && selection !== null && !selection.isCollapsed) return;
 
-    trackPagination(Controller.Keyboard);
-
     switch (keycode(event)) {
       case 'left':
+        trackPagination(Controller.Keyboard);
         return this.goBack(this.getBackAction());
       case 'right':
+        trackPagination(Controller.Keyboard);
         return this.goForward(this.getForwardAction());
       default:
         return;
