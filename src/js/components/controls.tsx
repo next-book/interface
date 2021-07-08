@@ -10,7 +10,8 @@ import { Note, Format, Menu, Close } from './../icons';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../reducer';
-import { reducer as onboardingReducer, ShowOnboarding } from './config/reducer';
+import { reducer as onboardingReducer, ShowOnboarding, ColorScheme } from './config/reducer';
+import { trackFontSize, trackMenuOpening, trackColorScheme } from './research/tracker';
 
 enum Control {
   None = 'none',
@@ -36,6 +37,8 @@ const buttons = [
 
 interface IProps extends WithTranslation {
   isOnboardingShown: ShowOnboarding;
+  fontSize: string;
+  colorScheme: ColorScheme;
   hideOnboarding(): void;
 }
 
@@ -57,8 +60,14 @@ class Controls extends React.Component<IProps, IState> {
 
     this.setState({ ...this.state, opened: control });
 
-    if (control === Control.None) document.body.classList.remove('nb-controls-open');
-    else document.body.classList.add('nb-controls-open');
+    if (control === Control.None) {
+      document.body.classList.remove('nb-controls-open');
+      trackColorScheme(this.props.colorScheme);
+      trackFontSize(this.props.fontSize);
+    } else {
+      trackMenuOpening();
+      document.body.classList.add('nb-controls-open');
+    }
   };
 
   renderWrapper = (control: JSX.Element) => (
@@ -145,6 +154,8 @@ function Tabs(props: ITabsProps) {
 const mapStateToProps = (state: ICombinedState) => {
   return {
     isOnboardingShown: state.config.showOnboarding,
+    fontSize: state.config.fontSize,
+    colorScheme: state.config.colorScheme,
   };
 };
 

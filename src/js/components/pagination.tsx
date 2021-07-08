@@ -1,6 +1,8 @@
 import React from 'react';
 import { throttle } from 'lodash';
+
 import { elements, setVisibleChunks, clearVisibleChunks, setDomFn } from '../doc-info';
+import { trackScroll } from './research/tracker';
 
 enum Side {
   Bottom = 'bottom',
@@ -85,6 +87,7 @@ export class Pagination extends React.Component<IProps, IState> {
     if (ms - this.state.lastScrollStart < 150) return;
 
     if (ms - this.state.lastScrollStart < 250) {
+      trackScroll();
       this.setState({ ...this.state, paginatedDisplay: false, lastScrollStart: null });
       return;
     }

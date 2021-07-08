@@ -18,6 +18,7 @@ import { getScrollRatio } from './position';
 import { reducer, IPosition, IDocMap } from './position/reducer';
 import { IState as IManifest, IDocument } from './manifest/reducer';
 import { Prev, Next, PrevChapter, NextChapter, End } from '../icons';
+import { trackPagination, Controller } from './research/tracker';
 
 export enum Direction {
   Back = 'back',
@@ -90,6 +91,8 @@ export class Navigation extends React.Component<IProps> {
     const selection = window.getSelection();
     if (event.shiftKey === true && selection !== null && !selection.isCollapsed) return;
 
+    trackPagination(Controller.Keyboard);
+
     switch (keycode(event)) {
       case 'left':
         return this.goBack(this.getBackAction());
@@ -101,6 +104,8 @@ export class Navigation extends React.Component<IProps> {
   };
 
   handleSwipeNav = (event: TouchEvent, dir: Direction) => {
+    trackPagination(Controller.Swipe);
+
     if (dir === Direction.Forward) {
       this.goForward(this.getForwardAction());
     } else if (dir === Direction.Back) {

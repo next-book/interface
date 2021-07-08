@@ -14,25 +14,33 @@ export const init = (id: string) => {
   ReactGA.initialize(id);
   ReactGA.pageview();
   initialized = true;
+
+  console.log('Research data collection initialized');
+
+  setInterval(trackReadingTime(), 1000 * 60 * 10);
+};
+
+const getMinutes = () => {
+  return Math.round(new Date().getTime() / (60 * 1000));
 };
 
 const send = (category: Category, action: string, value?: string | number) => {
-  console.log(initialized);
   if (initialized) {
+    console.log(`Event: ${category}, ${action} (${value}).`);
+
     if (value === undefined) ReactGA.event({ category, action });
     if (typeof value === 'number') ReactGA.event({ category, action, value: value });
     else ReactGA.event({ category, action, label: value });
   }
 };
 
-let trackedMinutes = 0;
+export const trackReadingTime = () => {
+  const startTime = getMinutes();
 
-export const trackReadingTime = (minutes: number) => {
-  if (trackedMinutes !== minutes && minutes % 10 === 0) {
-    send(Category.Text, 'time-read', minutes);
-
-    trackedMinutes = minutes;
-  }
+  return () => {
+    const curTime = getMinutes();
+    send(Category.Text, 'time-read', curTime - startTime);
+  };
 };
 
 const amountsToTrack = [1, 2, 3, 5, 8, 13, 21, 34, 55, 75, 98];
@@ -50,31 +58,31 @@ enum ControlType {
   Paginated = 'paginated',
 }
 
-let lastControlTypeTracked = new Date().getTime() / 1000;
+export enum Controller {
+  Keyboard = 'keyboard',
+  Swipe = 'swipe',
+  Buttons = 'buttons',
+  Scroll = 'scroll',
+}
 
 export const trackScroll = () => {
-  trackControlType(ControlType.Scrolled);
+  trackControlType(ControlType.Scrolled, Controller.Scroll);
 };
 
-export const trackPagination = () => {
-  trackControlType(ControlType.Paginated);
+export const trackPagination = (controller: Controller) => {
+  trackControlType(ControlType.Paginated, controller);
 };
 
-const trackControlType = (type: ControlType) => {
-  const curTime = new Date().getTime() / 1000;
-  if (curTime - lastControlTypeTracked > 60) {
-    send(Category.Interaction, type);
-
-    lastControlTypeTracked = curTime;
-  }
+const trackControlType = (type: ControlType, controller: Controller) => {
+  send(Category.Interaction, type, controller);
 };
 
-export const trackColorSchemeChange = (scheme: string) => {
+export const trackColorScheme = (scheme: string) => {
   send(Category.UI, 'color-scheme', scheme);
 };
 
-export const trackFontSizeChange = (size: number) => {
-  send(Category.UI, 'font-size', size);
+export const trackFontSize = (size: string) => {
+  send(Category.UI, 'font-size', parseInt(size, 10));
 };
 
 const openingsToTrack = [1, 2, 10, 20, 100];
@@ -88,8 +96,8 @@ export const trackMenuOpening = () => {
   }
 };
 
-export const trackAnnotationCreation = () => {
-  send(Category.Interaction, 'annotation-created');
+export const trackAnnotationCreation = (symbol: string) => {
+  send(Category.Interaction, 'annotation-created', symbol);
 };
 
 export const trackNoteCreation = () => {
@@ -100,19 +108,19 @@ export const trackSeqReturned = () => {
   send(Category.UI, 'seq-return', 'returned');
 };
 
-export const trackSeqContinued = () => {
-  send(Category.UI, 'seq-return', 'continued');
+export const trackSeqReset = () => {
+  send(Category.UI, 'seq-return', 'reset');
 };
 
-export const trackOfflineStatus = (swAvailable: SwAvailability, cacheAvailable: boolean) => {
+export const trackOfflineStatus = (swAvailable: SwAvailability) => {
   switch (swAvailable) {
     case SwAvailability.Initial:
-      return send(Category.Offline, 'initial', cacheAvailable ? 'cached' : 'not-cached');
+      return send(Category.Offline, 'initial');
     case SwAvailability.Unsecure:
-      return send(Category.Offline, 'unsecure', cacheAvailable ? 'cached' : 'not-cached');
+      return send(Category.Offline, 'unsecure');
     case SwAvailability.NoSw:
-      return send(Category.Offline, 'no-sw', cacheAvailable ? 'cached' : 'not-cached');
+      return send(Category.Offline, 'no-sw');
     case SwAvailability.Available:
-      return send(Category.Offline, 'available', cacheAvailable ? 'cached' : 'not-cached');
+      return send(Category.Offline, 'available');
   }
 };

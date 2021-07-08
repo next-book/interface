@@ -21,6 +21,7 @@ import docInfo from '../../doc-info';
 import { IDocMap, INavDocument } from '../position/reducer';
 import { getAnnotatedIdeas } from './utils';
 import { Plus, Check, Delete } from '../../icons';
+import { trackNoteCreation } from '../research/tracker';
 
 interface IProps extends WithTranslation {
   allAnnotations: IAllAnnotations;
@@ -58,6 +59,8 @@ class AnnotationDesk extends React.Component<IProps, IState> {
       text,
       file,
     });
+
+    trackNoteCreation();
   };
 
   toggleAllChapters = () => {

@@ -6,6 +6,7 @@ import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
 
 import { Info, ArrowForward, ReturnKey, Check } from './../icons';
+import { trackSeqReturned, trackSeqReset } from './research/tracker';
 
 export enum Sequential {
   No = 0,
@@ -52,6 +53,8 @@ class SeqReturn extends React.Component<IProps, IState> {
   resetPosition = (e: React.MouseEvent) => {
     e.preventDefault();
 
+    trackSeqReset();
+
     this.props.setPosition(true);
   };
 
@@ -61,6 +64,8 @@ class SeqReturn extends React.Component<IProps, IState> {
 
   returnToPosition = () => {
     this.setState({ ...this.state, collapsed: true });
+
+    trackSeqReturned();
 
     const sameChapter =
       this.props.targetChapter && this.props.targetChapter.order === docInfo.order;

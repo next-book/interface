@@ -20,6 +20,8 @@ import {
   highlightRange,
 } from './utils';
 
+import { trackAnnotationCreation } from './../research/tracker';
+
 enum Sets {
   Add,
   Edit,
@@ -64,6 +66,8 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
       annotation,
       ideas,
     });
+
+    trackAnnotationCreation(annotation.style.symbol);
   };
 
   private getNewAnnotationId = () => {
@@ -255,10 +259,12 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
   }
 }
 
-const buttonFn = (fn: () => void) => (event: React.SyntheticEvent): void => {
-  event.stopPropagation();
-  fn();
-};
+const buttonFn =
+  (fn: () => void) =>
+  (event: React.SyntheticEvent): void => {
+    event.stopPropagation();
+    fn();
+  };
 
 interface IActionButtonProps {
   action: string;
