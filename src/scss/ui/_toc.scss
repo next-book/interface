@@ -1,5 +1,10 @@
 .nb-toc {
   padding: var(--base-padding) calc(2 * var(--base-padding));
+
+  @media screen and (max-width: map-get($breakpoints, 'max-big-tabs')) {
+    padding: var(--base-padding);
+  }
+
   padding-bottom: calc(4 * var(--base-padding));
 
   ul,

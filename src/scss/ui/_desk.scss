@@ -3,6 +3,10 @@
   padding: var(--base-padding) calc(2 * var(--base-padding));
   overflow-y: auto;
 
+  @media screen and (max-width: map-get($breakpoints, 'max-big-tabs')) {
+    padding: var(--base-padding);
+  }
+
   .nb-desk__show-all-toggle {
     display: block;
     padding: calc(var(--base-padding) / 2) 0;

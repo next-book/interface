@@ -17,8 +17,12 @@
   box-shadow: var(--ui-box-shadow);
   overflow: hidden;
 
+  p {
+    line-height: 1.4;
+  }
+
   .plea {
-    max-height: 20vh;
+    max-height: 30vh;
     overflow-y: auto;
   }
 
@@ -38,7 +42,7 @@
     a {
       padding: calc(var(--base-padding) / 2);
       margin: 0;
-      line-height: 1.4;
+      line-height: 1.7;
       cursor: pointer;
     }
 

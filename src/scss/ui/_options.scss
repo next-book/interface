@@ -11,6 +11,10 @@
     display: grid;
     grid-gap: var(--base-padding);
     margin: var(--base-padding) calc(2 * var(--base-padding));
+
+    @media screen and (max-width: map-get($breakpoints, 'max-big-tabs')) {
+      margin: var(--base-padding);
+    }
   }
 
   .cell {

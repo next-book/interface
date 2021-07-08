@@ -152,7 +152,7 @@
   }
 }
 
-.nb-role-index .nb-navigation nav .button-navigation {
+.nb-role-cover .nb-navigation nav .button-navigation {
   .back-button {
     display: none;
   }
@@ -164,6 +164,15 @@
     width: 100vw;
     height: 100vw;
 
+    svg {
+      display: none;
+    }
+  }
+}
+
+.nb-role-break .nb-navigation nav .button-navigation {
+  .back-button,
+  .forward-button {
     svg {
       display: none;
     }
