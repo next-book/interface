@@ -191,11 +191,11 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
   renderExtend = (classes: string[]) => {
     const actions = [
       {
-        symbol: '➖',
+        symbol: '–',
         fn: this.cropHighlight,
       },
       {
-        symbol: '➕',
+        symbol: '+',
         fn: this.extendHighlight,
       },
     ];
