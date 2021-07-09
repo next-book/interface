@@ -42,14 +42,24 @@
     float: right;
   }
 
-  .progress {
-    display: flex;
-    margin-bottom: var(--ui-font-size);
+  &.turn-to {
+    margin: var(--ui-font-size) 0;
     padding-bottom: var(--ui-font-size);
-    border-bottom: 1px solid var(--ui-c-soft);
+    border: 1px solid var(--ui-c-soft);
+    border-radius: var(--border-radius);
+    padding: var(--base-padding);
+
+    h3 {
+      margin-top: 0;
+    }
+
+    .progress {
+      display: flex;
+    }
 
     select {
       max-width: 100%;
+      font-size: 1rem;
       padding: 0 0.25rem;
     }
   }

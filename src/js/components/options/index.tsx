@@ -24,8 +24,9 @@ interface IProps extends WithTranslation {
   setColorScheme(colorScheme: ColorScheme): void;
   basicStyle: boolean;
   setBasicStyle(basicStyle: boolean): void;
+  invisibleNav: boolean;
+  setInvisibleNav(invisibleNav: boolean): void;
   updateStyle(index: number, style: IAnnotationStyle): void;
-  showOnboarding(): void;
   position: IPosition | null;
 }
 
@@ -44,9 +45,8 @@ class Options extends React.Component<IProps, IState> {
       month: 'short',
       day: '2-digit',
     });
-    const [{ value: month }, , { value: day }, , { value: year }] = dateTimeFormat.formatToParts(
-      date
-    );
+    const [{ value: month }, , { value: day }, , { value: year }] =
+      dateTimeFormat.formatToParts(date);
 
     this.state = { dateGenerated: `${month} ${day}, ${year}` };
   }
@@ -82,12 +82,6 @@ class Options extends React.Component<IProps, IState> {
           <div className="scrollable nb-options">
             <div className="options-wrapper">
               <h1 className="nb-ui-big-title">{this.props.t('controls:options')}</h1>
-              <div className="cell show-tips">
-                <h3 className="nb-ui-title cell__title">{this.props.t('show-tips-title')}</h3>
-                <button className="button" onClick={this.props.showOnboarding}>
-                  {this.props.t('show-tips')}
-                </button>
-              </div>
               <FontSize
                 title={this.props.t('font-size')}
                 setFontSize={this.setFontSize}
@@ -98,20 +92,27 @@ class Options extends React.Component<IProps, IState> {
                 setColorScheme={this.setColorScheme}
                 colorScheme={this.props.colorScheme}
               />
+              <AnnotationStyles
+                styles={this.props.annotationStyles}
+                updateStyle={this.props.updateStyle}
+              />
               <div className="cell font-size">
                 <h3 className="nb-ui-title cell__title">{this.props.t('basic-style')}</h3>
-                <div>
+                <p>
                   <Option
                     title={this.props.t('basic-style-label')}
                     isSet={this.props.basicStyle}
                     fn={() => this.setBasicStyle(!this.props.basicStyle)}
                   />
-                </div>
+                </p>
+                <p>
+                  <Option
+                    title={this.props.t('invisible-nav-label')}
+                    isSet={this.props.invisibleNav}
+                    fn={() => this.props.setInvisibleNav(!this.props.invisibleNav)}
+                  />
+                </p>
               </div>
-              <AnnotationStyles
-                styles={this.props.annotationStyles}
-                updateStyle={this.props.updateStyle}
-              />
             </div>
           </div>
         </div>
@@ -177,6 +178,7 @@ function ColorSchemeComp(props: IColorSchemeProps) {
           isSet={isSepia}
           fn={() => props.setColorScheme(ColorScheme.Sepia)}
         />
+        <p className="explanation">{props.t('color-scheme-auto-explanation')}</p>
       </div>
     </div>
   );
@@ -202,6 +204,7 @@ const mapStateToProps = (state: ICombinedState) => {
     fontSize: state.config.fontSize,
     basicStyle: state.config.basicStyle,
     colorScheme: state.config.colorScheme,
+    invisibleNav: state.config.invisibleNav,
     annotationStyles: state.config.annotationStyles,
     offline: state.offline,
     manifest: state.manifest,
@@ -212,10 +215,10 @@ const mapStateToProps = (state: ICombinedState) => {
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
-      showOnboarding: reducer.showOnboarding,
       setFontSize: reducer.setFontSize,
       setColorScheme: reducer.setColorScheme,
       setBasicStyle: reducer.setBasicStyle,
+      setInvisibleNav: reducer.setInvisibleNav,
       updateStyle: reducer.updateStyle,
     },
     dispatch

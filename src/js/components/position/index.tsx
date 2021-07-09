@@ -24,7 +24,7 @@ export class Position extends React.Component<IProps> {
     super(props);
   }
 
-  setPosition = (resetSequence?: boolean) => {
+  setPosition = (resetSequence: boolean = false, manipulateUriIdea: boolean = true) => {
     const idea = getFirstIdeaShown();
     const file = docInfo.links.self;
     const chapterStart = idea === 1 || isPageScrolledToTop();
@@ -34,7 +34,7 @@ export class Position extends React.Component<IProps> {
 
     const sequential = resetSequence
       ? Sequential.Yes
-      : docInfo.role !== DocRole.Chapter
+      : docInfo.role !== DocRole.Chapter && docInfo.role !== DocRole.Break
       ? Sequential.No
       : this.props.seqReturnStatus === SeqReturnStatus.Initializing &&
         this.props.sequential === Sequential.No
@@ -53,14 +53,13 @@ export class Position extends React.Component<IProps> {
     );
 
     this.props.setPosition({ file, idea, chapterStart, chapterEnd }, sequential, seqReturnStatus);
-
-    setUriIdea(idea);
+    if (manipulateUriIdea) setUriIdea(idea);
   };
 
   getSeqReturnStatus = getSeqReturnStatus();
 
   getScrollHandler = () => {
-    const t1 = throttle(this.setPosition, 500, { leading: false });
+    const t1 = throttle(this.setPosition, 200, { leading: true });
 
     return function throttled() {
       t1();
@@ -69,9 +68,11 @@ export class Position extends React.Component<IProps> {
 
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
+    const isTop =
+      window.scrollY === 0 && (window.location.hash === '' || window.location.hash === '#idea1');
+    const isBottom = window.location.hash === '#chapter-end';
 
-    if (window.scrollY === 0 && !['', '#idea1'].includes(window.location.hash)) return;
-    else this.setPosition();
+    this.setPosition(false, !(isTop || isBottom));
   }
 
   componentWillUnmount() {
@@ -111,7 +112,7 @@ function getTopBound(): number {
 }
 
 function isPageScrolledToTop(): boolean {
-  return getTopBound() > 18;
+  return document.body.clientHeight <= window.innerHeight || getTopBound() > 48;
 }
 
 function getBottomBound(): number {
@@ -122,7 +123,7 @@ function getBottomBound(): number {
 }
 
 function isPageScrolledToBottom() {
-  return getBottomBound() < -50;
+  return document.body.clientHeight <= window.innerHeight || getBottomBound() < -50;
 }
 
 export function getScrollRatio(): number {

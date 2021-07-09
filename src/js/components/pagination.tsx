@@ -1,11 +1,8 @@
 import React from 'react';
 import { throttle } from 'lodash';
-import {
-  elements,
-  setVisibleChunks,
-  clearVisibleChunks,
-  setDomFn,
-} from '../doc-info';
+
+import { elements, setVisibleChunks, clearVisibleChunks, setDomFn } from '../doc-info';
+import { trackScroll } from './research/tracker';
 
 enum Side {
   Bottom = 'bottom',
@@ -35,7 +32,7 @@ export class Pagination extends React.Component<IProps, IState> {
     this.state = {
       paginatedDisplay: false,
       windowHeight: null,
-      zonePadding: { [Side.Top]: 18, [Side.Bottom]: 48 },
+      zonePadding: { [Side.Top]: 48, [Side.Bottom]: 48 },
       readingZone: { [Side.Top]: 0, [Side.Bottom]: 0 },
       realReadingZone: null,
       lastScrollStart: null,
@@ -90,6 +87,7 @@ export class Pagination extends React.Component<IProps, IState> {
     if (ms - this.state.lastScrollStart < 150) return;
 
     if (ms - this.state.lastScrollStart < 250) {
+      trackScroll();
       this.setState({ ...this.state, paginatedDisplay: false, lastScrollStart: null });
       return;
     }

@@ -19,16 +19,17 @@ function getNumericValue(selector: string, attrName: string) {
 }
 
 function getRole() {
-  const value = getValue('meta[name="role"]', 'content');
+  const value = getValue('meta[name="nb-role"]', 'content');
 
   if (value === DocRole.Chapter) return DocRole.Chapter;
-  if (value === DocRole.Index) return DocRole.Index;
+  if (value === DocRole.Break) return DocRole.Break;
+  if (value === DocRole.Cover) return DocRole.Cover;
   if (value === DocRole.Colophon) return DocRole.Colophon;
   else return DocRole.Other;
 }
 
 function getOrder() {
-  const value = getValue('meta[name="order"]', 'content');
+  const value = getValue('meta[name="nb-order"]', 'content');
 
   return value !== null ? parseInt(value, 10) : null;
 }
@@ -37,7 +38,7 @@ export const languageCode = getValue('html', 'lang');
 
 export const role = getRole();
 
-export const identifier = getValue('meta[name="identifier"]', 'content');
+export const identifier = getValue('meta[name="nb-identifier"]', 'content');
 
 export const order = getOrder();
 
@@ -102,6 +103,26 @@ export function scrollToIdea(number: number | null) {
     const el = document.getElementById(`idea${number}`);
     if (el) window.scrollTo(window.scrollX, window.scrollY + el.getBoundingClientRect().top);
   }
+}
+
+export function getResearchParams(): { text: string; orgs: string; ga: string } | null {
+  const textEl = document.querySelector('meta[name="nb-research"]');
+  const orgsEl = document.querySelector('meta[name="nb-research-orgs"]');
+  const gaEl = document.querySelector('meta[name="nb-research-ga"]');
+
+  if (textEl === null || orgsEl === null || gaEl === null) return null;
+
+  const text = textEl.getAttribute('content');
+  const orgs = orgsEl.getAttribute('content');
+  const ga = gaEl.getAttribute('content');
+
+  if (!text || !orgs || !ga) return null;
+
+  return {
+    text,
+    orgs,
+    ga,
+  };
 }
 
 export default {

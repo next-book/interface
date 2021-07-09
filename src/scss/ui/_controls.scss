@@ -12,6 +12,7 @@
     border-radius: var(--border-radius);
     background: var(--ui-c-bg);
     line-height: 1.6;
+    cursor: pointer;
 
     &.button-primary {
       color: var(--ui-c-bg);
@@ -23,26 +24,79 @@
     }
   }
 
+  .icon-link {
+    font-size: var(--ui-font-size);
+    font-weight: normal;
+    cursor: pointer;
+    color: var(--accent-color);
+    margin: 0 1rem;
+    white-space: nowrap;
+    line-height: 1.5;
+
+    svg {
+      fill: var(--accent-color);
+    }
+
+    @media (hover) {
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
   /* keep in sync with onboarding/controls-launcher-demo */
   .controls-launcher {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
 
     position: fixed;
-    bottom: 0;
-    left: 0;
+    top: 0;
     right: 0;
+    z-index: map-get($z-indexes, 'controls') - 1;
 
     cursor: pointer;
 
     div {
-      min-height: 48px;
+      opacity: 0;
+    }
+
+    @media (hover) {
+      &:hover {
+        div {
+          opacity: 0.25;
+        }
+      }
+    }
+
+    div {
+      height: 48px;
+      line-height: 48px;
+
+      margin-left: var(--base-padding);
+      padding-left: var(--base-padding);
+      padding-right: var(--base-padding);
+
+      text-align: right;
+
+      &:last-child {
+        opacity: 0.5;
+      }
+
+      @media (hover) {
+        &:hover {
+          opacity: 1;
+        }
+      }
+
+      .svg-icon {
+        vertical-align: middle;
+      }
     }
   }
 
   .control {
     display: grid;
-    grid-template-rows: 1fr calc(3 * var(--ui-font-size));
+    grid-template-rows: calc(3 * var(--ui-font-size)) 1fr;
     height: 100%;
     position: fixed;
     z-index: map-get($z-indexes, 'controls');
@@ -55,8 +109,8 @@
     box-sizing: border-box;
 
     box-shadow: var(--ui-box-shadow);
-    transition: bottom 0.2s ease-out;
-    animation: slide-up 0.2s ease-out;
+    transition: top 0.2s ease-out;
+    animation: slide-from-top 0.2s ease-out;
     font-size: var(--ui-font-size);
 
     @media (max-width: map-get($breakpoints, 'max-full-screen-controls')) {
@@ -66,7 +120,7 @@
 
     .control-bar {
       display: flex;
-      grid-row: 2;
+      grid-row: 1;
       width: $controls-width;
       max-width: 100vw;
       box-shadow: rgba(0, 0, 0, 0.3) -3px 0px 4px 0px inset;
@@ -83,7 +137,7 @@
         flex-grow: 1;
         min-width: 0;
         padding: 0 var(--base-padding);
-        line-height: 3;
+        line-height: 3.5;
         box-sizing: border-box;
         font-size: calc(var(--ui-font-size) * 0.9);
 
@@ -102,28 +156,37 @@
 
       .close {
         display: block;
-        flex: 0;
-        padding: calc(var(--base-padding) / 2) var(--base-padding) calc(var(--base-padding) / 2)
-          calc(var(--base-padding) / 2);
-        margin-top: calc(var(--base-padding) / 2);
+        position: relative;
+        box-sizing: border-box;
+        width: calc(var(--ui-font-size) * 3);
         cursor: pointer;
 
-        svg {
-          fill: var(--accent-color);
-          width: var(--ui-font-size);
-        }
-
         span {
-          padding: calc(var(--base-padding) / 2);
+          display: block;
+          position: absolute;
+          top: calc(var(--base-padding) / 2);
+          right: calc(var(--base-padding) / 2);
+          bottom: calc(var(--base-padding) / 2);
+          left: calc(var(--base-padding) / 2);
+          padding: calc(var(--base-padding) / 4);
           box-shadow: var(--ui-box-shadow);
           border-radius: var(--border-radius);
           background: var(--ui-c-bg);
+
+          text-align: center;
+          line-height: var(--ui-font-size);
+        }
+
+        svg {
+          display: block;
+          width: 100%;
+          fill: var(--ui-c-text);
         }
       }
     }
 
     .control__opened {
-      grid-row: 1;
+      grid-row: 2;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -141,6 +204,10 @@
       background: var(--ui-c-bg);
       padding: calc(var(--base-padding) * 2);
       font-size: calc(var(--ui-font-size) * 0.8);
+
+      &.show-tips {
+        padding-bottom: 0;
+      }
 
       & > div {
         flex: 1;

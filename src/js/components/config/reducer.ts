@@ -10,6 +10,7 @@ const UPDATE_STYLE = 'interface/config/UPDATE_STYLE';
 const REMOVE_STYLE = 'interface/config/REMOVE_STYLE';
 const SET_DARK_MODE = 'interface/config/SET_DARK_MODE';
 const SET_RICH_STYLE = 'interface/config/SET_RICH_STYLE';
+const SET_INVISIBLE_NAV = 'interface/config/SET_INVISIBLE_NAV';
 
 export enum ProgressKind {
   MinutesInChapter = 'displayMinutesInChapter',
@@ -85,7 +86,7 @@ const INITIAL_STATE: IState = {
     },
   ],
   keyboardNav: true,
-  invisibleNav: true,
+  invisibleNav: false,
 };
 
 export function reducer(state: IState = INITIAL_STATE, action: Actions) {
@@ -100,6 +101,8 @@ export function reducer(state: IState = INITIAL_STATE, action: Actions) {
       return removeStyle(state, action.payload);
     case SET_RICH_STYLE:
       return { ...state, basicStyle: action.payload };
+    case SET_INVISIBLE_NAV:
+      return { ...state, invisibleNav: action.payload };
     case SET_DARK_MODE:
       return { ...state, colorScheme: action.payload };
     case HIDE_ONBOARDING:
@@ -133,61 +136,68 @@ function removeStyle(state: IState, index: number) {
   return { ...state, annotationStyles };
 }
 
-reducer.showOnboarding = function() {
+reducer.showOnboarding = function () {
   return <const>{
     type: SHOW_ONBOARDING,
   };
 };
 
-reducer.hideOnboarding = function() {
+reducer.hideOnboarding = function () {
   return <const>{
     type: HIDE_ONBOARDING,
   };
 };
 
-reducer.toggleDisplay = function(kind: ProgressKind) {
+reducer.toggleDisplay = function (kind: ProgressKind) {
   return <const>{
     type: TOGGLE_PROGRESS_DISPLAY,
     payload: kind,
   };
 };
 
-reducer.setFontSize = function(size: string) {
+reducer.setFontSize = function (size: string) {
   return <const>{
     type: SET_FONT_SIZE,
     payload: { size },
   };
 };
 
-reducer.setColorScheme = function(mode: ColorScheme) {
+reducer.setColorScheme = function (mode: ColorScheme) {
   return <const>{
     type: SET_DARK_MODE,
     payload: mode,
   };
 };
 
-reducer.setBasicStyle = function(basicStyle: boolean) {
+reducer.setBasicStyle = function (basicStyle: boolean) {
   return <const>{
     type: SET_RICH_STYLE,
     payload: basicStyle,
   };
 };
 
-reducer.updateStyle = function(index: number, style: IAnnotationStyle) {
+reducer.setInvisibleNav = function (invisibleNav: boolean) {
+  return <const>{
+    type: SET_INVISIBLE_NAV,
+    payload: invisibleNav,
+  };
+};
+
+reducer.updateStyle = function (index: number, style: IAnnotationStyle) {
   return <const>{
     type: UPDATE_STYLE,
     payload: { index, style },
   };
 };
 
-reducer.addStyle = function(style: IAnnotationStyle) {
+reducer.addStyle = function (style: IAnnotationStyle) {
   return <const>{
     type: ADD_STYLE,
     payload: style,
   };
 };
 
-reducer.removeStyle = function(index: number) {
+reducer.removeStyle = function (index: number) {
   return <const>{
     type: REMOVE_STYLE,
     payload: index,
@@ -201,6 +211,7 @@ export type Actions = ReturnType<
   | typeof reducer.setFontSize
   | typeof reducer.setColorScheme
   | typeof reducer.setBasicStyle
+  | typeof reducer.setInvisibleNav
   | typeof reducer.updateStyle
   | typeof reducer.addStyle
   | typeof reducer.removeStyle

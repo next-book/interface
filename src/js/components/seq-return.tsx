@@ -5,7 +5,8 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
 
-import Icons from './../icons';
+import { Info, ArrowForward, ReturnKey, Check } from './../icons';
+import { trackSeqReturned, trackSeqReset } from './research/tracker';
 
 export enum Sequential {
   No = 0,
@@ -45,12 +46,14 @@ class SeqReturn extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      collapsed: docInfo.role !== DocRole.Index,
+      collapsed: docInfo.role !== DocRole.Cover,
     };
   }
 
   resetPosition = (e: React.MouseEvent) => {
     e.preventDefault();
+
+    trackSeqReset();
 
     this.props.setPosition(true);
   };
@@ -61,6 +64,8 @@ class SeqReturn extends React.Component<IProps, IState> {
 
   returnToPosition = () => {
     this.setState({ ...this.state, collapsed: true });
+
+    trackSeqReturned();
 
     const sameChapter =
       this.props.targetChapter && this.props.targetChapter.order === docInfo.order;
@@ -73,7 +78,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     if (this.props.colophonLink !== null) {
       buttons.push({
         link: this.props.colophonLink,
-        text: Icons.Info,
+        text: Info,
       });
     }
 
@@ -82,7 +87,7 @@ class SeqReturn extends React.Component<IProps, IState> {
       primary: false,
       text: (
         <span>
-          {this.props.t('start')} {Icons.ArrowForward}
+          {this.props.t('start')} {ArrowForward}
         </span>
       ),
     });
@@ -115,7 +120,7 @@ class SeqReturn extends React.Component<IProps, IState> {
       return chapter.order !== null
         ? this.renderWrapper(
             <span>
-              {Icons.ReturnKey} {chapter.order + 1}.{idea}
+              {ReturnKey} {chapter.order + 1}.{idea}
             </span>
           )
         : null;
@@ -129,7 +134,7 @@ class SeqReturn extends React.Component<IProps, IState> {
         primary: true,
         text: (
           <span>
-            {Icons.Check} {this.props.t('return')}
+            {Check} {this.props.t('return')}
           </span>
         ),
       },
@@ -144,7 +149,7 @@ class SeqReturn extends React.Component<IProps, IState> {
       return chapter.order !== null
         ? this.renderWrapper(
             <span>
-              {Icons.ReturnKey} {chapter.order + 1}.{idea}
+              {ReturnKey} {chapter.order + 1}.{idea}
             </span>
           )
         : null;
@@ -161,7 +166,7 @@ class SeqReturn extends React.Component<IProps, IState> {
         click: this.resetPosition,
         text: (
           <span>
-            {Icons.Check} {this.props.t('continue')}
+            {Check} {this.props.t('continue')}
           </span>
         ),
       },
@@ -171,7 +176,7 @@ class SeqReturn extends React.Component<IProps, IState> {
         primary: true,
         text: (
           <span>
-            {Icons.ReturnKey} {this.props.t('return')}
+            {ReturnKey} {this.props.t('return')}
           </span>
         ),
       },
@@ -212,7 +217,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     return (
       <div className={className}>
         <div className={`seq-return ${this.state.collapsed ? 'seq-return--collapsed' : ''}`}>
-          {docInfo.role !== DocRole.Index && this.state.collapsed && (
+          {docInfo.role !== DocRole.Cover && this.state.collapsed && (
             <div className="seq-return-toggle ui-target">{content}</div>
           )}
           {!this.state.collapsed && (
@@ -237,7 +242,7 @@ class SeqReturn extends React.Component<IProps, IState> {
   /* native event is used to cover the need
    * to collapse the component from the outside */
   collapseOnClickOutside = (e: Event) => {
-    if (this.props.docRole === DocRole.Index) return;
+    if (this.props.docRole === DocRole.Cover) return;
 
     const el = e.target as Element;
     const clickedInside =
@@ -261,7 +266,7 @@ class SeqReturn extends React.Component<IProps, IState> {
         return null;
       case SeqReturnStatus.Initializing:
         switch (this.props.docRole) {
-          case DocRole.Index:
+          case DocRole.Cover:
             if (this.props.targetChapter === null) return this.renderFirstOpen();
             else return this.renderReturnFromTitle();
           default:
@@ -269,9 +274,10 @@ class SeqReturn extends React.Component<IProps, IState> {
         }
       case SeqReturnStatus.Enabled:
         switch (this.props.docRole) {
-          case DocRole.Index:
+          case DocRole.Cover:
             return this.renderReturnFromTitle();
           case DocRole.Chapter:
+          case DocRole.Break:
             if (this.props.sequential === Sequential.No) return this.renderReturnFromChapter();
             else return null;
           default:

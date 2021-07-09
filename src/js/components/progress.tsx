@@ -5,6 +5,8 @@ import { IPosition, IDocMap, INavDocument } from './position/reducer';
 import { reducer as configReducer, ProgressKind } from './config/reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { IState as ICombinedState } from '../reducer';
+import { Paginate } from '../icons';
+import { trackAmountRead } from './research/tracker';
 
 export enum ProgressForm {
   Display,
@@ -71,19 +73,22 @@ class Progress extends React.Component<IProps, IState> {
     const { totalWords } = this.props.documents[ro[ro.length - 1]];
     const { offset, fraction } =
       chapter !== null ? getProgress(chapter, totalWords) : { offset: 0, fraction: 0 };
-    const progress = offset + fraction * this.props.scrollRatio;
+    const progress = cropProgress(offset + fraction * this.props.scrollRatio);
     const minutesLeft = chapter ? countMinutesLeft(this.props.scrollRatio, chapter.words) : null;
+
+    trackAmountRead(progress);
 
     switch (this.props.form) {
       case ProgressForm.Goto:
         return this.state.collapsed ? (
-          <div className="nb-progress">
-            <button className="progress--collapsed" onClick={this.toggleCollapsed}>
-              {this.props.t('turn-to')}
-            </button>
-          </div>
+          <a className="icon-link" onClick={this.toggleCollapsed}>
+            {this.props.t('turn-to')}
+          </a>
         ) : (
-          <div className="nb-progress">
+          <div className="nb-progress turn-to">
+            <h3>
+              {Paginate} {this.props.t('turn-to')}
+            </h3>
             <div className="progress">
               <label className="progress__chapter">
                 {this.props.t('chapter')}
@@ -136,7 +141,7 @@ class Progress extends React.Component<IProps, IState> {
           displays.push(this.props.t('minutes-left', { minutes: minutesLeft }));
 
         if (this.props.displayPercentRead)
-          displays.push(this.props.t('progress', { percent: cropProgress(progress) }));
+          displays.push(this.props.t('progress', { percent: progress }));
 
         if (this.props.displayPosition)
           displays.push(`${ro.indexOf(this.props.position.file) + 1}.${this.props.position.idea}`);
@@ -174,7 +179,7 @@ class Progress extends React.Component<IProps, IState> {
                 onClick={() => this.props.toggleDisplay(ProgressKind.PercentRead)}
               >
                 {displayPercentRead ? '● ' : '○ '}
-                {this.props.t('progress-long', { percent: cropProgress(progress) })}
+                {this.props.t('progress-long', { percent: progress })}
               </label>
 
               <label

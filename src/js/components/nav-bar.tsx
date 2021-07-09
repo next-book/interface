@@ -17,7 +17,7 @@ export function NavBar(props: IProps) {
     <ul className="nav-bar">
       <div className="nav-bar__overlay"></div>
 
-      {props.chapter && props.docRole === DocRole.Chapter && (
+      {props.chapter && (props.docRole === DocRole.Chapter || props.docRole === DocRole.Break) && (
         <Pointer
           scrollRatio={props.scrollRatio}
           chapter={props.chapter}

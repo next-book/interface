@@ -17,10 +17,18 @@ import { Sequential } from './seq-return';
 import { getScrollRatio } from './position';
 import { reducer, IPosition, IDocMap } from './position/reducer';
 import { IState as IManifest, IDocument } from './manifest/reducer';
+import { Prev, Next, PrevChapter, NextChapter, End } from '../icons';
+import { trackPagination, Controller } from './research/tracker';
 
 export enum Direction {
   Back = 'back',
   Forward = 'forward',
+}
+
+export enum Action {
+  Paginate,
+  ChangeChapter,
+  None,
 }
 
 export interface IProps extends WithTranslation {
@@ -43,7 +51,7 @@ export class Navigation extends React.Component<IProps> {
   };
 
   getScrollHandler = () => {
-    const t2 = throttle(this.setScrollRatio, 100, { leading: true });
+    const t2 = throttle(this.setScrollRatio, 200, { leading: true });
 
     return function throttled() {
       t2();
@@ -54,7 +62,7 @@ export class Navigation extends React.Component<IProps> {
     const links = docInfo.links;
     const position = this.props.position;
 
-    if (docInfo.role === DocRole.Chapter && position !== null) {
+    if ((docInfo.role === DocRole.Chapter || docInfo.role === DocRole.Break) && position !== null) {
       if (this.props.readingOrder.indexOf(position.file) === 0) {
         return links.colophon ? links.colophon : links.index;
       }
@@ -68,10 +76,10 @@ export class Navigation extends React.Component<IProps> {
     const role = docInfo.role;
     const position = this.props.position;
 
-    if (role === DocRole.Chapter && position !== null) {
+    if ((role === DocRole.Chapter || role === DocRole.Break) && position !== null) {
       const next = this.props.documents[position.file].next;
       return next || null;
-    } else if (role === DocRole.Colophon || role === DocRole.Index) {
+    } else if (role === DocRole.Colophon || role === DocRole.Cover) {
       const next = this.props.readingOrder[0];
       return next || null;
     } else return null;
@@ -85,68 +93,72 @@ export class Navigation extends React.Component<IProps> {
 
     switch (keycode(event)) {
       case 'left':
-        return this.goBack(event, false);
+        trackPagination(Controller.Keyboard);
+        return this.goBack(this.getBackAction());
       case 'right':
-        return this.goForward(event, false);
+        trackPagination(Controller.Keyboard);
+        return this.goForward(this.getForwardAction());
       default:
         return;
     }
   };
 
   handleSwipeNav = (event: TouchEvent, dir: Direction) => {
+    trackPagination(Controller.Swipe);
+
     if (dir === Direction.Forward) {
-      this.goForward(event, false);
+      this.goForward(this.getForwardAction());
     } else if (dir === Direction.Back) {
-      this.goBack(event, false);
+      this.goBack(this.getBackAction());
     }
   };
 
-  handleInvisibleNav = (event: MouseEvent) => {
-    const target = event.target as HTMLElement;
+  getForwardAction = () => {
+    if (document.body.clientHeight <= window.innerHeight) return Action.ChangeChapter;
+    else if (this.props.position === null || !this.props.position.chapterEnd)
+      return Action.Paginate;
+    else if (this.getNextChapterLink() !== null) return Action.ChangeChapter;
+    else return Action.None;
+  };
 
-    if (
-      isInPaginationRect(Direction.Forward, event.clientX, event.clientY) &&
-      target.tagName != 'A' &&
-      target.tagName != 'BUTTON' &&
-      target.tagName != 'INPUT' &&
-      target.tagName != 'LABEL' &&
-      !target.classList.contains('ui-target') &&
-      target.closest('A') === null &&
-      target.closest('LABEL') === null &&
-      target.closest('.ui-target') === null
-    ) {
-      return this.goForward(event);
+  getBackAction = () => {
+    if (document.body.clientHeight <= window.innerHeight) return Action.ChangeChapter;
+    else if (this.props.position === null || !this.props.position.chapterStart)
+      return Action.Paginate;
+    else if (this.getPrevChapterLink() !== null) return Action.ChangeChapter;
+    else return Action.None;
+  };
+
+  goForward = (action: Action) => {
+    switch (action) {
+      case Action.Paginate:
+        const step = domFns.getScrollStep();
+        pageForward(step);
+        setLastScrollStep(step ? [Direction.Forward, step] : null);
+        domFns.setPaginatedMode();
+        return;
+      case Action.ChangeChapter:
+        const next = this.getNextChapterLink();
+        if (next) window.location.assign(next);
+        return;
     }
   };
 
-  goForward = (event: MouseEvent | TouchEvent | KeyboardEvent, showButtons?: boolean) => {
-    event.preventDefault();
-
-    if (this.props.position === null || !this.props.position.chapterEnd) {
-      const step = domFns.getScrollStep();
-      pageForward(step, showButtons);
-      setLastScrollStep(step ? [Direction.Forward, step] : null);
-      domFns.setPaginatedMode();
-    } else {
-      const next = this.getNextChapterLink();
-      if (next) window.location.assign(next);
-    }
-  };
-
-  goBack = (event: MouseEvent | TouchEvent | KeyboardEvent, showButtons?: boolean) => {
-    event.preventDefault();
-
-    if (this.props.position === null || !this.props.position.chapterStart) {
-      const step =
-        lastScrollStep !== null && lastScrollStep[0] !== Direction.Back
-          ? lastScrollStep[1]
-          : domFns.getScrollStep();
-      pageBack(step, showButtons);
-      setLastScrollStep(step ? [Direction.Back, step] : null);
-      domFns.setPaginatedMode();
-    } else {
-      const prev = this.getPrevChapterLink();
-      if (prev) window.location.assign(prev);
+  goBack = (action: Action) => {
+    switch (action) {
+      case Action.Paginate:
+        const step =
+          lastScrollStep !== null && lastScrollStep[0] !== Direction.Back
+            ? lastScrollStep[1]
+            : domFns.getScrollStep();
+        pageBack(step);
+        setLastScrollStep(step ? [Direction.Back, step] : null);
+        domFns.setPaginatedMode();
+        return;
+      case Action.ChangeChapter:
+        const prev = this.getPrevChapterLink();
+        if (prev) window.location.assign(prev);
+        return;
     }
   };
 
@@ -154,9 +166,6 @@ export class Navigation extends React.Component<IProps> {
     window.addEventListener('scroll', this.getScrollHandler());
     if (this.props.keyboardNav) {
       document.body.addEventListener('keydown', this.handleKeyboardNav);
-    }
-    if (this.props.invisibleNav) {
-      document.body.addEventListener('mousedown', this.handleInvisibleNav);
     }
     initSwipeNav(this.handleSwipeNav);
 
@@ -169,9 +178,6 @@ export class Navigation extends React.Component<IProps> {
     if (this.props.keyboardNav) {
       document.body.removeEventListener('keydown', this.handleKeyboardNav);
     }
-    if (this.props.invisibleNav) {
-      document.body.removeEventListener('mousedown', this.handleInvisibleNav);
-    }
   }
 
   render() {
@@ -182,6 +188,9 @@ export class Navigation extends React.Component<IProps> {
     const chapter = pos !== null ? this.props.documents[pos.file] : null;
 
     const { totalWords } = this.props.documents[ro[ro.length - 1]];
+
+    const forwardAction = this.getForwardAction();
+    const backAction = this.getBackAction();
 
     return (
       <nav>
@@ -194,52 +203,48 @@ export class Navigation extends React.Component<IProps> {
           scrollRatio={this.props.scrollRatio}
           totalWords={totalWords}
         />
-        {docInfo.role !== DocRole.Index && chapter && (
+        {docInfo.role !== DocRole.Cover && chapter && (
           <TopBar title={this.props.manifest.title} chapter={chapter} />
         )}
+
+        <div className="button-navigation">
+          <div className="back-button" onClick={() => this.goBack(backAction)}>
+            {this.props.invisibleNav ||
+              (backAction === Action.Paginate
+                ? Prev
+                : backAction === Action.ChangeChapter
+                ? PrevChapter
+                : End)}
+          </div>
+          <div className="forward-button" onClick={() => this.goForward(forwardAction)}>
+            {this.props.invisibleNav ||
+              (forwardAction === Action.Paginate
+                ? Next
+                : forwardAction === Action.ChangeChapter
+                ? NextChapter
+                : End)}
+          </div>
+        </div>
       </nav>
     );
   }
 }
 
-function displayPagination(dir: Direction, showButtons?: boolean) {
+function displayPagination(dir: Direction) {
   document.body.classList.add(`nb-paginated-${dir}`);
   window.setTimeout(() => document.body.classList.remove(`nb-paginated-${dir}`), 300);
-
-  if (showButtons) {
-    document.body.classList.add(`nb-paginated-button-${dir}`);
-    window.setTimeout(() => document.body.classList.remove(`nb-paginated-button-${dir}`), 300);
-  }
 }
 
-function isInPaginationRect(dir: Direction, x: number, y: number) {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-
-  const rectW = w * 0.05 + 24;
-  const margin = 2;
-
-  if ((x > margin && x < margin + rectW) || (x < w - margin && x > w - margin - rectW)) {
-    const forwardTop = h * 0.25;
-    const forwardH = h * 0.5;
-
-    if (y > forwardTop && y < forwardTop + forwardH)
-      return dir === Direction.Forward ? true : false;
-  }
-
-  return false;
-}
-
-function pageForward(step: number | null, showButtons?: boolean) {
+function pageForward(step: number | null) {
   if (step === null) return;
   window.scrollTo(window.scrollX, window.scrollY + step);
-  displayPagination(Direction.Forward, showButtons);
+  displayPagination(Direction.Forward);
 }
 
-function pageBack(step: number | null, showButtons?: boolean) {
+function pageBack(step: number | null) {
   if (step === null) return;
   window.scrollTo(window.scrollX, window.scrollY - step);
-  displayPagination(Direction.Back, showButtons);
+  displayPagination(Direction.Back);
 }
 
 const mapStateToProps = (state: ICombinedState) => {

@@ -3,7 +3,7 @@ import ContentEditable from 'react-contenteditable';
 import { ContentEditableEvent } from 'react-contenteditable';
 import { INote } from './reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
-import Icons from '../../icons';
+import { Check, Delete } from '../../icons';
 
 interface IProps extends WithTranslation {
   note: INote;
@@ -61,10 +61,10 @@ class AnnotationNote extends React.Component<IProps, IState> {
             </div>
             <div className="button-zero-bar button-zero-bar--bottom button-zero-bar--two-buttons">
               <button className="round-button" onClick={this.update}>
-                {Icons.Check}
+                {Check}
               </button>
               <button className="round-button round-button--warning" onClick={this.destroy}>
-                {Icons.Delete}
+                {Delete}
               </button>
             </div>
           </>

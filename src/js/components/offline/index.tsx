@@ -3,6 +3,7 @@ import { reducer, IState, SwAvailability } from './../offline/reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../../reducer';
+import { trackOfflineStatus } from '../research/tracker';
 
 export interface IProps extends IState {
   setCacheAvailability(status: boolean): void;
@@ -14,11 +15,14 @@ export class Offline extends React.Component<IProps> {
     super(props);
   }
 
-  componentDidMount = () => {
-    const setOA = this.props.setSwAvailability;
+  setOA = (status: SwAvailability) => {
+    this.props.setSwAvailability(status);
+    trackOfflineStatus(status);
+  };
 
+  componentDidMount = () => {
     if ('serviceWorker' in navigator) {
-      setOA(SwAvailability.Available);
+      this.setOA(SwAvailability.Available);
 
       navigator.serviceWorker.ready.then(registration => {
         this.props.setCacheAvailability(true);
@@ -26,8 +30,8 @@ export class Offline extends React.Component<IProps> {
 
       registerServiceWorker();
     } else {
-      if (window.location.protocol !== 'https:') setOA(SwAvailability.Unsecure);
-      else setOA(SwAvailability.NoSw);
+      if (window.location.protocol !== 'https:') this.setOA(SwAvailability.Unsecure);
+      else this.setOA(SwAvailability.NoSw);
     }
   };
 

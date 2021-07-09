@@ -4,7 +4,7 @@ import { ContentEditableEvent } from 'react-contenteditable';
 import { IAnnotation, IAnnotationAndIdeas } from './reducer';
 import { getAnnotatedIdeas, updateHead } from './utils';
 import { withTranslation, WithTranslation } from 'react-i18next';
-import Icons from '../../icons';
+import { Delete } from '../../icons';
 
 interface IProps extends WithTranslation {
   annotation: IAnnotation;
@@ -77,7 +77,7 @@ class AnnotationDetail extends React.Component<IProps, IState> {
             className="round-button round-button--warning"
             onClick={() => this.destroyAnnotation(this.props.annotation)}
           >
-            {Icons.Delete}
+            {Delete}
           </button>
         </div>
 

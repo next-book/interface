@@ -17,6 +17,7 @@ $z-indexes: (
   'peeks': 1000,
   'toc': 1100,
   'controls': 3000,
+  'research': 3500,
 );
 
 $breakpoints: (
@@ -54,3 +55,4 @@ $breakpoints: (
 @import 'ui/_controls';
 @import 'ui/_options';
 @import 'ui/_onboarding';
+@import 'ui/_research';

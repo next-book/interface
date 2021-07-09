@@ -1,10 +1,20 @@
 .nb-options {
   font-size: var(--ui-font-size);
 
+  .explanation {
+    margin-top: -0.5rem;
+    font-size: calc(var(--ui-font-size) * 0.8);
+    grid-column: 1 / -1;
+  }
+
   .options-wrapper {
     display: grid;
     grid-gap: var(--base-padding);
     margin: var(--base-padding) calc(2 * var(--base-padding));
+
+    @media screen and (max-width: map-get($breakpoints, 'max-big-tabs')) {
+      margin: var(--base-padding);
+    }
   }
 
   .cell {
@@ -26,12 +36,13 @@
      * font size changes */
     font-size: 24px;
     line-height: 36px;
+    box-sizing: border-box;
 
     position: fixed;
     left: 50%;
     top: 50%;
-    width: 280px;
-    margin-left: -140px;
+    width: 320px;
+    margin-left: -160px;
     margin-top: -33vh;
 
     background: var(--ui-c-bg);
@@ -40,23 +51,25 @@
     border-radius: var(--border-radius);
     box-shadow: var(--ui-box-shadow);
 
+    z-index: 1;
     display: none;
 
     .enlarge-font-size,
     .shrink-font-size {
+      color: var(--ui-c-text);
       vertical-align: top;
     }
 
     .enlarge-font-size {
       font-size: 32px;
-      line-height: 32px;
+      line-height: 28px;
       width: 38px;
       height: 38px;
     }
 
     .shrink-font-size {
       font-size: 16px;
-      line-height: 32px;
+      line-height: 22px;
       width: 38px;
       height: 38px;
     }

@@ -7,7 +7,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 
 import docInfo from '../doc-info';
 import { DocRole } from './manifest/reducer';
-import Icons from './../icons';
+import { Close } from './../icons';
 
 interface IProps extends WithTranslation {
   offline: boolean;
@@ -43,27 +43,21 @@ export class Onboarding extends React.Component<IProps, IState> {
     const cards = Object.values(Cards);
 
     const showOpener =
-      docInfo.role !== DocRole.Index && this.props.isShown === ShowOnboarding.Initial;
+      docInfo.role !== DocRole.Cover && this.props.isShown === ShowOnboarding.Initial;
 
     const showOnboarding = this.props.isShown === ShowOnboarding.Enabled;
 
     if (showOpener)
       return (
-        <div>
-          <div className="onboarding-opener ui-target">
-            <div className="onboarding-opener-bubble">
-              <div className="onboarding-opener-close" onClick={this.props.hide}>
-                {Icons.Close}
-              </div>
-              <div className="onboarding-opener-intro">
-                <strong>{this.props.t('intro-head')}</strong> {this.props.t('intro')}{' '}
-              </div>
+        <div className="onboarding-opener ui-target">
+          <div className="onboarding-opener-bubble">
+            <div className="onboarding-opener-intro">
+              <strong>{this.props.t('intro-head')}</strong> {this.props.t('intro')}{' '}
             </div>
-          </div>
-          <div className="controls-launcher-demo">
-            <div>&rarr; {this.props.t('controls:annotations')}</div>
-            <div>&rarr; {this.props.t('controls:options')}</div>
-            <div>&rarr; {this.props.t('controls:toc')}</div>
+            <div className="buttons">
+              <a onClick={() => this.props.show()}>{this.props.t('intro-show')}</a>
+              <a onClick={this.props.hide}>{this.props.t('intro-hide')}</a>
+            </div>
           </div>
         </div>
       );
@@ -71,57 +65,56 @@ export class Onboarding extends React.Component<IProps, IState> {
     if (showOnboarding)
       return (
         <>
-          <div className="onboarding-overlay ui-target">
-            <div className="onboarding ui-target">
-              <span className="close" onClick={this.props.hide}>
-                {Icons.Close}
-              </span>
-              <div className="onboarding__card">
-                <h2>{this.props.t(`${cards[this.state.card]}-heading`)}</h2>
-                <div className="onboarding__content">
-                  {Svgs[cards[this.state.card]]()}
-                  <div className="tip">
-                    {this.props
-                      .t(cards[this.state.card])
-                      .split(/\|/g)
-                      .map((text, index) => (
-                        <p key={index}>{text}</p>
-                      ))}
-                    {!this.props.offline && this.state.card === 1 && this.props.t('read-offline')}
-                  </div>
-                </div>
-                <div className="onboarding__controls">
-                  {this.state.card > 0 && (
-                    <div
-                      className="onboarding__controls__back-button"
-                      onClick={() => this.show(this.state.card - 1)}
-                    >
-                      &larr;
-                    </div>
-                  )}
-                  {this.state.card < Object.keys(Cards).length - 1 ? (
-                    <div
-                      className="onboarding__controls__button"
-                      onClick={() => this.show(this.state.card + 1)}
-                    >
-                      {this.props.t('next')}
-                    </div>
-                  ) : (
-                    <div className="onboarding__controls__button" onClick={this.props.hide}>
-                      {this.props.t('close')}
-                    </div>
-                  )}
-                  <div className="dots">
-                    {cards.map((card, index) => (
-                      <span
-                        onClick={() => this.show(index)}
-                        key={index}
-                        className={(this.state.card === index && 'current') || ''}
-                      >
-                        ●
-                      </span>
+          <div className="onboarding-overlay ui-target"></div>
+          <div className="onboarding ui-target">
+            <span className="close" onClick={this.props.hide}>
+              {Close}
+            </span>
+            <div className="onboarding__card">
+              <h2>{this.props.t(`${cards[this.state.card]}-heading`)}</h2>
+              <div className="onboarding__content">
+                {Svgs[cards[this.state.card]]()}
+                <div className="tip">
+                  {this.props
+                    .t(cards[this.state.card])
+                    .split(/\|/g)
+                    .map((text, index) => (
+                      <p key={index}>{text}</p>
                     ))}
+                  {!this.props.offline && this.state.card === 1 && this.props.t('read-offline')}
+                </div>
+              </div>
+              <div className="onboarding__controls">
+                {this.state.card > 0 && (
+                  <div
+                    className="onboarding__controls__back-button"
+                    onClick={() => this.show(this.state.card - 1)}
+                  >
+                    &larr;
                   </div>
+                )}
+                {this.state.card < Object.keys(Cards).length - 1 ? (
+                  <div
+                    className="onboarding__controls__button"
+                    onClick={() => this.show(this.state.card + 1)}
+                  >
+                    {this.props.t('next')}
+                  </div>
+                ) : (
+                  <div className="onboarding__controls__button" onClick={this.props.hide}>
+                    {this.props.t('close')}
+                  </div>
+                )}
+                <div className="dots">
+                  {cards.map((card, index) => (
+                    <span
+                      onClick={() => this.show(index)}
+                      key={index}
+                      className={(this.state.card === index && 'current') || ''}
+                    >
+                      ●
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
