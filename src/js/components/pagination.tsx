@@ -1,8 +1,9 @@
 import React from 'react';
 import { throttle } from 'lodash';
 
-import { elements, setVisibleChunks, clearVisibleChunks, setDomFn } from '../doc-info';
+import { elements, setVisibleChunks, clearVisibleChunks, setDomFn, role } from '../doc-info';
 import { trackScroll } from './research/tracker';
+import { DocRole } from './manifest/reducer';
 
 enum Side {
   Bottom = 'bottom',
@@ -56,6 +57,11 @@ export class Pagination extends React.Component<IProps, IState> {
   };
 
   clipPage = () => {
+    if (role === DocRole.Break || role === DocRole.Cover) {
+      elements.chunks.forEach(c => c.classList.add('visible'));
+      return;
+    }
+
     if (this.state.windowHeight === null) return;
 
     clearVisibleChunks();
