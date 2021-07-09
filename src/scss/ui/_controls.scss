@@ -52,6 +52,7 @@
     position: fixed;
     top: 0;
     right: 0;
+    z-index: map-get($z-indexes, 'controls') - 1;
 
     cursor: pointer;
 
