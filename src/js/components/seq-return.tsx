@@ -5,7 +5,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
 
-import { Info, ArrowForward, ReturnKey, Check } from './../icons';
+import { ReturnKey, Check } from './../icons';
 import { trackSeqReturned, trackSeqReset } from './research/tracker';
 
 export enum Sequential {
@@ -70,29 +70,6 @@ class SeqReturn extends React.Component<IProps, IState> {
     const sameChapter =
       this.props.targetChapter && this.props.targetChapter.order === docInfo.order;
     sameChapter ? this.highlightPosition : null;
-  };
-
-  renderFirstOpen = () => {
-    const buttons = [];
-
-    if (this.props.colophonLink !== null) {
-      buttons.push({
-        link: this.props.colophonLink,
-        text: Info,
-      });
-    }
-
-    buttons.push({
-      link: this.props.startLink,
-      primary: false,
-      text: (
-        <span>
-          {this.props.t('start')} {ArrowForward}
-        </span>
-      ),
-    });
-
-    return this.renderWrapper(null, buttons);
   };
 
   renderReturnFromTitle = () => {
@@ -267,8 +244,7 @@ class SeqReturn extends React.Component<IProps, IState> {
       case SeqReturnStatus.Initializing:
         switch (this.props.docRole) {
           case DocRole.Cover:
-            if (this.props.targetChapter === null) return this.renderFirstOpen();
-            else return this.renderReturnFromTitle();
+            if (this.props.targetChapter !== null) return this.renderReturnFromTitle();
           default:
             return null;
         }
