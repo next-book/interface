@@ -18,6 +18,7 @@ import {
   getRangeBounds,
   getIdeaRanges,
   highlightRange,
+  limitRange,
 } from './utils';
 
 import { trackAnnotationCreation } from './../research/tracker';
@@ -79,7 +80,7 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
     const selection = window.getSelection();
     if (selection === null) return;
     if (selection.rangeCount === 0) return;
-    const range = selection.getRangeAt(0);
+    const range = limitRange(selection.getRangeAt(0));
     const id = this.getNewAnnotationId();
 
     const annotation = {
