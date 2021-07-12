@@ -9,26 +9,63 @@ const checkRange = (fn: IRangeCheckFn) => {
   if (selection.isCollapsed === true) return false;
   if (selection.rangeCount === 0) return false;
 
-  const range = selection.getRangeAt(0);
+  const range = limitRange(selection.getRangeAt(0));
   return fn(range);
 };
 
+export const limitRange = (range: Range): Range => {
+  const limitedRange = document.createRange();
+
+  const start = getStartContainerInsideIdea(range);
+  if (start === range.startContainer) limitedRange.setStart(start, range.startOffset);
+  else limitedRange.setStart(start.firstChild, 0);
+
+  const end = getEndContainerInsideIdea(range);
+  if (end === range.endContainer) limitedRange.setEnd(end, range.endOffset);
+  else limitedRange.setEnd(end.firstChild, end.firstChild.textContent.length);
+
+  return limitedRange;
+};
+
+const getStartContainerInsideIdea = (range: Range): Node => {
+  const start = range.startContainer;
+  const text = '' + start.textContent;
+  const next = range.startContainer.nextSibling;
+
+  if (next !== null && start.nodeType === Node.TEXT_NODE && /^\s+$/.test(text)) return next;
+  else return start;
+};
+
+const getEndContainerInsideIdea = (range: Range): Node => {
+  const end = range.endContainer;
+  const text = '' + end.textContent;
+  const prev = range.endContainer.previousSibling;
+
+  if (prev !== null && end.nodeType === Node.TEXT_NODE && /^\s+$/.test(text)) return prev;
+  else return end;
+};
+
 export const isRangeWithoutOverlap = () => {
-  return checkRange(
-    (range: Range) =>
-      isNodeSelectable(range.startContainer) &&
-      areInBetweenNodesSelectable(range.startContainer, range.endContainer) &&
-      isNodeSelectable(range.endContainer)
-  );
+  return checkRange((range: Range) => {
+    const start = range.startContainer;
+    const end = range.endContainer;
+
+    return (
+      isNodeSelectable(start) && areInBetweenNodesSelectable(start, end) && isNodeSelectable(end)
+    );
+  });
 };
 
 export const doesRangeOverlap = () => {
   return checkRange((range: Range) => {
-    const startEl = getElement(range.startContainer);
-    const endEl = getElement(range.endContainer);
+    const start = range.startContainer;
+    const end = range.endContainer;
 
-    const startSelectable = isNodeSelectable(range.startContainer);
-    const endSelectable = isNodeSelectable(range.endContainer);
+    const startEl = getElement(start);
+    const endEl = getElement(end);
+
+    const startSelectable = isNodeSelectable(start);
+    const endSelectable = isNodeSelectable(end);
 
     // XOR could make this more understanable
     if (startSelectable != endSelectable) {
@@ -36,8 +73,7 @@ export const doesRangeOverlap = () => {
 
       if (isElementInsideIdea(unselectable)) {
         const id = getAnnotationId(unselectable);
-        if (id !== null)
-          return areInBetweenNodesSelectable(range.startContainer, range.endContainer, id);
+        if (id !== null) return areInBetweenNodesSelectable(start, end, id);
       }
     }
 
@@ -50,18 +86,21 @@ const workOnHighlight = (fn: IHighlightFn) => {
   if (selection === null) return null;
   if (selection.isCollapsed === true) return null;
   if (selection.rangeCount === 0) return null;
-  const range = selection.getRangeAt(0);
+  const range = limitRange(selection.getRangeAt(0));
 
   return fn(selection, range);
 };
 
 export const extendHighlight = (annotations: IAnnotations) => {
   return workOnHighlight((selection: Selection, range: Range) => {
-    const startEl = getElement(range.startContainer);
-    const endEl = getElement(range.endContainer);
+    const start = range.startContainer;
+    const end = range.endContainer;
 
-    const startSelectable = isNodeSelectable(range.startContainer);
-    const endSelectable = isNodeSelectable(range.endContainer);
+    const startEl = getElement(start);
+    const endEl = getElement(end);
+
+    const startSelectable = isNodeSelectable(start);
+    const endSelectable = isNodeSelectable(end);
 
     // XOR could make this more understanable
     if (startSelectable != endSelectable) {
@@ -72,13 +111,13 @@ export const extendHighlight = (annotations: IAnnotations) => {
       const newRange = range.cloneRange();
 
       if (startSelectable) {
-        newRange.setStart(range.startContainer, range.startOffset);
+        newRange.setStart(start, range.startOffset);
         newRange.setEndAfter(spans[spans.length - 1]);
       }
 
       if (endSelectable) {
         newRange.setStartBefore(spans[0]);
-        newRange.setEnd(range.endContainer, range.endOffset);
+        newRange.setEnd(end, range.endOffset);
       }
 
       const ideaRanges = getIdeaRanges(newRange);
@@ -97,11 +136,14 @@ export const extendHighlight = (annotations: IAnnotations) => {
 
 export const cropHighlight = (annotations: IAnnotations): IAnnotation | null => {
   return workOnHighlight((selection: Selection, range: Range) => {
-    const startEl = getElement(range.startContainer);
-    const endEl = getElement(range.endContainer);
+    const start = range.startContainer;
+    const end = range.endContainer;
 
-    const startSelectable = isNodeSelectable(range.startContainer);
-    const endSelectable = isNodeSelectable(range.endContainer);
+    const startEl = getElement(start);
+    const endEl = getElement(end);
+
+    const startSelectable = isNodeSelectable(start);
+    const endSelectable = isNodeSelectable(end);
 
     // XOR could make this more understanable
     if (startSelectable != endSelectable) {
@@ -112,13 +154,13 @@ export const cropHighlight = (annotations: IAnnotations): IAnnotation | null => 
       const newRange = document.createRange();
 
       if (startSelectable) {
-        newRange.setStart(range.endContainer, range.endOffset);
+        newRange.setStart(end, range.endOffset);
         newRange.setEndAfter(spans[spans.length - 1]);
       }
 
       if (endSelectable) {
         newRange.setStartBefore(spans[0]);
-        newRange.setEnd(range.startContainer, range.startOffset);
+        newRange.setEnd(start, range.startOffset);
       }
 
       const ideaRanges = getIdeaRanges(newRange);
@@ -242,20 +284,25 @@ const isElementInsideIdea = (el: Element) => {
 };
 
 export const getIdeaRanges = (range: Range) => {
+  const start = range.startContainer;
+  const end = range.endContainer;
+
   return getSafeRanges(range)
     .filter(range => !range.collapsed)
     .reduce((acc, range) => {
-      if (isNodeSelectable(range.startContainer)) {
+      if (isNodeSelectable(start)) {
         acc.push(range);
-      } else if (range.startContainer === range.endContainer) {
+      } else if (start === end) {
         for (let i = range.startOffset; i < range.endOffset; i++) {
-          const child = range.startContainer.childNodes[i];
+          const child = start.childNodes[i];
           if (!child.nodeType || child.nodeType == Node.TEXT_NODE) continue;
-          if (child.classList.contains('idea')) acc.push(rangeFromElContents(child));
+          if (getElement(child).classList.contains('idea')) acc.push(rangeFromElContents(child));
           else
-            child.querySelectorAll('.idea').forEach((idea: Node) => {
-              acc.push(rangeFromElContents(idea));
-            });
+            getElement(child)
+              .querySelectorAll('.idea')
+              .forEach((idea: Node) => {
+                acc.push(rangeFromElContents(idea));
+              });
         }
       } else {
         acc.push(range);

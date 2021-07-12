@@ -7,7 +7,7 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: map-get($z-indexes, 'annotations') + 1;
+    z-index: map-get($z-indexes, 'controls') + 1;
 
     will-change: transform;
     animation: slide-from-top 0.2s ease-out;
