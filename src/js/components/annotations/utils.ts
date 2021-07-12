@@ -17,11 +17,13 @@ export const limitRange = (range: Range): Range => {
   const limitedRange = document.createRange();
 
   const start = getStartContainerInsideIdea(range);
-  if (start === range.startContainer) limitedRange.setStart(start, range.startOffset);
+  if (start === range.startContainer || start.firstChild === null)
+    limitedRange.setStart(start, range.startOffset);
   else limitedRange.setStart(start.firstChild, 0);
 
   const end = getEndContainerInsideIdea(range);
-  if (end === range.endContainer) limitedRange.setEnd(end, range.endOffset);
+  if (end === range.endContainer || end.firstChild === null || end.firstChild.textContent === null)
+    limitedRange.setEnd(end, range.endOffset);
   else limitedRange.setEnd(end.firstChild, end.firstChild.textContent.length);
 
   return limitedRange;
