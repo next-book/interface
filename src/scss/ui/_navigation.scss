@@ -107,6 +107,7 @@
     .forward-button {
       position: fixed;
       opacity: 0.25;
+      z-index: map-get($z-indexes, 'pagination');
 
       left: 2px;
       top: 25vh;
@@ -162,7 +163,7 @@
     left: 0;
     right: 0;
     width: 100vw;
-    height: 100vw;
+    height: 100vh;
 
     svg {
       display: none;
