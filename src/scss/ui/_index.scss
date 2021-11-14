@@ -1,0 +1,18 @@
+@use '../defaults';
+
+// always scoped to .nb-* class
+// root custom props prefixed with name
+// TODO: prefix bodyclasses
+@use 'base';
+@use 'round-buttons';
+@use 'annotations';
+@use 'desk';
+@use 'navigation';
+@use 'progress';
+@use 'seq-return';
+@use 'peeks';
+@use 'toc';
+@use 'controls';
+@use 'options';
+@use 'onboarding';
+@use 'research';

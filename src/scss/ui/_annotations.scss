@@ -1,3 +1,5 @@
+@use "../conf";
+
 .nb-annotations {
   font-family: var(--ui-font);
   font-size: var(--ui-font-size);
@@ -7,7 +9,7 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: map-get($z-indexes, 'controls') + 1;
+    z-index: map-get(conf.$z-indexes, 'controls') + 1;
 
     will-change: transform;
     animation: slide-from-top 0.2s ease-out;
@@ -78,11 +80,11 @@
     left: calc(var(--base-padding) / 2);
     bottom: calc(var(--base-padding) / 2);
     right: calc(var(--base-padding) / 2);
-    z-index: map-get($z-indexes, 'annotations') + 1;
+    z-index: map-get(conf.$z-indexes, 'annotations') + 1;
     box-sizing: border-box;
   }
 
-  @media screen and (min-width: map-get($breakpoints, 'min-side-annotation-ui')) {
+  @media screen and (min-width: map-get(conf.$breakpoints, 'min-side-annotation-ui')) {
     .annotation-buttons .button-wrapper {
       text-align: left;
     }

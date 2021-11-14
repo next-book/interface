@@ -1,9 +1,11 @@
+@use "../conf";
+
 .nb-desk {
   font-family: var(--ui-font);
   padding: var(--base-padding) calc(2 * var(--base-padding));
   overflow-y: auto;
 
-  @media screen and (max-width: map-get($breakpoints, 'max-big-tabs')) {
+  @media screen and (max-width: map-get(conf.$breakpoints, 'max-big-tabs')) {
     padding: var(--base-padding);
   }
 
