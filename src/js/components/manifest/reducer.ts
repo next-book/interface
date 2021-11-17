@@ -10,6 +10,7 @@ export interface IState {
   revision: string;
   generatedAt: IDate;
   documents: IDocument[];
+  tocBase: IBaseTocItem[];
   totals: {
     all: ITotalCounts;
     chapters: ITotalCounts;
@@ -32,6 +33,13 @@ export interface IToc {
   name: string;
   id: string;
   children: IToc[];
+}
+
+export interface IBaseTocItem {
+  link: string;
+  title: string;
+  children?: IBaseTocItem[];
+  numberedChildren?: boolean;
 }
 
 export interface IDocument {
