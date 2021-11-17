@@ -1,9 +1,11 @@
+@use "../conf";
+
 .nb-progress {
   font-family: var(--ui-font);
   font-size: var(--ui-font-size);
 
   .current-position {
-    z-index: map-get($z-indexes, 'navigation') + 20;
+    z-index: map-get(conf.$z-indexes, 'navigation') + 20;
 
     border: none;
     background: transparent;

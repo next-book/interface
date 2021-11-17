@@ -1,3 +1,5 @@
+@use "defaults";
+
 html {
   scroll-padding-top: 100px;
 }
@@ -7,10 +9,10 @@ body {
   background: var(--background);
 }
 
-@media (min-width: 0.1px + map-get($breakpoints, 'max-full-screen-controls')) {
+@media (min-width: 0.1px + map-get(defaults.$breakpoints, 'max-full-screen-controls')) {
   body.nb-controls-open {
     --margins: calc(
-      100vw - #{$controls-width} - var(--content-max-width) - 2 * var(--base-padding)
+      100vw - #{defaults.$controls-width} - var(--content-max-width) - 2 * var(--base-padding)
     );
     --content-margin-left: calc(var(--margins) / 2);
     --content-margin-right: auto;

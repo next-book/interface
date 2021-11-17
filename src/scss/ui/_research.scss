@@ -1,3 +1,5 @@
+@use "../conf";
+
 ._nb-research {
   position: fixed;
   top: 20vh;
@@ -17,7 +19,7 @@
   box-shadow: var(--ui-box-shadow);
   overflow: hidden;
 
-  z-index: map-get($z-indexes, 'research');
+  z-index: map-get(conf.$z-indexes, 'research');
 
   p {
     line-height: 1.4;

@@ -1,7 +1,9 @@
+@use "../conf";
+
 .nb-toc {
   padding: var(--base-padding) calc(2 * var(--base-padding));
 
-  @media screen and (max-width: map-get($breakpoints, 'max-big-tabs')) {
+  @media screen and (max-width: map-get(conf.$breakpoints, 'max-big-tabs')) {
     padding: var(--base-padding);
   }
 

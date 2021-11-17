@@ -1,3 +1,5 @@
+@use "../conf";
+
 .nb-seq-return {
   font-family: var(--ui-font);
   font-size: var(--ui-font-size);
@@ -6,7 +8,7 @@
   right: var(--base-padding);
   max-width: calc(100vw - 2 * var(--base-padding));
   animation: slide-up 0.2s ease-out;
-  z-index: map-get($z-indexes, 'navigation') + 30;
+  z-index: map-get(conf.$z-indexes, 'navigation') + 30;
   min-height: 1.5rem;
 
   .seq-text {

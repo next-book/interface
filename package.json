@@ -1,6 +1,6 @@
 {
   "name": "@next-book/interface",
-  "version": "0.1.29",
+  "version": "0.1.30",
   "description": "Next-book’s browser interface",
   "repository": {
     "type": "git",
@@ -15,6 +15,7 @@
     "build:types": "tsc --emitDeclarationOnly --watch",
     "build:js-dev": "webpack --mode development --watch",
     "build:css": "sass src/scss/style.scss dist/interface.css",
+    "build:css-dev": "sass src/scss/style.scss dist/interface.css --watch",
     "bundle": "webpack --mode production",
     "test": "jest"
   },

@@ -1,9 +1,11 @@
+@use "../conf";
+
 .nb-peeks {
   font-family: var(--ui-font);
   font-size: var(--ui-font-size);
 
   position: fixed;
-  z-index: map-get($z-indexes, 'peeks') + 5;
+  z-index: map-get(conf.$z-indexes, 'peeks') + 5;
   bottom: 0;
   left: 0;
   right: 0;
@@ -45,7 +47,7 @@
         line-height: 2rem;
         text-align: left;
         border-bottom: 1px solid var(--ui-c-soft);
-        z-index: map-get($z-indexes, 'peeks') + 10;
+        z-index: map-get(conf.$z-indexes, 'peeks') + 10;
 
         .peek-info {
           flex-grow: 1;
