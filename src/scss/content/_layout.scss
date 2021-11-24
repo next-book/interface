@@ -3,3 +3,7 @@
   max-width: var(--content-max-width);
   padding: calc(var(--base-padding) * 2) var(--base-padding);
 }
+
+main img {
+  max-width: 100%;
+}
