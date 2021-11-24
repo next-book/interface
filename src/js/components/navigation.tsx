@@ -58,33 +58,6 @@ export class Navigation extends React.Component<IProps> {
     };
   };
 
-  getPrevChapterLink = () => {
-    const links = docInfo.links;
-    const position = this.props.position;
-
-    if ((docInfo.role === DocRole.Chapter || docInfo.role === DocRole.Break) && position !== null) {
-      if (this.props.readingOrder.indexOf(position.file) === 0) {
-        return links.colophon ? links.colophon : links.index;
-      }
-      const prev = this.props.documents[position.file].prev;
-      return prev ? `${prev}#chapter-end` : null;
-    } else if (docInfo.role === DocRole.Colophon) return links.index;
-    else return null;
-  };
-
-  getNextChapterLink = () => {
-    const role = docInfo.role;
-    const position = this.props.position;
-
-    if ((role === DocRole.Chapter || role === DocRole.Break) && position !== null) {
-      const next = this.props.documents[position.file].next;
-      return next || null;
-    } else if (role === DocRole.Colophon || role === DocRole.Cover) {
-      const next = this.props.readingOrder[0];
-      return next || null;
-    } else return null;
-  };
-
   handleKeyboardNav = (event: KeyboardEvent) => {
     if (document.activeElement !== document.body || document.activeElement === null) return;
 
@@ -117,7 +90,7 @@ export class Navigation extends React.Component<IProps> {
     if (document.body.clientHeight <= window.innerHeight) return Action.ChangeChapter;
     else if (this.props.position === null || !this.props.position.chapterEnd)
       return Action.Paginate;
-    else if (this.getNextChapterLink() !== null) return Action.ChangeChapter;
+    else if (docInfo.links.next !== null) return Action.ChangeChapter;
     else return Action.None;
   };
 
@@ -125,7 +98,7 @@ export class Navigation extends React.Component<IProps> {
     if (document.body.clientHeight <= window.innerHeight) return Action.ChangeChapter;
     else if (this.props.position === null || !this.props.position.chapterStart)
       return Action.Paginate;
-    else if (this.getPrevChapterLink() !== null) return Action.ChangeChapter;
+    else if (docInfo.links.prev !== null) return Action.ChangeChapter;
     else return Action.None;
   };
 
@@ -138,7 +111,7 @@ export class Navigation extends React.Component<IProps> {
         domFns.setPaginatedMode();
         return;
       case Action.ChangeChapter:
-        const next = this.getNextChapterLink();
+        const next = docInfo.links.next;
         if (next) window.location.assign(next);
         return;
     }
@@ -156,7 +129,7 @@ export class Navigation extends React.Component<IProps> {
         domFns.setPaginatedMode();
         return;
       case Action.ChangeChapter:
-        const prev = this.getPrevChapterLink();
+        const prev = docInfo.links.prev;
         if (prev) window.location.assign(prev);
         return;
     }
