@@ -86,6 +86,39 @@ export class Navigation extends React.Component<IProps> {
     }
   };
 
+  handleButtonNav = (event: PointerEvent) => {
+    const target = event.target as HTMLElement;
+
+    if (
+      target.tagName != 'A' &&
+      target.tagName != 'BUTTON' &&
+      target.tagName != 'INPUT' &&
+      target.tagName != 'LABEL' &&
+      !target.classList.contains('ui-target') &&
+      target.closest('A') === null &&
+      target.closest('LABEL') === null &&
+      target.closest('.ui-target') === null
+    ) {
+      if (
+        isInPaginationRect(
+          document.querySelector('.forward-button')?.getBoundingClientRect(),
+          event.clientX,
+          event.clientY
+        )
+      )
+        return this.goForward(this.getForwardAction());
+
+      if (
+        isInPaginationRect(
+          document.querySelector('.back-button')?.getBoundingClientRect(),
+          event.clientX,
+          event.clientY
+        )
+      )
+        return this.goBack(this.getBackAction());
+    }
+  };
+
   getForwardAction = () => {
     if (document.body.clientHeight <= window.innerHeight) return Action.ChangeChapter;
     else if (this.props.position === null || !this.props.position.chapterEnd)
@@ -137,6 +170,8 @@ export class Navigation extends React.Component<IProps> {
 
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
+    window.addEventListener('pointerdown', this.handleButtonNav);
+
     if (this.props.keyboardNav) {
       document.body.addEventListener('keydown', this.handleKeyboardNav);
     }
@@ -181,7 +216,7 @@ export class Navigation extends React.Component<IProps> {
         )}
 
         <div className="button-navigation">
-          <div className="back-button" onClick={() => this.goBack(backAction)}>
+          <div className="back-button">
             {this.props.invisibleNav ||
               (backAction === Action.Paginate
                 ? Prev
@@ -189,7 +224,7 @@ export class Navigation extends React.Component<IProps> {
                 ? PrevChapter
                 : End)}
           </div>
-          <div className="forward-button" onClick={() => this.goForward(forwardAction)}>
+          <div className="forward-button">
             {this.props.invisibleNav ||
               (forwardAction === Action.Paginate
                 ? Next
@@ -201,6 +236,15 @@ export class Navigation extends React.Component<IProps> {
       </nav>
     );
   }
+}
+
+function isInPaginationRect(rect: ClientRect | undefined, x: number, y: number) {
+  if (!rect) return false;
+
+  if (rect.left < x && rect.left + rect.width > x && rect.top < y && rect.top + rect.height > y)
+    return true;
+
+  return false;
 }
 
 function displayPagination(dir: Direction) {
