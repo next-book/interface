@@ -23,7 +23,6 @@ export interface IState {
   zonePadding: Sides;
   readingZone: Sides;
   realReadingZone: Sides | null;
-  lastScrollStart: number | null;
 }
 
 export class Pagination extends React.Component<IProps, IState> {
@@ -36,7 +35,6 @@ export class Pagination extends React.Component<IProps, IState> {
       zonePadding: { [Side.Top]: 48, [Side.Bottom]: 48 },
       readingZone: { [Side.Top]: 0, [Side.Bottom]: 0 },
       realReadingZone: null,
-      lastScrollStart: null,
     };
   }
 
@@ -81,40 +79,44 @@ export class Pagination extends React.Component<IProps, IState> {
     });
   };
 
-  assessPagination = () => {
-    if (!this.state.paginatedDisplay) return;
-    const ms = new Date().getTime();
+  assessPagination = (() => {
+    let lastTime: number = 0;
+    let timer: number = 0;
 
-    if (this.state.lastScrollStart === null) {
-      this.setState({ ...this.state, lastScrollStart: ms });
-      return;
-    }
+    return (): boolean => {
+      const now = new Date().getTime();
+      const elapsed = now - lastTime;
+      window.clearTimeout(timer);
 
-    if (ms - this.state.lastScrollStart < 150) return;
+      if (lastTime === 0) {
+        lastTime = now;
 
-    if (ms - this.state.lastScrollStart < 250) {
-      trackScroll();
-      this.setState({ ...this.state, paginatedDisplay: false, lastScrollStart: null });
-      return;
-    }
+        return this.state.paginatedDisplay;
+      } else if (elapsed < 500) {
+        trackScroll();
+        timer = window.setTimeout(this.displayPaginated, 99);
 
-    this.setState({ ...this.state, lastScrollStart: null });
-  };
+        return false;
+      } else lastTime = 0;
+
+      return true;
+    };
+  })();
 
   displayPaginated = () => {
-    this.assessPagination();
-
-    if (this.state.paginatedDisplay) {
+    if (this.assessPagination()) {
       document.body.classList.add('nb-paginated');
       this.clipPage();
+      this.setState({ ...this.state, paginatedDisplay: true });
     } else {
       clearVisibleChunks();
       document.body.classList.remove('nb-paginated');
+      this.setState({ ...this.state, paginatedDisplay: false });
     }
   };
 
   getScrollHandler = () => {
-    const t3 = throttle(this.displayPaginated, 100, { leading: true });
+    const t3 = throttle(this.displayPaginated, 50, { leading: true });
 
     return function throttled() {
       t3();
