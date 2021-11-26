@@ -46,6 +46,9 @@ export interface IProps extends WithTranslation {
 }
 
 export class Navigation extends React.Component<IProps> {
+  forwardAction: Action | null = null;
+  backAction: Action | null = null;
+
   setScrollRatio = () => {
     this.props.setScrollRatio(getScrollRatio());
   };
@@ -67,10 +70,10 @@ export class Navigation extends React.Component<IProps> {
     switch (keycode(event)) {
       case 'left':
         trackPagination(Controller.Keyboard);
-        return this.goBack(this.getBackAction());
+        return this.goBack(this.backAction);
       case 'right':
         trackPagination(Controller.Keyboard);
-        return this.goForward(this.getForwardAction());
+        return this.goForward(this.forwardAction);
       default:
         return;
     }
@@ -80,9 +83,9 @@ export class Navigation extends React.Component<IProps> {
     trackPagination(Controller.Swipe);
 
     if (dir === Direction.Forward) {
-      this.goForward(this.getForwardAction());
+      this.goForward(this.forwardAction);
     } else if (dir === Direction.Back) {
-      this.goBack(this.getBackAction());
+      this.goBack(this.backAction);
     }
   };
 
@@ -106,7 +109,7 @@ export class Navigation extends React.Component<IProps> {
           event.clientY
         )
       )
-        return this.goForward(this.getForwardAction());
+        return this.goForward(this.forwardAction);
 
       if (
         isInPaginationRect(
@@ -115,7 +118,7 @@ export class Navigation extends React.Component<IProps> {
           event.clientY
         )
       )
-        return this.goBack(this.getBackAction());
+        return this.goBack(this.backAction);
     }
   };
 
@@ -135,7 +138,9 @@ export class Navigation extends React.Component<IProps> {
     else return Action.None;
   };
 
-  goForward = (action: Action) => {
+  goForward = (action: Action | null) => {
+    if (action === null) return;
+
     switch (action) {
       case Action.Paginate:
         const step = domFns.getScrollStep();
@@ -150,7 +155,9 @@ export class Navigation extends React.Component<IProps> {
     }
   };
 
-  goBack = (action: Action) => {
+  goBack = (action: Action | null) => {
+    if (action === null) return;
+
     switch (action) {
       case Action.Paginate:
         const step =
@@ -162,7 +169,7 @@ export class Navigation extends React.Component<IProps> {
         domFns.setPaginatedMode();
         return;
       case Action.ChangeChapter:
-        const prev = docInfo.links.prev;
+        const prev = `${docInfo.links.prev}#chapter-end`;
         if (prev) window.location.assign(prev);
         return;
     }
@@ -189,6 +196,9 @@ export class Navigation extends React.Component<IProps> {
   }
 
   render() {
+    this.forwardAction = this.getForwardAction();
+    this.backAction = this.getBackAction();
+
     const ro = this.props.readingOrder;
     if (ro.length === 0) return null;
 
@@ -196,9 +206,6 @@ export class Navigation extends React.Component<IProps> {
     const chapter = pos !== null ? this.props.documents[pos.file] : null;
 
     const { totalWords } = this.props.documents[ro[ro.length - 1]];
-
-    const forwardAction = this.getForwardAction();
-    const backAction = this.getBackAction();
 
     return (
       <nav>
@@ -218,17 +225,17 @@ export class Navigation extends React.Component<IProps> {
         <div className="button-navigation">
           <div className="back-button">
             {this.props.invisibleNav ||
-              (backAction === Action.Paginate
+              (this.backAction === Action.Paginate
                 ? Prev
-                : backAction === Action.ChangeChapter
+                : this.backAction === Action.ChangeChapter
                 ? PrevChapter
                 : End)}
           </div>
           <div className="forward-button">
             {this.props.invisibleNav ||
-              (forwardAction === Action.Paginate
+              (this.forwardAction === Action.Paginate
                 ? Next
-                : forwardAction === Action.ChangeChapter
+                : this.forwardAction === Action.ChangeChapter
                 ? NextChapter
                 : End)}
           </div>

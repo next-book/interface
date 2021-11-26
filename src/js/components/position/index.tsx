@@ -112,6 +112,9 @@ function getTopBound(): number {
 }
 
 function isPageScrolledToTop(): boolean {
+  const mainTop = document.querySelector('main')?.getBoundingClientRect()?.top;
+  if (mainTop && mainTop >= 20) return true;
+
   return document.body.clientHeight <= window.innerHeight || getTopBound() > 48;
 }
 
@@ -123,6 +126,9 @@ function getBottomBound(): number {
 }
 
 function isPageScrolledToBottom() {
+  const mainBottom = document.querySelector('main')?.getBoundingClientRect()?.bottom;
+  if (mainBottom && mainBottom < window.innerHeight - 30) return true;
+
   return document.body.clientHeight <= window.innerHeight || getBottomBound() < -50;
 }
 
