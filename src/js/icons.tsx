@@ -138,7 +138,7 @@ export const Help = svgRoot(
   </>
 );
 
-export const Paginate = svgRoot(
+export const TurnTo = svgRoot(
   <>
     <g>
       <rect fill="none" height="24" width="24" x="0" />

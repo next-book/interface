@@ -1,5 +1,5 @@
 import React from 'react';
-import { throttle } from 'lodash';
+//import { throttle } from 'lodash';
 
 import { elements, setVisibleChunks, clearVisibleChunks, setDomFn, role } from '../doc-info';
 import { trackScroll } from './research/tracker';
@@ -10,6 +10,11 @@ enum Side {
   Top = 'top',
 }
 
+enum Display {
+  Cropped,
+  ShowAll,
+}
+
 export type Sides = {
   [Side.Top]: number;
   [Side.Bottom]: number;
@@ -18,11 +23,9 @@ export type Sides = {
 interface IProps {}
 
 export interface IState {
-  paginatedDisplay: boolean;
   windowHeight: number | null;
   zonePadding: Sides;
   readingZone: Sides;
-  realReadingZone: Sides | null;
 }
 
 export class Pagination extends React.Component<IProps, IState> {
@@ -30,13 +33,14 @@ export class Pagination extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      paginatedDisplay: false,
       windowHeight: null,
       zonePadding: { [Side.Top]: 48, [Side.Bottom]: 48 },
       readingZone: { [Side.Top]: 0, [Side.Bottom]: 0 },
-      realReadingZone: null,
     };
   }
+
+  displayMode: Display = Display.Cropped;
+  realReadingZone: Sides | null = null;
 
   setSizes = () => {
     const windowHeight = window.innerHeight || document.documentElement.clientHeight;
@@ -50,11 +54,11 @@ export class Pagination extends React.Component<IProps, IState> {
           [Side.Bottom]: windowHeight - this.state.zonePadding[Side.Bottom],
         },
       },
-      this.clipPage
+      this.cropDisplay
     );
   };
 
-  clipPage = () => {
+  cropDisplay = () => {
     if (role === DocRole.Break || role === DocRole.Cover) {
       elements.chunks.forEach(c => c.classList.add('visible'));
       return;
@@ -64,92 +68,98 @@ export class Pagination extends React.Component<IProps, IState> {
 
     clearVisibleChunks();
     setVisibleChunks(findVisibleChunks(this.state.readingZone));
-    const realReadingZone = clipReadingZone(this.state.readingZone);
+    this.realReadingZone = clipReadingZone(this.state.readingZone);
+  };
 
-    this.setState({
-      ...this.state,
-      realReadingZone,
-    });
+  setCroppedDisplay = () => {
+    this.displayMode = Display.Cropped;
+  };
+
+  setAllLayout = () => {
+    this.displayMode = Display.ShowAll;
   };
 
   setPaginatedMode = () => {
-    this.setState({
-      ...this.state,
-      paginatedDisplay: true,
-    });
+    document.body.classList.add('nb-paginated');
   };
 
-  assessPagination = (() => {
-    let lastTime: number = 0;
-    let timer: number = 0;
+  setScrollingMode = () => {
+    document.body.classList.remove('nb-paginated');
+  };
 
-    return (): boolean => {
-      const now = new Date().getTime();
-      const elapsed = now - lastTime;
-      window.clearTimeout(timer);
-
-      if (lastTime === 0) {
-        lastTime = now;
-
-        return this.state.paginatedDisplay;
-      } else if (elapsed < 500) {
-        trackScroll();
-        timer = window.setTimeout(this.displayPaginated, 99);
-
-        return false;
-      } else lastTime = 0;
-
-      return true;
-    };
-  })();
-
-  displayPaginated = () => {
-    if (this.assessPagination()) {
-      document.body.classList.add('nb-paginated');
-      this.clipPage();
-      this.setState({ ...this.state, paginatedDisplay: true });
-    } else {
-      clearVisibleChunks();
-      document.body.classList.remove('nb-paginated');
-      this.setState({ ...this.state, paginatedDisplay: false });
+  refreshLayout = () => {
+    switch (this.displayMode) {
+      case Display.Cropped:
+        document.body.classList.add('nb-cropped');
+        this.cropDisplay();
+        break;
+      case Display.ShowAll:
+        document.body.classList.remove('nb-cropped');
+        clearVisibleChunks();
+        break;
     }
   };
 
-  getScrollHandler = () => {
-    const t3 = throttle(this.displayPaginated, 50, { leading: true });
+  getScrollHandler = (() => {
+    let timer: number | null = null;
+    let lastRefresh: number = new Date().getTime();
+    let eventCount: number = 0;
 
-    return function throttled() {
-      t3();
+    return (): void => {
+      if (timer !== null) clearTimeout(timer);
+
+      eventCount = eventCount + 1;
+
+      if (eventCount > 2) this.setAllLayout();
+
+      if (eventCount > 5) {
+        this.setScrollingMode();
+        trackScroll();
+      }
+
+      if (new Date().getTime() - lastRefresh > 100) {
+        lastRefresh = new Date().getTime();
+        this.refreshLayout();
+      }
+
+      timer = window.setTimeout(() => {
+        if (eventCount > 1 || this.displayMode === Display.ShowAll) {
+          this.setCroppedDisplay();
+          this.refreshLayout();
+        }
+
+        eventCount = 0;
+      }, 150);
     };
-  };
+  })();
 
   getScrollStep = (): number | null => {
     if (this.state.windowHeight === null) return null;
 
     return (
-      (this.state.realReadingZone === null ? 80 : this.state.realReadingZone[Side.Bottom]) -
+      (this.realReadingZone === null ? 80 : this.realReadingZone[Side.Bottom]) -
       this.state.zonePadding[Side.Top] -
       5
     );
   };
 
   componentDidMount() {
-    window.addEventListener('scroll', this.getScrollHandler());
+    window.addEventListener('scroll', this.getScrollHandler, { passive: true });
     setDomFn('getScrollStep', this.getScrollStep);
-    setDomFn('clipPage', this.clipPage);
-    setDomFn('setPaginatedMode', this.setPaginatedMode);
+    setDomFn('setCroppedDisplay', this.setCroppedDisplay);
 
     window.addEventListener('resize', this.setSizes);
 
     window.requestAnimationFrame(() => {
-      this.setPaginatedMode();
       this.setSizes();
-      document.body.classList.add('nb-paginated');
+      this.setCroppedDisplay();
+      this.setPaginatedMode();
+      this.refreshLayout();
     });
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.getScrollHandler());
+    window.removeEventListener('scroll', this.getScrollHandler);
     window.removeEventListener('resize', this.setSizes);
   }
 

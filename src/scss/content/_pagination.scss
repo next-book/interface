@@ -1,4 +1,4 @@
-.nb-paginated {
+.nb-cropped {
   .chunk {
     visibility: hidden;
   }
@@ -7,7 +7,9 @@
     visibility: visible;
     will-change: transform, opacity;
   }
+}
 
+.nb-paginated {
   .step-forward {
     animation: pagination-slide-in 0.3s;
   }

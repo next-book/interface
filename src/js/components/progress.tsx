@@ -5,7 +5,7 @@ import { IPosition, IDocMap, INavDocument } from './position/reducer';
 import { reducer as configReducer, ProgressKind } from './config/reducer';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { IState as ICombinedState } from '../reducer';
-import { Paginate } from '../icons';
+import { TurnTo } from '../icons';
 import { trackAmountRead } from './research/tracker';
 
 export enum ProgressForm {
@@ -87,7 +87,7 @@ class Progress extends React.Component<IProps, IState> {
         ) : (
           <div className="nb-progress turn-to">
             <h3>
-              {Paginate} {this.props.t('turn-to')}
+              {TurnTo} {this.props.t('turn-to')}
             </h3>
             <div className="progress">
               <label className="progress__chapter">

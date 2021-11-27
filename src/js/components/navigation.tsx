@@ -69,9 +69,11 @@ export class Navigation extends React.Component<IProps> {
 
     switch (keycode(event)) {
       case 'left':
+        document.body.classList.add('nb-paginated');
         trackPagination(Controller.Keyboard);
         return this.goBack(this.backAction);
       case 'right':
+        document.body.classList.add('nb-paginated');
         trackPagination(Controller.Keyboard);
         return this.goForward(this.forwardAction);
       default:
@@ -83,8 +85,10 @@ export class Navigation extends React.Component<IProps> {
     trackPagination(Controller.Swipe);
 
     if (dir === Direction.Forward) {
+      document.body.classList.add('nb-paginated');
       this.goForward(this.forwardAction);
     } else if (dir === Direction.Back) {
+      document.body.classList.add('nb-paginated');
       this.goBack(this.backAction);
     }
   };
@@ -108,8 +112,10 @@ export class Navigation extends React.Component<IProps> {
           event.clientX,
           event.clientY
         )
-      )
+      ) {
+        document.body.classList.add('nb-paginated');
         return this.goForward(this.forwardAction);
+      }
 
       if (
         isInPaginationRect(
@@ -117,8 +123,10 @@ export class Navigation extends React.Component<IProps> {
           event.clientX,
           event.clientY
         )
-      )
+      ) {
+        document.body.classList.add('nb-paginated');
         return this.goBack(this.backAction);
+      }
     }
   };
 
@@ -146,7 +154,7 @@ export class Navigation extends React.Component<IProps> {
         const step = domFns.getScrollStep();
         pageForward(step);
         setLastScrollStep(step ? [Direction.Forward, step] : null);
-        domFns.setPaginatedMode();
+        domFns.setCroppedDisplay();
         return;
       case Action.ChangeChapter:
         const next = docInfo.links.next;
@@ -166,7 +174,7 @@ export class Navigation extends React.Component<IProps> {
             : domFns.getScrollStep();
         pageBack(step);
         setLastScrollStep(step ? [Direction.Back, step] : null);
-        domFns.setPaginatedMode();
+        domFns.setCroppedDisplay();
         return;
       case Action.ChangeChapter:
         const prev = `${docInfo.links.prev}#chapter-end`;
