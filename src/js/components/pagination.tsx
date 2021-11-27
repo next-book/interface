@@ -216,25 +216,30 @@ function calcTopCutoff(chunk: Element | null, readingZone: Sides) {
   return { zone: y, clip: y - rect[Side.Top] };
 }
 
+function hasOrphan(chunkRect: DOMRect, readingZone: Sides, lineHeight: number) {
+  if (chunkRect.bottom - chunkRect.top < lineHeight * 1.5) return false;
+
+  const gap = chunkRect.bottom - readingZone[Side.Bottom];
+  return gap > 0 && gap < 1.5 * lineHeight;
+}
+
+function isWidow(chunkRect: DOMRect, y: number, lineHeight: number) {
+  if (chunkRect.bottom - chunkRect.top < lineHeight * 1.5) return false;
+
+  const gap = y - chunkRect.top;
+  return gap > 0 && gap < 1.5 * lineHeight;
+}
+
 function calcBottomCutoff(chunk: Element | null, readingZone: Sides) {
   if (chunk === null) return { zone: window.innerHeight, clip: 0 };
 
   const lineHeight = getComputedStyleNumber(chunk, 'lineHeight');
   const rect = chunk.getBoundingClientRect();
-
   let y = rect[Side.Bottom];
 
-  while (y > readingZone[Side.Bottom]) {
-    y -= lineHeight;
-  }
-
-  if (y - 1.5 * lineHeight < rect[Side.Top]) {
-    // cut off one-liners to prevent widows
-    y = rect[Side.Top];
-  } else if (y + 1.5 * lineHeight > rect[Side.Bottom]) {
-    // cut a line from n+1 long paragraph to prevent orphans
-    y -= lineHeight;
-  }
+  while (y > readingZone[Side.Bottom]) y -= lineHeight;
+  if (hasOrphan(rect, readingZone, lineHeight)) y -= lineHeight;
+  if (isWidow(rect, y, lineHeight)) y -= lineHeight;
 
   return { zone: y, clip: rect[Side.Bottom] - y };
 }
@@ -244,63 +249,81 @@ function getComputedStyleNumber(el: Element, attr: 'lineHeight' | 'paddingTop'):
   return parseInt(style[attr], 10);
 }
 
+enum Gate {
+  Unopened,
+  Open,
+  Closed,
+}
+
 function findVisibleChunks(readingZone: Sides) {
-  let top: null | Element = null;
-  let bottom: null | Element = null;
   const chunks = elements.chunks;
+  const insideRange = [];
+  let gate = Gate.Unopened;
 
-  for (let chunk of chunks) {
-    if (top !== null && bottom !== null) break;
+  for (let i = 0; i <= chunks.length - 1; i++) {
+    if (gate === Gate.Closed) break;
 
-    const rect = chunk.getBoundingClientRect();
-    const range = getComputedStyleNumber(chunk, 'lineHeight');
+    const chunk = chunks[i];
+    const prevChunk = chunks[i - 1];
+    const nextChunk = chunks[i + 1];
 
-    if (top === null && isChunkOnTopEdge(rect, range, readingZone[Side.Top])) top = chunk;
-    if (isChunkOnBottomEdge(rect, range, readingZone[Side.Bottom])) bottom = chunk;
+    const lineHeight = getComputedStyleNumber(chunk, 'lineHeight');
+
+    if (
+      (gate === Gate.Unopened &&
+        isChunkOnTopEdge(chunk, prevChunk, lineHeight, readingZone[Side.Top])) ||
+      (insideRange.length === 0 &&
+        isChunkInside(chunk, readingZone[Side.Top], readingZone[Side.Bottom]))
+    ) {
+      gate = isChunkOnBottomEdge(chunk, nextChunk, lineHeight, readingZone[Side.Bottom])
+        ? Gate.Closed
+        : Gate.Open;
+      insideRange.push(chunk);
+    } else if (
+      gate === Gate.Open &&
+      isChunkOnBottomEdge(chunk, nextChunk, lineHeight, readingZone[Side.Bottom])
+    ) {
+      gate = Gate.Closed;
+      insideRange.push(chunk);
+    } else if (gate === Gate.Open) insideRange.push(chunk);
   }
 
-  return { top, bottom, all: getRangeOfChunks(top, bottom, chunks) };
+  const top = insideRange[0];
+  const bottom = insideRange[insideRange.length - 1];
+
+  return { top, bottom, all: insideRange };
 }
 
-function getRangeOfChunks(
-  top: Element | null,
-  bottom: Element | null,
-  chunks: Element[]
-): Element[] {
-  if (chunks.length === 0) return [];
+function isChunkOnTopEdge(chunk: Element, prevChunk: Element, lineHeight: number, top: number) {
+  const range = {
+    top: prevChunk?.getBoundingClientRect().bottom || chunk.getBoundingClientRect().top,
+    bottom: chunk.getBoundingClientRect().bottom,
+  };
 
-  const topNum = top === null ? 1 : getRefInt(top);
-  const bottomNum = bottom === null ? getRefInt(chunks[chunks.length - 1]) : getRefInt(bottom);
-
-  if (topNum === null || bottomNum === null) return [];
-
-  const range: Element[] = [];
-
-  chunks.forEach(chunk => {
-    const attr = chunk.getAttribute('data-nb-ref-number');
-    if (attr !== null) {
-      const num = parseInt(attr, 10);
-      if (num >= topNum && num <= bottomNum) range.push(chunk);
-    }
-  });
-
-  return range;
+  return (range.top < top && range.bottom > top) || (range.top > top && range.top < top);
 }
 
-function getRefInt(el: Element) {
-  const num = el.getAttribute('data-nb-ref-number');
-  return num !== null ? parseInt(num, 10) : null;
+function isChunkInside(chunk: Element, top: number, bottom: number) {
+  const range = {
+    top: chunk.getBoundingClientRect().top,
+    bottom: chunk.getBoundingClientRect().bottom,
+  };
+
+  return (range.top > top && range.top < bottom) || (range.bottom > top && range.bottom < bottom);
 }
 
-function isChunkOnTopEdge(rect: DOMRect, range: number, edge: number) {
+function isChunkOnBottomEdge(
+  chunk: Element,
+  nextChunk: Element,
+  lineHeight: number,
+  bottom: number
+) {
+  const range = {
+    top: chunk.getBoundingClientRect().top,
+    bottom: nextChunk?.getBoundingClientRect().top || chunk.getBoundingClientRect().bottom,
+  };
+
   return (
-    (rect.top < edge && rect.bottom > edge + range) || (rect.top > edge && rect.top < edge + range)
-  );
-}
-
-function isChunkOnBottomEdge(rect: DOMRect, range: number, edge: number) {
-  return (
-    (rect.top < edge + range && rect.bottom > edge) ||
-    (rect.bottom < edge && rect.bottom > edge + range)
+    (range.top < bottom && range.bottom > bottom) || (range.top > bottom && range.top < bottom)
   );
 }
