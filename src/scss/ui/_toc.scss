@@ -17,12 +17,16 @@
     padding-left: calc(2 * 1rem);
   }
 
-  li {
-    margin-bottom: calc(1rem / 2);
+  ul.plain {
+    padding-left: 0;
+
+    & > li {
+      list-style-type: none;
+    }
   }
 
-  ul li {
-    list-style-type: none;
+  li {
+    margin-bottom: calc(1rem / 2);
   }
 
   .current-chapter {
@@ -37,6 +41,7 @@
 .nb-toc,
 .nb-toc-other {
   a {
+    font-family: var(--content-font);
     font-weight: bold;
     color: var(--text-color);
     text-decoration: none;

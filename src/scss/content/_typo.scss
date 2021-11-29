@@ -1,4 +1,4 @@
-.content {
+main {
   p,
   blockquote,
   dl,
@@ -59,6 +59,10 @@
     font-size: 1rem;
   }
 
+  h1.hidden-title {
+    display: none;
+  }
+
   p,
   blockquote,
   dl,
@@ -88,5 +92,9 @@
     border: 1px solid var(--ui-c-medium);
     background: var(--ui-c-soft);
     border-radius: var(--border-radius);
+  }
+
+  img {
+    max-width: 100%;
   }
 }

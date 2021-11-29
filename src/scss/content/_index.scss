@@ -1,7 +1,8 @@
-// always scoped to .content
 @use 'layout';
+@use 'pagination';
+@use 'navigation';
+
+// always scoped to main
 @use 'typo';
 @use 'footnote';
-@use 'navigation';
-@use 'pagination';
 @use 'annotation';

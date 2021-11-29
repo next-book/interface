@@ -79,7 +79,7 @@
       font-family: var(--heading-font);
       font-weight: var(--heading-font-weight);
       max-width: var(--content-max-width);
-      padding: calc(var(--base-padding) / 4) var(--base-padding);
+      padding: calc(var(--base-padding)) var(--base-padding);
       margin: 0 var(--content-margin-right) 0 var(--content-margin-left);
 
       a {
