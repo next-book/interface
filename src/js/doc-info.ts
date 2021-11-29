@@ -75,7 +75,7 @@ export function setDomFn(name: 'getScrollStep' | 'setCroppedDisplay', fn: any): 
   domFns[name] = fn;
 }
 
-type IVisibleChunks = { top: Element | null; bottom: Element | null; all: Element[] };
+export type IVisibleChunks = { top: Element | null; bottom: Element | null; all: Element[] };
 
 export const elements: {
   chunks: Element[];

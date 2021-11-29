@@ -1,7 +1,14 @@
 import React from 'react';
 //import { throttle } from 'lodash';
 
-import { elements, setVisibleChunks, clearVisibleChunks, setDomFn, role } from '../doc-info';
+import {
+  elements,
+  IVisibleChunks,
+  setVisibleChunks,
+  clearVisibleChunks,
+  setDomFn,
+  role,
+} from '../doc-info';
 import { trackScroll } from './research/tracker';
 import { DocRole } from './manifest/reducer';
 
@@ -265,7 +272,7 @@ enum Gate {
   Closed,
 }
 
-function findVisibleChunks(readingZone: Sides) {
+function findVisibleChunks(readingZone: Sides): IVisibleChunks {
   const chunks = elements.chunks;
   const insideRange = [];
   let gate = Gate.Unopened;
@@ -298,8 +305,8 @@ function findVisibleChunks(readingZone: Sides) {
     } else if (gate === Gate.Open) insideRange.push(chunk);
   }
 
-  const top = insideRange[0];
-  const bottom = insideRange[insideRange.length - 1];
+  const top = insideRange[0] || null;
+  const bottom = insideRange[insideRange.length - 1] || null;
 
   return { top, bottom, all: insideRange };
 }
