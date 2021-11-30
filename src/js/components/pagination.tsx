@@ -1,13 +1,25 @@
 import React from 'react';
-import { throttle } from 'lodash';
+//import { throttle } from 'lodash';
 
-import { elements, setVisibleChunks, clearVisibleChunks, setDomFn, role } from '../doc-info';
+import {
+  elements,
+  IVisibleChunks,
+  setVisibleChunks,
+  clearVisibleChunks,
+  setDomFn,
+  role,
+} from '../doc-info';
 import { trackScroll } from './research/tracker';
 import { DocRole } from './manifest/reducer';
 
 enum Side {
   Bottom = 'bottom',
   Top = 'top',
+}
+
+enum Display {
+  Cropped,
+  ShowAll,
 }
 
 export type Sides = {
@@ -18,12 +30,9 @@ export type Sides = {
 interface IProps {}
 
 export interface IState {
-  paginatedDisplay: boolean;
   windowHeight: number | null;
   zonePadding: Sides;
   readingZone: Sides;
-  realReadingZone: Sides | null;
-  lastScrollStart: number | null;
 }
 
 export class Pagination extends React.Component<IProps, IState> {
@@ -31,14 +40,14 @@ export class Pagination extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      paginatedDisplay: false,
       windowHeight: null,
       zonePadding: { [Side.Top]: 48, [Side.Bottom]: 48 },
       readingZone: { [Side.Top]: 0, [Side.Bottom]: 0 },
-      realReadingZone: null,
-      lastScrollStart: null,
     };
   }
+
+  displayMode: Display = Display.Cropped;
+  realReadingZone: Sides | null = null;
 
   setSizes = () => {
     const windowHeight = window.innerHeight || document.documentElement.clientHeight;
@@ -52,11 +61,11 @@ export class Pagination extends React.Component<IProps, IState> {
           [Side.Bottom]: windowHeight - this.state.zonePadding[Side.Bottom],
         },
       },
-      this.clipPage
+      this.cropDisplay
     );
   };
 
-  clipPage = () => {
+  cropDisplay = () => {
     if (role === DocRole.Break || role === DocRole.Cover) {
       elements.chunks.forEach(c => c.classList.add('visible'));
       return;
@@ -66,88 +75,98 @@ export class Pagination extends React.Component<IProps, IState> {
 
     clearVisibleChunks();
     setVisibleChunks(findVisibleChunks(this.state.readingZone));
-    const realReadingZone = clipReadingZone(this.state.readingZone);
+    this.realReadingZone = clipReadingZone(this.state.readingZone);
+  };
 
-    this.setState({
-      ...this.state,
-      realReadingZone,
-    });
+  setCroppedDisplay = () => {
+    this.displayMode = Display.Cropped;
+  };
+
+  setAllLayout = () => {
+    this.displayMode = Display.ShowAll;
   };
 
   setPaginatedMode = () => {
-    this.setState({
-      ...this.state,
-      paginatedDisplay: true,
-    });
+    document.body.classList.add('nb-paginated');
   };
 
-  assessPagination = () => {
-    if (!this.state.paginatedDisplay) return;
-    const ms = new Date().getTime();
-
-    if (this.state.lastScrollStart === null) {
-      this.setState({ ...this.state, lastScrollStart: ms });
-      return;
-    }
-
-    if (ms - this.state.lastScrollStart < 150) return;
-
-    if (ms - this.state.lastScrollStart < 250) {
-      trackScroll();
-      this.setState({ ...this.state, paginatedDisplay: false, lastScrollStart: null });
-      return;
-    }
-
-    this.setState({ ...this.state, lastScrollStart: null });
+  setScrollingMode = () => {
+    document.body.classList.remove('nb-paginated');
   };
 
-  displayPaginated = () => {
-    this.assessPagination();
-
-    if (this.state.paginatedDisplay) {
-      document.body.classList.add('nb-paginated');
-      this.clipPage();
-    } else {
-      clearVisibleChunks();
-      document.body.classList.remove('nb-paginated');
+  refreshLayout = () => {
+    switch (this.displayMode) {
+      case Display.Cropped:
+        document.body.classList.add('nb-cropped');
+        this.cropDisplay();
+        break;
+      case Display.ShowAll:
+        document.body.classList.remove('nb-cropped');
+        clearVisibleChunks();
+        break;
     }
   };
 
-  getScrollHandler = () => {
-    const t3 = throttle(this.displayPaginated, 100, { leading: true });
+  getScrollHandler = (() => {
+    let timer: number | null = null;
+    let lastRefresh: number = new Date().getTime();
+    let eventCount: number = 0;
 
-    return function throttled() {
-      t3();
+    return (): void => {
+      if (timer !== null) clearTimeout(timer);
+
+      eventCount = eventCount + 1;
+
+      if (eventCount > 2) this.setAllLayout();
+
+      if (eventCount > 5) {
+        this.setScrollingMode();
+        trackScroll();
+      }
+
+      if (new Date().getTime() - lastRefresh > 100) {
+        lastRefresh = new Date().getTime();
+        this.refreshLayout();
+      }
+
+      timer = window.setTimeout(() => {
+        if (eventCount > 1 || this.displayMode === Display.ShowAll) {
+          this.setCroppedDisplay();
+          this.refreshLayout();
+        }
+
+        eventCount = 0;
+      }, 150);
     };
-  };
+  })();
 
   getScrollStep = (): number | null => {
     if (this.state.windowHeight === null) return null;
 
     return (
-      (this.state.realReadingZone === null ? 80 : this.state.realReadingZone[Side.Bottom]) -
+      (this.realReadingZone === null ? 80 : this.realReadingZone[Side.Bottom]) -
       this.state.zonePadding[Side.Top] -
       5
     );
   };
 
   componentDidMount() {
-    window.addEventListener('scroll', this.getScrollHandler());
+    window.addEventListener('scroll', this.getScrollHandler, { passive: true });
     setDomFn('getScrollStep', this.getScrollStep);
-    setDomFn('clipPage', this.clipPage);
-    setDomFn('setPaginatedMode', this.setPaginatedMode);
+    setDomFn('setCroppedDisplay', this.setCroppedDisplay);
 
     window.addEventListener('resize', this.setSizes);
 
     window.requestAnimationFrame(() => {
-      this.setPaginatedMode();
       this.setSizes();
-      document.body.classList.add('nb-paginated');
+      this.setCroppedDisplay();
+      this.setPaginatedMode();
+      this.refreshLayout();
     });
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.getScrollHandler());
+    window.removeEventListener('scroll', this.getScrollHandler);
     window.removeEventListener('resize', this.setSizes);
   }
 
@@ -214,25 +233,30 @@ function calcTopCutoff(chunk: Element | null, readingZone: Sides) {
   return { zone: y, clip: y - rect[Side.Top] };
 }
 
+function hasOrphan(chunkRect: DOMRect, readingZone: Sides, lineHeight: number) {
+  if (chunkRect.bottom - chunkRect.top < lineHeight * 1.5) return false;
+
+  const gap = chunkRect.bottom - readingZone[Side.Bottom];
+  return gap > 0 && gap < 1.5 * lineHeight;
+}
+
+function isWidow(chunkRect: DOMRect, y: number, lineHeight: number) {
+  if (chunkRect.bottom - chunkRect.top < lineHeight * 1.5) return false;
+
+  const gap = y - chunkRect.top;
+  return gap > 0 && gap < 1.5 * lineHeight;
+}
+
 function calcBottomCutoff(chunk: Element | null, readingZone: Sides) {
   if (chunk === null) return { zone: window.innerHeight, clip: 0 };
 
   const lineHeight = getComputedStyleNumber(chunk, 'lineHeight');
   const rect = chunk.getBoundingClientRect();
-
   let y = rect[Side.Bottom];
 
-  while (y > readingZone[Side.Bottom]) {
-    y -= lineHeight;
-  }
-
-  if (y - 1.5 * lineHeight < rect[Side.Top]) {
-    // cut off one-liners to prevent widows
-    y = rect[Side.Top];
-  } else if (y + 1.5 * lineHeight > rect[Side.Bottom]) {
-    // cut a line from n+1 long paragraph to prevent orphans
-    y -= lineHeight;
-  }
+  while (y > readingZone[Side.Bottom]) y -= lineHeight;
+  if (hasOrphan(rect, readingZone, lineHeight)) y -= lineHeight;
+  if (isWidow(rect, y, lineHeight)) y -= lineHeight;
 
   return { zone: y, clip: rect[Side.Bottom] - y };
 }
@@ -242,63 +266,81 @@ function getComputedStyleNumber(el: Element, attr: 'lineHeight' | 'paddingTop'):
   return parseInt(style[attr], 10);
 }
 
-function findVisibleChunks(readingZone: Sides) {
-  let top: null | Element = null;
-  let bottom: null | Element = null;
+enum Gate {
+  Unopened,
+  Open,
+  Closed,
+}
+
+function findVisibleChunks(readingZone: Sides): IVisibleChunks {
   const chunks = elements.chunks;
+  const insideRange = [];
+  let gate = Gate.Unopened;
 
-  for (let chunk of chunks) {
-    if (top !== null && bottom !== null) break;
+  for (let i = 0; i <= chunks.length - 1; i++) {
+    if (gate === Gate.Closed) break;
 
-    const rect = chunk.getBoundingClientRect();
-    const range = getComputedStyleNumber(chunk, 'lineHeight');
+    const chunk = chunks[i];
+    const prevChunk = chunks[i - 1];
+    const nextChunk = chunks[i + 1];
 
-    if (top === null && isChunkOnTopEdge(rect, range, readingZone[Side.Top])) top = chunk;
-    if (isChunkOnBottomEdge(rect, range, readingZone[Side.Bottom])) bottom = chunk;
+    const lineHeight = getComputedStyleNumber(chunk, 'lineHeight');
+
+    if (
+      (gate === Gate.Unopened &&
+        isChunkOnTopEdge(chunk, prevChunk, lineHeight, readingZone[Side.Top])) ||
+      (insideRange.length === 0 &&
+        isChunkInside(chunk, readingZone[Side.Top], readingZone[Side.Bottom]))
+    ) {
+      gate = isChunkOnBottomEdge(chunk, nextChunk, lineHeight, readingZone[Side.Bottom])
+        ? Gate.Closed
+        : Gate.Open;
+      insideRange.push(chunk);
+    } else if (
+      gate === Gate.Open &&
+      isChunkOnBottomEdge(chunk, nextChunk, lineHeight, readingZone[Side.Bottom])
+    ) {
+      gate = Gate.Closed;
+      insideRange.push(chunk);
+    } else if (gate === Gate.Open) insideRange.push(chunk);
   }
 
-  return { top, bottom, all: getRangeOfChunks(top, bottom, chunks) };
+  const top = insideRange[0] || null;
+  const bottom = insideRange[insideRange.length - 1] || null;
+
+  return { top, bottom, all: insideRange };
 }
 
-function getRangeOfChunks(
-  top: Element | null,
-  bottom: Element | null,
-  chunks: Element[]
-): Element[] {
-  if (chunks.length === 0) return [];
+function isChunkOnTopEdge(chunk: Element, prevChunk: Element, lineHeight: number, top: number) {
+  const range = {
+    top: prevChunk?.getBoundingClientRect().bottom || chunk.getBoundingClientRect().top,
+    bottom: chunk.getBoundingClientRect().bottom,
+  };
 
-  const topNum = top === null ? 1 : getRefInt(top);
-  const bottomNum = bottom === null ? getRefInt(chunks[chunks.length - 1]) : getRefInt(bottom);
-
-  if (topNum === null || bottomNum === null) return [];
-
-  const range: Element[] = [];
-
-  chunks.forEach(chunk => {
-    const attr = chunk.getAttribute('data-nb-ref-number');
-    if (attr !== null) {
-      const num = parseInt(attr, 10);
-      if (num >= topNum && num <= bottomNum) range.push(chunk);
-    }
-  });
-
-  return range;
+  return (range.top < top && range.bottom > top) || (range.top > top && range.top < top);
 }
 
-function getRefInt(el: Element) {
-  const num = el.getAttribute('data-nb-ref-number');
-  return num !== null ? parseInt(num, 10) : null;
+function isChunkInside(chunk: Element, top: number, bottom: number) {
+  const range = {
+    top: chunk.getBoundingClientRect().top,
+    bottom: chunk.getBoundingClientRect().bottom,
+  };
+
+  return (range.top > top && range.top < bottom) || (range.bottom > top && range.bottom < bottom);
 }
 
-function isChunkOnTopEdge(rect: DOMRect, range: number, edge: number) {
+function isChunkOnBottomEdge(
+  chunk: Element,
+  nextChunk: Element,
+  lineHeight: number,
+  bottom: number
+) {
+  const range = {
+    top: chunk.getBoundingClientRect().top,
+    bottom: nextChunk?.getBoundingClientRect().top || chunk.getBoundingClientRect().bottom,
+  };
+
   return (
-    (rect.top < edge && rect.bottom > edge + range) || (rect.top > edge && rect.top < edge + range)
-  );
-}
-
-function isChunkOnBottomEdge(rect: DOMRect, range: number, edge: number) {
-  return (
-    (rect.top < edge + range && rect.bottom > edge) ||
-    (rect.bottom < edge && rect.bottom > edge + range)
+    (range.top < bottom && range.bottom > bottom) || (range.top > bottom && range.top < bottom)
   );
 }

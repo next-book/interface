@@ -3,3 +3,34 @@
   max-width: var(--content-max-width);
   padding: calc(var(--base-padding) * 2) var(--base-padding);
 }
+
+body.nb-paginated main {
+  .begin-nav,
+  .end-nav {
+    a[rel='prev'],
+    a[rel='next'] {
+      text-indent: -9999px;
+
+      &:focus {
+        text-indent: 0;
+      }
+    }
+  }
+}
+
+body.nb-paginated-back,
+body.nb-paginated-forward {
+  .content {
+    overflow: hidden;
+
+    .visible {
+      animation: pagination-slide-in 0.3s;
+    }
+  }
+}
+
+body.nb-paginated-back {
+  .content .visible {
+    animation: pagination-slide-in-rev 0.3s;
+  }
+}

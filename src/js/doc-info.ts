@@ -65,19 +65,17 @@ function getChunks(): Element[] {
 
 export const domFns: {
   getScrollStep: { (): number | null };
-  clipPage: { (): void };
-  setPaginatedMode: { (): void };
+  setCroppedDisplay: { (): void };
 } = {
   getScrollStep: () => null,
-  clipPage: () => null,
-  setPaginatedMode: () => null,
+  setCroppedDisplay: () => null,
 };
 
-export function setDomFn(name: 'clipPage' | 'getScrollStep' | 'setPaginatedMode', fn: any): void {
+export function setDomFn(name: 'getScrollStep' | 'setCroppedDisplay', fn: any): void {
   domFns[name] = fn;
 }
 
-type IVisibleChunks = { top: Element | null; bottom: Element | null; all: Element[] };
+export type IVisibleChunks = { top: Element | null; bottom: Element | null; all: Element[] };
 
 export const elements: {
   chunks: Element[];

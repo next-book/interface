@@ -1,4 +1,4 @@
-.content {
+main {
   .idea:target {
     animation: highlight 3s ease-in-out;
 
@@ -48,36 +48,5 @@
       padding-top: 5vh;
       padding-bottom: 5vh;
     }
-  }
-}
-
-body.nb-paginated .content {
-  .begin-nav,
-  .end-nav {
-    a[rel='prev'],
-    a[rel='next'] {
-      text-indent: -9999px;
-
-      &:focus {
-        text-indent: 0;
-      }
-    }
-  }
-}
-
-body.nb-paginated-back,
-body.nb-paginated-forward {
-  .content {
-    overflow: hidden;
-
-    .visible {
-      animation: pagination-slide-in 0.3s;
-    }
-  }
-}
-
-body.nb-paginated-back {
-  .content .visible {
-    animation: pagination-slide-in-rev 0.3s;
   }
 }

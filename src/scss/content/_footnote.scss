@@ -1,4 +1,4 @@
-.content {
+main {
   .footnotes {
     display: none;
   }
@@ -28,8 +28,8 @@
 
       @media (hover) {
         &:hover {
-          box-shadow: var(--ui-inset-shadow);
-          background: var(--background);
+          background: var(--accent-color);
+          color: var(--background);
         }
       }
     }

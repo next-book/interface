@@ -46,6 +46,9 @@ export interface IProps extends WithTranslation {
 }
 
 export class Navigation extends React.Component<IProps> {
+  forwardAction: Action | null = null;
+  backAction: Action | null = null;
+
   setScrollRatio = () => {
     this.props.setScrollRatio(getScrollRatio());
   };
@@ -58,33 +61,6 @@ export class Navigation extends React.Component<IProps> {
     };
   };
 
-  getPrevChapterLink = () => {
-    const links = docInfo.links;
-    const position = this.props.position;
-
-    if ((docInfo.role === DocRole.Chapter || docInfo.role === DocRole.Break) && position !== null) {
-      if (this.props.readingOrder.indexOf(position.file) === 0) {
-        return links.colophon ? links.colophon : links.index;
-      }
-      const prev = this.props.documents[position.file].prev;
-      return prev ? `${prev}#chapter-end` : null;
-    } else if (docInfo.role === DocRole.Colophon) return links.index;
-    else return null;
-  };
-
-  getNextChapterLink = () => {
-    const role = docInfo.role;
-    const position = this.props.position;
-
-    if ((role === DocRole.Chapter || role === DocRole.Break) && position !== null) {
-      const next = this.props.documents[position.file].next;
-      return next || null;
-    } else if (role === DocRole.Colophon || role === DocRole.Cover) {
-      const next = this.props.readingOrder[0];
-      return next || null;
-    } else return null;
-  };
-
   handleKeyboardNav = (event: KeyboardEvent) => {
     if (document.activeElement !== document.body || document.activeElement === null) return;
 
@@ -93,11 +69,13 @@ export class Navigation extends React.Component<IProps> {
 
     switch (keycode(event)) {
       case 'left':
+        document.body.classList.add('nb-paginated');
         trackPagination(Controller.Keyboard);
-        return this.goBack(this.getBackAction());
+        return this.goBack(this.backAction);
       case 'right':
+        document.body.classList.add('nb-paginated');
         trackPagination(Controller.Keyboard);
-        return this.goForward(this.getForwardAction());
+        return this.goForward(this.forwardAction);
       default:
         return;
     }
@@ -107,9 +85,48 @@ export class Navigation extends React.Component<IProps> {
     trackPagination(Controller.Swipe);
 
     if (dir === Direction.Forward) {
-      this.goForward(this.getForwardAction());
+      document.body.classList.add('nb-paginated');
+      this.goForward(this.forwardAction);
     } else if (dir === Direction.Back) {
-      this.goBack(this.getBackAction());
+      document.body.classList.add('nb-paginated');
+      this.goBack(this.backAction);
+    }
+  };
+
+  handleButtonNav = (event: PointerEvent) => {
+    const target = event.target as HTMLElement;
+
+    if (
+      target.tagName != 'A' &&
+      target.tagName != 'BUTTON' &&
+      target.tagName != 'INPUT' &&
+      target.tagName != 'LABEL' &&
+      !target.classList.contains('ui-target') &&
+      target.closest('A') === null &&
+      target.closest('LABEL') === null &&
+      target.closest('.ui-target') === null
+    ) {
+      if (
+        isInPaginationRect(
+          document.querySelector('.forward-button')?.getBoundingClientRect(),
+          event.clientX,
+          event.clientY
+        )
+      ) {
+        document.body.classList.add('nb-paginated');
+        return this.goForward(this.forwardAction);
+      }
+
+      if (
+        isInPaginationRect(
+          document.querySelector('.back-button')?.getBoundingClientRect(),
+          event.clientX,
+          event.clientY
+        )
+      ) {
+        document.body.classList.add('nb-paginated');
+        return this.goBack(this.backAction);
+      }
     }
   };
 
@@ -117,7 +134,7 @@ export class Navigation extends React.Component<IProps> {
     if (document.body.clientHeight <= window.innerHeight) return Action.ChangeChapter;
     else if (this.props.position === null || !this.props.position.chapterEnd)
       return Action.Paginate;
-    else if (this.getNextChapterLink() !== null) return Action.ChangeChapter;
+    else if (docInfo.links.next !== null) return Action.ChangeChapter;
     else return Action.None;
   };
 
@@ -125,26 +142,30 @@ export class Navigation extends React.Component<IProps> {
     if (document.body.clientHeight <= window.innerHeight) return Action.ChangeChapter;
     else if (this.props.position === null || !this.props.position.chapterStart)
       return Action.Paginate;
-    else if (this.getPrevChapterLink() !== null) return Action.ChangeChapter;
+    else if (docInfo.links.prev !== null) return Action.ChangeChapter;
     else return Action.None;
   };
 
-  goForward = (action: Action) => {
+  goForward = (action: Action | null) => {
+    if (action === null) return;
+
     switch (action) {
       case Action.Paginate:
         const step = domFns.getScrollStep();
         pageForward(step);
         setLastScrollStep(step ? [Direction.Forward, step] : null);
-        domFns.setPaginatedMode();
+        domFns.setCroppedDisplay();
         return;
       case Action.ChangeChapter:
-        const next = this.getNextChapterLink();
+        const next = docInfo.links.next;
         if (next) window.location.assign(next);
         return;
     }
   };
 
-  goBack = (action: Action) => {
+  goBack = (action: Action | null) => {
+    if (action === null) return;
+
     switch (action) {
       case Action.Paginate:
         const step =
@@ -153,10 +174,10 @@ export class Navigation extends React.Component<IProps> {
             : domFns.getScrollStep();
         pageBack(step);
         setLastScrollStep(step ? [Direction.Back, step] : null);
-        domFns.setPaginatedMode();
+        domFns.setCroppedDisplay();
         return;
       case Action.ChangeChapter:
-        const prev = this.getPrevChapterLink();
+        const prev = `${docInfo.links.prev}#chapter-end`;
         if (prev) window.location.assign(prev);
         return;
     }
@@ -164,6 +185,8 @@ export class Navigation extends React.Component<IProps> {
 
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
+    window.addEventListener('pointerdown', this.handleButtonNav);
+
     if (this.props.keyboardNav) {
       document.body.addEventListener('keydown', this.handleKeyboardNav);
     }
@@ -181,6 +204,9 @@ export class Navigation extends React.Component<IProps> {
   }
 
   render() {
+    this.forwardAction = this.getForwardAction();
+    this.backAction = this.getBackAction();
+
     const ro = this.props.readingOrder;
     if (ro.length === 0) return null;
 
@@ -188,9 +214,6 @@ export class Navigation extends React.Component<IProps> {
     const chapter = pos !== null ? this.props.documents[pos.file] : null;
 
     const { totalWords } = this.props.documents[ro[ro.length - 1]];
-
-    const forwardAction = this.getForwardAction();
-    const backAction = this.getBackAction();
 
     return (
       <nav>
@@ -208,19 +231,19 @@ export class Navigation extends React.Component<IProps> {
         )}
 
         <div className="button-navigation">
-          <div className="back-button" onClick={() => this.goBack(backAction)}>
+          <div className="back-button">
             {this.props.invisibleNav ||
-              (backAction === Action.Paginate
+              (this.backAction === Action.Paginate
                 ? Prev
-                : backAction === Action.ChangeChapter
+                : this.backAction === Action.ChangeChapter
                 ? PrevChapter
                 : End)}
           </div>
-          <div className="forward-button" onClick={() => this.goForward(forwardAction)}>
+          <div className="forward-button">
             {this.props.invisibleNav ||
-              (forwardAction === Action.Paginate
+              (this.forwardAction === Action.Paginate
                 ? Next
-                : forwardAction === Action.ChangeChapter
+                : this.forwardAction === Action.ChangeChapter
                 ? NextChapter
                 : End)}
           </div>
@@ -228,6 +251,15 @@ export class Navigation extends React.Component<IProps> {
       </nav>
     );
   }
+}
+
+function isInPaginationRect(rect: ClientRect | undefined, x: number, y: number) {
+  if (!rect) return false;
+
+  if (rect.left < x && rect.left + rect.width > x && rect.top < y && rect.top + rect.height > y)
+    return true;
+
+  return false;
 }
 
 function displayPagination(dir: Direction) {

@@ -27,8 +27,8 @@ export class Position extends React.Component<IProps> {
   setPosition = (resetSequence: boolean = false, manipulateUriIdea: boolean = true) => {
     const idea = getFirstIdeaShown();
     const file = docInfo.links.self;
-    const chapterStart = idea === 1 || isPageScrolledToTop();
-    const chapterEnd = isPageScrolledToBottom();
+    const chapterStart = idea === 1 || isMainContentScrolledToTop();
+    const chapterEnd = isMainContentScrolledToBottom();
 
     if (file === null || idea === null) return;
 
@@ -111,7 +111,10 @@ function getTopBound(): number {
   return -window.scrollY;
 }
 
-function isPageScrolledToTop(): boolean {
+function isMainContentScrolledToTop(): boolean {
+  const mainTop = document.querySelector('main')?.getBoundingClientRect()?.top;
+  if (mainTop && mainTop >= 20) return true;
+
   return document.body.clientHeight <= window.innerHeight || getTopBound() > 48;
 }
 
@@ -122,7 +125,10 @@ function getBottomBound(): number {
   return document.body.scrollHeight - window.innerHeight - window.scrollY;
 }
 
-function isPageScrolledToBottom() {
+function isMainContentScrolledToBottom() {
+  const mainBottom = document.querySelector('main')?.getBoundingClientRect()?.bottom;
+  if (mainBottom && mainBottom < window.innerHeight - 30) return true;
+
   return document.body.clientHeight <= window.innerHeight || getBottomBound() < -50;
 }
 

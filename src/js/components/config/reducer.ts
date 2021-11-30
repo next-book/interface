@@ -51,7 +51,7 @@ const INITIAL_STATE: IState = {
   showOnboarding: ShowOnboarding.Initial,
   displayMinutesInChapter: true,
   displayPercentRead: true,
-  displayPosition: true,
+  displayPosition: false,
   basicStyle: false,
   fontSize: '1',
   colorScheme: ColorScheme.Auto,
