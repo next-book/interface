@@ -41,7 +41,6 @@
 .nb-toc,
 .nb-toc-other {
   a {
-    font-family: var(--content-font);
     font-weight: bold;
     color: var(--text-color);
     text-decoration: none;
@@ -52,4 +51,8 @@
       }
     }
   }
+}
+
+.nb-toc-other {
+  font-family: var(--content-font);
 }
