@@ -4,6 +4,21 @@ export enum StateClass {
   Ready = 'nb-ready',
 }
 
+export enum FootnotesClass {
+  Wrapper = 'footnotes'
+}
+
+export enum CropClass {
+  Wrapper = 'nb-cropped',
+  Chunk = 'chunk',
+  Visible = 'visible'
+}
+
+export enum PaginationClass {
+  Forward = 'step-forward',
+  Back = 'step-back'
+}
+
 export enum ComponentClass {
   Annotations = 'nb-annotations',
   Navigation = 'nb-navigation',

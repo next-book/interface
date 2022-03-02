@@ -1,6 +1,7 @@
 import { DocRole } from './components/manifest/reducer';
 import { Direction } from './components/navigation';
-import { MetaDocRoleElement, MetaOrderElement, MetaIdentifierElement, ResearchMetaElement, LangElement, BodyElement, GaugeAttr, LinkElement, LinkRel, ResearchMetaName, MetaName } from '../../shared/dom';
+import { TagClass } from '@next-book/publisher/shared/dom';
+import { FootnotesClass, CropClass, PaginationClass, MetaDocRoleElement, MetaOrderElement, MetaIdentifierElement, ResearchMetaElement, LangElement, BodyElement, GaugeAttr, LinkElement, LinkRel, ResearchMetaName, MetaName } from '../../shared/dom';
 
 export let lastScrollStep: [Direction, number] | null = null;
 
@@ -66,8 +67,8 @@ export const links = {
 };
 
 function getChunks(): Element[] {
-  return [...document.querySelectorAll('main .chunk')].filter(
-    chunk => chunk.closest('.footnotes') === null
+  return [...document.querySelectorAll(`main .${TagClass.Chunk}`)].filter(
+    chunk => chunk.closest(`.${FootnotesClass.Wrapper}`) === null
   );
 }
 
@@ -98,15 +99,15 @@ export function setVisibleChunks(chunks: IVisibleChunks) {
 }
 
 export function clearVisibleChunks() {
-  [...document.querySelectorAll('.visible')].forEach(c => {
-    c.classList.remove('visible', 'step-forward', 'step-back');
+  [...document.querySelectorAll(`.${CropClass.Visible}`)].forEach(c => {
+    c.classList.remove(CropClass.Visible, PaginationClass.Forward, PaginationClass.Back);
     (c as HTMLElement).style.clipPath = 'none';
   });
 }
 
 export function scrollToIdea(number: number | null) {
   if (number !== null) {
-    const el = document.getElementById(`idea${number}`);
+    const el = document.getElementById(`${TagClass.Idea}${number}`);
     if (el) window.scrollTo(window.scrollX, window.scrollY + el.getBoundingClientRect().top);
   }
 }
