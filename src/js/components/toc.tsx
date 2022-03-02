@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../reducer';
-import { IToc, IBaseTocItem } from './manifest/reducer';
+import { IToc } from './manifest/reducer';
 import { DocRole } from '@next-book/publisher/shared/manifest';
 import { IDocMap } from './position/reducer';
 import docInfo from '../doc-info';
@@ -12,7 +12,6 @@ import { reducer } from './config/reducer';
 import { Help } from '../icons';
 
 interface IProps extends WithTranslation {
-  tocBase: IBaseTocItem[];
   readingOrder: string[];
   documents: IDocMap;
   showOnboarding(): void;
@@ -136,7 +135,6 @@ function Section(props: ISectionProps) {
 
 const mapStateToProps = (state: ICombinedState) => {
   return {
-    tocBase: state.manifest.tocBase,
     readingOrder: state.position.readingOrder,
     documents: state.position.documents,
   };
