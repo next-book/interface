@@ -1,4 +1,5 @@
 import React from 'react';
+import { ComponentClass } from '../../shared/dom';
 import annotations from './components/annotations';
 import navigation from './components/navigation';
 import position from './components/position';
@@ -11,20 +12,20 @@ import config from './components/config';
 import onboarding from './components/onboarding';
 import research from './components/research';
 
-type IViews = { [key: string]: React.ComponentType };
+type IViews = { [key in ComponentClass]: React.ComponentType };
 
 const views: IViews = {
-  annotations,
-  navigation,
-  position,
-  manifest,
-  peeks,
-  trace,
-  offline,
-  controls,
-  config,
-  onboarding,
-  research,
+  [ComponentClass.Annotations]: annotations,
+  [ComponentClass.Navigation]: navigation,
+  [ComponentClass.Position]: position,
+  [ComponentClass.Manifest]: manifest,
+  [ComponentClass.Peeks]: peeks,
+  [ComponentClass.Trace]: trace,
+  [ComponentClass.Offline]: offline,
+  [ComponentClass.Controls]: controls,
+  [ComponentClass.Config]: config,
+  [ComponentClass.Onboarding]: onboarding,
+  [ComponentClass.Research]: research,
 };
 
 export default views;

@@ -1,12 +1,13 @@
 import { IState as IManifest } from './components/manifest/reducer';
+import { StateClass, ComponentClass } from '../../shared/dom';
 
 import cuid from 'cuid';
 
-export function plantRoot(componentName: string, parent: HTMLElement = document.body): HTMLElement {
+export function plantRoot(component: ComponentClass, parent: HTMLElement = document.body): HTMLElement {
   const id = cuid();
 
   const el = document.createElement('div');
-  el.classList.add(`nb-${componentName}`);
+  el.classList.add(component);
   el.setAttribute('id', id);
   parent.appendChild(el);
   return el;
@@ -32,7 +33,7 @@ export function loadManifest(link: string | null): Promise<object> {
 }
 
 export function addReadyBodyClass() {
-  document.body.classList.add('nb-ready');
+  document.body.classList.add(StateClass.Ready);
 }
 
 export function assignManifest(data: any): IManifest {
