@@ -6,7 +6,7 @@ import { bindActionCreators, Dispatch } from 'redux';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
 import docInfo from '../doc-info';
-import { DocRole } from './manifest/reducer';
+import { DocRole } from '@next-book/publisher/shared/manifest';
 import { Close } from './../icons';
 
 interface IProps extends WithTranslation {

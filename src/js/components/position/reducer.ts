@@ -1,4 +1,5 @@
-import { IDocument, DocRole } from './../manifest/reducer';
+import { IDocument } from './../manifest/reducer';
+import { DocRole } from '@next-book/publisher/shared/manifest';
 import { Sequential, SeqReturnStatus } from './../seq-return';
 
 const SET_POSITION = 'interface/navigation/SET_POSITION';

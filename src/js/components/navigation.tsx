@@ -8,7 +8,7 @@ import keycode from 'keycode';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
 import docInfo, { setLastScrollStep, lastScrollStep, domFns } from '../doc-info';
-import { DocRole } from './manifest/reducer';
+import { DocRole } from '@next-book/publisher/shared/manifest';
 import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';

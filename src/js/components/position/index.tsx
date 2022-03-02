@@ -6,7 +6,7 @@ import { throttle } from 'lodash';
 
 import docInfo from '../../doc-info';
 import SeqReturn, { Sequential, SeqReturnStatus } from './../seq-return';
-import { DocRole } from './../manifest/reducer';
+import { DocRole } from '@next-book/publisher/shared/manifest';
 import { reducer, IPosition, IDocMap, INavDocument } from './../position/reducer';
 
 export interface IProps {

@@ -1,3 +1,4 @@
+import { DocRole } from "@next-book/publisher/shared/manifest";
 const SET_MANIFEST_DATA = 'interface/manifest/SET_MANIFEST_DATA';
 
 export interface IState {
@@ -53,14 +54,6 @@ export interface IDocument {
   prev: string | null;
   next: string | null;
   toc: IToc[];
-}
-
-export enum DocRole {
-  Chapter = 'chapter',
-  Cover = 'cover',
-  Break = 'break',
-  Colophon = 'colophon',
-  Other = 'other',
 }
 
 export function reducer(state: IState | null = null, action: Actions) {

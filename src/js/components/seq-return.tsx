@@ -1,5 +1,6 @@
 import React from 'react';
-import { IDocument, DocRole } from './manifest/reducer';
+import { IDocument } from './manifest/reducer';
+import { DocRole } from '@next-book/publisher/shared/manifest';
 
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';

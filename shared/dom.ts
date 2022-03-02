@@ -1,4 +1,4 @@
-import { DocRole } from "../src/js/components/manifest/reducer";
+import { DocRole } from '@next-book/publisher/shared/manifest';
 
 export enum StateClass {
   Ready = 'nb-ready',
@@ -10,7 +10,6 @@ export enum FootnotesClass {
 
 export enum CropClass {
   Wrapper = 'nb-cropped',
-  Chunk = 'chunk',
   Visible = 'visible'
 }
 
