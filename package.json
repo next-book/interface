@@ -22,7 +22,8 @@
   "author": "Jan Martinek",
   "license": "MIT",
   "devDependencies": {
-    "@next-book/publisher": "^0.3.0-canary",
+    "@next-book/publisher": "^0.3.1-canary",
+    "@types/jsdom": "^16.2.14",
     "eslint": "^7.29.0",
     "eslint-plugin-react": "^7.24.0",
     "jest": "^27.0.6",
