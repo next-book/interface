@@ -1,3 +1,4 @@
+import { TagClass, TagAttr } from '@next-book/publisher/shared/dom';
 import { DocRole } from '@next-book/publisher/shared/manifest';
 
 export enum StateClass {
