@@ -9,6 +9,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import Progress, { ProgressForm } from './progress';
 import { reducer } from './config/reducer';
 import { Help } from '../icons';
+import { CustomDocTocElement, Role } from '../../../shared/dom';
 
 interface IProps extends WithTranslation {
   readingOrder: string[];
@@ -24,7 +25,7 @@ class Toc extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    const customToc = document.querySelector('[role="doc-toc"]');
+    const customToc = document.querySelector<CustomDocTocElement>(`[role="${Role.DocToc}"]`);
 
     this.state = {
       toc: customToc ? this.insertCustomToc(customToc.innerHTML) : this.buildToc(),
@@ -32,7 +33,7 @@ class Toc extends React.Component<IProps, IState> {
   }
 
   insertCustomToc = (toc: string) => {
-    return <div role="doc-toc" dangerouslySetInnerHTML={{ __html: toc }}></div>;
+    return <div role={Role.DocToc} dangerouslySetInnerHTML={{ __html: toc }}></div>;
   };
 
   buildToc = () => {

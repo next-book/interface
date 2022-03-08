@@ -62,6 +62,11 @@ export enum LinkRel {
   License = 'license'
 }
 
+export enum Role {
+  /* custom toc */
+  DocToc = 'doc-toc',
+}
+
 type HTMLCustomMetaElement = Omit<HTMLMetaElement, 'name' | 'content'>;
 type HTMLCustomLinkElement = Omit<HTMLLinkElement, 'rel' | 'href'>;
 type HTMLCustomHtmlElement = Omit<HTMLHtmlElement, 'lang'>;
@@ -112,6 +117,10 @@ export interface BodyElement extends HTMLBodyElement {
   [GaugeAttr.Chars]: string;
   [GaugeAttr.Words]: string;
   getAttribute(qualifiedName: GaugeAttr): string | null;
+}
+
+export interface CustomDocTocElement extends HTMLDivElement {
+  role: Role.DocToc
 }
 
 type ideaId = string;
