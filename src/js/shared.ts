@@ -1,4 +1,4 @@
-import { IState as IManifest } from './components/manifest/reducer';
+import Manifest from '@next-book/publisher/shared/manifest';
 import { StateClass, ComponentClass } from '../../shared/dom';
 
 import cuid from 'cuid';
@@ -24,7 +24,7 @@ function json(response: Response): object {
   return response.json();
 }
 
-export function loadManifest(link: string | null): Promise<object> {
+export function loadManifest(link: string | null): Promise<Partial<Manifest>> {
   if (link === null) return Promise.reject(new Error('Manifest not available.'));
 
   return fetch(link)
@@ -36,17 +36,28 @@ export function addReadyBodyClass() {
   document.body.classList.add(StateClass.Ready);
 }
 
-export function assignManifest(data: any): IManifest {
+export function assignManifest(data: Partial<Manifest>): Manifest {
   return Object.assign(
     {
       title: data.title,
       identifier: data.identifier,
       revision: data.revision,
+      documents: data.documents,
+    },
+    data.generatedAt && data.generatedAt.date && data.generatedAt.unix && {
       generatedAt: {
         date: data.generatedAt.date,
         unix: data.generatedAt.unix,
-      },
-      documents: data.documents,
+      }
+    },
+    data.totals
+    && data.totals.all
+    && data.totals.chapters
+    && data.totals.all.chars
+    && data.totals.all.words
+    && data.totals.chapters.chars
+    && data.totals.chapters.words
+    && {
       totals: {
         all: {
           words: data.totals.all.words,

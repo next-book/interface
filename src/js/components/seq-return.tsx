@@ -1,11 +1,8 @@
 import React from 'react';
-import { IDocument } from './manifest/reducer';
-import { DocRole } from '@next-book/publisher/shared/manifest';
-
+import { DocRole, DocumentMetadata } from '@next-book/publisher/shared/manifest';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
-
 import { ReturnKey, Check } from './../icons';
 import { trackSeqReturned, trackSeqReset } from './research/tracker';
 
@@ -29,7 +26,7 @@ interface IButton {
 
 interface IProps extends WithTranslation {
   targetIdea: number | null;
-  targetChapter: IDocument | null;
+  targetChapter: DocumentMetadata | null;
   sequential: Sequential;
   status: SeqReturnStatus;
   docRole: DocRole;
