@@ -1,3 +1,4 @@
+import { TagClass } from '@next-book/publisher/shared/dom';
 import { IAnnotation, IAnnotations, IAnnotationStyle, IIdeas, IIdeaRange } from './reducer';
 
 type IHighlightFn = (selection: Selection, range: Range) => IAnnotation | null;
@@ -192,7 +193,7 @@ const getElement = (node: Node): Element => {
 
 const getIdeaId = (node: Node): string => {
   const el = getElement(node);
-  const idea = <Element>el.closest('.idea');
+  const idea = <Element>el.closest('.'+TagClass.Idea);
   return idea.getAttribute('id') as string;
 };
 
@@ -206,7 +207,7 @@ const getAnnotationId = (node: Node): number => {
 export const getAnnotatedIdeas = (): IIdeas => {
   return [...document.querySelectorAll('.annotation')]
     .reduce((acc: Element[], annotation: Element) => {
-      const idea = annotation.closest('.idea');
+      const idea = annotation.closest('.'+TagClass.Idea);
       if (idea !== null && !acc.includes(idea)) acc.push(idea);
       return acc;
     }, [])
@@ -280,7 +281,7 @@ const isElementInsideIdea = (el: Element) => {
   if (el === null) return false;
 
   // MUST BE inside an idea
-  if (el.closest('.idea') === null) return false;
+  if (el.closest('.'+TagClass.Idea) === null) return false;
 
   return true;
 };
@@ -298,10 +299,10 @@ export const getIdeaRanges = (range: Range) => {
         for (let i = range.startOffset; i < range.endOffset; i++) {
           const child = start.childNodes[i];
           if (!child.nodeType || child.nodeType == Node.TEXT_NODE) continue;
-          if (getElement(child).classList.contains('idea')) acc.push(rangeFromElContents(child));
+          if (getElement(child).classList.contains(TagClass.Idea)) acc.push(rangeFromElContents(child));
           else
             getElement(child)
-              .querySelectorAll('.idea')
+              .querySelectorAll('.'+TagClass.Idea)
               .forEach((idea: Node) => {
                 acc.push(rangeFromElContents(idea));
               });

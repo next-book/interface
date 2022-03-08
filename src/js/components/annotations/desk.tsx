@@ -22,6 +22,7 @@ import { IDocMap, INavDocument } from '../position/reducer';
 import { getAnnotatedIdeas } from './utils';
 import { Plus, Check, Delete } from '../../icons';
 import { trackNoteCreation } from '../research/tracker';
+import { TagClass } from '@next-book/publisher/shared/dom';
 
 interface IProps extends WithTranslation {
   allAnnotations: IAllAnnotations;
@@ -370,7 +371,7 @@ const getNewNoteId = (notes: INotes) => {
 const getIdeaNumber = (annotation: IAnnotation, position: Position): number =>
   parseIdeaNumber(annotation.range[position]);
 
-const parseIdeaNumber = (id: string) => parseInt(id.replace('idea', ''), 10);
+const parseIdeaNumber = (id: string) => parseInt(id.replace(TagClass.Idea, ''), 10);
 
 const sortIdeas = (ideas: IIdeas) =>
   Object.entries(ideas).reduce((acc: string[], entry: [string, string]) => {
