@@ -112,3 +112,15 @@ export interface BodyElement extends HTMLBodyElement {
   [GaugeAttr.Words]: string;
   getAttribute(qualifiedName: GaugeAttr): string | null;
 }
+
+type ideaId = string;
+
+export const getIdeaId = (n: number):ideaId => TagClass.Idea + n.toString()
+
+export interface IdeaElement extends HTMLSpanElement {
+  className: TagClass.Idea | `${TagClass.Idea} highlited`;
+  id: ideaId;
+  [TagAttr.RefNum]: string;
+  [GaugeAttr.Chars]: string;
+  [GaugeAttr.Words]: string;
+}

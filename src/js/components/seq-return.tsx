@@ -5,6 +5,8 @@ import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
 import { ReturnKey, Check } from './../icons';
 import { trackSeqReturned, trackSeqReset } from './research/tracker';
+import { TagClass } from '@next-book/publisher/shared/dom';
+import { getIdeaId, IdeaElement } from '../../../shared/dom';
 
 export enum Sequential {
   No = 0,
@@ -75,7 +77,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     const idea = this.props.targetIdea;
     if (chapter === null || idea === null) return null;
 
-    const link = `./${chapter.file}#idea${idea}`;
+    const link = `./${chapter.file}${TagClass.Idea}${idea}`;
 
     return this.renderWrapper(this.posInAnotherChapter(link, idea, chapter.title), [
       {
@@ -100,7 +102,7 @@ class SeqReturn extends React.Component<IProps, IState> {
           )
         : null;
 
-    const link = `./${chapter.file}#idea${idea}`;
+    const link = `./${chapter.file}#${TagClass.Idea}${idea}`;
 
     return this.renderWrapper(this.posInAnotherChapter(link, idea, chapter.title), [
       {
@@ -129,7 +131,7 @@ class SeqReturn extends React.Component<IProps, IState> {
           )
         : null;
 
-    const link = `./${chapter.file}#idea${idea}`;
+    const link = `./${chapter.file}#${TagClass.Idea}${idea}`;
 
     const description =
       chapter.order === docInfo.order
@@ -146,7 +148,7 @@ class SeqReturn extends React.Component<IProps, IState> {
         ),
       },
       {
-        link: `./${chapter.file}#idea${idea}`,
+        link: `./${chapter.file}#${TagClass.Idea}${idea}`,
         click: this.returnToPosition,
         primary: true,
         text: (
@@ -264,7 +266,7 @@ class SeqReturn extends React.Component<IProps, IState> {
 }
 
 function highlightIdea(id: number) {
-  const el = document.getElementById(`idea${id}`);
+  const el = document.getElementById(getIdeaId(id)) as IdeaElement | null;
 
   if (el === null) return null;
 
