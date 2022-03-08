@@ -227,7 +227,7 @@ export class Navigation extends React.Component<IProps> {
           totalWords={totalWords}
         />
         {docInfo.role !== DocRole.Cover && chapter && (
-          <TopBar title={this.props.manifest.title || ''} chapter={chapter} />
+          <TopBar title={this.props.manifest.title} chapter={chapter} />
         )}
 
         <div className="button-navigation">
