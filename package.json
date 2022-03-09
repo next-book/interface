@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/next-book/interface.git"
   },
-  "main": "lib/index.js",
+  "main": "dist/interface.js",
   "scripts": {
     "ts": "tsc",
     "type-check": "tsc --noEmit",
