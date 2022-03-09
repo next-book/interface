@@ -5,7 +5,7 @@ import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
 import { ReturnKey, Check } from './../icons';
 import { trackSeqReturned, trackSeqReset } from './research/tracker';
-import { TagClass, getIdeaId, IdeaElement } from '@next-book/publisher/shared/dom';
+import { getIdeaId, IdeaElement } from '@next-book/publisher/shared/dom';
 
 export enum Sequential {
   No = 0,
@@ -76,7 +76,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     const idea = this.props.targetIdea;
     if (chapter === null || idea === null) return null;
 
-    const link = `./${chapter.file}#${TagClass.Idea}${idea}`;
+    const link = `./${chapter.file}#${getIdeaId(idea)}`;
 
     return this.renderWrapper(this.posInAnotherChapter(link, idea, chapter.title), [
       {
@@ -101,7 +101,7 @@ class SeqReturn extends React.Component<IProps, IState> {
           )
         : null;
 
-    const link = `./${chapter.file}#${TagClass.Idea}${idea}`;
+    const link = `./${chapter.file}#${getIdeaId(idea)}`;
 
     return this.renderWrapper(this.posInAnotherChapter(link, idea, chapter.title), [
       {
@@ -130,7 +130,7 @@ class SeqReturn extends React.Component<IProps, IState> {
           )
         : null;
 
-    const link = `./${chapter.file}#${TagClass.Idea}${idea}`;
+    const link = `./${chapter.file}#${getIdeaId(idea)}`;
 
     const description =
       chapter.order === docInfo.order
@@ -147,7 +147,7 @@ class SeqReturn extends React.Component<IProps, IState> {
         ),
       },
       {
-        link: `./${chapter.file}#${TagClass.Idea}${idea}`,
+        link: `./${chapter.file}#${getIdeaId(idea)}`,
         click: this.returnToPosition,
         primary: true,
         text: (

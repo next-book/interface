@@ -1,6 +1,6 @@
 import { DocRole } from '@next-book/publisher/shared/manifest';
 import { Direction } from './components/navigation';
-import { TagClass, FootnotesClass, CropClass, PaginationClass, MetaDocRoleElement, MetaOrderElement, MetaIdentifierElement, ResearchMetaElement, LangElement, BodyElement, GaugeAttr, LinkElement, LinkRel, ResearchMetaName, MetaName } from '@next-book/publisher/shared/dom';
+import { TagClass, FootnotesClass, CropClass, PaginationClass, MetaDocRoleElement, MetaOrderElement, MetaIdentifierElement, ResearchMetaElement, LangElement, BodyElement, GaugeAttr, LinkElement, LinkRel, ResearchMetaName, MetaName, getIdeaId } from '@next-book/publisher/shared/dom';
 
 export let lastScrollStep: [Direction, number] | null = null;
 
@@ -106,7 +106,7 @@ export function clearVisibleChunks() {
 
 export function scrollToIdea(number: number | null) {
   if (number !== null) {
-    const el = document.getElementById(`${TagClass.Idea}${number}`);
+    const el = document.getElementById(getIdeaId(number));
     if (el) window.scrollTo(window.scrollX, window.scrollY + el.getBoundingClientRect().top);
   }
 }

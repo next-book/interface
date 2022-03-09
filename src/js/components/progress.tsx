@@ -7,7 +7,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import { IState as ICombinedState } from '../reducer';
 import { TurnTo } from '../icons';
 import { trackAmountRead } from './research/tracker';
-import { TagClass } from '@next-book/publisher/shared/dom';
+import { getIdeaId } from '@next-book/publisher/shared/dom';
 
 export enum ProgressForm {
   Display,
@@ -60,7 +60,7 @@ class Progress extends React.Component<IProps, IState> {
     const url = window.location.href;
     const baseUrl = url.substr(0, url.lastIndexOf('/'));
 
-    window.location.href = `${baseUrl}/${this.state.file}#${TagClass.Idea}${this.state.idea}`;
+    window.location.href = `${baseUrl}/${this.state.file}#${getIdeaId(this.state.idea)}`;
   };
 
   render() {
