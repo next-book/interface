@@ -5,8 +5,7 @@ import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
 import { ReturnKey, Check } from './../icons';
 import { trackSeqReturned, trackSeqReset } from './research/tracker';
-import { TagClass } from '@next-book/publisher/shared/dom';
-import { getIdeaId, IdeaElement } from '../../../shared/dom';
+import { TagClass, getIdeaId, IdeaElement } from '@next-book/publisher/shared/dom';
 
 export enum Sequential {
   No = 0,

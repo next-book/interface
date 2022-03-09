@@ -9,7 +9,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import Progress, { ProgressForm } from './progress';
 import { reducer } from './config/reducer';
 import { Help } from '../icons';
-import { CustomDocTocElement, Role } from '../../../shared/dom';
+import { CustomDocTocElement, Role } from '@next-book/publisher/shared/dom';
 
 interface IProps extends WithTranslation {
   readingOrder: string[];

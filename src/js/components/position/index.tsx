@@ -8,8 +8,7 @@ import docInfo from '../../doc-info';
 import SeqReturn, { Sequential, SeqReturnStatus } from './../seq-return';
 import { DocRole } from '@next-book/publisher/shared/manifest';
 import { reducer, IPosition, IDocMap, INavDocument } from './../position/reducer';
-import { ChapterId, TagAttr, TagClass } from '@next-book/publisher/shared/dom';
-import { IdeaElement } from '../../../../shared/dom';
+import { IdeaElement, ChapterId, TagAttr, TagClass } from '@next-book/publisher/shared/dom';
 
 export interface IProps {
   readingOrder: string[];

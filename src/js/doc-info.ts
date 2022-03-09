@@ -1,7 +1,6 @@
 import { DocRole } from '@next-book/publisher/shared/manifest';
 import { Direction } from './components/navigation';
-import { TagClass } from '@next-book/publisher/shared/dom';
-import { FootnotesClass, CropClass, PaginationClass, MetaDocRoleElement, MetaOrderElement, MetaIdentifierElement, ResearchMetaElement, LangElement, BodyElement, GaugeAttr, LinkElement, LinkRel, ResearchMetaName, MetaName } from '../../shared/dom';
+import { TagClass, FootnotesClass, CropClass, PaginationClass, MetaDocRoleElement, MetaOrderElement, MetaIdentifierElement, ResearchMetaElement, LangElement, BodyElement, GaugeAttr, LinkElement, LinkRel, ResearchMetaName, MetaName } from '@next-book/publisher/shared/dom';
 
 export let lastScrollStep: [Direction, number] | null = null;
 
