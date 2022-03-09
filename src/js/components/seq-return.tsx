@@ -77,7 +77,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     const idea = this.props.targetIdea;
     if (chapter === null || idea === null) return null;
 
-    const link = `./${chapter.file}${TagClass.Idea}${idea}`;
+    const link = `./${chapter.file}#${TagClass.Idea}${idea}`;
 
     return this.renderWrapper(this.posInAnotherChapter(link, idea, chapter.title), [
       {
