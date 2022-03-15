@@ -1,5 +1,5 @@
 import React from 'react';
-import { DocumentMetadata } from '@next-book/publisher/shared/manifest';
+import { DocumentMetadata } from '@next-book/publisher';
 
 interface IProps {
   title: string;

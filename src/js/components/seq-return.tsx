@@ -1,11 +1,11 @@
 import React from 'react';
-import { DocRole, DocumentMetadata } from '@next-book/publisher/shared/manifest';
+import { DocRole, DocumentMetadata } from '@next-book/publisher';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
 import { ReturnKey, Check } from './../icons';
 import { trackSeqReturned, trackSeqReset } from './research/tracker';
-import { getIdeaId, IdeaElement } from '@next-book/publisher/shared/dom';
+import { getIdeaId, IdeaElement } from '@next-book/publisher';
 
 export enum Sequential {
   No = 0,

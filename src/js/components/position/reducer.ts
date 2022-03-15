@@ -1,5 +1,5 @@
-import { DocumentMetadata } from '@next-book/publisher/shared/manifest';
-import { DocRole } from '@next-book/publisher/shared/manifest';
+import { DocumentMetadata } from '@next-book/publisher';
+import { DocRole } from '@next-book/publisher';
 import { Sequential, SeqReturnStatus } from './../seq-return';
 
 const SET_POSITION = 'interface/navigation/SET_POSITION';

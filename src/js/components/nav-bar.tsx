@@ -1,5 +1,5 @@
 import React from 'react';
-import { DocRole } from '@next-book/publisher/shared/manifest';
+import { DocRole } from '@next-book/publisher';
 import { INavDocument, IDocMap } from './position/reducer';
 import { getProgress } from './progress';
 

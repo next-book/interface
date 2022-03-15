@@ -22,7 +22,7 @@ import { IDocMap, INavDocument } from '../position/reducer';
 import { getAnnotatedIdeas } from './utils';
 import { Plus, Check, Delete } from '../../icons';
 import { trackNoteCreation } from '../research/tracker';
-import { Id } from '@next-book/publisher/shared/dom';
+import { Id } from '@next-book/publisher';
 
 interface IProps extends WithTranslation {
   allAnnotations: IAllAnnotations;

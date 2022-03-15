@@ -10,7 +10,7 @@ import {
   role,
 } from '../doc-info';
 import { trackScroll } from './research/tracker';
-import { DocRole } from '@next-book/publisher/shared/manifest';
+import { DocRole } from '@next-book/publisher';
 
 enum Side {
   Bottom = 'bottom',

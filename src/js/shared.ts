@@ -1,5 +1,5 @@
-import Manifest from '@next-book/publisher/shared/manifest';
-import { StateClass, ComponentClass } from '@next-book/publisher/shared/dom';
+import { Manifest } from '@next-book/publisher';
+import { StateClass, ComponentClass } from '@next-book/publisher';
 
 import cuid from 'cuid';
 

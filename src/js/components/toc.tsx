@@ -2,14 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../reducer';
-import { DocRole, Heading as IToc } from '@next-book/publisher/shared/manifest';
+import { DocRole, Heading as IToc } from '@next-book/publisher';
 import { IDocMap } from './position/reducer';
 import docInfo from '../doc-info';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import Progress, { ProgressForm } from './progress';
 import { reducer } from './config/reducer';
 import { Help } from '../icons';
-import { CustomDocTocElement, Role } from '@next-book/publisher/shared/dom';
+import { CustomDocTocElement, Role } from '@next-book/publisher';
 
 interface IProps extends WithTranslation {
   readingOrder: string[];

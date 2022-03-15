@@ -2,7 +2,7 @@ import React from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { IState as ICombinedState } from '../../reducer';
-import Manifest from '@next-book/publisher/shared/manifest';
+import { Manifest } from '@next-book/publisher';
 import { IPosition } from './../position/reducer';
 import { IState as IOfflineState, SwAvailability } from './../offline/reducer';
 import { reducer, ColorScheme } from './../config/reducer';

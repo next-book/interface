@@ -7,7 +7,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 import { IState as ICombinedState } from '../reducer';
 import { TurnTo } from '../icons';
 import { trackAmountRead } from './research/tracker';
-import { getIdeaId } from '@next-book/publisher/shared/dom';
+import { getIdeaId } from '@next-book/publisher';
 
 export enum ProgressForm {
   Display,

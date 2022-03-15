@@ -15,7 +15,7 @@ import views from './views';
 
 import { reducer as manifestReducer } from './components/manifest/reducer';
 import { setDocumentValues } from './components/config';
-import { ComponentClass } from '@next-book/publisher/shared/dom';
+import { ComponentClass } from '@next-book/publisher';
 
 export function initBook() {
   const id = docInfo.identifier;

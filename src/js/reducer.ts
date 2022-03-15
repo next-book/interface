@@ -4,7 +4,7 @@ import {
   IState as IAnnotationsState,
 } from './components/annotations/reducer';
 import { reducer as position, IState as IPositionState } from './components/position/reducer';
-import Manifest from '@next-book/publisher/shared/manifest';
+import { Manifest } from '@next-book/publisher';
 import { reducer as manifest } from './components/manifest/reducer';
 import { reducer as peeks, IState as IPeeksState } from './components/peeks/reducer';
 import { reducer as trace, IState as ITraceState } from './components/trace/reducer';

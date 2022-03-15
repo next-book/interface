@@ -1,5 +1,5 @@
 import React from 'react';
-import { ComponentClass } from '@next-book/publisher/shared/dom';
+import { ComponentClass } from '@next-book/publisher';
 import annotations from './components/annotations';
 import navigation from './components/navigation';
 import position from './components/position';

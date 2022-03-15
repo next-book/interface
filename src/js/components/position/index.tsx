@@ -6,9 +6,9 @@ import { throttle } from 'lodash';
 
 import docInfo from '../../doc-info';
 import SeqReturn, { Sequential, SeqReturnStatus } from './../seq-return';
-import { DocRole } from '@next-book/publisher/shared/manifest';
+import { DocRole } from '@next-book/publisher';
 import { reducer, IPosition, IDocMap, INavDocument } from './../position/reducer';
-import { IdeaElement, ChapterId, TagAttr, TagClass, Id, getIdeaId } from '@next-book/publisher/shared/dom';
+import { IdeaElement, ChapterId, TagAttr, TagClass, Id, getIdeaId } from '@next-book/publisher';
 
 export interface IProps {
   readingOrder: string[];

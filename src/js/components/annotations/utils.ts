@@ -1,4 +1,4 @@
-import { TagClass } from '@next-book/publisher/shared/dom';
+import { TagClass } from '@next-book/publisher';
 import { IAnnotation, IAnnotations, IAnnotationStyle, IIdeas, IIdeaRange } from './reducer';
 
 type IHighlightFn = (selection: Selection, range: Range) => IAnnotation | null;
