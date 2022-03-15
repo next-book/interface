@@ -36,7 +36,7 @@
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
-    "@next-book/publisher": "^0.3.5-canary",
+    "@next-book/publisher": "^0.3.6-canary",
     "@types/fscreen": "^1.0.1",
     "@types/lodash": "^4.14.149",
     "@types/react": "^16.14.10",
