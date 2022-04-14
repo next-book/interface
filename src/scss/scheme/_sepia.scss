@@ -1,0 +1,51 @@
+@use "color-reset";
+
+$background: rgb(236, 207, 179) !default;
+$transparent-background: rgba(236, 207, 179, 0) !default;
+$text-color: rgb(97, 68, 41) !default;
+$accent-color: rgb(154, 76, 45) !default;
+$highlight-color: rgba(255, 255, 0, 1) !default;
+$link: rgb(117, 49, 21) !default;
+$visited: rgb(102, 82, 94) !default;
+$ui-c-bg: rgb(255, 229, 208) !default;
+$ui-c-bg-shade: rgb(245, 216, 188) !default;
+$ui-c-soft: rgb(220, 191, 163) !default;
+$ui-c-medium: rgb(186, 157, 129) !default;
+$ui-c-text-shade: rgb(161, 132, 104) !default;
+$ui-c-text: rgb(74, 45, 18) !default;
+$ui-box-shadow-color: rgba(62, 32, 7, 0.25) !default;
+$ui-box-shadow: 0 0 5px rgba(62, 32, 7, 0.25) !default;
+$ui-inset-shadow: inset 0 0 4px rgba(62, 32, 7, 0.3) !default;
+$ui-c-warning: red !default;
+$soft-border-color: rgba(62, 32, 7, 0.1) !default;
+$ui-c-shadow: rgba(62, 32, 7, 0.5) !default;
+
+@mixin colors {
+  // content colors
+  --background: #{$background};
+  --transparent-background: #{$transparent-background};
+  --text-color: #{$text-color};
+  --accent-color: #{$accent-color};
+  --highlight-color: #{$highlight-color};
+
+  --link: #{$link};
+  --visited: #{$visited};
+
+  // ui colors
+  --ui-c-bg: #{$ui-c-bg};
+  --ui-c-bg-shade: #{$ui-c-bg-shade};
+  --ui-c-soft: #{$ui-c-soft};
+  --ui-c-medium: #{$ui-c-medium};
+  --ui-c-text-shade: #{$ui-c-text-shade};
+  --ui-c-text: #{$ui-c-text};
+
+  --ui-box-shadow-color: #{$ui-box-shadow-color};
+  --ui-box-shadow: #{$ui-box-shadow};
+  --ui-inset-shadow: #{$ui-inset-shadow};
+
+  --ui-c-warning: #{$ui-c-warning};
+  --soft-border-color: #{$soft-border-color};
+  --ui-c-shadow: #{$ui-c-shadow};
+
+  @include color-reset.reset;
+}
