@@ -1,4 +1,30 @@
-@use "defaults";
+@use "conf";
+
+:root {
+  // layout
+  --content-max-width: #{conf.$content-max-width};
+  --content-margin-left: #{conf.$content-margin-left};
+  --content-margin-right: #{conf.$content-margin-right};
+
+  // content typo
+  --content-font: #{conf.$content-font};
+  --heading-font: #{conf.$heading-font};
+  --heading-font-weight: #{conf.$heading-font-weight};
+  --base-font-size: #{conf.$base-font-size};
+  --font-size-ratio: #{conf.$font-size-ratio};
+
+  // ui
+  --base-padding: #{conf.$base-padding};
+  --small-padding: #{conf.$small-padding};
+  --border-radius: #{conf.$border-radius};
+  --border-radius-xl: #{conf.$border-radius-xl};
+
+  // ui typo
+  --ui-font: #{conf.$ui-font};
+  --ui-font-size: #{conf.$ui-font-size};
+
+  font-size: calc(var(--base-font-size) * var(--font-size-ratio));
+}
 
 html {
   scroll-padding-top: 100px;
@@ -9,10 +35,10 @@ body {
   background: var(--background);
 }
 
-@media (min-width: 0.1px + map-get(defaults.$breakpoints, 'max-full-screen-controls')) {
+@media (min-width: 0.1px + map-get(conf.$breakpoints, 'max-full-screen-controls')) {
   body.nb-controls-open {
     --margins: calc(
-      100vw - #{defaults.$controls-width} - var(--content-max-width) - 2 * var(--base-padding)
+      100vw - #{conf.$controls-width} - var(--content-max-width) - 2 * var(--base-padding)
     );
     --content-margin-left: calc(var(--margins) / 2);
     --content-margin-right: auto;

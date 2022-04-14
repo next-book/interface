@@ -1,9 +1,6 @@
-$base-font-size: 18px;
-$controls-width: 24rem;
-
 @use 'animations';
 @use 'base';
 @use 'utils';
-@use 'themes';
+@use 'scheme/index';
 @use 'content';
 @use 'ui';

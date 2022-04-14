@@ -1,0 +1,10 @@
+@mixin reset {
+  color: var(--text-color);
+  background: var(--background);
+  :link {
+    color: var(--link);
+  }
+  :visited {
+    color: var(--visited);
+  }
+}
