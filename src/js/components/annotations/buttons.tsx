@@ -275,7 +275,12 @@ interface IActionButtonProps {
 
 export function ActionButton(props: IActionButtonProps) {
   return (
-    <span className={`action-button`} onMouseDown={buttonFn(props.fn)} title={props.title}>
+    <span
+      className={`action-button`}
+      onTouchStart={buttonFn(props.fn)}
+      onMouseDown={buttonFn(props.fn)}
+      title={props.title}
+    >
       {props.action}
     </span>
   );
@@ -298,6 +303,7 @@ export function StyleButton(props: IStyleButtonProps) {
         props.style.quick ? 'quick-note' : ''
       }`}
       style={style}
+      onTouchStart={buttonFn(props.fn)}
       onMouseDown={buttonFn(props.fn)}
       title={`Create annotation`}
     >
