@@ -2,24 +2,35 @@
 @use 'dark';
 @use 'sepia';
 
-:root {
+body {
   @include light.colors;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  body {
     @include dark.colors;
   }
 }
 
-.nb-color-scheme-light {
+body.nb-color-scheme-light {
   @include light.colors;
 }
 
-.nb-color-scheme-dark {
+body.nb-color-scheme-dark {
   @include dark.colors;
 }
 
-.nb-color-scheme-sepia {
+body.nb-color-scheme-sepia {
   @include sepia.colors;
+}
+
+body {
+  color: var(--text-color);
+  background: var(--background);
+  :link {
+    color: var(--link);
+  }
+  :visited {
+    color: var(--visited);
+  }
 }

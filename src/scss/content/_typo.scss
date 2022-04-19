@@ -1,3 +1,5 @@
+@use '../conf';
+
 main {
   p,
   blockquote,
@@ -14,7 +16,7 @@ main {
   th,
   figcaption {
     font-family: var(--content-font);
-    line-height: 1.4;
+    line-height: conf.$content-line-height;
     font-size: 1rem;
   }
 
@@ -33,7 +35,7 @@ main {
   h6 {
     font-family: var(--heading-font);
     font-weight: var(--heading-font-weight);
-    line-height: 1.25;
+    line-height: conf.$heading-line-height;
     margin: 1.5rem 0 0.125rem;
   }
 

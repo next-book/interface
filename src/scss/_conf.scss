@@ -1,4 +1,7 @@
 $base-font-size: 18px !default;
+$content-line-height: 1.4 !default;
+$heading-line-height: 1.25 !default;
+
 $controls-width: 24rem !default;
 
 $content-max-width: 35rem !default;
@@ -25,15 +28,16 @@ $ui-font-size: calc(16px * var(--font-size-ratio)) !default;
 @use "functions";
 
 $z-indexes: (
-  'onboarding': 4000,
   'pagination': 900,
-  'annotations': 1300,
+  'breaks': 950,
   'navigation': 1000,
-  'footnotes': 1200,
-  'peeks': 1000,
+  'peeks': 1050,
   'toc': 1100,
+  'footnotes': 1200,
+  'annotations': 1300,
   'controls': 3000,
-  'research': 3500
+  'research': 3500,
+  'onboarding': 4000
 );
 
 $breakpoints: (

@@ -1,5 +1,3 @@
-@use "color-reset";
-
 $background: white !default;
 $transparent-background: rgba(255, 255, 255, 0) !default;
 $text-color: black !default;
@@ -46,6 +44,4 @@ $ui-c-shadow: rgba(0, 0, 0, 0.5) !default;
   --ui-c-warning: #{$ui-c-warning};
   --soft-border-color: #{$soft-border-color};
   --ui-c-shadow: #{$ui-c-shadow};
-
-  @include color-reset.reset;
 }
