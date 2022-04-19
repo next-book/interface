@@ -53,13 +53,7 @@ export class Navigation extends React.Component<IProps> {
     this.props.setScrollRatio(getScrollRatio());
   };
 
-  getScrollHandler = () => {
-    const t2 = throttle(this.setScrollRatio, 200, { leading: true });
-
-    return function throttled() {
-      t2();
-    };
-  };
+  scrollHandler = throttle(() => this.setScrollRatio(), 200, { leading: true });
 
   handleKeyboardNav = (event: KeyboardEvent) => {
     if (document.activeElement !== document.body || document.activeElement === null) return;
@@ -184,7 +178,7 @@ export class Navigation extends React.Component<IProps> {
   };
 
   componentDidMount() {
-    window.addEventListener('scroll', this.getScrollHandler());
+    window.addEventListener('scroll', this.scrollHandler);
     window.addEventListener('pointerdown', this.handleButtonNav);
 
     if (this.props.keyboardNav) {
@@ -197,7 +191,7 @@ export class Navigation extends React.Component<IProps> {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.getScrollHandler());
+    window.removeEventListener('scroll', this.scrollHandler);
     if (this.props.keyboardNav) {
       document.body.removeEventListener('keydown', this.handleKeyboardNav);
     }

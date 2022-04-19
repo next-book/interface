@@ -26,6 +26,8 @@ export class Position extends React.Component<IProps> {
   }
 
   setPosition = (resetSequence: boolean = false, manipulateUriIdea: boolean = true) => {
+    this.scrollToNonIdeaFragment();
+
     const idea = getFirstIdeaShown();
     const file = docInfo.links.self;
     const chapterStart = idea === 1 || isMainContentScrolledToTop();
@@ -59,16 +61,19 @@ export class Position extends React.Component<IProps> {
 
   getSeqReturnStatus = getSeqReturnStatus();
 
-  getScrollHandler = () => {
-    const t1 = throttle(this.setPosition, 200, { leading: true });
+  scrollHandler = throttle(() => this.setPosition(), 200, { leading: true });
 
-    return function throttled() {
-      t1();
-    };
+  scrollToNonIdeaFragment = () => {
+    if (window.location.hash && !/^#idea\d/.test(window.location.hash)) {
+      const el = document.getElementById(decodeURIComponent(window.location.hash.substr(1)));
+      if (el)
+        window.scrollTo(window.scrollX, window.scrollY + el.getBoundingClientRect().top - 100);
+    }
   };
 
   componentDidMount() {
-    window.addEventListener('scroll', this.getScrollHandler());
+    window.addEventListener('scroll', this.scrollHandler);
+
     const isTop =
       window.scrollY === 0 && (window.location.hash === '' || window.location.hash === `#${Id.Idea}1`);
     const isBottom = window.location.hash === `#${ChapterId.End}`;
@@ -77,7 +82,7 @@ export class Position extends React.Component<IProps> {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.getScrollHandler());
+    window.removeEventListener('scroll', this.scrollHandler);
   }
 
   render() {
