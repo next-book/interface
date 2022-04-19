@@ -74,8 +74,12 @@ export class Pagination extends React.Component<IProps, IState> {
     if (this.state.windowHeight === null) return;
 
     clearVisibleChunks();
-    setVisibleChunks(findVisibleChunks(this.state.readingZone));
-    this.realReadingZone = clipReadingZone(this.state.readingZone);
+
+    // clip reading zone
+    this.realReadingZone = clipReadingZone(
+      this.state.readingZone,
+      findVisibleChunks(this.state.readingZone)
+    );
   };
 
   setCroppedDisplay = () => {
@@ -175,9 +179,11 @@ export class Pagination extends React.Component<IProps, IState> {
   }
 }
 
-function clipReadingZone(readingZone: Sides): { top: number; bottom: number } {
-  const chunks = elements.visibleChunks;
-  const cutoffs = calcCutoffs(chunks.top, chunks.bottom, readingZone);
+function clipReadingZone(
+  readingZone: Sides,
+  visibleChunks: IVisibleChunks
+): { top: number; bottom: number } {
+  const { visibleChunks: chunks, cutoffs } = recursiveClipAndCheck(readingZone, visibleChunks);
 
   if (chunks.top !== null && chunks.top === chunks.bottom)
     clipChunk(chunks.top, cutoffs.top.clip, cutoffs.bottom.clip);
@@ -190,10 +196,63 @@ function clipReadingZone(readingZone: Sides): { top: number; bottom: number } {
     if (chunks.all !== null) chunks.all.forEach(c => c.classList.add('visible'));
   });
 
+  setVisibleChunks(chunks);
+
   return {
     top: cutoffs.top.zone,
     bottom: cutoffs.bottom.zone,
   };
+}
+
+function recursiveClipAndCheck(
+  readingZone: Sides,
+  visibleChunks: IVisibleChunks
+): {
+  visibleChunks: IVisibleChunks;
+  cutoffs: {
+    top: { zone: number; clip: number };
+    bottom: { zone: number; clip: number };
+  };
+} {
+  const { top, bottom, all } = visibleChunks;
+
+  const cutoffs = calcCutoffs(top, bottom, readingZone);
+
+  if (top === null || bottom === null || all.length === 1) return { visibleChunks, cutoffs };
+
+  // remove first chunk if it has no visible lines
+  if (isCompletelyClipped(top, cutoffs.top.clip)) {
+    all.shift();
+
+    return recursiveClipAndCheck(readingZone, {
+      top: all[0],
+      bottom: all[all.length - 1],
+      all,
+    });
+  }
+
+  //  remove last chunk if it has no visible lines, is a heading or contains clipped images
+  if (
+    isCompletelyClipped(bottom, cutoffs.bottom.clip) ||
+    isHeading(bottom) ||
+    hasClippedImages(bottom, cutoffs.bottom.zone)
+  ) {
+    all.pop();
+
+    return recursiveClipAndCheck(readingZone, {
+      top: all[0],
+      bottom: all[all.length - 1],
+      all,
+    });
+  }
+
+  return { visibleChunks, cutoffs };
+}
+
+function isCompletelyClipped(chunk: Element, clip: number) {
+  // half line height added to account for few px differences
+  const lineHeight = getComputedStyleNumber(chunk, 'lineHeight');
+  return chunk.getBoundingClientRect().height <= clip + lineHeight / 2;
 }
 
 function calcCutoffs(
@@ -213,13 +272,17 @@ function calcCutoffs(
 function clipChunk(chunk: Element | null, top: number, bottom: number) {
   if (chunk === null) return;
 
-  (chunk as HTMLElement).style.clipPath = `inset(${top}px 0 ${bottom}px 0)`;
+  (chunk as HTMLElement).style.clipPath = `inset(${top === 0 ? '-999' : top}px -999px ${
+    bottom === 0 ? '-999' : bottom
+  }px -999px)`;
 }
 
 function calcTopCutoff(chunk: Element | null, readingZone: Sides) {
   if (chunk === null) return { zone: 0, clip: 0 };
 
   const lineHeight = getComputedStyleNumber(chunk, 'lineHeight');
+
+  // todo check clientRect and padding calculations and box-sizing combinations
   const rect = chunk.getBoundingClientRect();
 
   let y = rect[Side.Top] + getComputedStyleNumber(chunk, 'paddingTop');
@@ -305,10 +368,25 @@ function findVisibleChunks(readingZone: Sides): IVisibleChunks {
     } else if (gate === Gate.Open) insideRange.push(chunk);
   }
 
+  // remove last item if it’s a heading
+  const lastItem = insideRange.pop();
+  if (lastItem && (insideRange.length === 0 || !isHeading(lastItem))) insideRange.push(lastItem);
+
   const top = insideRange[0] || null;
   const bottom = insideRange[insideRange.length - 1] || null;
 
   return { top, bottom, all: insideRange };
+}
+
+function hasClippedImages(chunk: Element, zoneBottom: number) {
+  return [...chunk.querySelectorAll('img')].some(img => {
+    const rect = img.getBoundingClientRect();
+    return rect.top > zoneBottom || rect.bottom > zoneBottom;
+  });
+}
+
+function isHeading(chunk: Element) {
+  return /^[hH][1-6]$/.test(chunk.tagName);
 }
 
 function isChunkOnTopEdge(chunk: Element, prevChunk: Element, lineHeight: number, top: number) {
@@ -336,7 +414,7 @@ function isChunkOnBottomEdge(
   bottom: number
 ) {
   const range = {
-    top: chunk.getBoundingClientRect().top,
+    top: chunk.getBoundingClientRect().top + lineHeight,
     bottom: nextChunk?.getBoundingClientRect().top || chunk.getBoundingClientRect().bottom,
   };
 
