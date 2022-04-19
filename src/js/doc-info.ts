@@ -96,6 +96,10 @@ export function setVisibleChunks(chunks: IVisibleChunks) {
   elements.visibleChunks = chunks;
 }
 
+export function showAllChunks() {
+  [...document.querySelectorAll('.chunk')].forEach(c => c.classList.add('visible'));
+}
+
 export function clearVisibleChunks() {
   [...document.querySelectorAll(`.${CropClass.Visible}`)].forEach(c => {
     c.classList.remove(CropClass.Visible, PaginationClass.Forward, PaginationClass.Back);

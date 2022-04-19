@@ -20,6 +20,8 @@ function getTouches(e: TouchEvent) {
 }
 
 function handleSwipeEnd(e: TouchEvent) {
+  if (window.visualViewport.scale > 1) return;
+
   if (preventClick) {
     e.preventDefault();
     e.stopPropagation();
@@ -28,12 +30,16 @@ function handleSwipeEnd(e: TouchEvent) {
 }
 
 function handleSwipeStart(e: TouchEvent) {
+  if (window.visualViewport.scale > 1) return;
+
   const firstTouch = getTouches(e)[0];
   xDown = firstTouch.clientX;
   yDown = firstTouch.clientY;
 }
 
 function handleSwipeMove(e: TouchEvent) {
+  if (window.visualViewport.scale > 1) return;
+
   if (preventClick) e.preventDefault();
 
   const selection = window.getSelection();
