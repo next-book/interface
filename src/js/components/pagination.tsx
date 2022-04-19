@@ -6,6 +6,7 @@ import {
   IVisibleChunks,
   setVisibleChunks,
   clearVisibleChunks,
+  showAllChunks,
   setDomFn,
   role,
 } from '../doc-info';
@@ -76,10 +77,12 @@ export class Pagination extends React.Component<IProps, IState> {
     clearVisibleChunks();
 
     // clip reading zone
-    this.realReadingZone = clipReadingZone(
-      this.state.readingZone,
-      findVisibleChunks(this.state.readingZone)
-    );
+    if (window.visualViewport.scale === 1)
+      this.realReadingZone = clipReadingZone(
+        this.state.readingZone,
+        findVisibleChunks(this.state.readingZone)
+      );
+    else showAllChunks();
   };
 
   setCroppedDisplay = () => {

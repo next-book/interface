@@ -89,6 +89,10 @@ export function setVisibleChunks(chunks: IVisibleChunks) {
   elements.visibleChunks = chunks;
 }
 
+export function showAllChunks() {
+  [...document.querySelectorAll('.chunk')].forEach(c => c.classList.add('visible'));
+}
+
 export function clearVisibleChunks() {
   [...document.querySelectorAll('.visible')].forEach(c => {
     c.classList.remove('visible', 'step-forward', 'step-back');
