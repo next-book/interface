@@ -252,10 +252,22 @@ function recursiveClipAndCheck(
   return { visibleChunks, cutoffs };
 }
 
+function getContentVerticals(el: Element) {
+  const rect = el.getBoundingClientRect();
+  const paddingTop = getComputedStyleNumber(el, 'paddingTop');
+  const paddingBottom = getComputedStyleNumber(el, 'paddingBottom');
+
+  return {
+    top: rect.top + paddingTop,
+    bottom: rect.bottom - paddingBottom,
+    height: rect.height - paddingTop - paddingBottom,
+  };
+}
+
 function isCompletelyClipped(chunk: Element, clip: number) {
   // half line height added to account for few px differences
   const lineHeight = getComputedStyleNumber(chunk, 'lineHeight');
-  return chunk.getBoundingClientRect().height <= clip + lineHeight / 2;
+  return getContentVerticals(chunk).height <= clip + lineHeight / 2;
 }
 
 function calcCutoffs(
@@ -280,15 +292,36 @@ function clipChunk(chunk: Element | null, top: number, bottom: number) {
   }px -999px)`;
 }
 
-function calcTopCutoff(chunk: Element | null, readingZone: Sides) {
+function calcNestedTopCutoff(
+  el: Element,
+  readingZone: Sides
+): { zone: number; clip: number } | null {
+  return [...el.querySelectorAll('p, li, dd, dt')]
+    .filter(el => window.getComputedStyle(el).display === 'block')
+    .filter((el, index, els) => isElementOnTopEdge(el, els[index - 1], readingZone[Side.Top]))
+    .map(el => calcTopCutoff(el, readingZone, true))
+    .reduce((acc: { zone: number; clip: number } | null, cutoff) => {
+      if (cutoff.zone === null) return acc;
+      if (acc === null) return cutoff;
+
+      if (cutoff.clip > acc.clip) acc = { ...cutoff };
+      return acc;
+    }, null);
+}
+
+function calcTopCutoff(chunk: Element | null, readingZone: Sides, skipBlockCheck: boolean = false) {
   if (chunk === null) return { zone: 0, clip: 0 };
+  const verticals = getContentVerticals(chunk);
+
+  if (!skipBlockCheck) {
+    const nestedCutoff = calcNestedTopCutoff(chunk, readingZone);
+    if (nestedCutoff !== null)
+      return { zone: nestedCutoff.zone, clip: nestedCutoff.zone - verticals[Side.Top] };
+  }
 
   const lineHeight = getComputedStyleNumber(chunk, 'lineHeight');
 
-  // todo check clientRect and padding calculations and box-sizing combinations
-  const rect = chunk.getBoundingClientRect();
-
-  let y = rect[Side.Top] + getComputedStyleNumber(chunk, 'paddingTop');
+  let y = verticals[Side.Top];
 
   // adding half of lineHeight to account for Firefox behavior
   // (Chrome and Safari work OK without this)
@@ -296,38 +329,72 @@ function calcTopCutoff(chunk: Element | null, readingZone: Sides) {
     y += lineHeight;
   }
 
-  return { zone: y, clip: y - rect[Side.Top] };
+  return { zone: y, clip: y - verticals[Side.Top] };
 }
 
-function hasOrphan(chunkRect: DOMRect, readingZone: Sides, lineHeight: number) {
-  if (chunkRect.bottom - chunkRect.top < lineHeight * 1.5) return false;
+function hasOrphan(
+  verticals: ReturnType<typeof getContentVerticals>,
+  readingZone: Sides,
+  lineHeight: number
+) {
+  if (verticals.bottom - verticals.top < lineHeight * 1.5) return false;
 
-  const gap = chunkRect.bottom - readingZone[Side.Bottom];
+  const gap = verticals.bottom - readingZone[Side.Bottom];
   return gap > 0 && gap < 1.5 * lineHeight;
 }
 
-function isWidow(chunkRect: DOMRect, y: number, lineHeight: number) {
-  if (chunkRect.bottom - chunkRect.top < lineHeight * 1.5) return false;
+function isWidow(verticals: ReturnType<typeof getContentVerticals>, y: number, lineHeight: number) {
+  if (verticals.bottom - verticals.top < lineHeight * 1.5) return false;
 
-  const gap = y - chunkRect.top;
+  const gap = y - verticals.top;
   return gap > 0 && gap < 1.5 * lineHeight;
 }
 
-function calcBottomCutoff(chunk: Element | null, readingZone: Sides) {
+function calcNestedBottomCutoff(
+  el: Element,
+  readingZone: Sides
+): { zone: number; clip: number } | null {
+  return [...el.querySelectorAll('p, li, dd, dt')]
+    .filter(el => window.getComputedStyle(el).display === 'block')
+    .filter((el, index, els) => isElementOnBottomEdge(el, els[index + 1], readingZone[Side.Bottom]))
+    .map(el => calcBottomCutoff(el, readingZone, true))
+    .reduce((acc: { zone: number; clip: number } | null, cutoff) => {
+      if (cutoff.zone === null) return acc;
+      if (acc === null) return cutoff;
+
+      if (cutoff.clip > acc.clip) acc = { ...cutoff };
+      return acc;
+    }, null);
+}
+
+function calcBottomCutoff(
+  chunk: Element | null,
+  readingZone: Sides,
+  skipBlockCheck: boolean = false
+): { zone: number; clip: number } {
   if (chunk === null) return { zone: window.innerHeight, clip: 0 };
+  const verticals = getContentVerticals(chunk);
+
+  if (!skipBlockCheck) {
+    const nestedCutoff = calcNestedBottomCutoff(chunk, readingZone);
+    if (nestedCutoff !== null)
+      return { zone: nestedCutoff.zone, clip: verticals[Side.Bottom] - nestedCutoff.zone };
+  }
 
   const lineHeight = getComputedStyleNumber(chunk, 'lineHeight');
-  const rect = chunk.getBoundingClientRect();
-  let y = rect[Side.Bottom];
+  let y = verticals[Side.Bottom];
 
   while (y > readingZone[Side.Bottom]) y -= lineHeight;
-  if (hasOrphan(rect, readingZone, lineHeight)) y -= lineHeight;
-  if (isWidow(rect, y, lineHeight)) y -= lineHeight;
+  if (hasOrphan(verticals, readingZone, lineHeight)) y -= lineHeight;
+  if (isWidow(verticals, y, lineHeight)) y -= lineHeight;
 
-  return { zone: y, clip: rect[Side.Bottom] - y };
+  return { zone: y, clip: verticals[Side.Bottom] - y };
 }
 
-function getComputedStyleNumber(el: Element, attr: 'lineHeight' | 'paddingTop'): number {
+function getComputedStyleNumber(
+  el: Element,
+  attr: 'lineHeight' | 'paddingTop' | 'paddingBottom'
+): number {
   const style = window.getComputedStyle(el);
   return parseInt(style[attr], 10);
 }
@@ -354,17 +421,17 @@ function findVisibleChunks(readingZone: Sides): IVisibleChunks {
 
     if (
       (gate === Gate.Unopened &&
-        isChunkOnTopEdge(chunk, prevChunk, lineHeight, readingZone[Side.Top])) ||
+        isElementOnTopEdge(chunk, prevChunk, readingZone[Side.Top], lineHeight)) ||
       (insideRange.length === 0 &&
-        isChunkInside(chunk, readingZone[Side.Top], readingZone[Side.Bottom]))
+        isElementInside(chunk, readingZone[Side.Top], readingZone[Side.Bottom]))
     ) {
-      gate = isChunkOnBottomEdge(chunk, nextChunk, lineHeight, readingZone[Side.Bottom])
+      gate = isElementOnBottomEdge(chunk, nextChunk, readingZone[Side.Bottom], lineHeight)
         ? Gate.Closed
         : Gate.Open;
       insideRange.push(chunk);
     } else if (
       gate === Gate.Open &&
-      isChunkOnBottomEdge(chunk, nextChunk, lineHeight, readingZone[Side.Bottom])
+      isElementOnBottomEdge(chunk, nextChunk, readingZone[Side.Bottom], lineHeight)
     ) {
       gate = Gate.Closed;
       insideRange.push(chunk);
@@ -383,8 +450,8 @@ function findVisibleChunks(readingZone: Sides): IVisibleChunks {
 
 function hasClippedImages(chunk: Element, zoneBottom: number) {
   return [...chunk.querySelectorAll('img')].some(img => {
-    const rect = img.getBoundingClientRect();
-    return rect.top > zoneBottom || rect.bottom > zoneBottom;
+    const verticals = getContentVerticals(img);
+    return verticals.top > zoneBottom || verticals.bottom > zoneBottom;
   });
 }
 
@@ -392,33 +459,42 @@ function isHeading(chunk: Element) {
   return /^[hH][1-6]$/.test(chunk.tagName);
 }
 
-function isChunkOnTopEdge(chunk: Element, prevChunk: Element, lineHeight: number, top: number) {
+function isElementOnTopEdge(
+  el: Element,
+  prevEl: Element | undefined,
+  top: number,
+  lineHeight: number | null = null
+) {
+  if (lineHeight === null) lineHeight = getComputedStyleNumber(el, 'lineHeight');
+
   const range = {
-    top: prevChunk?.getBoundingClientRect().bottom || chunk.getBoundingClientRect().top,
-    bottom: chunk.getBoundingClientRect().bottom,
+    top: (prevEl && getContentVerticals(prevEl).bottom) || getContentVerticals(el).top,
+    bottom: getContentVerticals(el).bottom,
   };
 
   return (range.top < top && range.bottom > top) || (range.top > top && range.top < top);
 }
 
-function isChunkInside(chunk: Element, top: number, bottom: number) {
+function isElementInside(el: Element, top: number, bottom: number) {
   const range = {
-    top: chunk.getBoundingClientRect().top,
-    bottom: chunk.getBoundingClientRect().bottom,
+    top: getContentVerticals(el).top,
+    bottom: getContentVerticals(el).bottom,
   };
 
   return (range.top > top && range.top < bottom) || (range.bottom > top && range.bottom < bottom);
 }
 
-function isChunkOnBottomEdge(
-  chunk: Element,
-  nextChunk: Element,
-  lineHeight: number,
-  bottom: number
+function isElementOnBottomEdge(
+  el: Element,
+  nextEl: Element | undefined,
+  bottom: number,
+  lineHeight: number | null = null
 ) {
+  if (lineHeight === null) lineHeight = getComputedStyleNumber(el, 'lineHeight');
+
   const range = {
-    top: chunk.getBoundingClientRect().top + lineHeight,
-    bottom: nextChunk?.getBoundingClientRect().top || chunk.getBoundingClientRect().bottom,
+    top: getContentVerticals(el).top + lineHeight,
+    bottom: (nextEl && getContentVerticals(nextEl).top) || getContentVerticals(el).bottom,
   };
 
   return (
