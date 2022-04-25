@@ -15,6 +15,7 @@ import views from './views';
 
 import { reducer as manifestReducer } from './components/manifest/reducer';
 import { setDocumentValues } from './components/config';
+import { ComponentClass } from '@next-book/publisher';
 
 export function initBook() {
   const id = docInfo.identifier;
@@ -39,8 +40,8 @@ export function initBook() {
 
 function init(identifier: string, store: Store) {
   setDocumentValues(store.getState().config);
-
-  Object.keys(views).forEach(key => {
+  
+  (Object.keys(views) as Array<ComponentClass>).forEach(key => {
     const wrapper = plantRoot(key);
     if (!wrapper) return;
 

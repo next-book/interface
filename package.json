@@ -22,6 +22,8 @@
   "author": "Jan Martinek",
   "license": "MIT",
   "devDependencies": {
+    "@types/jsdom": "^16.2.14",
+    "@types/react-redux": "^6.0.20",
     "eslint": "^7.29.0",
     "eslint-plugin-react": "^7.24.0",
     "jest": "^27.0.6",
@@ -34,11 +36,11 @@
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
+    "@next-book/publisher": "^0.3.6-canary",
     "@types/fscreen": "^1.0.1",
     "@types/lodash": "^4.14.149",
     "@types/react": "^16.14.10",
     "@types/react-dom": "^16.9.13",
-    "@types/react-redux": "^6.0.14",
     "cuid": "^2.1.6",
     "fscreen": "^1.2.0",
     "i18next": "^20.3.2",

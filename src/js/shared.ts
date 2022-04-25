@@ -1,12 +1,13 @@
-import { IState as IManifest } from './components/manifest/reducer';
+import { Manifest } from '@next-book/publisher';
+import { StateClass, ComponentClass } from '@next-book/publisher';
 
 import cuid from 'cuid';
 
-export function plantRoot(componentName: string, parent: HTMLElement = document.body): HTMLElement {
+export function plantRoot(component: ComponentClass, parent: HTMLElement = document.body): HTMLElement {
   const id = cuid();
 
   const el = document.createElement('div');
-  el.classList.add(`nb-${componentName}`);
+  el.classList.add(component);
   el.setAttribute('id', id);
   parent.appendChild(el);
   return el;
@@ -23,7 +24,7 @@ function json(response: Response): object {
   return response.json();
 }
 
-export function loadManifest(link: string | null): Promise<object> {
+export function loadManifest(link: string | null): Promise<Partial<Manifest>> {
   if (link === null) return Promise.reject(new Error('Manifest not available.'));
 
   return fetch(link)
@@ -32,20 +33,31 @@ export function loadManifest(link: string | null): Promise<object> {
 }
 
 export function addReadyBodyClass() {
-  document.body.classList.add('nb-ready');
+  document.body.classList.add(StateClass.Ready);
 }
 
-export function assignManifest(data: any): IManifest {
+export function assignManifest(data: Partial<Manifest>): Manifest {
   return Object.assign(
     {
       title: data.title,
       identifier: data.identifier,
       revision: data.revision,
+      documents: data.documents,
+    },
+    data.generatedAt && data.generatedAt.date && data.generatedAt.unix && {
       generatedAt: {
         date: data.generatedAt.date,
         unix: data.generatedAt.unix,
-      },
-      documents: data.documents,
+      }
+    },
+    data.totals
+    && data.totals.all
+    && data.totals.chapters
+    && data.totals.all.chars
+    && data.totals.all.words
+    && data.totals.chapters.chars
+    && data.totals.chapters.words
+    && {
       totals: {
         all: {
           words: data.totals.all.words,

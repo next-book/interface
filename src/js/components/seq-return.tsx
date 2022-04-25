@@ -1,12 +1,11 @@
 import React from 'react';
-import { IDocument, DocRole } from './manifest/reducer';
-
+import { DocRole, DocumentMetadata } from '@next-book/publisher';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
-
 import { ReturnKey, Check } from './../icons';
 import { trackSeqReturned, trackSeqReset } from './research/tracker';
+import { getIdeaId, IdeaElement } from '@next-book/publisher';
 
 export enum Sequential {
   No = 0,
@@ -28,7 +27,7 @@ interface IButton {
 
 interface IProps extends WithTranslation {
   targetIdea: number | null;
-  targetChapter: IDocument | null;
+  targetChapter: DocumentMetadata | null;
   sequential: Sequential;
   status: SeqReturnStatus;
   docRole: DocRole;
@@ -77,7 +76,7 @@ class SeqReturn extends React.Component<IProps, IState> {
     const idea = this.props.targetIdea;
     if (chapter === null || idea === null) return null;
 
-    const link = `./${chapter.file}#idea${idea}`;
+    const link = `./${chapter.file}#${getIdeaId(idea)}`;
 
     return this.renderWrapper(this.posInAnotherChapter(link, idea, chapter.title), [
       {
@@ -102,7 +101,7 @@ class SeqReturn extends React.Component<IProps, IState> {
           )
         : null;
 
-    const link = `./${chapter.file}#idea${idea}`;
+    const link = `./${chapter.file}#${getIdeaId(idea)}`;
 
     return this.renderWrapper(this.posInAnotherChapter(link, idea, chapter.title), [
       {
@@ -131,7 +130,7 @@ class SeqReturn extends React.Component<IProps, IState> {
           )
         : null;
 
-    const link = `./${chapter.file}#idea${idea}`;
+    const link = `./${chapter.file}#${getIdeaId(idea)}`;
 
     const description =
       chapter.order === docInfo.order
@@ -148,7 +147,7 @@ class SeqReturn extends React.Component<IProps, IState> {
         ),
       },
       {
-        link: `./${chapter.file}#idea${idea}`,
+        link: `./${chapter.file}#${getIdeaId(idea)}`,
         click: this.returnToPosition,
         primary: true,
         text: (
@@ -266,7 +265,7 @@ class SeqReturn extends React.Component<IProps, IState> {
 }
 
 function highlightIdea(id: number) {
-  const el = document.getElementById(`idea${id}`);
+  const el = document.getElementById(getIdeaId(id)) as IdeaElement | null;
 
   if (el === null) return null;
 

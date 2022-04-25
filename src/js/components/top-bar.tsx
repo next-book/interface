@@ -1,10 +1,9 @@
 import React from 'react';
-
-import { IDocument } from './manifest/reducer';
+import { DocumentMetadata } from '@next-book/publisher';
 
 interface IProps {
   title: string;
-  chapter: IDocument;
+  chapter: DocumentMetadata;
 }
 
 export function TopBar(props: IProps) {

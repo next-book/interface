@@ -1,5 +1,6 @@
 import React from 'react';
-import { reducer, IState as IManifest } from './../manifest/reducer';
+import { Manifest as IManifest } from "@next-book/publisher";
+import { reducer } from './../manifest/reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../../reducer';

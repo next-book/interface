@@ -1,6 +1,6 @@
 import React from 'react';
+import { DocRole } from '@next-book/publisher';
 import { INavDocument, IDocMap } from './position/reducer';
-import { DocRole } from './manifest/reducer';
 import { getProgress } from './progress';
 
 interface IProps {

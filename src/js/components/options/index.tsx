@@ -2,7 +2,7 @@ import React from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { IState as ICombinedState } from '../../reducer';
-import { IState as IManifestState } from './../manifest/reducer';
+import { Manifest } from '@next-book/publisher';
 import { IPosition } from './../position/reducer';
 import { IState as IOfflineState, SwAvailability } from './../offline/reducer';
 import { reducer, ColorScheme } from './../config/reducer';
@@ -18,7 +18,7 @@ interface IProps extends WithTranslation {
   fontSize: string;
   annotationStyles: IAnnotationStyle[];
   offline: IOfflineState;
-  manifest: IManifestState;
+  manifest: Manifest;
   setFontSize(size: string): void;
   colorScheme: ColorScheme;
   setColorScheme(colorScheme: ColorScheme): void;

@@ -2,16 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { IState as ICombinedState } from '../reducer';
-import { IToc, DocRole, IBaseTocItem } from './manifest/reducer';
+import { DocRole, Heading as IToc } from '@next-book/publisher';
 import { IDocMap } from './position/reducer';
 import docInfo from '../doc-info';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import Progress, { ProgressForm } from './progress';
 import { reducer } from './config/reducer';
 import { Help } from '../icons';
+import { CustomDocTocElement, Role } from '@next-book/publisher';
 
 interface IProps extends WithTranslation {
-  tocBase: IBaseTocItem[];
   readingOrder: string[];
   documents: IDocMap;
   showOnboarding(): void;
@@ -25,7 +25,7 @@ class Toc extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    const customToc = document.querySelector('[role="doc-toc"]');
+    const customToc = document.querySelector<CustomDocTocElement>(`[role="${Role.DocToc}"]`);
 
     this.state = {
       toc: customToc ? this.insertCustomToc(customToc.innerHTML) : this.buildToc(),
@@ -33,7 +33,7 @@ class Toc extends React.Component<IProps, IState> {
   }
 
   insertCustomToc = (toc: string) => {
-    return <div role="doc-toc" dangerouslySetInnerHTML={{ __html: toc }}></div>;
+    return <div role={Role.DocToc} dangerouslySetInnerHTML={{ __html: toc }}></div>;
   };
 
   buildToc = () => {
@@ -135,7 +135,6 @@ function Section(props: ISectionProps) {
 
 const mapStateToProps = (state: ICombinedState) => {
   return {
-    tocBase: state.manifest.tocBase,
     readingOrder: state.position.readingOrder,
     documents: state.position.documents,
   };

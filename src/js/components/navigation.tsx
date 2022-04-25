@@ -8,7 +8,7 @@ import keycode from 'keycode';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
 import docInfo, { setLastScrollStep, lastScrollStep, domFns } from '../doc-info';
-import { DocRole } from './manifest/reducer';
+import { DocRole } from '@next-book/publisher';
 import { initSwipeNav } from '../swipe-nav';
 import { NavBar } from './nav-bar';
 import { TopBar } from './top-bar';
@@ -16,7 +16,7 @@ import { Pagination } from './pagination';
 import { Sequential } from './seq-return';
 import { getScrollRatio } from './position';
 import { reducer, IPosition, IDocMap } from './position/reducer';
-import { IState as IManifest, IDocument } from './manifest/reducer';
+import { Manifest, DocumentMetadata } from '@next-book/publisher';
 import { Prev, Next, PrevChapter, NextChapter, End } from '../icons';
 import { trackPagination, Controller } from './research/tracker';
 
@@ -32,7 +32,7 @@ export enum Action {
 }
 
 export interface IProps extends WithTranslation {
-  manifest: IManifest;
+  manifest: Manifest;
   keyboardNav: boolean;
   invisibleNav: boolean;
   scrollRatio: number;
@@ -42,7 +42,7 @@ export interface IProps extends WithTranslation {
   documents: IDocMap;
   sequential: Sequential;
   setScrollRatio(scrollRatio: number): void;
-  setReadingOrder(documents: IDocument[]): void;
+  setReadingOrder(documents: DocumentMetadata[]): void;
 }
 
 export class Navigation extends React.Component<IProps> {

@@ -6,8 +6,9 @@ import { throttle } from 'lodash';
 
 import docInfo from '../../doc-info';
 import SeqReturn, { Sequential, SeqReturnStatus } from './../seq-return';
-import { DocRole } from './../manifest/reducer';
+import { DocRole } from '@next-book/publisher';
 import { reducer, IPosition, IDocMap, INavDocument } from './../position/reducer';
+import { IdeaElement, ChapterId, TagAttr, TagClass, Id, getIdeaId } from '@next-book/publisher';
 
 export interface IProps {
   readingOrder: string[];
@@ -69,8 +70,8 @@ export class Position extends React.Component<IProps> {
   componentDidMount() {
     window.addEventListener('scroll', this.getScrollHandler());
     const isTop =
-      window.scrollY === 0 && (window.location.hash === '' || window.location.hash === '#idea1');
-    const isBottom = window.location.hash === '#chapter-end';
+      window.scrollY === 0 && (window.location.hash === '' || window.location.hash === `#${Id.Idea}1`);
+    const isBottom = window.location.hash === `#${ChapterId.End}`;
 
     this.setPosition(false, !(isTop || isBottom));
   }
@@ -153,7 +154,7 @@ export function getProgress(chapter: INavDocument, totalWords: number) {
 }
 
 function getFirstIdeaShown() {
-  const ideas = [...document.querySelectorAll('.idea')].map(el => ({
+  const ideas = ([...document.querySelectorAll('.'+TagClass.Idea)] as IdeaElement[]).map(el => ({
     el,
     top: el.getBoundingClientRect().top,
     bottom: el.getBoundingClientRect().bottom,
@@ -163,7 +164,7 @@ function getFirstIdeaShown() {
   const shown = ideas.filter(el => el.top > 0).sort((el1, el2) => el1.bottom - el2.bottom);
 
   const idea = shown.length > 0 ? shown[0] : ideas[ideas.length - 1];
-  const attr = idea.el.getAttribute('data-nb-ref-number');
+  const attr = idea.el.getAttribute(TagAttr.RefNum);
   return attr !== null ? parseInt(attr, 10) : null;
 }
 
@@ -206,8 +207,8 @@ function checkSequence(
         if (Math.abs(pos2.idea - pos1.idea) < 3) return Sequential.Yes;
 
         // 1.5 steps down or up
-        const idea1 = document.getElementById(`idea${pos1.idea}`);
-        const idea2 = document.getElementById(`idea${pos2.idea}`);
+        const idea1 = document.getElementById(getIdeaId(pos1.idea)) as IdeaElement | null;
+        const idea2 = document.getElementById(getIdeaId(pos2.idea)) as IdeaElement | null;
 
         if (idea1 !== null && idea2 !== null) {
           const top1 = idea1.getBoundingClientRect().top;
@@ -220,7 +221,7 @@ function checkSequence(
       }
     } else if (pos1.file === pos2.file) {
       // is back on screen
-      const idea1 = document.getElementById(`idea${pos1.idea}`);
+      const idea1 = document.getElementById(getIdeaId(pos1.idea)) as IdeaElement | null;
 
       if (idea1 !== null) {
         const top1 = idea1.getBoundingClientRect().top;
@@ -263,7 +264,7 @@ const getSeqReturnStatus = () => {
 };
 
 function setUriIdea(id: number) {
-  window.history.replaceState(undefined, document.title, `#idea${id}`);
+  window.history.replaceState(undefined, document.title, `#${getIdeaId(id)}`);
 }
 
 const mapStateToProps = (state: ICombinedState) => {

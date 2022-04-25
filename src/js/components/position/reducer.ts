@@ -1,4 +1,5 @@
-import { IDocument, DocRole } from './../manifest/reducer';
+import { DocumentMetadata } from '@next-book/publisher';
+import { DocRole } from '@next-book/publisher';
 import { Sequential, SeqReturnStatus } from './../seq-return';
 
 const SET_POSITION = 'interface/navigation/SET_POSITION';
@@ -22,7 +23,7 @@ export interface IPosition {
   chapterEnd: boolean;
 }
 
-export interface INavDocument extends IDocument {
+export interface INavDocument extends DocumentMetadata {
   offsetChars: number;
   offsetWords: number;
   totalChars: number;
@@ -70,7 +71,7 @@ function setPosition(
   };
 }
 
-function prepReadingOrder(documents: IDocument[]) {
+function prepReadingOrder(documents: DocumentMetadata[]) {
   let totalChars = 0;
   let totalWords = 0;
 
@@ -109,7 +110,7 @@ function arrayToDocMap(arr: INavDocument[]) {
   }, {});
 }
 
-reducer.setReadingOrder = function (documents: IDocument[]) {
+reducer.setReadingOrder = function (documents: DocumentMetadata[]) {
   return <const>{
     type: SET_READING_ORDER,
     payload: documents,
