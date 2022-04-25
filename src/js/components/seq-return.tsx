@@ -161,7 +161,8 @@ class SeqReturn extends React.Component<IProps, IState> {
 
   posInThisChapter = (link: string, idea: number) => (
     <Trans i18nKey="navigation:seqReturnThisChapter">
-      You read up to{' '}
+      You read up to
+      {/* @ts-ignore */}
       <a href={link} onClick={this.highlightPosition}>
         sentence #{{ idea }}
       </a>{' '}
@@ -171,6 +172,7 @@ class SeqReturn extends React.Component<IProps, IState> {
 
   posInAnotherChapter = (link: string, idea: number, title: string) => (
     <Trans i18nKey="navigation:seqReturnAnotherChapter">
+      {/* @ts-ignore */}
       You read up to <a href={link}>sentence #{{ idea }}</a> in chapter <b>{{ title }}</b>.
     </Trans>
   );

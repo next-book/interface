@@ -87,29 +87,31 @@ class Toc extends React.Component<IProps, IState> {
       <>
         <div className="scrollable-wrapper">
           <div className="nb-toc scrollable">
-            <h1 className="nb-ui-big-title">
-              {this.props.t('controls:toc')}
+            <>
+              <h1 className="nb-ui-big-title">
+                {this.props.t('controls:toc')}
 
-              <a className="icon-link" onClick={this.props.showOnboarding}>
-                {Help} {this.props.t('show-tips')}
-              </a>
+                <a className="icon-link" onClick={this.props.showOnboarding}>
+                  {Help} {this.props.t('show-tips')}
+                </a>
 
-              <Progress form={ProgressForm.Goto} />
-            </h1>
+                <Progress form={ProgressForm.Goto} />
+              </h1>
 
-            {this.state.toc}
-            <p className="nb-toc-other">
-              {otherLinks.map((link, index) => {
-                return (
-                  <span key={index}>
-                    <a className={link.classes} href={link.href}>
-                      {link.text}
-                    </a>
-                    {index !== otherLinks.length - 1 ? <> &middot; </> : null}
-                  </span>
-                );
-              })}
-            </p>
+              {this.state.toc}
+              <p className="nb-toc-other">
+                {otherLinks.map((link, index) => {
+                  return (
+                    <span key={index}>
+                      <a className={link.classes} href={link.href}>
+                        {link.text}
+                      </a>
+                      {index !== otherLinks.length - 1 ? <> &middot; </> : null}
+                    </span>
+                  );
+                })}
+              </p>
+            </>
           </div>
         </div>
         <div>

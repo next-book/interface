@@ -146,6 +146,7 @@ class Options extends React.Component<IProps, IState> {
 interface IColorSchemeProps extends WithT {
   colorScheme: ColorScheme;
   setColorScheme(colorScheme: ColorScheme): void;
+  t: (key: string) => string;
 }
 
 function ColorSchemeComp(props: IColorSchemeProps) {
