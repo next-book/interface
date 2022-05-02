@@ -45,7 +45,7 @@ export const languageCode = document.querySelector<LangElement>('html')?.getAttr
 
 export const role = getRole();
 
-export const identifier = document.querySelector<MetaIdentifierElement>(`meta[name="${MetaName.Identifier}"]`)?.getAttribute('content') || null;;
+export const identifier = document.querySelector<MetaIdentifierElement>(`meta[name="${MetaName.Identifier}"]`)?.getAttribute('content') || null;
 
 export const order = getOrder();
 
