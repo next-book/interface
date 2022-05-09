@@ -1,4 +1,4 @@
-@use "../conf";
+@use '../conf';
 
 .nb-navigation nav {
   font-size: var(--ui-font-size);
@@ -151,7 +151,8 @@
   }
 }
 
-.nb-role-cover .nb-navigation nav .button-navigation {
+.nb-role-cover .nb-navigation nav .button-navigation,
+.nb-role-break .nb-navigation nav .button-navigation {
   .back-button {
     display: none;
   }
