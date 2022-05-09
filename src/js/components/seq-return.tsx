@@ -3,7 +3,7 @@ import { DocRole, DocumentMetadata } from '@next-book/publisher';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { Trans } from 'react-i18next';
 import docInfo from '../doc-info';
-import { ReturnKey, Check } from './../icons';
+import { ReturnKey, Close } from './../icons';
 import { trackSeqReturned, trackSeqReset } from './research/tracker';
 import { getIdeaId, IdeaElement } from '@next-book/publisher';
 
@@ -110,7 +110,7 @@ class SeqReturn extends React.Component<IProps, IState> {
         primary: true,
         text: (
           <span>
-            {Check} {this.props.t('return')}
+            {ReturnKey} {this.props.t('return')}
           </span>
         ),
       },
@@ -138,14 +138,6 @@ class SeqReturn extends React.Component<IProps, IState> {
         : this.posInAnotherChapter(link, idea, chapter.title);
 
     return this.renderWrapper(description, [
-      {
-        click: this.resetPosition,
-        text: (
-          <span>
-            {Check} {this.props.t('continue')}
-          </span>
-        ),
-      },
       {
         link: `./${chapter.file}#${getIdeaId(idea)}`,
         click: this.returnToPosition,
@@ -200,6 +192,10 @@ class SeqReturn extends React.Component<IProps, IState> {
           )}
           {!this.state.collapsed && (
             <>
+              <span className="close" onClick={this.resetPosition}>
+                {Close}
+              </span>
+
               {content && <p className="seq-text">{content}</p>}
               {buttons && (
                 <div className="seq-buttons">

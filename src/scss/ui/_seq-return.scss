@@ -1,4 +1,4 @@
-@use "../conf";
+@use '../conf';
 
 .nb-seq-return {
   font-family: var(--ui-font);
@@ -51,6 +51,12 @@
     padding: calc(var(--base-padding) / 2);
     margin: 0;
     line-height: 1.4;
+    cursor: pointer;
+  }
+
+  .close {
+    float: right;
+    padding: calc(var(--base-padding) / 2);
     cursor: pointer;
   }
 
