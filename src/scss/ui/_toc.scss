@@ -49,12 +49,13 @@
   }
 
   .current-chapter {
-    background: yellow;
+    color: var(--accent-color);
   }
 
   .toggle {
     display: block;
     float: right;
+    cursor: pointer;
 
     margin-top: -0.1rem;
     padding: 0;

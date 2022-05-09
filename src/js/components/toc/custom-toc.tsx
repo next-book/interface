@@ -53,12 +53,8 @@ const ingestToc = (
               const toggleOn = toggleIndex !== null && toggles[toggleIndex];
               toggleCount += 1;
 
-              const classes = [];
-              if (current === el.getAttribute('href')) classes.push('current-chapter');
-              classes.push(toggleOn ? 'unfolded' : 'folded');
-
               return (
-                <li key={index} className={classes.join(' ')}>
+                <li key={index} className={toggleOn ? 'unfolded' : 'folded'}>
                   {toggleIndex && (
                     <button className="toggle" onClick={() => toggleCallback(toggleIndex)}>
                       {toggleOn ? ExpandLess : ExpandMore}
@@ -69,8 +65,14 @@ const ingestToc = (
               );
 
             case 'A':
+              const href = el.getAttribute('href');
+
               return (
-                <a href={el.getAttribute('href') || undefined} key={index}>
+                <a
+                  className={current === href ? 'current-chapter' : ''}
+                  href={href || undefined}
+                  key={index}
+                >
                   {el.textContent}
                 </a>
               );
