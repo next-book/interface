@@ -86,7 +86,7 @@
     "prev-chapter": "Předchozí kapitola",
     "next-chapter": "Následující kapitola",
     "seqReturnAnotherChapter": "Dočetli jste po <1>{{idea}}. větu</1> v kapitole <3>{{title}}</3>.",
-    "seqReturnThisChapter": "Dočetli jste po <2>{{idea}}. větu</2> v této kapitole.",
+    "seqReturnThisChapter": "Dočetli jste po <1>{{idea}}. větu</1> v této kapitole.",
     "go": "Přejít",
     "show-tips": "Tipy"
   },
