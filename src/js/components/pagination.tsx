@@ -1,5 +1,4 @@
 import React from 'react';
-//import { throttle } from 'lodash';
 
 import {
   elements,
@@ -28,6 +27,11 @@ export type Sides = {
   [Side.Bottom]: number;
 };
 
+enum ReadingMode {
+  Scrolling,
+  Paginated,
+}
+
 interface IProps {}
 
 export interface IState {
@@ -48,6 +52,7 @@ export class Pagination extends React.Component<IProps, IState> {
   }
 
   displayMode: Display = Display.Cropped;
+  readingMode: ReadingMode = ReadingMode.Paginated;
   realReadingZone: Sides | null = null;
 
   setSizes = () => {
@@ -80,7 +85,8 @@ export class Pagination extends React.Component<IProps, IState> {
     if (window.visualViewport.scale === 1)
       this.realReadingZone = clipReadingZone(
         this.state.readingZone,
-        findVisibleChunks(this.state.readingZone)
+        this.readingMode,
+        findVisibleChunks(this.state.readingZone, this.readingMode)
       );
     else showAllChunks();
   };
@@ -94,10 +100,12 @@ export class Pagination extends React.Component<IProps, IState> {
   };
 
   setPaginatedMode = () => {
+    this.readingMode = ReadingMode.Paginated;
     document.body.classList.add('nb-paginated');
   };
 
   setScrollingMode = () => {
+    this.readingMode = ReadingMode.Scrolling;
     document.body.classList.remove('nb-paginated');
   };
 
@@ -161,6 +169,7 @@ export class Pagination extends React.Component<IProps, IState> {
     window.addEventListener('scroll', this.getScrollHandler, { passive: true });
     setDomFn('getScrollStep', this.getScrollStep);
     setDomFn('setCroppedDisplay', this.setCroppedDisplay);
+    setDomFn('setPaginatedMode', this.setPaginatedMode);
 
     window.addEventListener('resize', this.setSizes);
 
@@ -184,9 +193,14 @@ export class Pagination extends React.Component<IProps, IState> {
 
 function clipReadingZone(
   readingZone: Sides,
+  readingMode: ReadingMode,
   visibleChunks: IVisibleChunks
 ): { top: number; bottom: number } {
-  const { visibleChunks: chunks, cutoffs } = recursiveClipAndCheck(readingZone, visibleChunks);
+  const { visibleChunks: chunks, cutoffs } = recursiveClipAndCheck(
+    readingZone,
+    readingMode,
+    visibleChunks
+  );
 
   if (chunks.top !== null && chunks.top === chunks.bottom)
     clipChunk(chunks.top, cutoffs.top.clip, cutoffs.bottom.clip);
@@ -209,6 +223,7 @@ function clipReadingZone(
 
 function recursiveClipAndCheck(
   readingZone: Sides,
+  readingMode: ReadingMode,
   visibleChunks: IVisibleChunks
 ): {
   visibleChunks: IVisibleChunks;
@@ -219,34 +234,36 @@ function recursiveClipAndCheck(
 } {
   const { top, bottom, all } = visibleChunks;
 
-  const cutoffs = calcCutoffs(top, bottom, readingZone);
+  const cutoffs = calcCutoffs(top, bottom, readingZone, readingMode);
 
   if (top === null || bottom === null || all.length === 1) return { visibleChunks, cutoffs };
 
-  // remove first chunk if it has no visible lines
-  if (isCompletelyClipped(top, cutoffs.top.clip)) {
-    all.shift();
+  if (readingMode === ReadingMode.Paginated) {
+    // remove first chunk if it has no visible lines
+    if (isCompletelyClipped(top, cutoffs.top.clip)) {
+      all.shift();
 
-    return recursiveClipAndCheck(readingZone, {
-      top: all[0],
-      bottom: all[all.length - 1],
-      all,
-    });
-  }
+      return recursiveClipAndCheck(readingZone, readingMode, {
+        top: all[0],
+        bottom: all[all.length - 1],
+        all,
+      });
+    }
 
-  //  remove last chunk if it has no visible lines, is a heading or contains clipped images
-  if (
-    isCompletelyClipped(bottom, cutoffs.bottom.clip) ||
-    isHeading(bottom) ||
-    hasClippedImages(bottom, cutoffs.bottom.zone)
-  ) {
-    all.pop();
+    //  remove last chunk if it has no visible lines, is a heading or contains clipped images
+    if (
+      isCompletelyClipped(bottom, cutoffs.bottom.clip) ||
+      isHeading(bottom) ||
+      hasClippedImages(bottom, cutoffs.bottom.zone)
+    ) {
+      all.pop();
 
-    return recursiveClipAndCheck(readingZone, {
-      top: all[0],
-      bottom: all[all.length - 1],
-      all,
-    });
+      return recursiveClipAndCheck(readingZone, readingMode, {
+        top: all[0],
+        bottom: all[all.length - 1],
+        all,
+      });
+    }
   }
 
   return { visibleChunks, cutoffs };
@@ -273,14 +290,15 @@ function isCompletelyClipped(chunk: Element, clip: number) {
 function calcCutoffs(
   topChunk: Element | null,
   bottomChunk: Element | null,
-  readingZone: Sides
+  readingZone: Sides,
+  readingMode: ReadingMode
 ): {
   top: { zone: number; clip: number };
   bottom: { zone: number; clip: number };
 } {
   return {
-    top: calcTopCutoff(topChunk, readingZone),
-    bottom: calcBottomCutoff(bottomChunk, readingZone),
+    top: calcTopCutoff(topChunk, readingZone, readingMode),
+    bottom: calcBottomCutoff(bottomChunk, readingZone, readingMode),
   };
 }
 
@@ -294,12 +312,13 @@ function clipChunk(chunk: Element | null, top: number, bottom: number) {
 
 function calcNestedTopCutoff(
   el: Element,
-  readingZone: Sides
+  readingZone: Sides,
+  readingMode: ReadingMode
 ): { zone: number; clip: number } | null {
   return [...el.querySelectorAll('p, li, dd, dt')]
     .filter(el => window.getComputedStyle(el).display === 'block')
     .filter((el, index, els) => isElementOnTopEdge(el, els[index - 1], readingZone[Side.Top]))
-    .map(el => calcTopCutoff(el, readingZone, true))
+    .map(el => calcTopCutoff(el, readingZone, readingMode, true))
     .reduce((acc: { zone: number; clip: number } | null, cutoff) => {
       if (cutoff.zone === null) return acc;
       if (acc === null) return cutoff;
@@ -309,12 +328,17 @@ function calcNestedTopCutoff(
     }, null);
 }
 
-function calcTopCutoff(chunk: Element | null, readingZone: Sides, skipBlockCheck: boolean = false) {
-  if (chunk === null) return { zone: 0, clip: 0 };
+function calcTopCutoff(
+  chunk: Element | null,
+  readingZone: Sides,
+  readingMode: ReadingMode,
+  skipBlockCheck: boolean = false
+) {
+  if (chunk === null || readingMode === ReadingMode.Scrolling) return { zone: 0, clip: 0 };
   const verticals = getContentVerticals(chunk);
 
   if (!skipBlockCheck) {
-    const nestedCutoff = calcNestedTopCutoff(chunk, readingZone);
+    const nestedCutoff = calcNestedTopCutoff(chunk, readingZone, readingMode);
     if (nestedCutoff !== null)
       return { zone: nestedCutoff.zone, clip: nestedCutoff.zone - verticals[Side.Top] };
   }
@@ -352,12 +376,13 @@ function isWidow(verticals: ReturnType<typeof getContentVerticals>, y: number, l
 
 function calcNestedBottomCutoff(
   el: Element,
-  readingZone: Sides
+  readingZone: Sides,
+  readingMode: ReadingMode
 ): { zone: number; clip: number } | null {
   return [...el.querySelectorAll('p, li, dd, dt')]
     .filter(el => window.getComputedStyle(el).display === 'block')
     .filter((el, index, els) => isElementOnBottomEdge(el, els[index + 1], readingZone[Side.Bottom]))
-    .map(el => calcBottomCutoff(el, readingZone, true))
+    .map(el => calcBottomCutoff(el, readingZone, readingMode, true))
     .reduce((acc: { zone: number; clip: number } | null, cutoff) => {
       if (cutoff.zone === null) return acc;
       if (acc === null) return cutoff;
@@ -370,13 +395,14 @@ function calcNestedBottomCutoff(
 function calcBottomCutoff(
   chunk: Element | null,
   readingZone: Sides,
+  readingMode: ReadingMode,
   skipBlockCheck: boolean = false
 ): { zone: number; clip: number } {
   if (chunk === null) return { zone: window.innerHeight, clip: 0 };
   const verticals = getContentVerticals(chunk);
 
   if (!skipBlockCheck) {
-    const nestedCutoff = calcNestedBottomCutoff(chunk, readingZone);
+    const nestedCutoff = calcNestedBottomCutoff(chunk, readingZone, readingMode);
     if (nestedCutoff !== null)
       return { zone: nestedCutoff.zone, clip: verticals[Side.Bottom] - nestedCutoff.zone };
   }
@@ -384,9 +410,14 @@ function calcBottomCutoff(
   const lineHeight = getComputedStyleNumber(chunk, 'lineHeight');
   let y = verticals[Side.Bottom];
 
-  while (y > readingZone[Side.Bottom]) y -= lineHeight;
-  if (hasOrphan(verticals, readingZone, lineHeight)) y -= lineHeight;
-  if (isWidow(verticals, y, lineHeight)) y -= lineHeight;
+  const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+  while (y > windowHeight - 10) y -= lineHeight;
+
+  if (readingMode === ReadingMode.Paginated) {
+    while (y > readingZone[Side.Bottom]) y -= lineHeight;
+    if (hasOrphan(verticals, readingZone, lineHeight)) y -= lineHeight;
+    if (isWidow(verticals, y, lineHeight)) y -= lineHeight;
+  }
 
   return { zone: y, clip: verticals[Side.Bottom] - y };
 }
@@ -405,7 +436,7 @@ enum Gate {
   Closed,
 }
 
-function findVisibleChunks(readingZone: Sides): IVisibleChunks {
+function findVisibleChunks(readingZone: Sides, readingMode: ReadingMode): IVisibleChunks {
   const chunks = elements.chunks;
   const insideRange = [];
   let gate = Gate.Unopened;
@@ -438,9 +469,11 @@ function findVisibleChunks(readingZone: Sides): IVisibleChunks {
     } else if (gate === Gate.Open) insideRange.push(chunk);
   }
 
-  // remove last item if it’s a heading
-  const lastItem = insideRange.pop();
-  if (lastItem && (insideRange.length === 0 || !isHeading(lastItem))) insideRange.push(lastItem);
+  if (readingMode === ReadingMode.Paginated) {
+    // remove last item if it’s a heading
+    const lastItem = insideRange.pop();
+    if (lastItem && (insideRange.length === 0 || !isHeading(lastItem))) insideRange.push(lastItem);
+  }
 
   const top = insideRange[0] || null;
   const bottom = insideRange[insideRange.length - 1] || null;

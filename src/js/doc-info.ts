@@ -95,12 +95,17 @@ function getChunks(): Element[] {
 export const domFns: {
   getScrollStep: { (): number | null };
   setCroppedDisplay: { (): void };
+  setPaginatedMode: { (): void };
 } = {
   getScrollStep: () => null,
   setCroppedDisplay: () => null,
+  setPaginatedMode: () => null,
 };
 
-export function setDomFn(name: 'getScrollStep' | 'setCroppedDisplay', fn: any): void {
+export function setDomFn(
+  name: 'getScrollStep' | 'setCroppedDisplay' | 'setPaginatedMode',
+  fn: any
+): void {
   domFns[name] = fn;
 }
 

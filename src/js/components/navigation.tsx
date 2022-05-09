@@ -63,11 +63,11 @@ export class Navigation extends React.Component<IProps> {
 
     switch (keycode(event)) {
       case 'left':
-        document.body.classList.add('nb-paginated');
+        domFns.setPaginatedMode();
         trackPagination(Controller.Keyboard);
         return this.goBack(this.backAction);
       case 'right':
-        document.body.classList.add('nb-paginated');
+        domFns.setPaginatedMode();
         trackPagination(Controller.Keyboard);
         return this.goForward(this.forwardAction);
       default:
@@ -79,10 +79,10 @@ export class Navigation extends React.Component<IProps> {
     trackPagination(Controller.Swipe);
 
     if (dir === Direction.Forward) {
-      document.body.classList.add('nb-paginated');
+      domFns.setPaginatedMode();
       this.goForward(this.forwardAction);
     } else if (dir === Direction.Back) {
-      document.body.classList.add('nb-paginated');
+      domFns.setPaginatedMode();
       this.goBack(this.backAction);
     }
   };
@@ -107,7 +107,7 @@ export class Navigation extends React.Component<IProps> {
           event.clientY
         )
       ) {
-        document.body.classList.add('nb-paginated');
+        domFns.setPaginatedMode();
         return this.goForward(this.forwardAction);
       }
 
@@ -118,7 +118,7 @@ export class Navigation extends React.Component<IProps> {
           event.clientY
         )
       ) {
-        document.body.classList.add('nb-paginated');
+        domFns.setPaginatedMode();
         return this.goBack(this.backAction);
       }
     }
