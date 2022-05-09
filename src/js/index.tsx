@@ -3,7 +3,7 @@
 import { Provider } from 'react-redux';
 import { createStore, Store } from 'redux';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOMClient from 'react-dom/client';
 import { debounce } from 'lodash';
 import i18n from './i18n';
 import { I18nextProvider } from 'react-i18next';
@@ -40,16 +40,17 @@ export function initBook() {
 
 function init(identifier: string, store: Store) {
   setDocumentValues(store.getState().config);
-  
+
   (Object.keys(views) as Array<ComponentClass>).forEach(key => {
     const wrapper = plantRoot(key);
     if (!wrapper) return;
 
-    ReactDOM.render(
+    const root = ReactDOMClient.createRoot(wrapper);
+
+    root.render(
       <I18nextProvider i18n={i18n}>
         <Provider store={store}>{React.createElement(views[key], null)}</Provider>
-      </I18nextProvider>,
-      wrapper
+      </I18nextProvider>
     );
   });
 
