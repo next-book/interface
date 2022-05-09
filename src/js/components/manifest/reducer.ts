@@ -1,4 +1,4 @@
-import { Manifest } from "@next-book/publisher";
+import { Manifest } from '@next-book/publisher';
 const SET_MANIFEST_DATA = 'interface/manifest/SET_MANIFEST_DATA';
 
 export function reducer(state: Manifest | null = null, action: Actions) {

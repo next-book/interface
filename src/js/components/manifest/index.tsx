@@ -1,5 +1,5 @@
 import React from 'react';
-import { Manifest as IManifest } from "@next-book/publisher";
+import { Manifest as IManifest } from '@next-book/publisher';
 import { reducer } from './../manifest/reducer';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';

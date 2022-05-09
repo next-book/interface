@@ -55,14 +55,14 @@ function destroyPeek(state: IState, payload: number) {
   return state.filter((peek: IPeek) => peek.hash !== payload);
 }
 
-reducer.addPeek = function(data: IPeek) {
+reducer.addPeek = function (data: IPeek) {
   return <const>{
     type: ADD_PEEK,
     payload: data,
   };
 };
 
-reducer.destroyPeek = function(data: number) {
+reducer.destroyPeek = function (data: number) {
   return <const>{
     type: DESTROY_PEEK,
     payload: data,

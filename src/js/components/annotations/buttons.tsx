@@ -260,12 +260,10 @@ export default class AnnotationButtons extends React.Component<IProps, IState> {
   }
 }
 
-const buttonFn =
-  (fn: () => void) =>
-  (event: React.SyntheticEvent): void => {
-    event.stopPropagation();
-    fn();
-  };
+const buttonFn = (fn: () => void) => (event: React.SyntheticEvent): void => {
+  event.stopPropagation();
+  fn();
+};
 
 interface IActionButtonProps {
   action: string;

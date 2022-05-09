@@ -181,42 +181,42 @@ function destroyAnnotation(state: IState, payload: IAnnotationAndIdeas) {
   return newState;
 }
 
-reducer.addNote = function(data: INote) {
+reducer.addNote = function (data: INote) {
   return <const>{
     type: ADD_NOTE,
     payload: data,
   };
 };
 
-reducer.updateNote = function(data: INote) {
+reducer.updateNote = function (data: INote) {
   return <const>{
     type: UPDATE_NOTE,
     payload: data,
   };
 };
 
-reducer.destroyNote = function(data: INote) {
+reducer.destroyNote = function (data: INote) {
   return <const>{
     type: DESTROY_NOTE,
     payload: data,
   };
 };
 
-reducer.addAnnotation = function(data: IAnnotationAndIdeas) {
+reducer.addAnnotation = function (data: IAnnotationAndIdeas) {
   return <const>{
     type: ADD_ANNOTATION,
     payload: data,
   };
 };
 
-reducer.updateAnnotation = function(data: IAnnotationAndIdeas) {
+reducer.updateAnnotation = function (data: IAnnotationAndIdeas) {
   return <const>{
     type: UPDATE_ANNOTATION,
     payload: data,
   };
 };
 
-reducer.destroyAnnotation = function(data: IAnnotationAndIdeas) {
+reducer.destroyAnnotation = function (data: IAnnotationAndIdeas) {
   return <const>{
     type: DESTROY_ANNOTATION,
     payload: data,

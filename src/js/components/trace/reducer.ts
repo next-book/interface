@@ -103,7 +103,7 @@ function concludeSession(session: ISession): ISession {
   };
 }
 
-reducer.addMoment = function(moment: IMoment) {
+reducer.addMoment = function (moment: IMoment) {
   return <const>{
     type: ADD_MOMENT,
     payload: moment,

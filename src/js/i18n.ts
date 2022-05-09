@@ -19,14 +19,14 @@ i18n
 
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
-      format: function(value, format, lng) {
+      format: function (value, format, lng) {
         if (format === 'ordinal') return numbro(value).format({ output: 'ordinal' });
         return value;
       },
     },
   });
 
-i18n.on('languageChanged', function(lng) {
+i18n.on('languageChanged', function (lng) {
   numbro.setLanguage(lng);
 });
 

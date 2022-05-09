@@ -45,8 +45,9 @@ class Options extends React.Component<IProps, IState> {
       month: 'short',
       day: '2-digit',
     });
-    const [{ value: month }, , { value: day }, , { value: year }] =
-      dateTimeFormat.formatToParts(date);
+    const [{ value: month }, , { value: day }, , { value: year }] = dateTimeFormat.formatToParts(
+      date
+    );
 
     this.state = { dateGenerated: `${month} ${day}, ${year}` };
   }

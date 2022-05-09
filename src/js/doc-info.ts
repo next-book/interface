@@ -1,5 +1,23 @@
 import { Direction } from './components/navigation';
-import { DocRole, TagClass, FootnotesClass, CropClass, PaginationClass, MetaDocRoleElement, MetaOrderElement, MetaIdentifierElement, ResearchMetaElement, LangElement, BodyElement, GaugeAttr, LinkElement, LinkRel, ResearchMetaName, MetaName, getIdeaId } from '@next-book/publisher';
+import {
+  DocRole,
+  TagClass,
+  FootnotesClass,
+  CropClass,
+  PaginationClass,
+  MetaDocRoleElement,
+  MetaOrderElement,
+  MetaIdentifierElement,
+  ResearchMetaElement,
+  LangElement,
+  BodyElement,
+  GaugeAttr,
+  LinkElement,
+  LinkRel,
+  ResearchMetaName,
+  MetaName,
+  getIdeaId,
+} from '@next-book/publisher';
 
 export let lastScrollStep: [Direction, number] | null = null;
 
@@ -41,11 +59,15 @@ function getResearchParam(name: ResearchMetaName) {
   return value || null;
 }
 
-export const languageCode = document.querySelector<LangElement>('html')?.getAttribute('lang') || null;
+export const languageCode =
+  document.querySelector<LangElement>('html')?.getAttribute('lang') || null;
 
 export const role = getRole();
 
-export const identifier = document.querySelector<MetaIdentifierElement>(`meta[name="${MetaName.Identifier}"]`)?.getAttribute('content') || null;
+export const identifier =
+  document
+    .querySelector<MetaIdentifierElement>(`meta[name="${MetaName.Identifier}"]`)
+    ?.getAttribute('content') || null;
 
 export const order = getOrder();
 

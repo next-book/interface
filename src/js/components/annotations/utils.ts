@@ -193,7 +193,7 @@ const getElement = (node: Node): Element => {
 
 const getIdeaId = (node: Node): string => {
   const el = getElement(node);
-  const idea = <Element>el.closest('.'+TagClass.Idea);
+  const idea = <Element>el.closest('.' + TagClass.Idea);
   return idea.getAttribute('id') as string;
 };
 
@@ -207,7 +207,7 @@ const getAnnotationId = (node: Node): number => {
 export const getAnnotatedIdeas = (): IIdeas => {
   return [...document.querySelectorAll('.annotation')]
     .reduce((acc: Element[], annotation: Element) => {
-      const idea = annotation.closest('.'+TagClass.Idea);
+      const idea = annotation.closest('.' + TagClass.Idea);
       if (idea !== null && !acc.includes(idea)) acc.push(idea);
       return acc;
     }, [])
@@ -281,7 +281,7 @@ const isElementInsideIdea = (el: Element) => {
   if (el === null) return false;
 
   // MUST BE inside an idea
-  if (el.closest('.'+TagClass.Idea) === null) return false;
+  if (el.closest('.' + TagClass.Idea) === null) return false;
 
   return true;
 };
@@ -299,10 +299,11 @@ export const getIdeaRanges = (range: Range) => {
         for (let i = range.startOffset; i < range.endOffset; i++) {
           const child = start.childNodes[i];
           if (!child.nodeType || child.nodeType == Node.TEXT_NODE) continue;
-          if (getElement(child).classList.contains(TagClass.Idea)) acc.push(rangeFromElContents(child));
+          if (getElement(child).classList.contains(TagClass.Idea))
+            acc.push(rangeFromElContents(child));
           else
             getElement(child)
-              .querySelectorAll('.'+TagClass.Idea)
+              .querySelectorAll('.' + TagClass.Idea)
               .forEach((idea: Node) => {
                 acc.push(rangeFromElContents(idea));
               });

@@ -75,7 +75,8 @@ export class Position extends React.Component<IProps> {
     window.addEventListener('scroll', this.scrollHandler);
 
     const isTop =
-      window.scrollY === 0 && (window.location.hash === '' || window.location.hash === `#${Id.Idea}1`);
+      window.scrollY === 0 &&
+      (window.location.hash === '' || window.location.hash === `#${Id.Idea}1`);
     const isBottom = window.location.hash === `#${ChapterId.End}`;
 
     this.setPosition(false, !(isTop || isBottom));
@@ -159,7 +160,7 @@ export function getProgress(chapter: INavDocument, totalWords: number) {
 }
 
 function getFirstIdeaShown() {
-  const ideas = ([...document.querySelectorAll('.'+TagClass.Idea)] as IdeaElement[]).map(el => ({
+  const ideas = ([...document.querySelectorAll('.' + TagClass.Idea)] as IdeaElement[]).map(el => ({
     el,
     top: el.getBoundingClientRect().top,
     bottom: el.getBoundingClientRect().bottom,
