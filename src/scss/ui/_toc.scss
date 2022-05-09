@@ -1,20 +1,43 @@
-@use "../conf";
+@use '../conf';
 
 .nb-toc {
-  padding: var(--base-padding) calc(2 * var(--base-padding));
-
   @media screen and (max-width: map-get(conf.$breakpoints, 'max-big-tabs')) {
     padding: var(--base-padding);
   }
 
   padding-bottom: calc(4 * var(--base-padding));
 
+  h1 {
+    padding: var(--base-padding) calc(2 * var(--base-padding));
+  }
+
   ul,
   ol {
     font-size: 1rem;
     font-family: var(--content-font);
-    margin: 1rem 0;
-    padding-left: calc(2 * 1rem);
+    padding: 0;
+    border: solid var(--ui-c-soft);
+    border-width: 1px 0;
+
+    li {
+      padding: 0.5rem var(--base-padding) 0.5rem calc(2 * var(--base-padding));
+      border-bottom: 1px solid var(--ui-c-soft);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    ul,
+    ol {
+      margin: 0.5rem calc(-1 * var(--base-padding)) 0 0;
+      padding-left: 2rem;
+      border-width: 1px 0 0;
+
+      li {
+        padding-left: 0;
+      }
+    }
   }
 
   ul.plain {
@@ -25,17 +48,37 @@
     }
   }
 
-  li {
-    margin-bottom: calc(1rem / 2);
+  .current-chapter {
+    background: yellow;
   }
 
-  .current-chapter {
-    font-weight: bold;
+  .toggle {
+    display: block;
+    float: right;
+
+    margin-top: -0.1rem;
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    color: var(--ui-c-text);
+
+    font-size: 1rem;
+    clear: both;
+  }
+
+  li.folded {
+    ol,
+    ul {
+      display: none;
+    }
   }
 }
 
 .nb-toc-other {
   font-size: 1rem;
+  padding: 0 calc(2 * var(--base-padding)) var(--base-padding);
 }
 
 .nb-toc,
@@ -50,6 +93,10 @@
         text-decoration: underline;
       }
     }
+  }
+
+  .headings-toc {
+    font-weight: normal;
   }
 }
 

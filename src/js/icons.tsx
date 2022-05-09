@@ -24,6 +24,20 @@ export const Close = svgRoot(
   </>
 );
 
+export const ExpandMore = svgRoot(
+  <>
+    <path d="M0 0h24v24H0z" fill="none" />
+    <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+  </>
+);
+
+export const ExpandLess = svgRoot(
+  <>
+    <path d="M0 0h24v24H0z" fill="none" />
+    <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z" />
+  </>
+);
+
 export const ArrowForward = svgRoot(
   <>
     <path d="M0 0h24v24H0z" fill="none" />
