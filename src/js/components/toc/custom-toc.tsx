@@ -55,7 +55,7 @@ const ingestToc = (
 
               return (
                 <li key={index} className={toggleOn ? 'unfolded' : 'folded'}>
-                  {toggleIndex && (
+                  {toggleIndex !== null && (
                     <button className="toggle" onClick={() => toggleCallback(toggleIndex)}>
                       {toggleOn ? ExpandLess : ExpandMore}
                     </button>
