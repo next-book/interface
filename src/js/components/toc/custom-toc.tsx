@@ -7,7 +7,7 @@ interface Props {
 }
 
 export default function CustomToc(props: Props) {
-  const [toggles, setToggles] = useState<boolean[]>([]);
+  const [toggles, setToggles] = useState<(boolean | null)[]>(getDefaultToggles(props.toc));
 
   const toggle = (index: number) => {
     const copy = [...toggles];
@@ -15,17 +15,20 @@ export default function CustomToc(props: Props) {
     setToggles(copy);
   };
 
-  const ingestedToc = ingestToc(props.toc, props.current, toggles, toggle);
-  if (ingestedToc.toggleCount > toggles.length)
-    setToggles(new Array(ingestedToc.toggleCount).fill(false));
-
-  return <>{ingestedToc.comp}</>;
+  return <>{ingestToc(props.toc, props.current, toggles, toggle)}</>;
 }
+
+const getDefaultToggles = (toc: Element) =>
+  [...toc.querySelectorAll('li')].map(li => {
+    if (li.querySelector('ul, ol') === null) return null;
+    if (li.querySelector(':scope > ul, :scope > ol:not(.headings-toc)') !== null) return true;
+    return false;
+  });
 
 const ingestToc = (
   toc: Element,
   current: string,
-  toggles: boolean[],
+  toggles: (boolean | null)[],
   toggleCallback: (index: number) => void
 ) => {
   let toggleCount: number = 0;
@@ -48,16 +51,18 @@ const ingestToc = (
                 </ol>
               );
             case 'LI':
-              const hasChildList = el.querySelector('ul,ol') !== null;
-              const toggleIndex = hasChildList ? toggleCount : null;
-              const toggleOn = toggleIndex !== null && toggles[toggleIndex];
+              const toggleIndex = toggleCount;
+              const toggleState = toggles[toggleIndex];
               toggleCount += 1;
 
               return (
-                <li key={index} className={toggleOn ? 'unfolded' : 'folded'}>
-                  {toggleIndex !== null && (
+                <li
+                  key={index}
+                  className={toggleState !== null && toggleState ? 'unfolded' : 'folded'}
+                >
+                  {toggleState !== null && (
                     <button className="toggle" onClick={() => toggleCallback(toggleIndex)}>
-                      {toggleOn ? ExpandLess : ExpandMore}
+                      {toggleState ? ExpandLess : ExpandMore}
                     </button>
                   )}
                   {ingestEl(el)}
@@ -84,7 +89,5 @@ const ingestToc = (
     );
   };
 
-  const comp = ingestEl(toc);
-
-  return { toggleCount, comp };
+  return ingestEl(toc);
 };
