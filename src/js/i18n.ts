@@ -3,8 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import numbro from './numbro';
 
-import en from './translation/en.json';
-import cs from './translation/cs.json';
+import { en, cs } from '@next-book/publisher';
 
 i18n
   .use(LanguageDetector)
