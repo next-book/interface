@@ -48,7 +48,9 @@ class Research extends React.Component<IProps, IState> {
         .consent === Consent.None ? (
       <div className="_nb-research">
         <h2>{this.props.t('plea-title')}</h2>
-        <p className="plea">{this.state.text}</p>
+        {this.state.text && (
+          <p className="plea" dangerouslySetInnerHTML={{ __html: this.state.text }}></p>
+        )}
 
         <p>
           {this.props.t('researcher')}: <strong>{this.state.orgs}</strong>
