@@ -1,4 +1,4 @@
-@use "../conf";
+@use '../conf';
 
 ._nb-research {
   position: fixed;
@@ -19,7 +19,7 @@
   box-shadow: var(--ui-box-shadow);
   overflow: hidden;
 
-  z-index: map-get(conf.$z-indexes, 'research');
+  z-index: map-get(conf.$z-indexes, 'modals');
 
   p {
     line-height: 1.4;

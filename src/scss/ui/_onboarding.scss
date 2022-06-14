@@ -1,4 +1,4 @@
-@use "../conf";
+@use '../conf';
 
 $nb-yellow: #fff6de;
 $nb-red: #9a4663;
@@ -106,13 +106,13 @@ $nb-red: #9a4663;
     opacity: 0.75;
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    z-index: map-get(conf.$z-indexes, 'onboarding');
+    z-index: map-get(conf.$z-indexes, 'controls-modal');
   }
 
   .onboarding {
     font-family: var(--ui-font);
     font-size: var(--ui-font-size);
-    z-index: map-get(conf.$z-indexes, 'onboarding');
+    z-index: map-get(conf.$z-indexes, 'controls-modal');
 
     position: fixed;
     top: var(--base-padding);

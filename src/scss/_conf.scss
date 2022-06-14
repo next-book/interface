@@ -25,24 +25,27 @@ $ui-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Aria
   'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol' !default;
 $ui-font-size: calc(16px * var(--font-size-ratio)) !default;
 
-@use "functions";
+@use 'functions';
 
 $z-indexes: (
   'pagination': 900,
-  'breaks': 950,
   'navigation': 1000,
-  'peeks': 1050,
-  'toc': 1100,
-  'footnotes': 1200,
-  'annotations': 1300,
-  'controls': 3000,
-  'research': 3500,
-  'onboarding': 4000,
+  'peeks': 1200,
+  'toc': 1300,
+  'footnotes': 1400,
+  'annotations': 1500,
+
+  'controls-launcher': 2000,
+  'breaks': 3000,
+  'modals': 4000,
+
+  'controls': 5000,
+  'controls-modal': 6000
 );
 
 $breakpoints: (
   'max-big-tabs': 400px,
   'min-side-annotation-ui': functions.remToPx(24rem),
   'max-full-screen-controls': 990px,
-  'min-double-col-notes': 600px,
+  'min-double-col-notes': 600px
 );
