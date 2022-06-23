@@ -33,6 +33,7 @@ html {
 body {
   margin: 0;
   background: var(--background);
+  min-height: 100vh;
 }
 
 @media (min-width: 0.1px + map-get(conf.$breakpoints, 'max-full-screen-controls')) {
