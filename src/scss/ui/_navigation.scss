@@ -66,6 +66,8 @@
   }
 
   .top-bar {
+    display: none; // temporary
+
     font-family: var(--content-font);
     font-size: var(--ui-font-size);
 
