@@ -60,11 +60,11 @@ function Toc(props: Props) {
     });
   }
 
-  if (docInfo.links.colophon !== null) {
+  if (docInfo.links.about !== null) {
     otherLinks.push({
-      classes: docInfo.role === DocRole.Colophon ? 'current-chapter' : undefined,
-      href: docInfo.links.colophon,
-      text: t('colophon'),
+      classes: docInfo.role === DocRole.About ? 'current-chapter' : undefined,
+      href: docInfo.links.about,
+      text: t('about'),
     });
   }
 

@@ -90,7 +90,7 @@ export class Position extends React.Component<IProps> {
     const ro = this.props.readingOrder;
     if (ro.length === 0) return null;
 
-    const colophon = Object.values(this.props.documents).find(doc => doc.role === DocRole.Colophon);
+    const about = Object.values(this.props.documents).find(doc => doc.role === DocRole.About);
 
     return (
       <SeqReturn
@@ -105,7 +105,7 @@ export class Position extends React.Component<IProps> {
         setPosition={this.setPosition}
         sequential={this.props.sequential}
         startLink={this.props.documents[ro[0]].file}
-        colophonLink={colophon ? colophon.file : null}
+        aboutLink={about ? about.file : null}
       />
     );
   }

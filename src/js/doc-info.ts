@@ -37,7 +37,7 @@ function getRole() {
   if (value === DocRole.Chapter) return DocRole.Chapter;
   if (value === DocRole.Break) return DocRole.Break;
   if (value === DocRole.Cover) return DocRole.Cover;
-  if (value === DocRole.Colophon) return DocRole.Colophon;
+  if (value === DocRole.About) return DocRole.About;
   else return DocRole.Other;
 }
 
@@ -82,7 +82,7 @@ export const links = {
   manifest: getLinkRel(LinkRel.Publication),
   prev: getLinkRel(LinkRel.Prev),
   next: getLinkRel(LinkRel.Next),
-  colophon: getLinkRel(LinkRel.Colophon),
+  about: getLinkRel(LinkRel.About),
   license: getLinkRel(LinkRel.License),
 };
 

@@ -33,7 +33,7 @@ interface IProps extends WithTranslation {
   docRole: DocRole;
   setPosition(resetSequence: boolean): void;
   startLink: string;
-  colophonLink: string | null;
+  aboutLink: string | null;
 }
 
 interface IState {
