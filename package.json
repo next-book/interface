@@ -1,6 +1,6 @@
 {
   "name": "@next-book/interface",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Next-book’s browser interface",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {
-    "@next-book/publisher": "^1.0.0",
+    "@next-book/publisher": "^1.0.2",
     "@types/fscreen": "^1.0.1",
     "@types/lodash": "^4.14.182",
     "@types/react": "^18.0.6",
