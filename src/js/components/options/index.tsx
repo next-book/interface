@@ -13,6 +13,7 @@ import { FontSize } from './font-size';
 import AnnotationStyles from './annotation-styles';
 import { IAnnotationStyle } from './../annotations/reducer';
 import { scrollToIdea } from './../../doc-info';
+import { updateCache } from './../sw-messages';
 
 interface IProps extends WithTranslation {
   fontSize: string;
@@ -45,9 +46,8 @@ class Options extends React.Component<IProps, IState> {
       month: 'short',
       day: '2-digit',
     });
-    const [{ value: month }, , { value: day }, , { value: year }] = dateTimeFormat.formatToParts(
-      date
-    );
+    const [{ value: month }, , { value: day }, , { value: year }] =
+      dateTimeFormat.formatToParts(date);
 
     this.state = { dateGenerated: `${month} ${day}, ${year}` };
   }
@@ -74,6 +74,12 @@ class Options extends React.Component<IProps, IState> {
     applyBasicStyle(basicStyle);
 
     scrollToIdea(idea);
+  };
+
+  requestCacheUpdate = () => {
+    updateCache();
+
+    alert(this.props.t('offline:cacheUpdateRequested'));
   };
 
   render() {
@@ -128,6 +134,15 @@ class Options extends React.Component<IProps, IState> {
                 : this.props.offline.swIsAvailable === SwAvailability.Unsecure
                 ? this.props.t('offline:unsecure')
                 : this.props.t('offline:problem')}
+
+              {this.props.offline.cacheIsAvailable && (
+                <>
+                  {' '}
+                  <a href="#" onClick={this.requestCacheUpdate}>
+                    {this.props.t('offline:updateCache')}
+                  </a>
+                </>
+              )}
             </p>
           </div>
           <div>
