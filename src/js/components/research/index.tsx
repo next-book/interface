@@ -11,13 +11,14 @@ import { init as initTracking } from './tracker';
 interface IProps extends WithTranslation {
   consent: Consent;
   denyConsent(): void;
-  grantConsent(ga: string): void;
+  grantConsent(ga: string, id: string): void;
 }
 
 export interface IState {
   active: boolean;
   text?: string;
   orgs?: string;
+  id?: string;
   ga?: string;
 }
 
@@ -34,12 +35,12 @@ class Research extends React.Component<IProps, IState> {
     if (params !== null) {
       this.setState({ ...this.state, ...params, active: true });
 
-      if (this.props.consent === Consent.Granted) initTracking(params.ga);
+      if (this.props.consent === Consent.Granted) initTracking(params.ga, params.id);
     }
   }
 
   grantConsent = () => {
-    if (this.state.ga) this.props.grantConsent(this.state.ga);
+    if (this.state.ga && this.state.id) this.props.grantConsent(this.state.ga, this.state.id);
     else this.props.denyConsent();
   };
 
