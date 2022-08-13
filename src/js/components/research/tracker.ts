@@ -14,14 +14,13 @@ let initialized: boolean = false;
 export const init = (gaId: string, nbId: string) => {
   const path = document.location.pathname;
   const domain = document.location.host + path.substring(path.indexOf('/'), path.lastIndexOf('/'));
-  Tracker.init(nbId, domain, 'http://127.0.0.1:3000', true);
-  console.log('Tracker Initialized');
+  Tracker.init(nbId, domain, 'https://analytics.next-book.info');
   Tracker.send('pageview');
   ReactGA.initialize(gaId);
   ReactGA.pageview();
   initialized = true;
 
-  console.log('Research data collection initialized.');
+  console.log('Research data collection initialized');
 
   setInterval(trackReadingTime(), 1000 * 60 * 10);
 };
