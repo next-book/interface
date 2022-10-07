@@ -134,7 +134,7 @@ export class Pagination extends React.Component<IProps, IState> {
 
       if (eventCount > 2) this.setAllLayout();
 
-      if (eventCount > 5) {
+      if (eventCount > 5 && this.readingMode !== ReadingMode.Scrolling) {
         this.setScrollingMode();
         trackScroll();
       }
