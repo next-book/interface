@@ -141,12 +141,13 @@ export function scrollToIdea(number: number | null) {
   }
 }
 
-export function getResearchParams(): { text: string; orgs: string; ga: string } | null {
+export function getResearchParams(): { text: string; orgs: string; ga: string, id: string } | null {
   const text = getResearchParam(ResearchMetaName.Text);
   const orgs = getResearchParam(ResearchMetaName.Orgs);
   const ga = getResearchParam(ResearchMetaName.GA);
-  if (!text || !orgs || !ga) return null;
+  if (!text || !orgs || !ga || !identifier) return null;
   return {
+    id: identifier,
     text,
     orgs,
     ga,

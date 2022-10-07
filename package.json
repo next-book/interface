@@ -36,6 +36,7 @@
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {
+    "@next-book/analytics": "^0.0.2",
     "@next-book/publisher": "^1.0.2",
     "@types/fscreen": "^1.0.1",
     "@types/lodash": "^4.14.182",

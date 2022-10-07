@@ -34,8 +34,8 @@ reducer.denyConsent = function () {
   };
 };
 
-reducer.grantConsent = function (ga: string) {
-  initTracking(ga);
+reducer.grantConsent = function (ga: string, id: string) {
+  initTracking(ga, id);
 
   return <const>{
     type: GRANT_CONSENT,
