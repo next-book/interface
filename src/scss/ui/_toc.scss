@@ -100,8 +100,14 @@
     }
   }
 
-  .headings-toc a {
-    font-weight: normal;
+  .headings-toc {
+    li {
+      list-style-type: none;
+    }
+
+    a {
+      font-weight: normal;
+    }
   }
 }
 
